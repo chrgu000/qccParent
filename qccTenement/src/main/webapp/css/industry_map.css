@@ -1,0 +1,10 @@
+.BMapLabel span{
+	position: absolute;
+	font-size: 30px;
+	left:50%;
+	top:-15px;
+	transform:translate(-50%);
+}
+label{
+	background-color:none !important;
+}

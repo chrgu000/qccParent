@@ -1,0 +1,143 @@
+.head {
+	margin-top:  -10px;
+}
+.container{
+	background-color: #ff8040;
+}
+.left{
+	margin-left: 30px;
+}
+.qiuzucount{
+	
+	margin-left: 130px;
+}
+.building_set span {
+	width: 30%;
+	display: inline-block;
+	
+}
+
+.building_set input {
+	width: 65%;
+	display: inline-block;
+	
+}
+.list-group-item input{
+	width: 130px ;
+}
+ #systemdata{
+	display: none;
+}
+#updatetest{
+	display: none;
+}
+#commoninte {
+	display: none;
+}
+#update_picture_domain , #landlord_examine , #parerrule{
+	display: none;
+}
+#suggess {
+	display: none;
+}
+#app_update{
+	display: none;
+}
+#percent {
+	display: none;
+}
+#editaddress2 {
+	display: none;
+}
+#searchuseraccount {
+	display: none;
+}
+#qiuzu {
+	display: none;
+}
+#historyexcle{
+	display: none;
+}
+#systemstate{
+	display: none;
+}
+
+#auth {
+	display: none;
+}
+#buildingsmap{
+	display: none;
+}
+#metro{
+	display: none;
+}
+.selet1, .selet2, .selet3{
+	margin-left: 50px;
+	font-size: 15;
+	height: 30px;
+}
+#manager_to_user{
+	display: none;
+}
+
+#qiuzu_message{
+	display: none;
+}
+#user_to_role{
+	display: none;
+}
+#solr_add{
+	display: none;
+}
+#tribep{
+	display: none;
+}
+#tribet{
+	display: none;
+}
+#paramtype {
+	display: none;
+}
+#access {
+	display: none;
+}
+#role {
+	display: none;
+}
+#lovetribe {
+	display: none;
+}
+#tribeaddress {
+	display: none;
+}
+.btn-primary{
+	margin-top: -5px;
+}
+#village{
+	display: none;
+}
+#building {
+	/*display: none; */
+}
+.modal {
+	margin-top: 170px;
+	
+}
+.village_model {
+	margin-top:40px;
+}
+#village_css{
+	margin-top: 40px;
+	margin-bottom: 20px;
+}
+div .bildingcount {
+	margin-bottom: 10px;
+	margin-left: 150px;
+}
+
+div .metro_search{
+	margin-left: 120px;
+}
+.container-fluid{
+	background-url: "/css/back.jpg";
+}

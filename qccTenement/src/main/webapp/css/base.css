@@ -1,0 +1,447 @@
+/*基础样式*/
+@charset "utf-8";
+
+
+/*添加媒体查询*/
+@media (min-width: 320px){html{font-size: 20px;} }
+@media (min-width: 375px){html{font-size: 23.4375px;} }
+@media (min-width: 384px){html{font-size: 24px;} }
+@media (min-width: 414px){html{font-size: 25.875px;} }
+@media (min-width: 448px){html{font-size: 28px;} }
+@media (min-width: 480px){html{font-size: 30px;} }
+@media (min-width: 512px){html{font-size: 32px;} }
+@media (min-width: 544px){html{font-size: 34px;} }
+@media (min-width: 576px){html{font-size: 36px;} }
+@media (min-width: 608px){html{font-size: 38px;} }
+/*@media (min-width: 640px){html{font-size: 40px;} }*/
+/*@media (min-width: 750px){html{font-size: 46.875px;} }*/
+@media (min-width: 1280px){html{font-size: 40px;} }
+
+/*标签初始化*/
+html,body,ul,ol,li,a,span,p,b,img,header,nav,footer,input,h1,h2,h3,h4,img,form,dl,dd{
+    padding:0;
+    margin:0;
+}
+ul,li{
+    list-style: none;
+}
+img,input,button{
+    border: none;
+    outline-style: none;
+}
+img{
+    border: 0;
+    vertical-align: middle;
+}
+input{
+    padding-top: 0;
+    padding-bottom: 0;
+    vertical-align: middle;
+}
+span,a{
+    display: inline-block;
+}
+a{
+    text-decoration: none;
+}
+.fl{
+    float: left;
+}
+.fr{
+    float: right;
+}
+.clearFix:before,
+.clearFix:after{
+    content: '';
+    display: block;
+    clear: both;
+    height:0;
+}
+s,i,em{
+    font-style: normal;
+    text-decoration: none;
+}
+
+/*底部通栏*/
+footer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2.5rem;
+    bottom: 0;
+    background-color: #fff;
+    z-index: 999;
+    border-top: 0.014rem solid #e8e9ef;
+    -webkit-box-shadow: 0 -0.02rem 2rem 0.3rem #CCC;
+}
+#footer .footer_nav {
+    display: flex;
+}
+#footer .footer_nav li {
+    flex: 1;
+    margin: 0.1rem 0;
+}
+#footer .footer_nav li a {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+#footer .footer_nav li a p {
+    width: 1.5rem;
+    height: 1.5rem;
+    display: block;
+    margin-left: 0.85rem;
+}
+#footer .footer_nav li a span {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #9fa3aa;
+}
+#footer .footer_nav .home {
+    background: url("../pages/images/home_s.png") no-repeat center center;
+    background-size: 100%;
+}
+#footer .footer_nav .home.rull {
+    background: url("../pages/images/home.png") no-repeat center center;
+    background-size: 100%;
+}
+#footer .footer_nav .community {
+    background: url("../pages/images/community_s.png") no-repeat center center;
+    background-size: 100%;
+}
+#footer .footer_nav .community.rull {
+    background: url("../pages/images/community.png") no-repeat center center;
+    background-size: 100%;
+}
+#footer .footer_nav .buttonAdd {
+    background: url("../pages/images/buttonAdd_s.png") no-repeat center center;
+    background-size: 100%;
+}
+#footer .footer_nav .buttonAdd.rull {
+    background: url("../pages/images/buttonAdd.png") no-repeat center center;
+    background-size: 100%;
+}
+#footer .footer_nav .news {
+    background: url("../pages/images/news_s.png") no-repeat center center;
+    background-size: 100%;
+}
+#footer .footer_nav .news.rull {
+    background: url("../pages/images/news.png") no-repeat center center;
+    background-size: 100%;
+}
+#footer .footer_nav .personage {
+    background: url("../pages/images/personage_s.png") no-repeat center center;
+    background-size: 100%;
+}
+#footer .footer_nav .personage.rull {
+    background: url("../pages/images/personage.png") no-repeat center center;
+    background-size: 100%;
+}
+#footer .footer_nav span.rull {
+    color: #303139 !important;
+}
+
+
+/*发布页*/
+@-webkit-keyframes move {
+    0% {
+        transform: translateY(100%);
+        -webkit-transform: translateY(100%);
+        opacity: 0;
+    }
+    75% {
+        transform: translateY(-5%);
+        -webkit-transform: translateY(-5%);
+    }
+    85% {
+        -webkit-transform: translateY(3%);
+        transform: translateY(3%);
+    }
+    95% {
+        transform: translateY(-1%);
+        -webkit-transform: translateY(-1%);
+    }
+    100% {
+        -webkit-transform: translateY(0%);
+        transform: translateY(0%);
+        opacity: 1;
+    }
+}
+@-webkit-keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+    }
+    75% {
+        transform: rotate(-51deg);
+        -webkit-transform: rotate(-51deg);
+    }
+    85% {
+        transform: rotate(-39deg);
+        -webkit-transform: rotate(-39deg);
+    }
+    95% {
+        transform: rotate(-47deg);
+        -webkit-transform: rotate(-47deg);
+    }
+    100% {
+        transform: rotate(-45deg);
+        -webkit-transform: rotate(-45deg);
+    }
+}
+.release {
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    display: none;
+    background: rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(10px);
+    -webkit-animation: opacity 1s;
+    -o-animation: opacity 1s;
+    animation: opacity 1s;
+}
+.release .content-wrapper {
+    width: 100%;
+    min-height: 100%;
+}
+.release .content {
+    position: absolute;
+    left: 0;
+    bottom: 3.2rem;
+    width: 100%;
+    padding-bottom: 3.2rem;
+}
+.release .property-list {
+    position: absolute;
+    left: 0;
+    bottom: 7.4rem;
+    width: 100%;
+    display: flex;
+}
+.release .property-list1 {
+    position: absolute;
+    left: 0;
+    bottom: 3.2rem;
+    width: 100%;
+    display: flex;
+}
+.release .property-list>li {
+    flex: 1;
+    opacity: 0;
+}
+.release .property-list1>li {
+    flex: 1;
+    opacity: 0;
+}
+.release .property-list .rent {
+    -webkit-animation: move 0.2s;
+    -o-animation: move 0.2s;
+    animation: move 0.2s;
+    -webkit-animation-timing-function: ease-out;
+    -moz-animation-timing-function: ease-out;
+    -o-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+.release .property-list .sell {
+  -webkit-animation: move 0.2s;
+    -o-animation: move 0.2s;
+    animation: move 0.2s;
+    -webkit-animation-timing-function: ease-out;
+    -moz-animation-timing-function: ease-out;
+    -o-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    -webkit-animation-delay:0.2s;
+    -moz-animation-delay: 0.2s;
+    -o-animation-delay: 0.2s;
+    animation-delay: 0.2s;
+}
+.release .property-list .wanted {
+  -webkit-animation: move 0.2s;
+    -o-animation: move 0.2s;
+    animation: move 0.2s;
+    -webkit-animation-timing-function: ease-out;
+    -moz-animation-timing-function: ease-out;
+    -o-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    -webkit-animation-delay:0.4s;
+    -moz-animation-delay: 0.4s;
+    -o-animation-delay: 0.4s;
+    animation-delay: 0.4s;
+}
+.release .property-list .buy {
+  -webkit-animation: move 0.2s;
+    -o-animation: move 0.2s;
+    animation: move 0.2s;
+    -webkit-animation-timing-function: ease-out;
+    -moz-animation-timing-function: ease-out;
+    -o-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    -webkit-animation-delay:0.6s;
+    -moz-animation-delay: 0.6s;
+    -o-animation-delay: 0.6s;
+    animation-delay: 0.6s;
+}
+.release .property-list1 .ploat {
+  -webkit-animation: move 0.2s;
+    -o-animation: move 0.2s;
+    animation: move 0.2s;
+    -webkit-animation-timing-function: ease-out;
+    -moz-animation-timing-function: ease-out;
+    -o-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    -webkit-animation-delay:0.6s;
+    -moz-animation-delay: 0.6s;
+    -o-animation-delay: 0.6s;
+    animation-delay: 0.6s;
+}
+.release .property-list1 .build {
+  -webkit-animation: move 0.2s;
+    -o-animation: move 0.2s;
+    animation: move 0.2s;
+    -webkit-animation-timing-function: ease-out;
+    -moz-animation-timing-function: ease-out;
+    -o-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    -webkit-animation-delay:0.6s;
+    -moz-animation-delay: 0.6s;
+    -o-animation-delay: 0.6s;
+    animation-delay: 0.6s;
+}
+.release .property-list>li>i{
+    display: block;
+    margin: 0 auto;
+    width: 2rem;
+    height: 2rem;
+}
+.release .property-list1>li>i{
+    display: block;
+    margin: 0 auto;
+    width: 2rem;
+    height: 2rem;
+}
+.release .property-list .rent>i {
+    background: url("../pages/images/rent.png") center no-repeat;
+    -webkit-background-size: 100% auto;
+    background-size: 100% auto;
+}
+.release .property-list .sell>i {
+    background: url("../pages/images/sell.png") center no-repeat;
+    -webkit-background-size: 100% auto;
+    background-size: 100% auto;
+}
+.release .property-list .wanted>i {
+    background: url("../pages/images/wanted.png") center no-repeat;
+    -webkit-background-size: 100% auto;
+    background-size: 100% auto;
+}
+.release .property-list .buy>i {
+    background: url("../pages/images/buy.png") center no-repeat;
+    -webkit-background-size: 100% auto;
+    background-size: 100% auto;
+}
+.release .property-list1 .ploat>i {
+    background: url("../pages/images/plot.png") center no-repeat;
+    -webkit-background-size: 100% auto;
+    background-size: 100% auto;
+}
+.release .property-list1 .build>i {
+    background: url("../pages/images/building.png") center no-repeat;
+    -webkit-background-size: 100% auto;
+    background-size: 100% auto;
+}
+.release .property-list>li>span{
+    display: block;
+    margin-top: 0.4rem;
+    width: 100%;
+    font-size: 0.7rem;
+    text-align: center;
+}
+.release .property-list1>li>span{
+    display: block;
+    margin-top: 0.4rem;
+    width: 100%;
+    font-size: 0.7rem;
+    text-align: center;
+}
+.release .close {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2.4rem;
+}
+.release .close>i {
+    margin: 0 auto;
+    display: block;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: url("../pages/images/buttonAdd_c.png") center no-repeat;
+    -webkit-background-size: 100% auto;
+    background-size: 100% auto;
+    -webkit-animation: rotate 1s;
+    -o-animation: rotate 1s;
+    animation: rotate 1s;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+@keyframes opacity {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+@-webkit-keyframes opacity {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
