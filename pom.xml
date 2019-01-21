@@ -51,5 +51,6 @@
   	<module>qccService</module>
   	<module>qccTenement</module>
   	<module>qccPojo</module>
+  	<module>qccManager</module>
   </modules>
 </project>
