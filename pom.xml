@@ -45,4 +45,7 @@
 			</resource>
 		</resources>
 	</build>
+  <modules>
+  	<module>qccCommon</module>
+  </modules>
 </project>
