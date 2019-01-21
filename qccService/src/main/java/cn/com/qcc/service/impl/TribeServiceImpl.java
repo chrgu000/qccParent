@@ -1399,8 +1399,10 @@ public class TribeServiceImpl implements TribeService {
 					tribids.add(detail.getTribeids().split(",")[0]);
 				}
 				String tabName = "";
+				// 如果是房源的时候需要在detailName后面加上房号
 				if (CheckDataUtil.checkisEqual(detail.getArticletypeid(), 1)) {
 					tabName = detail.getTypename();
+					detail.setTitle(detail.getTitle() + "  " + detail.getHouseNub() + "号房");
 				}
 				if (CheckDataUtil.checkisEqual(detail.getArticletypeid(), 2)) {
 					tabName = "【求租】";

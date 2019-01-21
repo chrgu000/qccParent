@@ -72,6 +72,17 @@ public class ArticleDetailCustomer extends Articledetail{
 	
 	private String fanStatus;
 	
+	private String houseNub;
+	
+	
+	public String getHouseNub() {
+		return houseNub;
+	}
+
+	public void setHouseNub(String houseNub) {
+		this.houseNub = houseNub;
+	}
+
 	public String getFanStatus() {
 		return fanStatus;
 	}

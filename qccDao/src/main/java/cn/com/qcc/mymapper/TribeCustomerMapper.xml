@@ -877,6 +877,7 @@
 	<select id="myfocus" resultType="cn.com.qcc.queryvo.ArticleDetailCustomer" >
 		SELECT  *   FROM (
 			SELECT
+				house.house_number houseNub ,
 				property.propertyname typename ,
 				apartment.apartmentname description ,
 				price.prices ,
@@ -903,6 +904,7 @@
 			AND house.housestatus in (1 ,2 )
 			UNION
 			SELECT
+				'' houseNub , 
 				'' typename ,
 				qiuzu.housetype description ,
 				ifnull(qiuzu.price,0.00)prices,
@@ -926,6 +928,7 @@
 			And qiuzu.qiuzustatus in (1)
 			UNION
 			SELECT
+				'' houseNub , 
 				'' typename ,
 				articledetail.description ,
 				IFNULL(MIN(releasetable.prices) ,0.00)prices,
