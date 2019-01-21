@@ -76,7 +76,7 @@ public class AppUdateController {
 	@ResponseBody
 	public ResultMap searchNewAppservice (@PathVariable Integer type) {
 		Appversion version = appUpdatesService.searchNewAppservice(type);
-		if (CheckDataUtil.checkNotEmpty(version)) {
+		if (CheckDataUtil.checkisEmpty(version)) {
 			return ResultMap.build(400, "没有找到对应APP");
 		}
 		return ResultMap.IS_200(version);
