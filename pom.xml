@@ -49,5 +49,6 @@
   	<module>qccCommon</module>
   	<module>qccDao</module>
   	<module>qccService</module>
+  	<module>qccTenement</module>
   </modules>
 </project>
