@@ -4,6 +4,9 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import cn.com.qcc.common.CheckDataUtil;
+import cn.com.qcc.common.JsonUtils;
+import cn.com.qcc.common.RedisUtil;
+import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mymapper.HouseCustomerMapper;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.service.solrdao.HouseSolrDao;
@@ -19,6 +22,8 @@ public class HouseSaleAddOrUpdateMessage implements MessageListener{
 	private HouseCustomerMapper houseCustomerMapper;
 	@Autowired
 	private HouseSolrDao houseSolrDao;
+	@Autowired
+	private JedisClient jedisClient;
 	
 	public void onMessage(Message message) {
 		try {
@@ -31,11 +36,14 @@ public class HouseSaleAddOrUpdateMessage implements MessageListener{
 			// 同步索引库
 			HouseCustomer houseCustomer = houseCustomerMapper.searchoneHouseToSolr(houseid);
 			if (CheckDataUtil.checkNotEmpty(houseCustomer)) {
-				
 				if (CheckDataUtil.checkisEqual(houseCustomer.getHousestatus(), 3)) {
 					houseSolrDao.oneHouseDeleteFromSolr(houseCustomer);
 				}else {
 					houseSolrDao.AddOneHouseToSolr(houseCustomer);
+					// 这里需要同步房源的缓存
+					HouseCustomer cache = houseCustomerMapper.findHouseDetails(houseid);
+					jedisClient.set(RedisUtil.HOUSE_FIRST_KEY+ houseid, JsonUtils.objectToJson(cache));
+					jedisClient.expire(RedisUtil.HOUSE_FIRST_KEY+ houseid, RedisUtil.HOUSE_OUT_TIME);
 				}
 				
 			}
