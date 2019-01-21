@@ -12,13 +12,11 @@ public class PictureDeleteMess implements MessageListener {
 	@Override
 	public void onMessage(Message message) {
 		TextMessage textMessage = (TextMessage)message;
-		
-		//休眠一秒钟等待图片上传完成
-		
-		
 		try {
-			Thread.sleep(1000);
+			
+			Thread.sleep(4000);
 			String  filePath =   (String)textMessage.getText() ;
+			System.out.println("发送图片后收到的消息：" + filePath );
 			String[] splitPath = filePath.split("-");
 			for (int i=0;i<splitPath.length;i++) {
 				File file = new File(splitPath[i]);
