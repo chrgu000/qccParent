@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mapper.UsercentMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Usercent" >
+    <id column="usercentid" property="usercentid" jdbcType="BIGINT" />
+    <result column="usercentnum" property="usercentnum" jdbcType="VARCHAR" />
+    <result column="centtimes" property="centtimes" jdbcType="INTEGER" />
+    <result column="houseid" property="houseid" jdbcType="BIGINT" />
+    <result column="userid" property="userid" jdbcType="BIGINT" />
+    <result column="centstate" property="centstate" jdbcType="INTEGER" />
+    <result column="landuserid" property="landuserid" jdbcType="BIGINT" />
+    <result column="yaprices" property="yaprices" jdbcType="DOUBLE" />
+    <result column="centprices" property="centprices" jdbcType="DOUBLE" />
+    <result column="centfromid" property="centfromid" jdbcType="BIGINT" />
+    <result column="userstete" property="userstete" jdbcType="INTEGER" />
+    <result column="othermore" property="othermore" jdbcType="VARCHAR" />
+    <result column="othermoreid" property="othermoreid" jdbcType="VARCHAR" />
+    <result column="paystyleid" property="paystyleid" jdbcType="VARCHAR" />
+    <result column="rentmodalid" property="rentmodalid" jdbcType="BIGINT" />
+    <result column="end_time" property="end_time" jdbcType="TIMESTAMP" />
+    <result column="start_time" property="start_time" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    usercentid, usercentnum, centtimes, houseid, userid, centstate, landuserid, yaprices, 
+    centprices, centfromid, userstete, othermore, othermoreid, paystyleid, rentmodalid, 
+    end_time, start_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.UsercentExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from usercent
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from usercent
+    where usercentid = #{usercentid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from usercent
+    where usercentid = #{usercentid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.com.qcc.pojo.UsercentExample" >
+    delete from usercent
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.com.qcc.pojo.Usercent" >
+  <selectKey  resultType="long"  order="AFTER"  keyProperty="usercentid" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into usercent (usercentid, usercentnum, centtimes, 
+      houseid, userid, centstate, 
+      landuserid, yaprices, centprices, 
+      centfromid, userstete, othermore, 
+      othermoreid, paystyleid, rentmodalid, 
+      end_time, start_time)
+    values (#{usercentid,jdbcType=BIGINT}, #{usercentnum,jdbcType=VARCHAR}, #{centtimes,jdbcType=INTEGER}, 
+      #{houseid,jdbcType=BIGINT}, #{userid,jdbcType=BIGINT}, #{centstate,jdbcType=INTEGER}, 
+      #{landuserid,jdbcType=BIGINT}, #{yaprices,jdbcType=DOUBLE}, #{centprices,jdbcType=DOUBLE}, 
+      #{centfromid,jdbcType=BIGINT}, #{userstete,jdbcType=INTEGER}, #{othermore,jdbcType=VARCHAR}, 
+      #{othermoreid,jdbcType=VARCHAR}, #{paystyleid,jdbcType=VARCHAR}, #{rentmodalid,jdbcType=BIGINT}, 
+      #{end_time,jdbcType=TIMESTAMP}, #{start_time,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Usercent" >
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="usercentid" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into usercent
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="usercentid != null" >
+        usercentid,
+      </if>
+      <if test="usercentnum != null" >
+        usercentnum,
+      </if>
+      <if test="centtimes != null" >
+        centtimes,
+      </if>
+      <if test="houseid != null" >
+        houseid,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="centstate != null" >
+        centstate,
+      </if>
+      <if test="landuserid != null" >
+        landuserid,
+      </if>
+      <if test="yaprices != null" >
+        yaprices,
+      </if>
+      <if test="centprices != null" >
+        centprices,
+      </if>
+      <if test="centfromid != null" >
+        centfromid,
+      </if>
+      <if test="userstete != null" >
+        userstete,
+      </if>
+      <if test="othermore != null" >
+        othermore,
+      </if>
+      <if test="othermoreid != null" >
+        othermoreid,
+      </if>
+      <if test="paystyleid != null" >
+        paystyleid,
+      </if>
+      <if test="rentmodalid != null" >
+        rentmodalid,
+      </if>
+      <if test="end_time != null" >
+        end_time,
+      </if>
+      <if test="start_time != null" >
+        start_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="usercentid != null" >
+        #{usercentid,jdbcType=BIGINT},
+      </if>
+      <if test="usercentnum != null" >
+        #{usercentnum,jdbcType=VARCHAR},
+      </if>
+      <if test="centtimes != null" >
+        #{centtimes,jdbcType=INTEGER},
+      </if>
+      <if test="houseid != null" >
+        #{houseid,jdbcType=BIGINT},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="centstate != null" >
+        #{centstate,jdbcType=INTEGER},
+      </if>
+      <if test="landuserid != null" >
+        #{landuserid,jdbcType=BIGINT},
+      </if>
+      <if test="yaprices != null" >
+        #{yaprices,jdbcType=DOUBLE},
+      </if>
+      <if test="centprices != null" >
+        #{centprices,jdbcType=DOUBLE},
+      </if>
+      <if test="centfromid != null" >
+        #{centfromid,jdbcType=BIGINT},
+      </if>
+      <if test="userstete != null" >
+        #{userstete,jdbcType=INTEGER},
+      </if>
+      <if test="othermore != null" >
+        #{othermore,jdbcType=VARCHAR},
+      </if>
+      <if test="othermoreid != null" >
+        #{othermoreid,jdbcType=VARCHAR},
+      </if>
+      <if test="paystyleid != null" >
+        #{paystyleid,jdbcType=VARCHAR},
+      </if>
+      <if test="rentmodalid != null" >
+        #{rentmodalid,jdbcType=BIGINT},
+      </if>
+      <if test="end_time != null" >
+        #{end_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="start_time != null" >
+        #{start_time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.com.qcc.pojo.UsercentExample" resultType="java.lang.Integer" >
+    select count(*) from usercent
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update usercent
+    <set >
+      <if test="record.usercentid != null" >
+        usercentid = #{record.usercentid,jdbcType=BIGINT},
+      </if>
+      <if test="record.usercentnum != null" >
+        usercentnum = #{record.usercentnum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.centtimes != null" >
+        centtimes = #{record.centtimes,jdbcType=INTEGER},
+      </if>
+      <if test="record.houseid != null" >
+        houseid = #{record.houseid,jdbcType=BIGINT},
+      </if>
+      <if test="record.userid != null" >
+        userid = #{record.userid,jdbcType=BIGINT},
+      </if>
+      <if test="record.centstate != null" >
+        centstate = #{record.centstate,jdbcType=INTEGER},
+      </if>
+      <if test="record.landuserid != null" >
+        landuserid = #{record.landuserid,jdbcType=BIGINT},
+      </if>
+      <if test="record.yaprices != null" >
+        yaprices = #{record.yaprices,jdbcType=DOUBLE},
+      </if>
+      <if test="record.centprices != null" >
+        centprices = #{record.centprices,jdbcType=DOUBLE},
+      </if>
+      <if test="record.centfromid != null" >
+        centfromid = #{record.centfromid,jdbcType=BIGINT},
+      </if>
+      <if test="record.userstete != null" >
+        userstete = #{record.userstete,jdbcType=INTEGER},
+      </if>
+      <if test="record.othermore != null" >
+        othermore = #{record.othermore,jdbcType=VARCHAR},
+      </if>
+      <if test="record.othermoreid != null" >
+        othermoreid = #{record.othermoreid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.paystyleid != null" >
+        paystyleid = #{record.paystyleid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rentmodalid != null" >
+        rentmodalid = #{record.rentmodalid,jdbcType=BIGINT},
+      </if>
+      <if test="record.end_time != null" >
+        end_time = #{record.end_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.start_time != null" >
+        start_time = #{record.start_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update usercent
+    set usercentid = #{record.usercentid,jdbcType=BIGINT},
+      usercentnum = #{record.usercentnum,jdbcType=VARCHAR},
+      centtimes = #{record.centtimes,jdbcType=INTEGER},
+      houseid = #{record.houseid,jdbcType=BIGINT},
+      userid = #{record.userid,jdbcType=BIGINT},
+      centstate = #{record.centstate,jdbcType=INTEGER},
+      landuserid = #{record.landuserid,jdbcType=BIGINT},
+      yaprices = #{record.yaprices,jdbcType=DOUBLE},
+      centprices = #{record.centprices,jdbcType=DOUBLE},
+      centfromid = #{record.centfromid,jdbcType=BIGINT},
+      userstete = #{record.userstete,jdbcType=INTEGER},
+      othermore = #{record.othermore,jdbcType=VARCHAR},
+      othermoreid = #{record.othermoreid,jdbcType=VARCHAR},
+      paystyleid = #{record.paystyleid,jdbcType=VARCHAR},
+      rentmodalid = #{record.rentmodalid,jdbcType=BIGINT},
+      end_time = #{record.end_time,jdbcType=TIMESTAMP},
+      start_time = #{record.start_time,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.Usercent" >
+    update usercent
+    <set >
+      <if test="usercentnum != null" >
+        usercentnum = #{usercentnum,jdbcType=VARCHAR},
+      </if>
+      <if test="centtimes != null" >
+        centtimes = #{centtimes,jdbcType=INTEGER},
+      </if>
+      <if test="houseid != null" >
+        houseid = #{houseid,jdbcType=BIGINT},
+      </if>
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="centstate != null" >
+        centstate = #{centstate,jdbcType=INTEGER},
+      </if>
+      <if test="landuserid != null" >
+        landuserid = #{landuserid,jdbcType=BIGINT},
+      </if>
+      <if test="yaprices != null" >
+        yaprices = #{yaprices,jdbcType=DOUBLE},
+      </if>
+      <if test="centprices != null" >
+        centprices = #{centprices,jdbcType=DOUBLE},
+      </if>
+      <if test="centfromid != null" >
+        centfromid = #{centfromid,jdbcType=BIGINT},
+      </if>
+      <if test="userstete != null" >
+        userstete = #{userstete,jdbcType=INTEGER},
+      </if>
+      <if test="othermore != null" >
+        othermore = #{othermore,jdbcType=VARCHAR},
+      </if>
+      <if test="othermoreid != null" >
+        othermoreid = #{othermoreid,jdbcType=VARCHAR},
+      </if>
+      <if test="paystyleid != null" >
+        paystyleid = #{paystyleid,jdbcType=VARCHAR},
+      </if>
+      <if test="rentmodalid != null" >
+        rentmodalid = #{rentmodalid,jdbcType=BIGINT},
+      </if>
+      <if test="end_time != null" >
+        end_time = #{end_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="start_time != null" >
+        start_time = #{start_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where usercentid = #{usercentid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Usercent" >
+    update usercent
+    set usercentnum = #{usercentnum,jdbcType=VARCHAR},
+      centtimes = #{centtimes,jdbcType=INTEGER},
+      houseid = #{houseid,jdbcType=BIGINT},
+      userid = #{userid,jdbcType=BIGINT},
+      centstate = #{centstate,jdbcType=INTEGER},
+      landuserid = #{landuserid,jdbcType=BIGINT},
+      yaprices = #{yaprices,jdbcType=DOUBLE},
+      centprices = #{centprices,jdbcType=DOUBLE},
+      centfromid = #{centfromid,jdbcType=BIGINT},
+      userstete = #{userstete,jdbcType=INTEGER},
+      othermore = #{othermore,jdbcType=VARCHAR},
+      othermoreid = #{othermoreid,jdbcType=VARCHAR},
+      paystyleid = #{paystyleid,jdbcType=VARCHAR},
+      rentmodalid = #{rentmodalid,jdbcType=BIGINT},
+      end_time = #{end_time,jdbcType=TIMESTAMP},
+      start_time = #{start_time,jdbcType=TIMESTAMP}
+    where usercentid = #{usercentid,jdbcType=BIGINT}
+  </update>
+</mapper>

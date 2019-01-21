@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mapper.BuyMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Buy" >
+    <id column="buyid" property="buyid" jdbcType="BIGINT" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="user_id" property="user_id" jdbcType="BIGINT" />
+    <result column="head" property="head" jdbcType="VARCHAR" />
+    <result column="classify" property="classify" jdbcType="VARCHAR" />
+    <result column="housetype" property="housetype" jdbcType="VARCHAR" />
+    <result column="detailid" property="detailid" jdbcType="BIGINT" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="metroid" property="metroid" jdbcType="BIGINT" />
+    <result column="areas" property="areas" jdbcType="DOUBLE" />
+    <result column="price" property="price" jdbcType="VARCHAR" />
+    <result column="linkman" property="linkman" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="BIGINT" />
+    <result column="describes" property="describes" jdbcType="VARCHAR" />
+    <result column="buystatus" property="buystatus" jdbcType="CHAR" />
+    <result column="create_time" property="create_time" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="update_time" jdbcType="TIMESTAMP" />
+    <result column="picture" property="picture" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    buyid, code, user_id, head, classify, housetype, detailid, address, metroid, areas, 
+    price, linkman, phone, describes, buystatus, create_time, update_time, picture
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.BuyExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from buy
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from buy
+    where buyid = #{buyid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from buy
+    where buyid = #{buyid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.com.qcc.pojo.BuyExample" >
+    delete from buy
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.com.qcc.pojo.Buy" >
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="buyid" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into buy (buyid, code, user_id, 
+      head, classify, housetype, 
+      detailid, address, metroid, 
+      areas, price, linkman, 
+      phone, describes, buystatus, 
+      create_time, update_time, picture
+      )
+    values (#{buyid,jdbcType=BIGINT}, #{code,jdbcType=VARCHAR}, #{user_id,jdbcType=BIGINT}, 
+      #{head,jdbcType=VARCHAR}, #{classify,jdbcType=VARCHAR}, #{housetype,jdbcType=VARCHAR}, 
+      #{detailid,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, #{metroid,jdbcType=BIGINT}, 
+      #{areas,jdbcType=DOUBLE}, #{price,jdbcType=VARCHAR}, #{linkman,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=BIGINT}, #{describes,jdbcType=VARCHAR}, #{buystatus,jdbcType=CHAR}, 
+      #{create_time,jdbcType=TIMESTAMP}, #{update_time,jdbcType=TIMESTAMP}, #{picture,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Buy" >
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="buyid" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into buy
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="buyid != null" >
+        buyid,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="user_id != null" >
+        user_id,
+      </if>
+      <if test="head != null" >
+        head,
+      </if>
+      <if test="classify != null" >
+        classify,
+      </if>
+      <if test="housetype != null" >
+        housetype,
+      </if>
+      <if test="detailid != null" >
+        detailid,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="metroid != null" >
+        metroid,
+      </if>
+      <if test="areas != null" >
+        areas,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="linkman != null" >
+        linkman,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="describes != null" >
+        describes,
+      </if>
+      <if test="buystatus != null" >
+        buystatus,
+      </if>
+      <if test="create_time != null" >
+        create_time,
+      </if>
+      <if test="update_time != null" >
+        update_time,
+      </if>
+      <if test="picture != null" >
+        picture,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="buyid != null" >
+        #{buyid,jdbcType=BIGINT},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="user_id != null" >
+        #{user_id,jdbcType=BIGINT},
+      </if>
+      <if test="head != null" >
+        #{head,jdbcType=VARCHAR},
+      </if>
+      <if test="classify != null" >
+        #{classify,jdbcType=VARCHAR},
+      </if>
+      <if test="housetype != null" >
+        #{housetype,jdbcType=VARCHAR},
+      </if>
+      <if test="detailid != null" >
+        #{detailid,jdbcType=BIGINT},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="metroid != null" >
+        #{metroid,jdbcType=BIGINT},
+      </if>
+      <if test="areas != null" >
+        #{areas,jdbcType=DOUBLE},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=VARCHAR},
+      </if>
+      <if test="linkman != null" >
+        #{linkman,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=BIGINT},
+      </if>
+      <if test="describes != null" >
+        #{describes,jdbcType=VARCHAR},
+      </if>
+      <if test="buystatus != null" >
+        #{buystatus,jdbcType=CHAR},
+      </if>
+      <if test="create_time != null" >
+        #{create_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="update_time != null" >
+        #{update_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="picture != null" >
+        #{picture,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.com.qcc.pojo.BuyExample" resultType="java.lang.Integer" >
+    select count(*) from buy
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update buy
+    <set >
+      <if test="record.buyid != null" >
+        buyid = #{record.buyid,jdbcType=BIGINT},
+      </if>
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.user_id != null" >
+        user_id = #{record.user_id,jdbcType=BIGINT},
+      </if>
+      <if test="record.head != null" >
+        head = #{record.head,jdbcType=VARCHAR},
+      </if>
+      <if test="record.classify != null" >
+        classify = #{record.classify,jdbcType=VARCHAR},
+      </if>
+      <if test="record.housetype != null" >
+        housetype = #{record.housetype,jdbcType=VARCHAR},
+      </if>
+      <if test="record.detailid != null" >
+        detailid = #{record.detailid,jdbcType=BIGINT},
+      </if>
+      <if test="record.address != null" >
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.metroid != null" >
+        metroid = #{record.metroid,jdbcType=BIGINT},
+      </if>
+      <if test="record.areas != null" >
+        areas = #{record.areas,jdbcType=DOUBLE},
+      </if>
+      <if test="record.price != null" >
+        price = #{record.price,jdbcType=VARCHAR},
+      </if>
+      <if test="record.linkman != null" >
+        linkman = #{record.linkman,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phone != null" >
+        phone = #{record.phone,jdbcType=BIGINT},
+      </if>
+      <if test="record.describes != null" >
+        describes = #{record.describes,jdbcType=VARCHAR},
+      </if>
+      <if test="record.buystatus != null" >
+        buystatus = #{record.buystatus,jdbcType=CHAR},
+      </if>
+      <if test="record.create_time != null" >
+        create_time = #{record.create_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.update_time != null" >
+        update_time = #{record.update_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.picture != null" >
+        picture = #{record.picture,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update buy
+    set buyid = #{record.buyid,jdbcType=BIGINT},
+      code = #{record.code,jdbcType=VARCHAR},
+      user_id = #{record.user_id,jdbcType=BIGINT},
+      head = #{record.head,jdbcType=VARCHAR},
+      classify = #{record.classify,jdbcType=VARCHAR},
+      housetype = #{record.housetype,jdbcType=VARCHAR},
+      detailid = #{record.detailid,jdbcType=BIGINT},
+      address = #{record.address,jdbcType=VARCHAR},
+      metroid = #{record.metroid,jdbcType=BIGINT},
+      areas = #{record.areas,jdbcType=DOUBLE},
+      price = #{record.price,jdbcType=VARCHAR},
+      linkman = #{record.linkman,jdbcType=VARCHAR},
+      phone = #{record.phone,jdbcType=BIGINT},
+      describes = #{record.describes,jdbcType=VARCHAR},
+      buystatus = #{record.buystatus,jdbcType=CHAR},
+      create_time = #{record.create_time,jdbcType=TIMESTAMP},
+      update_time = #{record.update_time,jdbcType=TIMESTAMP},
+      picture = #{record.picture,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.Buy" >
+    update buy
+    <set >
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="user_id != null" >
+        user_id = #{user_id,jdbcType=BIGINT},
+      </if>
+      <if test="head != null" >
+        head = #{head,jdbcType=VARCHAR},
+      </if>
+      <if test="classify != null" >
+        classify = #{classify,jdbcType=VARCHAR},
+      </if>
+      <if test="housetype != null" >
+        housetype = #{housetype,jdbcType=VARCHAR},
+      </if>
+      <if test="detailid != null" >
+        detailid = #{detailid,jdbcType=BIGINT},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="metroid != null" >
+        metroid = #{metroid,jdbcType=BIGINT},
+      </if>
+      <if test="areas != null" >
+        areas = #{areas,jdbcType=DOUBLE},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=VARCHAR},
+      </if>
+      <if test="linkman != null" >
+        linkman = #{linkman,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=BIGINT},
+      </if>
+      <if test="describes != null" >
+        describes = #{describes,jdbcType=VARCHAR},
+      </if>
+      <if test="buystatus != null" >
+        buystatus = #{buystatus,jdbcType=CHAR},
+      </if>
+      <if test="create_time != null" >
+        create_time = #{create_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="update_time != null" >
+        update_time = #{update_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="picture != null" >
+        picture = #{picture,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where buyid = #{buyid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Buy" >
+    update buy
+    set code = #{code,jdbcType=VARCHAR},
+      user_id = #{user_id,jdbcType=BIGINT},
+      head = #{head,jdbcType=VARCHAR},
+      classify = #{classify,jdbcType=VARCHAR},
+      housetype = #{housetype,jdbcType=VARCHAR},
+      detailid = #{detailid,jdbcType=BIGINT},
+      address = #{address,jdbcType=VARCHAR},
+      metroid = #{metroid,jdbcType=BIGINT},
+      areas = #{areas,jdbcType=DOUBLE},
+      price = #{price,jdbcType=VARCHAR},
+      linkman = #{linkman,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=BIGINT},
+      describes = #{describes,jdbcType=VARCHAR},
+      buystatus = #{buystatus,jdbcType=CHAR},
+      create_time = #{create_time,jdbcType=TIMESTAMP},
+      update_time = #{update_time,jdbcType=TIMESTAMP},
+      picture = #{picture,jdbcType=VARCHAR}
+    where buyid = #{buyid,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,844 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.qcc.mymapper.VillageCustomerMapper">
+
+	<!-- 查询街道下面的小区 -->
+	<select id="findAllVillage" resultType="cn.com.qcc.queryvo.VillageCustomer"
+		parameterType="cn.com.qcc.queryvo.VillageeVo">
+		SELECT * from village inner JOIN area on village.`code` = area.`code`
+		where 1=1
+		<!-- 小区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where" />
+		<!-- 地区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_area_where" />
+	</select>
+
+	<!-- 查询小区下面的楼栋 -->
+	<select id="findBuildingListByVillage" resultType="cn.com.qcc.queryvo.VillageCustomer"
+		parameterType="cn.com.qcc.queryvo.VillageeVo">
+		SELECT * from building INNER JOIN village on building.villageid =
+		village.villageid
+		where 1=1
+		<!-- 小区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where" />
+		<!-- 楼栋的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_building_where" />
+	</select>
+
+
+	<!-- 小区的查询 -->
+	<select id="searchCommlist" resultType="cn.com.qcc.queryvo.VillageCustomer"
+		parameterType="cn.com.qcc.queryvo.VillageeVo">
+		SELECT detaileaddress.latitude ,detaileaddress.longitude,
+		IFNULL(t.aname,'')trading,
+		IFNULL(t.fname,'')district,
+		village.* ,
+		village.picture onepicture,
+		ifnull(t.houstatus,1)houstatus ,
+		IFNULL(t.avgprices,1)avgprices
+		<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli" />
+		FROM village
+		LEFT JOIN detaileaddress ON detaileaddress.detailid = village.detailid
+		left JOIN
+		(
+		<if test="villageCustomer != null  ">
+			<if
+				test="villageCustomer.houstatus  !=null and villageCustomer.houstatus != '' ">
+				SELECT IFNULL(avg(prices),1) avgprices, house.houstatus
+				houstatus,village.villageid,
+				village.villagename,
+				area.`name` aname, fcode.`name` fname ,building.buildingid
+				FROM house
+				LEFT JOIN building on house.buildingid =
+				building.buildingid
+				LEFT JOIN price ON house.price_id = price.priceid
+				LEFT JOIN village ON village.villageid = building.villageid
+				LEFT JOIN
+				`user` on user.userid = house.user_id
+				LEFT JOIN area ON
+				area.`code`=village.`code`
+				LEFT JOIN (SELECT * from area) fcode on
+				area.parentId = fcode.code
+				LEFT JOIN detaileaddress on
+				detaileaddress.detailid = building.detailid
+				where house.houstatus =
+				'1'
+			</if>
+			<if
+				test="villageCustomer.houstatus2  !=null and villageCustomer.houstatus2 != ''">
+				SELECT IFNULL(SUM(prices)/SUM(area),1) avgprices, house.houstatus
+				houstatus,village.villageid, building.buildingid,
+				village.villagename,area.`name` aname, fcode.`name` fname
+				FROM house
+				LEFT JOIN building on house.buildingid =
+				building.buildingid
+				LEFT JOIN price ON house.price_id = price.priceid
+				LEFT JOIN `user` on user.userid = house.user_id
+				LEFT JOIN village ON
+				village.villageid = building.villageid
+				LEFT JOIN area ON
+				area.`code`=village.`code`
+				LEFT JOIN (SELECT * from area) fcode on
+				area.parentId = fcode.code
+				LEFT JOIN detaileaddress on
+				detaileaddress.detailid = building.detailid
+				where house.houstatus =
+				'2'
+			</if>
+		</if>
+		GROUP BY building.buildingid
+		) t ON village.villageid = t.villageid
+		where 1=1
+
+
+		<if test="metro!=null">
+			<if test="metro.code !=null ">
+				and t.buildingid in (
+				SELECT buildingid from metro
+				inner JOIN building on metro.metroid = building.metroid
+				where 1=1
+				<!-- buildin的查询条件 -->
+				<include refid="cn.com.qcc.mymapper.SearchWhere.query_metro_where" />
+				)
+			</if>
+		</if>
+		<!-- 小区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where" />
+		<if test="villageCustomer !=null">
+			<if
+				test="villageCustomer.smallprices != null and
+				villageCustomer.smallprices != '' and villageCustomer.bigprices != ''
+				and villageCustomer.bigprices != null ">
+				and (t.avgprices between #{villageCustomer.smallprices} and
+				#{villageCustomer.bigprices})
+			</if>
+		</if>
+		GROUP BY village.villageid
+		ORDER BY
+		<if test="villageCustomer !=null">
+			<if test="villageCustomer.desc != null and villageCustomer.desc != '' ">
+				t.avgprices desc ,
+			</if>
+			<if test="villageCustomer.asc != null and villageCustomer.asc != '' ">
+				t.avgprices asc ,
+			</if>
+			<if
+				test="villageCustomer.julidesc != null and villageCustomer.julidesc != '' ">
+				juli desc ,
+			</if>
+			<if
+				test="villageCustomer.juliasc != null and villageCustomer.juliasc != '' ">
+				juli asc ,
+			</if>
+		</if>
+		village.update_time desc
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+
+
+	<!-- 小区的查询 -->
+	<select id="searchCommlistCount" resultType="integer"
+		parameterType="cn.com.qcc.queryvo.VillageeVo">
+		SELECT count(1)
+		FROM village
+		left JOIN
+		(
+		<if test="villageCustomer != null  ">
+			<if
+				test="villageCustomer.houstatus  !=null and villageCustomer.houstatus != '' ">
+				SELECT IFNULL(avg(prices),1) avgprices, house.houstatus
+				houstatus,village.villageid,detaileaddress.*,
+				village.villagename,
+				area.`name` aname, fcode.`name` fname ,building.buildingid
+				<if test="userid !=null">
+					<!-- 导入距离 -->
+					<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli" />
+				</if>
+				FROM house
+				LEFT JOIN building on house.buildingid =
+				building.buildingid
+				LEFT JOIN price ON house.price_id = price.priceid
+				LEFT JOIN village ON village.villageid = building.villageid
+				LEFT JOIN
+				`user` on user.userid = house.user_id
+				LEFT JOIN area ON
+				area.`code`=village.`code`
+				LEFT JOIN (SELECT * from area) fcode on
+				area.parentId = fcode.code
+				LEFT JOIN detaileaddress on
+				detaileaddress.detailid = building.detailid
+				where house.houstatus =
+				'1'
+			</if>
+			<if
+				test="villageCustomer.houstatus2  !=null and villageCustomer.houstatus2 != ''">
+				SELECT IFNULL(SUM(prices)/SUM(area),1) avgprices, house.houstatus
+				houstatus,village.villageid,detaileaddress.*, building.buildingid,
+				village.villagename,area.`name` aname, fcode.`name` fname
+				<if test="userid !=null">
+					<!-- 导入距离 -->
+					<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli" />
+				</if>
+				FROM house
+				LEFT JOIN building on house.buildingid =
+				building.buildingid
+				LEFT JOIN price ON house.price_id = price.priceid
+				LEFT JOIN `user` on user.userid = house.user_id
+				LEFT JOIN village ON
+				village.villageid = building.villageid
+				LEFT JOIN area ON
+				area.`code`=village.`code`
+				<if test="metro!=null">
+					Inner JOIN metro on metro.metroid = building.metroid
+				</if>
+				LEFT JOIN (SELECT * from area) fcode on area.parentId = fcode.code
+				LEFT JOIN detaileaddress on detaileaddress.detailid =
+				building.detailid
+				where house.houstatus = '2'
+			</if>
+		</if>
+		GROUP BY building.buildingid
+		) t ON village.villageid = t.villageid
+		where 1=1
+		<if test="metro!=null">
+			<if test="metro.code !=null">
+				and t.buildingid in (
+				SELECT buildingid from metro
+				left JOIN building on metro.metroid = building.metroid
+				where 1=1
+				<!-- buildin的查询条件 -->
+				<include refid="cn.com.qcc.mymapper.SearchWhere.query_metro_where" />
+				)
+			</if>
+		</if>
+		<!-- 小区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where" />
+		<if test="villageCustomer !=null">
+			<if
+				test="villageCustomer.smallprices != null and
+				villageCustomer.smallprices != '' and villageCustomer.bigprices != ''
+				and villageCustomer.bigprices != null ">
+				and (t.avgprices between #{villageCustomer.smallprices} and
+				#{villageCustomer.bigprices})
+			</if>
+		</if>
+	</select>
+
+
+	<!-- 根据小区ID查询小区详情 -->
+	<select id="searchCommById" resultType="cn.com.qcc.queryvo.VillageCustomer"
+		parameterType="long">
+		SELECT
+		IFNULL(area.name,'')trading,
+		IFNULL(fcode.name,'')district,
+		village.* FROM village
+		LEFT JOIN area on
+		area.`code` = village.`code`
+		LEFT JOIN (SELECT * from area) fcode on
+		area.parentId = fcode.code
+		where village.villageid = #{villageid}
+	</select>
+
+
+
+	<!-- 根据小区ID查询小区详情 -->
+	<select id="searchBuildingbyVillageid" resultType="cn.com.qcc.queryvo.BuildingCustomer">
+		SELECT
+			building.buildingid,
+			building.picture onepicture,
+			building.building ,
+		    detaileaddress.latitude ,
+		    detaileaddress.longitude
+		FROM
+			building
+		LEFT JOIN detaileaddress ON detaileaddress.detailid = building.detailid
+		where building.villageid =
+		#{villageid}
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+	<select id="searchBuildingbyVillageidCount" resultType="integer"
+		parameterType="long">
+		SELECT count(1) from building
+		where building.villageid =
+		#{villageid}
+	</select>
+
+
+
+	<!-- 楼栋的查询 -->
+	<select id="searchbuildlist" resultType="cn.com.qcc.queryvo.BuildingCustomer"
+		parameterType="cn.com.qcc.queryvo.VillageeVo">
+		
+  		SELECT building.buildingid , building.building , village.villagename , 
+		IFNULL(f.count,'0')count,
+		IFNULL(house.avgprices,'10')avgprices ,`profile`.avatar , `profile`.user_id ,building.detailid
+		,building.update_time,
+		IFNULL(area.name,'')trading,IFNULL(fcode.name,'')district
+		,building.picture onepicture,ifnull(t.juli,'10')juli,t.latitude,t.longitude,
+		IFNULL(metro.name,'')metroname,IFNULL(metro.finalstop,'')finalstop
+		,metro.code metrocode from building 
+		LEFT JOIN metro on building.metroid = metro.metroid
+		LEFT JOIN village on building.villageid = village.villageid
+		LEFT JOIN area on area.`code` = village.`code`
+		LEFT JOIN (SELECT * from area) fcode on area.parentId = fcode.code
+		LEFT JOIN `profile` on `profile`.user_id = building.userid
+		LEFT JOIN (
+		SELECT COUNT(1)count,building.buildingid from building LEFT JOIN house on
+		house.buildingid = building.buildingid
+		where house.housestatus = '1' GROUP BY building.buildingid
+		) f on f.buildingid = building.buildingid
+		LEFT JOIN (
+		SELECT MAX(price.prices) avgprices   ,building.buildingid ,house.area from building
+		LEFT JOIN house on house.buildingid = building.buildingid
+		LEFT JOIN apartment on house.apartment_id = apartment.apartmentid
+		LEFT JOIN price ON house.price_id = price.priceid
+		where 1=1
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_apartment_where" />
+		<!-- 房间的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where" />
+		<!-- 标签的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_housetarg_where" />
+		GROUP BY building.buildingid
+		) house on house.buildingid = building.buildingid 
+		
+		LEFT JOIN	 (SELECT building.detailid , building.buildingid ,
+					detaileaddress.latitude,
+					detaileaddress.longitude
+					<if test="userid !=null">
+					<!-- 导入距离 -->
+					<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli" />
+				</if>
+		from building 
+			 LEFT JOIN detaileaddress on building.detailid = detaileaddress.detailid
+		)t  on building.buildingid = t.buildingid
+		 where 1=1
+		<!-- 小区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where" />
+		<!-- 楼栋的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_building_where" />
+		<!-- 地区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_area_where" />
+		<!-- 地铁的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_metro_where" />
+		 <if test="juli != null and juli != ''  "> <!-- 距离的查询条件 -->
+			and t.juli <![CDATA[   <=  ]]>
+			#{juli}
+		</if>
+		<if test="villageCustomer !=null">
+			<if test="villageCustomer.smallprices != null and villageCustomer.smallprices !=''  "> <!-- 价格的查询条件 -->
+				and	IFNULL(house.avgprices,'10')  > #{villageCustomer.smallprices}
+			</if>
+			<if test="villageCustomer.bigprices != null and  villageCustomer.bigprices != '' ">
+				and IFNULL(house.avgprices,'10') <![CDATA[   <=  ]]>
+				#{villageCustomer.bigprices}
+			</if>
+		</if>
+		
+		 ORDER BY 
+		 <if test="villageCustomer !=null"><!-- 价格的排序条件 -->
+			<if test="villageCustomer.desc != null and villageCustomer.desc != '' ">
+				house.avgprices asc,
+			</if>
+			<if test="villageCustomer.asc != null and villageCustomer.asc != '' ">
+				house.avgprices desc,
+			</if>
+
+		</if>
+		 
+		 building.update_time desc  
+		<if test="pagequery !=null "><!-- 分页条件 -->
+			limit #{pagequery.pagestart} , 8
+		</if>
+		
+		
+	</select>
+
+
+	<!-- 楼栋的count查询 -->
+	<select id="searchbuildlistCount" resultType="integer"
+		parameterType="cn.com.qcc.queryvo.VillageeVo">
+		SELECT count(1) from building 
+		LEFT JOIN metro on building.metroid = metro.metroid
+		LEFT JOIN village on building.villageid = village.villageid
+		LEFT JOIN area on area.`code` = village.`code`
+		LEFT JOIN (SELECT * from area) fcode on area.parentId = fcode.code
+		LEFT JOIN `profile` on `profile`.user_id = building.userid
+		LEFT JOIN (
+		SELECT COUNT(1)count,building.buildingid from building LEFT JOIN house on
+		house.buildingid = building.buildingid
+		where house.housestatus = '1' GROUP BY building.buildingid
+		) f on f.buildingid = building.buildingid
+		LEFT JOIN (
+		SELECT MAX(price.prices) avgprices   ,building.buildingid ,house.area from building
+		LEFT JOIN house on house.buildingid = building.buildingid
+		LEFT JOIN apartment on house.apartment_id = apartment.apartmentid
+		LEFT JOIN price ON house.price_id = price.priceid
+		where 1=1
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_apartment_where" />
+		<!-- 房间的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where" />
+		<!-- 标签的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_housetarg_where" />
+		GROUP BY building.buildingid
+		) house on house.buildingid = building.buildingid 
+		
+		LEFT JOIN	 (SELECT building.detailid , building.buildingid ,
+					detaileaddress.latitude,
+					detaileaddress.longitude
+					<if test="userid !=null">
+					<!-- 导入距离 -->
+					<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli" />
+				</if>
+		from building 
+			 LEFT JOIN detaileaddress on building.detailid = detaileaddress.detailid
+		)t  on building.buildingid = t.buildingid
+		 where 1=1
+		<!-- 小区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where" />
+		<!-- 楼栋的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_building_where" />
+		<!-- 地区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_area_where" />
+		<!-- 地铁的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_metro_where" />
+		 <if test="juli != null and juli != ''  "> <!-- 距离的查询条件 -->
+			and t.juli <![CDATA[   <=  ]]>
+			#{juli}
+		</if>
+		<if test="villageCustomer !=null">
+			<if test="villageCustomer.smallprices != null and villageCustomer.smallprices !=''  "> <!-- 价格的查询条件 -->
+				and	IFNULL(house.avgprices,'10')  > #{villageCustomer.smallprices}
+			</if>
+			<if test="villageCustomer.bigprices != null and  villageCustomer.bigprices != '' ">
+				and IFNULL(house.avgprices,'10') <![CDATA[   <=  ]]>
+				#{villageCustomer.bigprices}
+			</if>
+		</if>
+	</select>
+
+
+	<!-- 根据楼栋ID查询楼栋详情 -->
+	<select id="searchbuildingbyid" resultType="cn.com.qcc.queryvo.BuildingCustomer"
+		parameterType="long">
+		SELECT
+		IFNULL(brand.brand,'')brand ,
+		area.`name` trading,
+		fcode.name district,
+		`profile`.avatar,
+		`profile`.user_id,
+		`profile`.user_name,
+		village.villagename,
+		village.userid villageuserid , 
+		IFNULL(village.villagetypeid ,1)villagetypeid , 
+		building.* ,
+		detaileaddress.*,
+    browse.bcount 
+		FROM building
+		INNER JOIN village on village.villageid =building.villageid
+		LEFT JOIN area on village.`code` = area.`code`
+		LEFT JOIN (SELECT * from area) fcode on area.parentId = fcode.code
+		INNER JOIN detaileaddress on detaileaddress.detailid = building.detailid
+		INNER JOIN `profile` ON building.userid = `profile`.user_id
+		LEFT JOIN brand on brand.brandid = building.brandid
+
+		JOIN (
+							SELECT IFNULL(SUM(bcount),0) bcount , browse.otherid FROM browse
+					WHERE
+						browse.type = 5
+					AND browse.otherid = #{buildingid}
+			        ) browse
+		where building.buildingid = #{buildingid}
+	</select>
+
+
+	<!-- 楼栋下面房源的查询条件 -->
+	<select id="searchhouseList" resultType="cn.com.qcc.queryvo.HouseCustomer"
+		parameterType="cn.com.qcc.queryvo.VillageeVo">
+		SELECT house.house_number,property.propertyname,house.houseid
+		,house.picture onepicture,house.picture,  IFNULL(house.`schedule`,2)schedule ,
+		house.area,house.user_id,house.paystyle,village.villagename,
+		house.housestatus,price.prices,price.pricetype,property.propertyname,apartment.apartmentname
+		FROM house
+		left JOIN building on house.buildingid = building.buildingid
+		LEFT JOIN apartment on house.apartment_id = apartment.apartmentid
+		LEFT JOIN price on house.price_id = price.priceid
+		LEFT JOIN property on
+		house.property_id = property.propertyid
+		LEFT JOIN village on
+		village.villageid = building.villageid
+		INNER JOIN detaileaddress on
+		detaileaddress.detailid = building.detailid
+		and house.houstatus = '1'
+		and house.housestatus in (1,2,6)
+		<!-- 楼栋的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_building_where" />
+		<!--小区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where" />
+		ORDER BY house.update_time desc
+	</select>
+
+
+	<!-- 楼栋的count查询 -->
+	<select id="getbuildinglistbyvid" resultType="cn.com.qcc.queryvo.BuildingCustomer"
+		parameterType="long">
+		SELECT * from building LEFT JOIN village on
+		building.villageid =village.villageid
+		LEFT JOIN detaileaddress on detaileaddress.detailid = building.detailid
+		LEFT JOIN metro on metro.metroid = building.metroid
+		where
+		building.villageid = #{villageid}
+	</select>
+
+
+	<!-- 统计发布楼栋 -->
+	<select id="censusvillage" resultType="cn.com.qcc.queryvo.UserCustomer"
+		parameterType="string">
+				SELECT
+			COUNT(1) tcount,
+			village.userid ,
+		  IFNULL(yescount.bcount,0)bcount , 
+		  `user`.telephone ,
+		  `profile`.user_name 
+		FROM
+			village
+		
+		LEFT JOIN (
+		SELECT
+		   	COUNT(1) bcount,
+			village.userid
+		FROM
+			village
+		WHERE
+			MONTH (village.update_time) = MONTH (curdate())
+		AND YEAR (village.update_time) = YEAR (curdate())
+		AND village.`code` LIKE CONCAT('', #{code}, '%')
+		GROUP BY
+			village.userid
+		) yescount on yescount.userid = village.userid
+			INNER JOIN `profile` on village.userid=`profile`.user_id
+			LEFT JOIN `user` on village.userid = `user`.userid
+			where village.`code` like CONCAT('',#{code},'%')
+		GROUP BY
+			village.userid
+		ORDER BY yescount.bcount DESC
+	</select>
+
+	<!-- 统计发布楼栋 -->
+	<select id="censusbuilding" resultType="cn.com.qcc.queryvo.UserCustomer"
+		parameterType="string">
+		SELECT IFNULL(b.count,'0') bcount,IFNULL(COUNT(1),'0')tcount,
+		`profile`.user_name, `user`.telephone,`user`.userid ,
+		IFNULL(landyes.count,'0') landcount ,
+		IFNULL(linkyes.count,'0')linkcount,
+		IFNULL(nowlandyes.count,'0')nowlandcount,
+		IFNULL(nowlinkyes.count,'0')nowlinkcount
+		from building LEFT
+		JOIN village on building.villageid = village.villageid
+		LEFT JOIN `profile` on building.userid=`profile`.user_id
+		LEFT JOIN `user` on building.userid = `user`.userid
+		LEFT JOIN (
+		select COUNT(1)count ,building.userid from building
+		LEFT JOIN village on building.villageid = village.villageid
+		where
+		month(building.update_time) =
+		month(curdate()) and
+		year(building.update_time) = year(curdate())
+		and village.`code` like
+		CONCAT('',#{code},'%')
+		GROUP BY building.userid
+		)b on b.userid =
+		building.userid
+		LEFT JOIN (
+			SELECT COUNT(1)count,building.userid from building LEFT JOIN village on building.villageid = village.villageid
+				where building.landphone != ''   
+				and village.`code` like
+		    CONCAT('',#{code},'%')
+			GROUP BY building.userid
+		) landyes on landyes.userid = building.userid
+  		LEFT JOIN (
+			SELECT COUNT(1)count,building.userid from building LEFT JOIN village on building.villageid = village.villageid
+				where building.landphone != '' and 	month(building.update_time) =
+					month(curdate()) and
+					year(building.update_time) = year(curdate())  
+				and village.`code` like
+		    CONCAT('',#{code},'%')
+			GROUP BY building.userid
+		) nowlandyes on nowlandyes.userid = building.userid
+		LEFT JOIN (
+			SELECT COUNT(1)count,building.userid from building LEFT JOIN village on building.villageid = village.villageid
+				where building.linkphone != ''   
+				and village.`code` like
+		    CONCAT('',#{code},'%')
+			GROUP BY building.userid
+		) linkyes on linkyes.userid = building.userid
+ 		 LEFT JOIN (
+			SELECT COUNT(1)count,building.userid from building LEFT JOIN village on building.villageid = village.villageid
+				where building.linkphone != '' and 	month(building.update_time) =
+					month(curdate()) and
+					year(building.update_time) = year(curdate())  
+				and village.`code` like
+		    CONCAT('',#{code},'%')
+			GROUP BY building.userid
+		) nowlinkyes on nowlinkyes.userid = building.userid
+		where village.`code` like CONCAT('',#{code},'%') and
+		`user`.telephone != ''
+		GROUP BY building.userid
+		order by b.count desc
+	</select>
+
+
+
+	<!--地图找楼栋 -->
+	<select id="fingbuildsmap" resultType="cn.com.qcc.queryvo.BuildingCustomer"
+		parameterType="cn.com.qcc.queryvo.VillageeVo">
+
+		select * from (
+		SELECT building.buildingid ,building.building
+		,detaileaddress.latitude,detaileaddress.longitude ,
+		village.`code` ,village.villagename,AVG(price.prices) avgprices
+		<if test="userid !=null">
+			<!-- 导入距离 -->
+			<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli" />
+		</if>
+		from building
+		INNER JOIN village on building.villageid = village.villageid
+		INNER JOIN house on house.buildingid = building.buildingid
+		LEFT JOIN
+		detaileaddress on detaileaddress.detailid = building.detailid
+		LEFT JOIN
+		price on house.price_id = price.priceid
+		where house.housestatus = '1' and house.houstatus = '1'
+		GROUP BY building.buildingid ) map where 1=1
+		<!-- 地图上面的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_map_where" />
+		order by
+		<if test="orderjuli !=null and orderjuli !='' ">
+			map.juli ${orderjuli} ,
+		</if>
+		<if test="orderprice !=null and orderprice !='' ">
+			map.avgprices ${orderprice}
+		</if>
+		map.code desc
+		LIMIT 0 ,20
+	</select>
+
+
+	<!--地图找街道 -->
+	<select id="fingtrandmap" resultType="cn.com.qcc.queryvo.BuildingCustomer"
+		parameterType="long">
+		SELECT village.`code` ,area.`name` ,AVG(TRUNCATE(detaileaddress.latitude,3))
+		latitude
+		, AVG(TRUNCATE(detaileaddress.longitude,3)) longitude ,t.count
+		from building
+		LEFT JOIN detaileaddress on detaileaddress.detailid = building.detailid
+		LEFT JOIN village on building.villageid = village.villageid
+		LEFT JOIN area on village.`code` = area.`code`
+		LEFT JOIN (SELECT count(code)count,code from village GROUP BY `code`) t on
+		t.code = village.`code`
+		where village.`code` like
+		CONCAT('',#{code},'%')
+		GROUP BY village.`code`
+	</select>
+
+	<!--地图找小区 -->
+	<select id="fingvillagemap" resultType="cn.com.qcc.queryvo.BuildingCustomer"
+		parameterType="long">
+		SELECT village.villageid ,village.villagename ,
+		IFNULL(AVG(TRUNCATE(detaileaddress.latitude,3)),'1') latitude
+		, IFNULL(AVG(TRUNCATE(detaileaddress.longitude,3)),'1') longitude
+		,IFNULL(t.tcount,'0')count
+		from village
+		LEFT JOIN building on village.villageid = building.villageid
+		LEFT JOIN
+		detaileaddress on detaileaddress.detailid = building.detailid
+		LEFT JOIN
+		(SELECT COUNT(1)tcount,villageid from building GROUP BY
+		building.villageid )t on t.villageid = village.villageid
+		where
+		village.`code` = #{code}
+		GROUP BY building.villageid
+	</select>
+	
+	
+	<!--地图找小区 -->
+	<select id="fingbuildsmaps" resultType="cn.com.qcc.queryvo.BuildingCustomer"
+		parameterType="cn.com.qcc.queryvo.AddressCustomer">
+		SELECT building.building ,detaileaddress.latitude ,detaileaddress.longitude 
+		from building LEFT JOIN detaileaddress on building.detailid = detaileaddress.detailid
+			LEFT JOIN village on village.villageid = building.villageid
+		where 1=1 and  ( detaileaddress.longitude between #{minLongitude} and #{maxLongitude} ) 
+		and ( detaileaddress.latitude between #{minLatude} and #{maxLatude} )
+		ORDER BY detaileaddress.latitude desc
+		limit 0 ,100
+	</select>
+	
+
+	<!--一键维护地铁 -->
+	<select id="updateallmetro" parameterType="cn.com.qcc.pojo.Building">
+		UPDATE building set metroid =#{metroid} where villageid =#{villageid}
+	</select>
+
+
+	<!-- -->
+	<select id="getallbuilngandvillage" resultType="cn.com.qcc.queryvo.BuildingCustomer">
+		SELECT * from building LEFT JOIN village on building.villageid =
+		village.villageid
+	</select>
+
+	<!-- -->
+	<select id="update_villagedetailid" resultType="cn.com.qcc.queryvo.BuildingCustomer"
+		parameterType="cn.com.qcc.queryvo.VillageeVo">
+		SELECT IFNULL(building.brandid ,'-1') brandid,IFNULL(brand.brand ,'') brand,
+		building.buildingid,village.villageid,village.villagename,building.building
+		<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli" />
+		from village LEFT JOIN building on building.villageid =
+		village.villageid
+		LEFT JOIN brand on building.brandid = brand.brandid
+		LEFT JOIN detaileaddress on village.detailid = detaileaddress.detailid
+		where 1=1 and building.building != ''
+		<!-- 小区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where" />
+		<!-- 小区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_building_where" />
+		<if test="buildingCustomer !=null">
+			<if
+				test="buildingCustomer.identity == null or buildingCustomer.identity == '' "> GROUP BY village.villageid</if>
+		</if>
+		order by juli asc
+		<if test="buildingCustomer !=null">
+			<if
+				test="buildingCustomer.identity == null or buildingCustomer.identity == '' "> limit 0 , 30</if>
+			<if
+				test="buildingCustomer.identity != null and buildingCustomer.identity != '' "> limit 0 , 200</if>
+		</if>
+
+	</select>
+	
+	
+	<!--楼栋详情简单-->
+	<select id="getsimplebuilding" parameterType="long" resultType="cn.com.qcc.queryvo.BuildingCustomer">
+		SELECT building.*,metro.`name` metroname ,metro.finalstop , village.`code`,
+			IFNULL(brand.brand,'无品牌')brand ,detaileaddress.detailes
+			from building 
+		LEFT JOIN metro on building.metroid = metro.metroid
+		LEFT JOIN brand on building.brandid = brand.brandid
+		LEFT JOIN village on village.villageid = building.villageid
+     LEFT JOIN detaileaddress on detaileaddress.detailid = building.detailid
+		where building.buildingid = #{buildingid}
+	</select>
+	
+	
+	<!--先获取小区里面所有街道的编号-->
+	<select id="getvillagebuidingcode"  resultType="cn.com.qcc.pojo.Village">
+		SELECT DISTINCT village.`code` from village where village.villageid in (
+		SELECT DISTINCT building.villageid from building
+		)
+	</select>
+	
+	<!--根据小区的code查询楼栋-->
+	<select id="searchbuildingonvillagecode"  resultType="cn.com.qcc.pojo.Building" parameterType="cn.com.qcc.pojo.Village">
+		SELECT building.* from building INNER JOIN village
+			on building.villageid = village.villageid
+		where village.`code` = #{code}
+	</select>
+	
+	<!--查询楼栋的最大编号-->
+	<select id="searchmaxbuildingcode"  resultType="string" parameterType="long">
+		SELECT MAX(building.buildingcode)+1 from building
+		INNER JOIN village on village.villageid = building.villageid
+		and village.`code` = #{code}
+	</select>
+	
+	
+	<!--查询窗口类似的小区-->
+	<select id="searchlikevillage"  resultType="cn.com.qcc.queryvo.SearchModal" parameterType="string">
+		SELECT  area.`name` firstname  , 
+				villagename lastname  ,
+				village.villageid detailid, 
+				'1' type  from village 
+			LEFT JOIN area on village.`code` = area.`code` 
+			where   village.`code` like CONCAT('',#{code},'%') and  
+		  (villagename like CONCAT('%',#{searchname},'%') or village.keyword  like CONCAT('%',#{searchname},'%') )
+		LIMIT 0 ,500
+	</select>
+	
+	<!--查询窗口类似的品牌-->
+	<select id="searchlikebrand"  resultType="cn.com.qcc.queryvo.SearchModal" parameterType="string">
+		SELECT brandid detailid ,
+			 '' firstname,
+			 brand lastname ,
+       '3' type
+			from brand where brand like CONCAT('%',#{searchname},'%')
+	and brand.state=2 
+	LIMIT 0 ,500
+	</select>
+	
+	<!--查询窗口类似的楼栋-->
+	<select id="searchlikebuilding"  resultType="cn.com.qcc.queryvo.SearchModal" parameterType="string">
+		SELECT village.villagename firstname ,
+			 building.building lastname ,
+		     building.buildingid detailid,
+			   '2' type 
+			from building 
+		LEFT JOIN village on building.villageid = village.villageid
+		where 
+		  village.`code` like  CONCAT('',#{code},'%') AND ( 
+		  building.building like CONCAT('%',#{searchname},'%') OR building.bnumber like CONCAT('%',#{searchname},'%')
+		  OR village.keyword  like CONCAT('%',#{searchname},'%')
+		  )
+		LIMIT 0 , 500
+	</select>
+	
+	
+	<!--查询公租房图-->
+	<select id="searchrentpicture"  resultType="string" parameterType="string">
+		SELECT rental.rentpicture from rental where code = #{codeone} or code = #{codetwo} 
+	</select>
+	
+	
+	<!-- 楼栋一键导入索引库 -->
+	<select id="addbuildngtosolr"  resultType="cn.com.qcc.queryvo.BuildingCustomer" parameterType="long">
+		SELECT
+			building.building ,
+		  building.villageid , 
+		  building.buildingid , 
+		  detaileaddress.*,
+	    village.`code` likecode,
+		  building.picture onepicture,
+		  IFNULL(metro.`name`,'') metroname ,
+		  IFNULL(metro.finalstop ,'')finalstop,
+		  metro.`code` citycode ,
+		  metro.metroid,
+		  '' propertyright ,
+		  '' redecorat  , 
+		  '' apartmentname ,
+		  '' avgprices ,
+		  area.`name` trading ,
+		  '' housecount , 
+		  IFNULL(fcode.name,'')district ,
+		  brand.brand,
+		  brand.brandid ,
+		  building.update_time ,
+		  `profile`.avatar
+		FROM
+			building
+		LEFT JOIN metro ON metro.metroid = building.metroid
+		LEFT JOIN detaileaddress on detaileaddress.detailid = building.detailid
+		LEFT JOIN village on village.villageid = building.villageid
+		LEFT JOIN area on area.`code` = village.`code`
+		LEFT JOIN (SELECT * from area) fcode on area.parentId = fcode.`code` 
+		LEFT JOIN brand on  brand.brandid = building.brandid
+		LEFT JOIN `profile` on `profile`.user_id = building.userid
+		
+		<if test="pagequery !=null ">
+			where building.buildingid > #{pagequery.pagestart} and 
+			<![CDATA[building.buildingid<=#{pagequery.pageend}]]>
+		</if>
+	</select>
+</mapper>

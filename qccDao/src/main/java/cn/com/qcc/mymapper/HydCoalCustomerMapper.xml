@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.HydCoalCustomerMapper" >
+  	
+  	<!-- 查询房子配置的水电单价 -->
+  	<select id="defaultprices" resultType="cn.com.qcc.queryvo.HydCoalCustomer" parameterType="string" >
+  	  	SELECT finance.categoryname ,finance.financeid ,
+			 IFNULL(landbuilding.unitprice,'0')unitprice ,
+       IFNULL(landbuilding.state,'1')state
+
+			from finance
+			
+			LEFT JOIN (
+				SELECT * from landbuilding 
+		
+			where landbuilding.userid = (SELECT userid from house where house.houseid = #{houseid})
+					and landbuilding.buildingid = (SELECT buildingid from house where house.houseid = #{houseid})
+		
+		  )landbuilding on landbuilding.financeid = finance.financeid
+		
+			where finance.financeid in (19,20,21,22,23)
+  	</select>
+  	
+  	
+  	<!-- 查询抄表的初始值 -->
+  	<select id="beforemeter" resultType="cn.com.qcc.queryvo.HistorymeterCustomer" parameterType="cn.com.qcc.queryvo.HydCoalVo" >
+		  	  SELECT house.houseid , house.house_number  ,
+				IFNULL(historymeter.`aftercount`,'0')`aftercount` ,
+				IFNULL(historymeter.`beforecount`,'0')`beforecount`,
+				historymeter.financeid,
+			    historymeter.update_time
+						FROM
+				 house LEFT JOIN (
+						SELECT historymeter.`aftercount`  `beforecount` , '0'  `aftercount` 
+					,historymeter.update_time ,historymeter.houseid, historymeter.financeid
+					from historymeter 
+				
+					where historymeter.financeid = #{financeid}
+							and historymeter.historymeterid in (
+				 SELECT MAX(historymeterid) from historymeter GROUP BY houseid , financeid
+				)
+					) historymeter on historymeter.houseid = house.houseid
+				where house.houseid in (
+							SELECT DISTINCT housepay.houseid from housepay 
+							LEFT JOIN house on house.houseid = housepay.houseid
+							where housepay.paystate=1 and house.user_id  = #{userid}
+						) and house.buildingid = #{buildingid}
+			<!-- 1 表示没有抄表 -->			
+			<if test="state !=null and 'not' == state  ">
+				and ( historymeter.update_time <![CDATA[<]]> (select date_add(curdate(),interval -day(curdate())+1 day))
+				or historymeter.update_time is null 	)
+			</if>
+			
+			<!-- 2已经抄表 -->			
+			<if test="state !=null and 'yes' == state ">
+			and historymeter.update_time >=(select date_add(curdate(),interval -day(curdate())+1 day))
+			</if>
+  	</select>
+  	
+  	<!-- 查询可以抄表 的楼栋-->
+  	<select id="meterbuilding" resultType="cn.com.qcc.queryvo.BuildingCustomer" parameterType="long" >
+			  	  SELECT building.building ,
+						 building.buildingid ,
+			       village.villagename
+				from building 
+				LEFT JOIN village on building.villageid = village.villageid
+			   where building.buildingid  in (
+					SELECT DISTINCT house.buildingid from house where house.houseid in  (
+				    SELECT DISTINCT housepay.houseid from housepay 
+						LEFT JOIN house on house.houseid = housepay.houseid
+						where housepay.paystate=1 and house.user_id  = #{userid}
+			       )
+			  ) 
+			  and building.buildingid in (
+				SELECT DISTINCT buildingid from landbuilding where landbuilding.userid = #{userid}
+	             and landbuilding.state = 1)
+			ORDER BY village.villageid 
+  	</select>
+  	
+  	<!-- 查询之前是否配置过-->
+  	<select id="unitname" resultType="cn.com.qcc.pojo.Finance" parameterType="cn.com.qcc.pojo.Landbuilding" >
+			SELECT landbuilding.financeid ,
+			 finance.categoryname
+			from landbuilding 
+				LEFT JOIN finance on finance.financeid = landbuilding.financeid
+		where landbuilding.userid =#{userid} and landbuilding.buildingid =#{buildingid} and landbuilding.state = 2
+  	</select>
+  	
+  	
+  	<!-- 查询之前是否配置过-->
+  	<select id="syncbuildingprices" resultType="cn.com.qcc.pojo.Landbuilding" parameterType="long" >
+			SELECT * from landbuilding 
+				where landbuilding.financeid = #{financeid}
+				and landbuilding.buildingid = (SELECT buildingid from house where house.houseid = #{houseid})
+			    and landbuilding.userid = (SELECT userid from house where house.houseid = #{houseid} )
+  	</select>
+  	
+  	<!-- 获取历史抄表的count-->
+  	<select id="meterdetailCount" resultType="integer" parameterType="cn.com.qcc.queryvo.HistorymeterVo" >
+			SELECT IFNULL(COUNT(1) ,'0') from historymeter where 1=1 
+			<!-- 历史抄表的查询条件 -->
+		   <include refid="cn.com.qcc.mymapper.SearchWhere.query_meter_where"/>
+  	</select>
+  	
+  	<!-- 获取历史抄表的count-->
+  	<select id="meterdetail" resultType="cn.com.qcc.queryvo.HistorymeterCustomer" parameterType="cn.com.qcc.queryvo.HistorymeterVo" >
+			SELECT  historymeter.* ,
+				IFNULL(`profile`.real_name,house.house_number) realname
+		    from historymeter 
+			LEFT JOIN usercent on usercent.houseid = historymeter.houseid
+			LEFT JOIN `profile` on usercent.userid = `profile`.user_id
+			LEFT JOIN house on house.houseid = historymeter.houseid
+			where 1=1
+		    <include refid="cn.com.qcc.mymapper.SearchWhere.query_meter_where"/>
+		   ORDER BY historymeter.update_time desc 
+		   <!-- 分页的查询条件 -->
+		  <if test="pagequery !=null ">
+				limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		  </if>
+  	</select>
+  	
+  	
+  	<!-- 获取待生成账单 的楼栋-->
+  	<select id="unitbuilding" resultType="cn.com.qcc.queryvo.BuildingCustomer" parameterType="long" >
+					SELECT COUNT(1)count , building.buildingid ,building.building ,village.villagename
+		 from historymeter 
+			LEFT JOIN house on historymeter.houseid = house.houseid
+			LEFT JOIN building on house.buildingid = building.buildingid
+			LEFT JOIN village on village.villageid = building.villageid
+		where historymeter.state = 1 and house.user_id = #{userid} and 
+		 building.buildingid in (
+						SELECT DISTINCT buildingid from landbuilding where landbuilding.userid = #{userid}
+			             and landbuilding.state = 1 )
+		GROUP BY building.buildingid
+  	</select>
+  	
+  	
+  	<!-- 获取待生成账单 列表结合-->
+  	<select id="meterbuils" resultType="cn.com.qcc.queryvo.HistorymeterCustomer" parameterType="cn.com.qcc.queryvo.HistorymeterCustomer" >
+				SELECT historymeter.beforecount ,historymeter.aftercount ,
+						 finance.categoryname ,historymeter.update_time ,
+					     `profile`.real_name realname ,
+					      house.house_number ,
+					      house.user_id userid ,
+			              historymeter.financeid ,
+			              historymeter.historymeterid,
+				          house.houseid
+					from historymeter
+				LEFT JOIN finance on finance.financeid = historymeter.financeid
+				LEFT JOIN `profile` on `profile`.user_id = historymeter.userid
+				LEFT JOIN house on house.houseid = historymeter.houseid 
+						where historymeter.houseid in (
+						SELECT houseid from house where buildingid = #{buildingid} and user_id = #{userid}
+						 )
+			 <if test="financeid !=null">
+			 	and historymeter.financeid = #{financeid}
+			 </if> and  historymeter.state = 1
+			 order by house.houseid , historymeter.update_time desc
+  	</select>
+  	
+  	<!-- 根据房子ID查询分期账单-->
+  	<select id="payexpbyhouseid" resultType="cn.com.qcc.pojo.Payexpert" parameterType="long" >
+		SELECT * from payexpert where payexpert.payexpertid in (
+			SELECT DISTINCT payexpert.payexpertid from payexpert 
+			LEFT JOIN housepay on payexpert.payexpertid = housepay.payexpertid 
+			LEFT JOIN usercent on usercent.usercentid = housepay.usercentid 
+		where usercent.houseid =  #{houseid} and usercent.centstate = 1
+		) ORDER BY payexpert.end_time asc 
+  	</select>
+  	
+  	<!-- 获取抄表的详情-->
+  	<select id="hismeterdetail" resultType="cn.com.qcc.queryvo.HistorymeterCustomer" parameterType="long" >
+			SELECT historymeter.aftercount ,
+			 historymeter.beforecount ,
+		     historymeter.update_time ,
+		     historymeter.historymeterid ,
+		     historymeter.houseid,
+	         `profile`.real_name realname ,
+	         finance.categoryname ,
+	         his.real_name centname ,
+	         hydcoal.unitprice
+	 from historymeter
+		LEFT JOIN `profile` on historymeter.userid = `profile`.user_id
+		LEFT JOIN (
+			SELECT usercent.houseid , `profile`.real_name  from usercent 
+		LEFT JOIN `profile` on usercent.userid = `profile`.user_id
+	  where usercent.houseid = (SELECT houseid from historymeter where historymeterid = #{historymeterid})
+	  ) his on his.houseid = historymeter.houseid
+		LEFT JOIN usercent on usercent.userid = `profile`.user_id
+		and historymeter.houseid = usercent.houseid
+	  LEFT JOIN finance on finance.financeid = historymeter.financeid
+	  LEFT JOIN hydcoal on hydcoal.houseid  = historymeter.houseid and hydcoal.financeid = historymeter.financeid
+	 where historymeter.historymeterid = #{historymeterid} 
+  	</select>
+  	
+  	<!-- 根据查询条件查询账本-->
+  	<select id="reckoning" resultType="cn.com.qcc.queryvo.ReckoningCustomer" parameterType="cn.com.qcc.queryvo.HydCoalVo" >
+		SELECT   house.house_number ,
+				 IFNULL(`profile`.real_name,house.house_number)realname,
+				 `user`.telephone ,
+	      		 house.houseid ,
+	      		 house.buildingid, housepay.start_time date ,
+	      		 house.floor,
+	      		 housepay.centprices yajin ,
+	      		 area.`name` trading ,village.villagename ,building.building 
+			from house
+			LEFT JOIN usercent on house.houseid = usercent.houseid and usercent.centstate not in (3,4)
+			LEFT JOIN `profile` on usercent.userid = `profile`.user_id
+			LEFT JOIN `user` on `user`.userid = `profile`.user_id
+			LEFT JOIN building on house.buildingid = building.buildingid
+			LEFT JOIN village on building.villageid = village.villageid
+			LEFT JOIN area on area.`code` = village.`code`
+			INNER JOIN (
+				SELECT   housepay.houseid  ,housepay.centprices , payexpert.start_time from housepay 
+					LEFT JOIN payexpert on housepay.payexpertid = payexpert.payexpertid
+					LEFT JOIN usercent on housepay.usercentid = usercent.usercentid 
+					where payexpert.start_time >= #{start} and payexpert.start_time  <![CDATA[<=#{end}]]>
+					and usercent.centstate not in (3,4)
+					and  housepay.financeid = 29
+			) housepay on housepay.houseid = house.houseid
+			where house.user_id = #{userid} 
+		 ORDER BY house.buildingid ,house.house_number asc 
+		 
+		  <!-- 分页的查询条件 -->
+		  <if test="pagequery !=null ">
+				limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		  </if>
+  	</select>
+  	
+  	
+  	<!-- 根据查询条件查询账本-->
+  	<select id="reckoningCount" resultType="integer" parameterType="cn.com.qcc.queryvo.HydCoalVo" >
+		SELECT   count(1)
+			from house
+			LEFT JOIN usercent on house.houseid = usercent.houseid
+			LEFT JOIN `profile` on usercent.userid = `profile`.user_id
+			LEFT JOIN `user` on `user`.userid = `profile`.user_id
+			where house.houseid in (
+					SELECT  DISTINCT housepay.houseid from housepay 
+					LEFT JOIN payexpert on housepay.payexpertid = payexpert.payexpertid
+					where payexpert.start_time >= #{start} and payexpert.start_time <![CDATA[<=#{end}]]> 
+		
+		  ) and house.user_id = #{userid}
+  	</select>
+  	
+  	<!-- 根据查询条件查询账本-->
+  	<select id="reckbuil" resultType="cn.com.qcc.queryvo.ReckoningCustomer" parameterType="cn.com.qcc.queryvo.HydCoalVo" >
+		  SELECT finance.financeid ,finance.categoryname ,
+				 housepay.centprices
+		from housepay 
+		LEFT JOIN payexpert on housepay.payexpertid = payexpert.payexpertid
+		LEFT JOIN finance on housepay.financeid = finance.financeid
+       where housepay.houseid = #{houseid} and  housepay.financeid !=30  and 
+        payexpert.start_time  >= #{start} and payexpert.start_time <![CDATA[<=#{end}]]>
+  	</select>
+  	
+  		<!-- 根据查询条件查询账本-->
+  	<select id="addfinancelist" resultType="cn.com.qcc.pojo.Finance" >
+		 SELECT * from finance where fatherid not in (
+			
+				0 ,1
+			)
+  	</select>
+  	
+  	<!-- 校验电表水表是否已经生成账单-->
+  	<select id="checkmeter" resultType="cn.com.qcc.pojo.Historymeter" parameterType="cn.com.qcc.pojo.Historymeter">
+		       SELECT * from historymeter where historymeter.financeid = #{financeid}
+					and historymeter.houseid =#{houseid} and historymeter.state = 2 AND
+				month(historymeter.update_time) =
+					month(curdate()) and
+			  year(historymeter.update_time) = year(curdate())  
+  	</select>
+  	
+  	<!-- 校验当前类目账单是否已经存在-->
+  	<select id="checkpaybuilexist" resultType="cn.com.qcc.pojo.Housepay" parameterType="cn.com.qcc.pojo.Housepay">
+		      SELECT * from housepay where housepay.houseid = #{houseid}
+					and housepay.payexpertid = #{payexpertid} and housepay.financeid = #{financeid}
+				   AND housepay.paystate not in (3)
+  	</select>
+  	
+  	<!-- 校验当前类目账单是否已经存在-->
+  	<select id="mothermeterdetails" resultType="cn.com.qcc.pojo.Historymeter" parameterType="cn.com.qcc.pojo.Housepay">
+		     SELECT * from historymeter  where historymeter.houseid = #{houseid}
+				and historymeter.state !=3 and month(historymeter.update_time) =
+					month(curdate()) and
+			  year(historymeter.update_time) = year(curdate())  
+  	</select>
+  	
+  		<!-- 根据城市名称获得code -->
+  	<select id="getcodebycity" resultType="string" parameterType="string">
+  		SELECT MIN(code)code  from area where name like CONCAT('%',#{city},'%') and `level` &lt;3
+  	</select>
+</mapper>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mapper.AccessMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Access" >
+    <id column="accessid" property="accessid" jdbcType="BIGINT" />
+    <result column="accessname" property="accessname" jdbcType="VARCHAR" />
+    <result column="accessurl" property="accessurl" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    accessid, accessname, accessurl
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.AccessExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from access
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from access
+    where accessid = #{accessid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from access
+    where accessid = #{accessid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.com.qcc.pojo.AccessExample" >
+    delete from access
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.com.qcc.pojo.Access" >
+  	 <selectKey  resultType="long"  order="AFTER"  keyProperty="accessid" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into access (accessid, accessname, accessurl
+      )
+    values (#{accessid,jdbcType=BIGINT}, #{accessname,jdbcType=VARCHAR}, #{accessurl,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Access" >
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="accessid" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into access
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="accessid != null" >
+        accessid,
+      </if>
+      <if test="accessname != null" >
+        accessname,
+      </if>
+      <if test="accessurl != null" >
+        accessurl,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="accessid != null" >
+        #{accessid,jdbcType=BIGINT},
+      </if>
+      <if test="accessname != null" >
+        #{accessname,jdbcType=VARCHAR},
+      </if>
+      <if test="accessurl != null" >
+        #{accessurl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.com.qcc.pojo.AccessExample" resultType="java.lang.Integer" >
+    select count(*) from access
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update access
+    <set >
+      <if test="record.accessid != null" >
+        accessid = #{record.accessid,jdbcType=BIGINT},
+      </if>
+      <if test="record.accessname != null" >
+        accessname = #{record.accessname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.accessurl != null" >
+        accessurl = #{record.accessurl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update access
+    set accessid = #{record.accessid,jdbcType=BIGINT},
+      accessname = #{record.accessname,jdbcType=VARCHAR},
+      accessurl = #{record.accessurl,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.Access" >
+    update access
+    <set >
+      <if test="accessname != null" >
+        accessname = #{accessname,jdbcType=VARCHAR},
+      </if>
+      <if test="accessurl != null" >
+        accessurl = #{accessurl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where accessid = #{accessid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Access" >
+    update access
+    set accessname = #{accessname,jdbcType=VARCHAR},
+      accessurl = #{accessurl,jdbcType=VARCHAR}
+    where accessid = #{accessid,jdbcType=BIGINT}
+  </update>
+  
+  <select id="getrole_access" resultType="cn.com.qcc.pojo.Access" parameterType="long">
+  		SELECT * from role_access INNER JOIN access on role_access.accessid = access.accessid
+		and role_access.roleid = #{roleid}
+  </select>
+  
+    <!-- dd -->
+  <select id="isinrole" resultType="cn.com.qcc.pojo.Access" parameterType="java.util.List">
+  		SELECT * , 1 'type' from access where accessid in 
+  		 <foreach item="item" collection="idsList" separator="," open="(" close=")" index="">    
+          #{item, jdbcType=VARCHAR}    
+        </foreach>    
+  </select>
+  
+      <!-- dd -->
+  <select id="isnotrole" resultType="cn.com.qcc.pojo.Access" parameterType="java.util.List">
+  		SELECT * ,2 'type' from access where accessid not in 
+  		 <foreach item="item" collection="idsList" separator="," open="(" close=")" index="">    
+          #{item, jdbcType=VARCHAR}    
+        </foreach>    
+  </select>
+  
+       <!-- dd -->
+  <select id="deletebyroleid"  parameterType="cn.com.qcc.pojo.Role">
+  		DELETE from role_access where role_access.roleid = #{roleid}
+  </select>
+</mapper>

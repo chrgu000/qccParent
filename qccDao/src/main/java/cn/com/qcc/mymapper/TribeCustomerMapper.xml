@@ -1,0 +1,1025 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.TribeCustomerMapper" >
+  		
+  	
+  <!-- 我加入的部落 -->
+  <select id="myjointribe" parameterType="long" resultType="cn.com.qcc.queryvo.TribeCustomer">
+  		SELECT * from tribecontroller INNER JOIN
+	tribe on tribe.tribeid = tribecontroller.tribeid
+	and tribecontroller.state != '2' and tribecontroller.userid = #{userid}
+	order by tribecontroller.state desc   , tribecontroller.update_time desc 
+	<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} ,  #{pagequery.pagesize}
+		</if>
+  </select>
+  <!-- 我加入的部落 -->
+  <select id="myjointribeCount" parameterType="long" resultType="integer">
+  		SELECT count(1) from tribecontroller INNER JOIN
+	tribe on tribe.tribeid = tribecontroller.tribeid
+	and tribecontroller.state != '2' and tribecontroller.userid = #{userid}
+  </select>
+  
+  <!-- 我加入的部落是否存在 -->
+  <select id="myjointribeexist" parameterType="long" resultType="cn.com.qcc.queryvo.TribeCustomer">
+  		SELECT * from tribe INNER JOIN tribecontroller on tribe.tribeid = tribecontroller.tribeid
+		and  tribecontroller.userid = #{userid} and tribecontroller.tribeid = #{tribeid}
+  </select>
+  
+  	<!-- 根据条件查询部落发布物品详情 -->
+   <select id="findtribedetailbycondition" parameterType="cn.com.qcc.queryvo.TribeVo" resultType="cn.com.qcc.queryvo.TribeCustomer">
+			SELECT IFNULL(t.mes,'暂无回答')mes,
+			`profile`.avatar,
+			`profile`.user_name name,
+			IFNULL(articletype.typename,'')comfrom,
+			article.update_time,
+		 	IFNULL(articledetail.articledetailid,'')articledetailid,
+			IFNULL(t.mescount,0)mescount,
+			tribe.picture tribepicture,
+			article.tribeid,
+			IFNULL(articledetail.userid,'')userid,
+			articledetail.articletypeid,
+			articletype.type,
+			ifnull(articletype.typename,'')typename,
+			ifnull(articledetail.description,'')description,
+			ifnull(articledetail.title,'')title,
+			ifnull (articledetail.prices,'')prices,
+			ifnull(articledetail.picture,'') thingpicture
+			from articledetail 
+			INNER  JOIN article ON article.articledetailid = articledetail.articledetailid
+			left JOIN articletype on articletype.articletypeid = articledetail.articletypeid
+			LEFT JOIN tribe on article.tribeid = tribe.tribeid
+			LEFT JOIN `profile` on `profile`.user_id = articledetail.userid
+			LEFT JOIN (
+			SELECT count(1) mescount,messages.house_id detailid ,type ,mes from messages GROUP BY detailid ,type
+			) t 		on  t.detailid=	articledetail.articledetailid
+			and t.type = articletype.type
+			where 1=1
+	<!-- 类型的查询条件比如 /** 1,表示房源，6.表示找物品，7表示找人*/ -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.query_articletype_where"/>
+	<!-- 部落的查询条件 -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.quert_tribe_where"/>
+		ORDER BY articledetail.update_time desc
+		
+		
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , 8
+		</if>
+  </select>
+  
+  	<!-- 根据条件查询部落发布物品详情 -->
+   <select id="findtribedetailCount" parameterType="cn.com.qcc.queryvo.TribeVo" resultType="integer">
+		 SELECT 
+			count(1)
+		from article LEFT JOIN house on article.otherid = house.houseid
+		LEFT JOIN articledetail on article.articledetailid = articledetail.articledetailid
+			LEFT JOIN tribe on article.tribeid = tribe.tribeid
+			LEFT JOIN articletype on articledetail.articletypeid = articletype.articletypeid
+			LEFT JOIN price on house.price_id = price.priceid
+			LEFT JOIN property on property.propertyid = house.property_id
+			where 1=1 
+	<!-- 类型的查询条件比如 /** 1,表示房源，6.表示找物品，7表示找人*/ -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.query_articletype_where"></include>
+		<!-- 部落的查询条件 -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.quert_tribe_where"/>	
+  </select>
+  
+  
+  
+  	<!-- 获取城市的部落 -->
+   <select id="getCityTribe" resultType="cn.com.qcc.pojo.Tribetype">
+		select
+		any_value(initial) as initial,group_concat(typename) as cityname
+		from tribetype 
+		where typecode='1'
+		group by
+		initial 
+  </select>
+  
+  	<!-- 人气部落 -->
+   <select id="horttribe" resultType="cn.com.qcc.queryvo.TribeCustomer" parameterType="cn.com.qcc.queryvo.TribeVo">
+		SELECT * from tribe LEFT JOIN detaileaddress on tribe.detailid = detaileaddress.detailid
+		LEFT JOIN (
+		SELECT SUM(bcount) bcount ,otherid from browse where type =6
+		) t on t.otherid = tribe.tribeid
+		<!-- 地址的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_address_where"/>
+		ORDER BY tribe.update_time ,t.bcount
+  </select>
+  
+   <!-- 主页加载的其中一个商品 -->
+   <select id="indextribe" resultType="cn.com.qcc.queryvo.TribeCustomer" parameterType="cn.com.qcc.queryvo.TribeVo">
+		select a.* from (
+		SELECT tribe.name,article.update_time,
+		 	IFNULL(house.houseid,articledetail.articledetailid)articledetailid,
+			IFNULL(t.mescount,0)mescount,
+			tribe.picture tribepicture,
+			article.tribeid,
+			IFNULL(house.user_id,articledetail.userid)userid,
+			articledetail.articletypeid,
+			articletype.type,
+			ifnull(property.propertyname,articletype.typename)typename,
+			ifnull(house.description,articledetail.description)description,
+			ifnull(house.housetitle,articledetail.title)title,
+			ifnull (price.prices , articledetail.prices)prices,
+			ifnull(price.pricetype,'元')  pricestype,
+			ifnull(house.picture,articledetail.picture) thingpicture
+			from tribe 
+			INNER JOIN article on article.tribeid = tribe.tribeid
+			INNER JOIN articledetail on article.articledetailid = articledetail.articledetailid
+			INNER JOIN articletype on articletype.articletypeid = articledetail.articletypeid
+			LEFT JOIN house on house.houseid = article.otherid and house.housestatus in (1,2)
+			LEFT JOIN price on house.price_id = price.priceid
+			LEFT JOIN property on property.propertyid = house.property_id
+			LEFT JOIN (
+			SELECT count(1) mescount,messages.house_id detailid ,type from messages GROUP BY detailid ,type
+			) t 		on  t.detailid=	IFNULL(house.houseid,articledetail.articledetailid) and t.type = articletype.type
+			where 1=1  
+	<!-- 类型的查询条件比如 /** 1,表示房源，6.表示找物品，7表示找人*/ -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.query_articletype_where"></include>
+	<!-- 排除加入的部落 -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.query_tribecontroller_where"></include>
+		) a join (SELECT MAX(update_time)update_time,tribeid from article GROUP BY tribeid) b
+ 		on a.tribeid = b.tribeid and a.update_time = b.update_time ORDER BY a.update_time desc
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} ,#{pagequery.pagesize}
+		</if>
+  </select>
+  
+  
+   <!-- 主页加载的分页总数 -->
+   <select id="indextribeCount" resultType="integer" parameterType="cn.com.qcc.queryvo.TribeVo">
+		SELECT COUNT(1) from ( 
+		 SELECT 
+			count(1)
+		from article LEFT JOIN house on article.otherid = house.houseid
+		LEFT JOIN articledetail on article.articledetailid = articledetail.articledetailid
+			LEFT JOIN tribe on article.tribeid = tribe.tribeid
+			LEFT JOIN articletype on articledetail.articletypeid = articletype.articletypeid
+			LEFT JOIN price on house.price_id = price.priceid
+			LEFT JOIN property on property.propertyid = house.property_id
+			where 1=1
+			<!-- 类型的查询条件比如 /** 1,表示房源，6.表示找物品，7表示找人*/ -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.query_articletype_where"></include>
+			GROUP BY	tribe.tribeid ) t
+  </select>
+  
+  
+  
+   <!-- 人气榜单-->
+   <select id="getpopularity" resultType="cn.com.qcc.queryvo.TribeCustomer" >
+		SELECT * from tribe ORDER BY (followuserid) desc
+  </select>
+  
+  
+   <!-- 明星群主-->
+   <select id="getLuncida" resultType="cn.com.qcc.queryvo.TribeCustomer" >
+		SELECT
+			t.tcount,f.fcount ,u.userid,p.avatar,p.user_name
+			FROM`user` u, `profile` p, 
+		( SELECT count(1)fcount,followUserId FROM fans WHERE fanStatus='1' GROUP BY followUserId) f , 
+		(SELECT count(1)tcount ,userid from tribe where state =1 GROUP BY userid)t
+		where u.userid=p.user_id and p.user_id=f.followUserId  and t.userid = u.userid
+		GROUP BY u.userid
+		ORDER BY f.fcount desc  ,t.tcount desc
+  </select>
+  
+  
+  
+  <!-- 部落详情的查询-->
+   <select id="getTribetailbyid" resultType="cn.com.qcc.queryvo.TribeCustomer" parameterType="integer">
+		SELECT IFNULL(SUM(bcount),0) tcount, IFNULL(t.count,0) fcount ,
+		tribe.`name`,tribe.tribeid,tribe.picture , tribe.userid 
+		FROM tribe
+		LEFT JOIN ( SELECT count(1) count, otherid FROM
+				browse WHERE DATEDIFF(b_time, NOW()) >= 0 AND DATEDIFF(b_time, NOW()) &lt; 2 
+				AND	browse.type = 9
+				AND browse.otherid = #{tribeid}
+		) t ON t.otherid = tribe.tribeid
+		left join browse on tribe.tribeid = browse.otherid
+		WHERE
+			browse.type = 9
+		AND browse.otherid = #{tribeid}
+  </select>
+  
+  
+  
+  
+   <!-- 获取部落成员-->
+   <select id="getTribeuser" resultType="cn.com.qcc.queryvo.TribeCustomer" parameterType="long">
+				SELECT * from tribecontroller 
+		INNER JOIN `user` on tribecontroller.userid = `user`.userid 
+		INNER JOIN `profile` on `profile`.user_id = `user`.userid
+		and tribecontroller.tribeid = #{tribeid}
+		ORDER BY tribecontroller.state desc
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} ,#{pagequery.pagesize}
+		</if>
+  </select>
+  <select id="getTribeuserCount" resultType="integer" parameterType="long">
+				SELECT count(1) from tribecontroller 
+		INNER JOIN `user` on tribecontroller.userid = `user`.userid 
+		INNER JOIN `profile` on `profile`.user_id = `user`.userid
+		and tribecontroller.tribeid = #{tribeid}
+  </select>
+  
+  
+  
+  	<!-- 根据条件查询相关部落 -->
+  	<select id="getTribebycondition" resultType="cn.com.qcc.queryvo.TribeCustomer" parameterType="cn.com.qcc.queryvo.TribeVo">
+		SELECT tribe.tribeid,detaileaddress.latitude,
+		detaileaddress.longitude,t.tcount,
+		IFNULL(f.fcount,0),tribe.picture,
+		tribe.`name`,tribe.description ,tribetype.typecode
+		 from tribe 
+		left JOIN tribetype on tribe.tribetypeid = tribetype.tribetypeid
+		left JOIN detaileaddress on tribe.detailid = detaileaddress.detailid
+		left JOIN (SELECT SUM(bcount)tcount  ,otherid from browse where type =9 GROUP BY otherid)t on t.otherid = tribe.tribeid 
+		left JOIN	(SELECT count(1)fcount,article.tribeid from article GROUP BY article.tribeid)f on f.tribeid = tribe.tribeid 
+	where 1=1 
+	<!-- 地址的查询条件 包括经纬度-->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.query_address_where"/>
+	<!-- 地区兴趣部落查询条件 包括经纬度-->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.quert_tribe_where"/>
+	<!-- 部落类型查询条件 -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.quert_tribetype_where"/>
+	ORDER BY t.tcount desc
+	<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , 8
+	</if>
+  </select>
+  
+  
+  <!-- 根据条件查询相关部落 -->
+  	<select id="getTribebyconditionCount" resultType="integer" parameterType="cn.com.qcc.queryvo.TribeVo">
+		SELECT count(1)
+		 from tribe 
+		INNER JOIN tribetype on tribe.tribetypeid = tribetype.tribetypeid
+		INNER JOIN detaileaddress on tribe.detailid = detaileaddress.detailid
+		INNER JOIN (SELECT SUM(bcount)tcount  ,otherid from browse where type =9 GROUP BY otherid)t on t.otherid = tribe.tribeid 
+		INNER JOIN	(SELECT count(1)fcount,article.tribeid from article GROUP BY article.tribeid)f on f.tribeid = tribe.tribeid 
+	where 1=1 
+	<!-- 地址的查询条件 包括经纬度-->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.query_address_where"/>
+	<!-- 部落查询条件 -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.quert_tribe_where"/>
+	<!-- 部落类型查询条件 -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.quert_tribetype_where"/>
+  </select>
+  
+  
+  
+   <!-- 物品/提问/找人详情 -->
+  	<select id="thingdetail" resultType="cn.com.qcc.queryvo.ArticleDetailCustomer" parameterType="long">
+				SELECT 
+					`profile`.avatar,
+					`profile`.user_name username,
+					articledetail.update_time,
+					articledetail.articledetailid,
+					IFNULL(t.mescount,0)mcount,
+					articledetail.userid,
+					articledetail.articletypeid,
+					articledetail.title title,
+					articledetail.picture picture,
+					articledetail.description,
+					articledetail.tribeids,
+		      releasetable.* 
+					from  articledetail
+					LEFT JOIN articletype on articletype.onetypeid = articledetail.onetypeid
+					LEFT JOIN `profile` on `profile`.user_id = articledetail.userid
+					LEFT JOIN (
+					SELECT count(1) mescount,messages.house_id detailid ,type ,mes from messages GROUP BY detailid ,type
+					) t 		on  t.detailid=	articledetail.articledetailid
+					and t.type = articledetail.articletypeid
+		LEFT JOIN releasetable on releasetable.articledetailid = articledetail.articledetailid
+		where  articledetail.articledetailid= #{articledetailid}
+		
+		LIMIT 0 ,1
+  </select>
+  
+  
+  <!-- 分类找兴趣部落 首页-->
+ <select id="indexhortibe" resultType="cn.com.qcc.queryvo.TribeCustomer"  parameterType="cn.com.qcc.queryvo.TribeVo">
+	SELECT max(a.bcount)bcount ,b.`name`,b.picture ,b.userid ,b.tribeid  ,b.typename ,b.tribetypeid  from (
+			SELECT tribetype.typename,
+					tribetype.tribetypeid,
+					tribe.userid,
+					tribe.picture,
+					tribe.`name`,
+					tribe.tribeid
+					from tribetype 
+		LEFT JOIN tribe on tribetype.tribetypeid = tribe.tribetypeid
+		where tribetype.typecode ='2' 
+		) b 
+		left join (
+			SELECT SUM(bcount)bcount,browse.otherid tribeid ,type from browse  where type = 9 GROUP BY tribeid
+		) a on a.tribeid = b.tribeid GROUP BY b.tribetypeid ORDER BY b.tribeid desc
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} ,  #{pagequery.pagesize}
+	</if>
+  </select>
+  
+  
+  <!-- 分类找兴趣部落 首页-->
+ <select id="indexhortibCount" resultType="integer"  parameterType="cn.com.qcc.queryvo.TribeVo">
+	SELECT COUNT(1) from tribetype where typecode ='2'
+  </select>
+  
+   <!-- 最近访问的部落-->
+ <select id="nearbrotribe" resultType="cn.com.qcc.queryvo.TribeCustomer"  parameterType="cn.com.qcc.queryvo.TribeVo" >
+  		SELECT IFNULL(b.bcount,0)tcount , tribe.tribeid ,browse.userid ,browse.browseid,
+		tribe.`name` ,tribe.picture ,MAX(browse.b_time)update_time
+	from browse 
+	LEFT JOIN (SELECT SUM(bcount)bcount,otherid,type from browse GROUP BY browse.otherid ,browse.type) b
+	on browse.otherid = b.otherid and browse.type = b.type
+	INNER JOIN tribe on tribe.tribeid = browse.otherid
+	where  browse.type='9'  and browse.statue ='1'
+	and browse.userid = #{userid}
+	GROUP BY browse.otherid
+	ORDER BY browse.b_time desc
+	<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+	</if>
+	</select>
+	
+	
+	
+ <!-- 最近访问的部落-->
+ <select id="nearbrotribeCount" resultType="integer"  parameterType="long" >
+  		select count(1) from (
+  		SELECT count(1)
+	from browse 
+	LEFT JOIN (SELECT SUM(bcount)bcount,otherid,type from browse GROUP BY browse.otherid ,browse.type) b
+	on browse.otherid = b.otherid and browse.type = b.type
+	INNER JOIN tribe on tribe.tribeid = browse.otherid
+	where browse.type='9' and browse.statue = 1
+		and browse.userid=#{userid}
+		
+		GROUP BY browse.otherid ) browse
+		
+  </select>
+  
+   
+   <!-- 附近部落 -->
+   <select id="indexhorneartribe" parameterType="cn.com.qcc.queryvo.TribeVo" resultType="cn.com.qcc.queryvo.TribeCustomer" >
+   		SELECT tribe.tribeid ,tribe.`name`,tribe.picture,tribetype.typename
+			from tribe LEFT JOIN detaileaddress on detaileaddress.detailid = tribe.detailid
+	LEFT JOIN tribetype on tribe.tribetypeid = tribetype.tribetypeid 
+		where 1=1 
+	<!-- 排除加入的部落 -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.query_tribecontroller_where"></include>
+	<!-- 地址的查询条件 -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.query_address_where"/>
+	ORDER BY tribe.update_time desc LIMIT 0,3
+   </select>
+   
+   
+   
+   <!-- 根据条件查询部落发布物品详情  房源 -->
+   <select id="findtribedetailbyHouse" parameterType="cn.com.qcc.queryvo.TribeVo" resultType="cn.com.qcc.queryvo.TribeCustomer">
+				SELECT 
+					IFNULL(t.mes,'暂无回答')mes,
+					`profile`.avatar,
+					`profile`.user_name name,
+					area.name trading,
+					village.villagename,
+					apartment.apartmentname,
+					house.housetitle,
+					house.house_number,
+					IFNULL(fcode.name,area.name)comfrom,
+					article.update_time,
+				 	IFNULL(house.houseid,'')articledetailid,
+					IFNULL(t.mescount,0)mescount,
+					tribe.picture tribepicture,
+					article.tribeid,
+					IFNULL(house.user_id,'')userid,
+					ifnull(property.propertyname,'')typename,
+					ifnull(house.description,'')description,
+					ifnull(house.housetitle,'')title,
+					ifnull (price.prices ,'')prices,
+					ifnull(price.pricetype,'元')  pricestype,
+					ifnull(house.picture,'') thingpicture,
+					articledetail.articletypeid,
+					articletype.type
+			from article  
+			LEFT JOIN house on article.otherid = house.houseid
+			LEFT JOIN building on house.buildingid = building.buildingid
+			LEFT JOIN village on village.villageid = building.villageid
+			LEFT JOIN area on village.`code` = area.`code`
+			LEFT JOIN apartment on house.apartment_id = apartment.apartmentid
+			LEFT JOIN property on property.propertyid = house.property_id
+			LEFT JOIN price on house.price_id = price.priceid
+			LEFT JOIN `profile` on `profile`.user_id = house.user_id
+			LEFT JOIN tribe on tribe.tribeid = article.tribeid
+			LEFT JOIN articledetail on articledetail.articledetailid = article.articledetailid
+			LEFT JOIN articletype on articletype.articletypeid = articledetail.articletypeid
+			LEFT JOIN (SELECT * from area) fcode on area.parentId = fcode.code
+			LEFT JOIN (
+					SELECT count(1) mescount,messages.house_id detailid ,type ,mes from messages GROUP BY detailid ,type
+					) t 		on  t.detailid=	house.houseid
+					where  house.housestatus  in (1,2)
+	<!-- 类型的查询条件比如 /** 1,表示房源，6.表示找物品，7表示找人*/ -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.query_articletype_where"/>
+	<!-- 部落的查询条件 -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.quert_tribe_where"/>
+		ORDER BY house.update_time desc
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , 8
+		</if>
+  </select>
+   
+   
+   
+   <!-- 部落签到榜单 -->
+   <select id="tribesign" parameterType="long" resultType="cn.com.qcc.queryvo.UserCustomer">
+	SELECT usersign.singcount tcount, usersign.userid , `profile`.user_name , `profile`.avatar ,usersign.update_time
+			from usersign 
+			LEFT JOIN `profile` on `profile`.user_id = usersign.userid
+		where usersign.tribeid =#{tribeid} 
+		ORDER BY usersign.singcount desc, usersign.update_time desc
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} ,  #{pagequery.pagesize}
+		</if>
+   </select>
+   <select id="tribesignCount" parameterType="long" resultType="integer">
+	SELECT count(1)
+			from usersign 
+			LEFT JOIN `profile` on `profile`.user_id = usersign.userid
+		where usersign.tribeid =#{tribeid} 
+   </select>
+   
+   <!-- 城市部落查询 -->
+   <select id="tribecity"  resultType="cn.com.qcc.pojo.Tribetype">
+   		SELECT * FROM tribetype WHERE typecode ='1' ORDER BY initial asc
+   </select>
+   
+   
+    <!-- 获得找物品的第二集 -->
+   <select id="getdetailtype"  resultType="cn.com.qcc.pojo.Typedetail" parameterType="integer">
+   		SELECT * from typedetail LEFT JOIN articletype  on typedetail.articletypeid = articletype.articletypeid
+		where typedetail.articletypeid = #{articletypeid}
+   </select>
+   
+   
+   
+   <select id="getarticlelist"  resultType="cn.com.qcc.queryvo.ArticleDetailCustomer" parameterType="cn.com.qcc.queryvo.TribeVo">
+   		SELECT `profile`.avatar ,`profile`.user_name  ,`user`.telephone,
+		articledetail.* ,articletype.* ,t.juli ,t.detailes ,articledetail.picture onepicture
+		,IFNULL(typedetail.detailname,'')detailname
+	 from 
+	articledetail INNER JOIN articletype on articledetail.articletypeid = articletype.articletypeid
+	LEFT JOIN `profile` on `profile`.user_id = articledetail.userid
+	INNER JOIN `user` on `user`.userid = `profile`.user_id
+	LEFT JOIN typedetail on typedetail.typedetailid = articledetail.typedetailid
+	LEFT JOIN	 (SELECT articledetail.detailid , articledetail.articledetailid ,
+					detaileaddress.latitude,
+					detaileaddress.longitude,
+					detaileaddress.detailes
+					<!-- 导入距离 -->
+					<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli" />
+		from articledetail 
+			 LEFT JOIN detaileaddress on articledetail.detailid = detaileaddress.detailid
+		)t  on articledetail.articledetailid = t.articledetailid
+	
+	where 1=1 and articledetail.state = '1' 
+	<!-- articletype 条件 -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.query_articletype_where" />
+	<!-- typedetailie 条件 -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.query_typedetail_where" />
+	ORDER BY articledetail.topday desc , articledetail.update_time desc 
+	<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , 8
+	</if>
+	   </select>
+	   
+	   
+	     <select id="articledetail"  resultType="cn.com.qcc.queryvo.ArticleDetailCustomer" parameterType="cn.com.qcc.queryvo.TribeVo">
+   		SELECT `profile`.avatar ,`profile`.user_name  ,`user`.telephone,
+		articledetail.* ,articletype.* ,t.juli ,t.detailes ,area.`name` trading ,t.latitude,t.longitude
+		,IFNULL(typedetail.detailname,'')detailname,bro.bcount
+	 from 
+	articledetail INNER JOIN articletype on articledetail.articletypeid = articletype.articletypeid
+	LEFT JOIN `profile` on `profile`.user_id = articledetail.userid
+	INNER JOIN `user` on `user`.userid = `profile`.user_id
+	LEFT JOIN	 (SELECT articledetail.detailid , articledetail.articledetailid ,
+					detaileaddress.latitude,
+					detaileaddress.longitude,
+					detaileaddress.detailes
+					<!-- 导入距离 -->
+					<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli" />
+		from articledetail 
+			 LEFT JOIN detaileaddress on articledetail.detailid = detaileaddress.detailid
+		)t  on articledetail.articledetailid = t.articledetailid
+	INNER JOIN area on area.`code` = articledetail.`code`
+	LEFT JOIN typedetail on typedetail.typedetailid = articledetail.typedetailid
+	LEFT JOIN (SELECT SUM(bcount) bcount ,browse.otherid FROM browse WHERE browse.type = 11 GROUP BY browse.otherid )bro 
+	on bro.otherid = articledetail.articledetailid
+	where articledetail.articledetailid =#{articledetailid}
+	
+	   </select>
+	   
+	   
+	   
+	   
+	  <select id="getarticlelistCount"  resultType="integer" parameterType="cn.com.qcc.queryvo.TribeVo">
+   		SELECT count(1)
+	 from 
+	articledetail INNER JOIN articletype on articledetail.articletypeid = articletype.articletypeid
+	LEFT JOIN typedetail on typedetail.typedetailid = articledetail.typedetailid
+	where 1=1 and articledetail.state = '1'
+	<!-- articletype 条件 -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.query_articletype_where" />
+	<!-- typedetailie 条件 -->
+	<include refid="cn.com.qcc.mymapper.SearchWhere.query_typedetail_where" />
+	</select>
+	
+	
+	 <select id="getArticledetailandtype"  resultType="cn.com.qcc.queryvo.ArticleDetailCustomer" parameterType="string">
+   		SELECT * from articledetail INNER JOIN articletype on articledetail.articletypeid = articletype.articletypeid
+		and articledetail.articledetailid = #{articledetailid}
+	</select>
+	
+	<select id="myarticledetailCount" resultType="integer" parameterType="cn.com.qcc.queryvo.TribeVo">
+		SELECT count(1)
+		 from articledetail 
+		INNER JOIN `profile` on articledetail.userid = `profile`.user_id
+		INNER JOIN articletype on articledetail.articletypeid = articletype.articletypeid
+		INNER JOIN detaileaddress on articledetail.detailid = detaileaddress.detailid
+		where  `profile`.user_id = #{userid} and articledetail.state in (1,2)
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_articletype_where"></include>
+	</select>
+	
+	<select id="myarticledetail" resultType="cn.com.qcc.queryvo.ArticleDetailCustomer" parameterType="cn.com.qcc.queryvo.TribeVo">
+		SELECT `profile`.avatar ,`profile`.user_name ,articledetail.topday ,articledetail.articledetailid,
+			articletype.typename,articledetail.description ,detaileaddress.detailes ,articledetail.update_time,
+			articledetail.state ,articledetail.picture onepicture,articledetail.topprices,articledetail.picture
+			,IFNULL(typedetail.detailname,'')detailname
+		 from articledetail 
+		INNER JOIN `profile` on articledetail.userid = `profile`.user_id
+		INNER JOIN articletype on articledetail.articletypeid = articletype.articletypeid
+		INNER JOIN detaileaddress on articledetail.detailid = detaileaddress.detailid
+		LEFT JOIN typedetail on typedetail.typedetailid = articledetail.typedetailid
+		where  `profile`.user_id = #{userid} and articledetail.state in (1,2)
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_articletype_where"></include>
+		order by articledetail.update_time desc 
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+	    </if>
+	</select>
+	
+	
+	
+	<!-- 一条部落发布详情导入索引库 -->
+	<select id="oneArticleDetailToSolr" resultType="cn.com.qcc.queryvo.ArticleDetailCustomer" parameterType="long">
+		SELECT
+						articledetail.*, MIN(releasetable.prices) prices,
+						releasetable.count
+					FROM
+						(
+							SELECT
+								articledetail.title,
+								articledetail.description,
+								articledetail.articledetailid,
+								articledetail.update_time,
+								articledetail.articletypeid,
+								`profile`.user_name username,
+								`profile`.avatar,
+								articledetail.picture onepicture,
+								articledetail.picture,
+								area.`name` trading,
+								detaileaddress.*,
+								articletype.typename ,
+					      articledetail.tribeids
+							FROM
+								articledetail
+							LEFT JOIN `user` ON `user`.userid = articledetail.userid
+							LEFT JOIN `profile` ON `user`.userid = `profile`.user_id
+							LEFT JOIN articletype ON articledetail.onetypeid = articletype.onetypeid
+							LEFT JOIN area ON area.`code` = articledetail.`code`
+							LEFT JOIN detaileaddress ON detaileaddress.detailid = articledetail.detailid
+						) articledetail
+					LEFT JOIN releasetable ON articledetail.articledetailid = releasetable.articledetailid
+					
+			 where articledetail.articledetailid = #{articledetailid}
+		</select>
+		
+		<!-- 所有部落发布详情导入索引库 -->
+		<select id="searchAllDetailToSolr" resultType="cn.com.qcc.queryvo.ArticleDetailCustomer">
+				SELECT
+				articledetail.*,
+				MIN(releasetable.prices) prices,
+				releasetable.count
+			FROM
+				(
+					SELECT
+            articledetail.title ,
+						articledetail.description , 
+						articledetail.articledetailid,
+						articledetail.update_time,
+            articledetail.articletypeid,
+						`profile`.user_name username,
+						`profile`.avatar,
+						articledetail.picture onepicture,
+						articledetail.picture,
+						area.`name` trading,
+						detaileaddress.* ,
+			      articletype.typename ,
+		        articledetail.tribeids
+					FROM
+						articledetail
+					LEFT JOIN `user` ON `user`.userid = articledetail.userid
+					LEFT JOIN `profile` ON `user`.userid = `profile`.user_id
+					LEFT JOIN articletype ON articledetail.onetypeid = articletype.onetypeid
+					LEFT JOIN area ON area.`code` = articledetail.`code`
+					LEFT JOIN detaileaddress ON detaileaddress.detailid = articledetail.detailid
+				) articledetail
+			LEFT JOIN releasetable ON articledetail.articledetailid = releasetable.articledetailid
+			 <if test="pagequery !=null ">
+			WHERE articledetail.articledetailid > #{pagequery.pagestart} and 
+			<![CDATA[articledetail.articledetailid<=#{pagequery.pageend}]]>
+		    </if>
+		GROUP BY articledetail.articledetailid
+	</select>
+	
+	
+	<!-- 查询规格参数列表 -->
+	<select id="parametypeList" resultType="cn.com.qcc.pojo.Parametype" parameterType="java.util.List" >
+		SELECT parametype.* , 1 type from parametype where `codeid` in 
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+	</select>
+	<select id="parametypeListNot" resultType="cn.com.qcc.pojo.Parametype" parameterType="java.util.List" >
+		SELECT parametype.* , 2 type from parametype where `codeid` not in 
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+			AND FATHERID = 0
+	</select>
+	<select id="parametypeListIS" resultType="cn.com.qcc.pojo.Parametype" parameterType="java.util.List" >
+		SELECT parametype.* , 1 type from parametype where `codeid`  in 
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		AND FATHERID = 0
+	</select>
+	
+	
+	
+	
+	<!-- 根据分类id查询部落信息 -->
+	<select id="searchtribebyTypeid" resultType="cn.com.qcc.queryvo.TribeCustomer" >
+			SELECT
+					tribe.tribeid,
+					tribe.`name`,
+					tribe.picture,
+					IFNULL(tribecontroller.state, '2') state , 
+				  conn.pcount 
+				FROM
+					tribe
+				LEFT JOIN tribecontroller ON tribe.tribeid = tribecontroller.tribeid
+				AND tribecontroller.userid = #{userid}
+				LEFT JOIN (
+					SELECT
+						count(1) pcount,
+						tribeid
+					FROM
+						tribecontroller
+					WHERE
+						tribecontroller.state IN (1, 3) 
+					GROUP BY
+						tribecontroller.tribeid
+				) conn ON conn.tribeid = tribe.tribeid
+				<if test="tribetypeid !=null"> where tribe.tribetypeid = #{tribetypeid}    </if>
+				ORDER BY conn.pcount desc 
+				<if test="pagequery !=null ">
+			        limit #{pagequery.pagestart} , #{pagequery.pagesize}
+	           </if>  
+	</select>
+	
+	<select id="searchtribebyTypeidCount" resultType="integer" >
+			SELECT
+					 count(1)
+				FROM
+					tribe
+				LEFT JOIN tribecontroller ON tribe.tribeid = tribecontroller.tribeid
+				AND tribecontroller.userid = #{userid}
+				<if test="tribetypeid !=null"> where tribe.tribetypeid = #{tribetypeid}    </if>
+	</select>
+	
+	
+	
+	
+	<!-- 类似的部落信息 -->
+	<select id="searchLikeTribe" resultType="cn.com.qcc.queryvo.TribeCustomer" >
+			SELECT
+					tribe.tribeid,
+					tribe.`name`,
+					tribe.picture,
+					IFNULL(tribecontroller.state, '2') state , 
+				  conn.pcount 
+				FROM
+					tribe
+				LEFT JOIN tribecontroller ON tribe.tribeid = tribecontroller.tribeid
+				AND tribecontroller.userid = #{userid}
+				LEFT JOIN (
+					SELECT
+						count(1) pcount,
+						tribeid
+					FROM
+						tribecontroller
+					WHERE
+						tribecontroller.state IN (1, 3) 
+					GROUP BY
+						tribecontroller.tribeid
+				) conn ON conn.tribeid = tribe.tribeid
+		LEFT JOIN tribetype on tribetype.tribetypeid = tribe.tribetypeid 
+        where tribe.`name` like CONCAT('%',#{searchwhere},'%') 
+        or  tribetype.typename like CONCAT('%',#{searchwhere},'%') 
+				ORDER BY conn.pcount desc 
+				<if test="pagequery !=null ">
+			        limit #{pagequery.pagestart} , #{pagequery.pagesize}
+	           </if>  
+	</select>
+	<select id="searchLikeTribeCount" resultType="integer" >
+			SELECT
+					 count(1)
+				FROM
+					tribe
+				LEFT JOIN tribecontroller ON tribe.tribeid = tribecontroller.tribeid
+				AND tribecontroller.userid = #{userid}
+				LEFT JOIN (
+					SELECT
+						count(1) pcount,
+						tribeid
+					FROM
+						tribecontroller
+					WHERE
+						tribecontroller.state IN (1, 3) 
+					GROUP BY
+						tribecontroller.tribeid
+				) conn ON conn.tribeid = tribe.tribeid
+		LEFT JOIN tribetype on tribetype.tribetypeid = tribe.tribetypeid 
+        where tribe.`name` like CONCAT('%',#{searchwhere},'%') 
+        or  tribetype.typename like CONCAT('%',#{searchwhere},'%') 
+	</select>
+	
+	
+	
+	<!-- 查询挂到部落的房源 -->
+	<select id="houseSearchToTribeCount" resultType="integer" >
+			SELECT
+				 count(1)
+			FROM
+				house
+			LEFT JOIN price ON house.price_id = price.priceid
+			WHERE
+				house.housestatus != '3'
+				and house.user_id = #{userid}
+	</select>
+	<select id="houseSearchToTribe" resultType="cn.com.qcc.queryvo.DetailCustomer" >
+				SELECT
+						house.housetitle title,
+						house.houseid detailid,
+						house.picture onepicture,
+						house.area,
+						house.property_id,
+						price.prices,
+						price.pricetype ,
+					  apartment.apartmentname
+					FROM
+						house
+					LEFT JOIN price ON house.price_id = price.priceid
+					LEFT JOIN apartment ON apartment.apartmentid = house.apartment_id
+					WHERE
+						house.housestatus not in ( 0 , 3 ) 
+					<if test="userid !=null"> AND house.user_id = #{userid}</if>
+					<if test="detailid !=null"> and house.houseid =#{detailid}</if>
+					ORDER BY house.update_time desc 
+				<if test="pagequery !=null ">
+			        limit #{pagequery.pagestart} , #{pagequery.pagesize}
+	           </if>  
+	</select>
+	
+	
+	
+	<!--  查询挂到部落的求租 -->
+	<select id="qiuzuSearchToTribeCount" resultType="integer" >
+			SELECT
+				 count(1)
+				FROM
+					qiuzu
+				WHERE
+					qiuzu.qiuzustatus = '1' and qiuzu.user_id = #{userid}
+	</select>
+	<select id="qiuzuSearchToTribe" resultType="cn.com.qcc.queryvo.DetailCustomer" >
+				SELECT
+					area.`name` trading,
+					qiuzu.caption title,
+					qiuzu.qiuzuid detailid,
+					qiuzu.classification ,
+					qiuzu.price prices,
+					'' onepicture,
+					'' pricetype ,
+					qiuzu.housetype apartmentname
+				FROM
+					qiuzu
+				LEFT JOIN area ON area.`code` = qiuzu.`code`
+				WHERE
+					qiuzu.qiuzustatus = '1'
+				
+				<if test="userid !=null">AND qiuzu.user_id = #{userid} </if>
+				<if test="detailid !=null"> and qiuzu.qiuzuid =#{detailid}</if>
+				ORDER BY qiuzu.update_time desc 
+				<if test="pagequery !=null ">
+			        limit #{pagequery.pagestart} , #{pagequery.pagesize}
+	           </if>  
+	</select>
+	
+	
+	
+	
+		<select id="detailSearchToTribe" resultType="cn.com.qcc.queryvo.DetailCustomer" >
+				SELECT
+					  articledetail.articledetailid detailid , 
+					  articledetail.title , 
+					  articledetail.picture onepicture ,
+					  IFNULL(MIN(releasetable.prices),'') prices ,
+					  '' pricestype , 
+                      articletype.typename apartmentname
+					FROM
+						articledetail
+					LEFT JOIN articletype on articledetail.onetypeid = articletype.onetypeid
+					LEFT JOIN releasetable on releasetable.articledetailid = articledetail.articledetailid 
+					where articledetail.articletypeid = #{type} 
+					<if test="userid !=null"> and articledetail.userid = #{userid} </if>
+					<if test="detailid !=null"> and articledetail.articledetailid =#{detailid}</if>
+					GROUP BY articledetail.articledetailid
+				<if test="pagequery !=null ">
+			        limit #{pagequery.pagestart} , #{pagequery.pagesize}
+	           </if>  
+	</select>
+	<select id="detailSearchToTribeCount" resultType="integer" >
+				SELECT
+					  count(1)
+					FROM
+						articledetail
+					where articledetail.articletypeid = #{type} 
+					and articledetail.userid = #{userid}
+	</select>
+	
+	
+	
+	<!-- 查询我关注的 -->
+	<select id="myfocus" resultType="cn.com.qcc.queryvo.ArticleDetailCustomer" >
+		SELECT  *   FROM (
+			SELECT
+				property.propertyname typename ,
+				apartment.apartmentname description ,
+				price.prices ,
+				price.pricetype , 
+				house.housetitle title,
+				'1' tabName,
+				house.houseid detailid,
+				house.picture ,
+				house.update_time ,
+			    `profile`.avatar ,
+				`profile`.user_name username ,
+				`profile`.user_id userid ,
+				1 articletypeid ,
+				 house.tribeids
+			FROM
+				house
+			LEFT JOIN `user` on house.user_id= `user`.userid
+		    LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+		    LEFT JOIN  price on price.priceid = house.price_id
+		    LEFT JOIN apartment on apartment.apartmentid = house.apartment_id
+		    LEFT JOIN property on house.property_id = property.propertyid
+			WHERE  house.user_id in 
+			(SELECT followUserId from fans where fans.userId = #{userid})
+			AND house.housestatus in (1 ,2 )
+			UNION
+			SELECT
+				'' typename ,
+				qiuzu.housetype description ,
+				ifnull(qiuzu.price,0.00)prices,
+				'' pricetype ,
+				IFNULL( qiuzu.classification ,qiuzu.caption ) title,
+				'1' tabName,
+				qiuzu.qiuzuid detailid,
+				'' picture ,
+				qiuzu.update_time ,
+				`profile`.avatar ,
+				`profile`.user_name username ,
+				`profile`.user_id userid , 
+				2 articletypeid ,
+				'' tribeids
+			FROM
+				qiuzu
+			LEFT JOIN `user` on qiuzu.user_id = `user`.userid
+			LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+			WHERE qiuzu.user_id in 
+			(SELECT followUserId from fans where fans.userId = #{userid})
+			And qiuzu.qiuzustatus in (1)
+			UNION
+			SELECT
+				'' typename ,
+				articledetail.description ,
+				IFNULL(MIN(releasetable.prices) ,0.00)prices,
+				'' pricetype ,
+				articledetail.title,
+				'1' tabName ,
+				articledetail.articledetailid detailid,
+			    articledetail.picture ,
+			    articledetail.update_time,
+			    `profile`.avatar ,
+				`profile`.user_name username ,
+				`profile`.user_id userid ,
+				articledetail.articletypeid ,
+				articledetail.tribeids
+			FROM  articledetail
+			LEFT JOIN `user` on articledetail.userid = `user`.userid
+		    LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+		    LEFT JOIN releasetable on releasetable.articledetailid = articledetail.articledetailid
+			WHERE  articledetail.userid in
+			  (SELECT followUserId from fans where fans.userId = #{userid})
+			  And articledetail.state in (1)
+		) ss
+						
+		ORDER BY ss.update_time desc 
+		 <if test="pagequery !=null ">
+			        limit #{pagequery.pagestart} , #{pagequery.pagesize}
+	     </if>  
+	</select>
+	
+	<select id="myfocusCount" resultType="integer" >
+		SELECT  count(1)   FROM (
+			SELECT
+				house.houseid detailid,
+				house.picture ,
+				house.update_time ,
+			    `profile`.avatar ,
+				`profile`.user_name ,
+				`profile`.user_id ,
+				1 articletypeid ,
+				 house.tribeids
+			FROM
+				house
+			LEFT JOIN `user` on house.user_id= `user`.userid
+		    LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+			WHERE  house.user_id in 
+			(SELECT followUserId from fans where fans.userId = #{userid})
+			AND house.housestatus in (1 ,2 )
+			UNION
+			SELECT
+				qiuzu.qiuzuid detailid,
+				'' picture ,
+				qiuzu.update_time ,
+				`profile`.avatar ,
+				`profile`.user_name ,
+				`profile`.user_id , 
+				2 articletypeid ,
+				'' tribeids
+			FROM
+				qiuzu
+			LEFT JOIN `user` on qiuzu.user_id = `user`.userid
+			LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+			WHERE qiuzu.user_id in 
+			(SELECT followUserId from fans where fans.userId = #{userid})
+			And qiuzu.qiuzustatus in (1)
+			UNION
+			SELECT
+				articledetail.articledetailid detailid,
+			    articledetail.picture ,
+			    articledetail.update_time,
+			    `profile`.avatar ,
+				`profile`.user_name ,
+				`profile`.user_id ,
+				articledetail.articletypeid ,
+				articledetail.tribeids
+			FROM  articledetail
+			LEFT JOIN `user` on articledetail.userid = `user`.userid
+		    LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+			WHERE  articledetail.userid in
+			  (SELECT followUserId from fans where fans.userId = #{userid})
+			    And articledetail.state in (1)
+		) ss
+	</select>
+	
+	
+	
+	
+	
+	<!-- 根据部落的ids查询部落信息 -->
+	<select id="searchtribebyids" resultType="cn.com.qcc.pojo.Tribe">
+			SELECT * from tribe where tribe.tribeid in 
+			<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+				
+	</select>
+</mapper>

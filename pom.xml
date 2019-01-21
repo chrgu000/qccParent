@@ -47,5 +47,6 @@
 	</build>
   <modules>
   	<module>qccCommon</module>
+  	<module>qccDao</module>
   </modules>
 </project>

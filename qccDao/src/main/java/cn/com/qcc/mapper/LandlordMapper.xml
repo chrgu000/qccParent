@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mapper.LandlordMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Landlord" >
+    <id column="landuserid" property="landuserid" jdbcType="BIGINT" />
+    <result column="identity" property="identity" jdbcType="VARCHAR" />
+    <result column="idpictures" property="idpictures" jdbcType="VARCHAR" />
+    <result column="realname" property="realname" jdbcType="VARCHAR" />
+    <result column="landstate" property="landstate" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="BIGINT" />
+    <result column="landaddress" property="landaddress" jdbcType="VARCHAR" />
+    <result column="update_time" property="update_time" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    landuserid, identity, idpictures, realname, landstate, code, landaddress, update_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.LandlordExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from landlord
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from landlord
+    where landuserid = #{landuserid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from landlord
+    where landuserid = #{landuserid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.com.qcc.pojo.LandlordExample" >
+    delete from landlord
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.com.qcc.pojo.Landlord" >
+  
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="landlordid" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into landlord (landuserid, identity, idpictures, 
+      realname, landstate, code, 
+      landaddress, update_time)
+    values (#{landuserid,jdbcType=BIGINT}, #{identity,jdbcType=VARCHAR}, #{idpictures,jdbcType=VARCHAR}, 
+      #{realname,jdbcType=VARCHAR}, #{landstate,jdbcType=INTEGER}, #{code,jdbcType=BIGINT}, 
+      #{landaddress,jdbcType=VARCHAR}, #{update_time,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Landlord" >
+  
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="landlordid" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into landlord
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="landuserid != null" >
+        landuserid,
+      </if>
+      <if test="identity != null" >
+        identity,
+      </if>
+      <if test="idpictures != null" >
+        idpictures,
+      </if>
+      <if test="realname != null" >
+        realname,
+      </if>
+      <if test="landstate != null" >
+        landstate,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="landaddress != null" >
+        landaddress,
+      </if>
+      <if test="update_time != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="landuserid != null" >
+        #{landuserid,jdbcType=BIGINT},
+      </if>
+      <if test="identity != null" >
+        #{identity,jdbcType=VARCHAR},
+      </if>
+      <if test="idpictures != null" >
+        #{idpictures,jdbcType=VARCHAR},
+      </if>
+      <if test="realname != null" >
+        #{realname,jdbcType=VARCHAR},
+      </if>
+      <if test="landstate != null" >
+        #{landstate,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=BIGINT},
+      </if>
+      <if test="landaddress != null" >
+        #{landaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="update_time != null" >
+        #{update_time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.com.qcc.pojo.LandlordExample" resultType="java.lang.Integer" >
+    select count(*) from landlord
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update landlord
+    <set >
+      <if test="record.landuserid != null" >
+        landuserid = #{record.landuserid,jdbcType=BIGINT},
+      </if>
+      <if test="record.identity != null" >
+        identity = #{record.identity,jdbcType=VARCHAR},
+      </if>
+      <if test="record.idpictures != null" >
+        idpictures = #{record.idpictures,jdbcType=VARCHAR},
+      </if>
+      <if test="record.realname != null" >
+        realname = #{record.realname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.landstate != null" >
+        landstate = #{record.landstate,jdbcType=INTEGER},
+      </if>
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=BIGINT},
+      </if>
+      <if test="record.landaddress != null" >
+        landaddress = #{record.landaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="record.update_time != null" >
+        update_time = #{record.update_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update landlord
+    set landuserid = #{record.landuserid,jdbcType=BIGINT},
+      identity = #{record.identity,jdbcType=VARCHAR},
+      idpictures = #{record.idpictures,jdbcType=VARCHAR},
+      realname = #{record.realname,jdbcType=VARCHAR},
+      landstate = #{record.landstate,jdbcType=INTEGER},
+      code = #{record.code,jdbcType=BIGINT},
+      landaddress = #{record.landaddress,jdbcType=VARCHAR},
+      update_time = #{record.update_time,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.Landlord" >
+    update landlord
+    <set >
+      <if test="identity != null" >
+        identity = #{identity,jdbcType=VARCHAR},
+      </if>
+      <if test="idpictures != null" >
+        idpictures = #{idpictures,jdbcType=VARCHAR},
+      </if>
+      <if test="realname != null" >
+        realname = #{realname,jdbcType=VARCHAR},
+      </if>
+      <if test="landstate != null" >
+        landstate = #{landstate,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=BIGINT},
+      </if>
+      <if test="landaddress != null" >
+        landaddress = #{landaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="update_time != null" >
+        update_time = #{update_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where landuserid = #{landuserid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Landlord" >
+    update landlord
+    set identity = #{identity,jdbcType=VARCHAR},
+      idpictures = #{idpictures,jdbcType=VARCHAR},
+      realname = #{realname,jdbcType=VARCHAR},
+      landstate = #{landstate,jdbcType=INTEGER},
+      code = #{code,jdbcType=BIGINT},
+      landaddress = #{landaddress,jdbcType=VARCHAR},
+      update_time = #{update_time,jdbcType=TIMESTAMP}
+    where landuserid = #{landuserid,jdbcType=BIGINT}
+  </update>
+</mapper>

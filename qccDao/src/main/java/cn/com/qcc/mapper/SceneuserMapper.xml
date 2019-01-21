@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mapper.SceneuserMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Sceneuser" >
+    <id column="sceneid" property="sceneid" jdbcType="INTEGER" />
+    <result column="comments" property="comments" jdbcType="VARCHAR" />
+    <result column="scene" property="scene" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="allcount" property="allcount" jdbcType="INTEGER" />
+    <result column="nearcount" property="nearcount" jdbcType="INTEGER" />
+    <result column="update_time" property="update_time" jdbcType="TIMESTAMP" />
+    <result column="ticket" property="ticket" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    sceneid, comments, scene, url, allcount, nearcount, update_time, ticket
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.SceneuserExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sceneuser
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sceneuser
+    where sceneid = #{sceneid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sceneuser
+    where sceneid = #{sceneid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.com.qcc.pojo.SceneuserExample" >
+    delete from sceneuser
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.com.qcc.pojo.Sceneuser" >
+   <selectKey  resultType="integer"  order="AFTER"  keyProperty="sceneid" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into sceneuser (sceneid, comments, scene, 
+      url, allcount, nearcount, 
+      update_time, ticket)
+    values (#{sceneid,jdbcType=INTEGER}, #{comments,jdbcType=VARCHAR}, #{scene,jdbcType=VARCHAR}, 
+      #{url,jdbcType=VARCHAR}, #{allcount,jdbcType=INTEGER}, #{nearcount,jdbcType=INTEGER}, 
+      #{update_time,jdbcType=TIMESTAMP}, #{ticket,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Sceneuser" >
+   <selectKey  resultType="integer"  order="AFTER"  keyProperty="sceneid" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into sceneuser
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sceneid != null" >
+        sceneid,
+      </if>
+      <if test="comments != null" >
+        comments,
+      </if>
+      <if test="scene != null" >
+        scene,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="allcount != null" >
+        allcount,
+      </if>
+      <if test="nearcount != null" >
+        nearcount,
+      </if>
+      <if test="update_time != null" >
+        update_time,
+      </if>
+      <if test="ticket != null" >
+        ticket,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sceneid != null" >
+        #{sceneid,jdbcType=INTEGER},
+      </if>
+      <if test="comments != null" >
+        #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="scene != null" >
+        #{scene,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="allcount != null" >
+        #{allcount,jdbcType=INTEGER},
+      </if>
+      <if test="nearcount != null" >
+        #{nearcount,jdbcType=INTEGER},
+      </if>
+      <if test="update_time != null" >
+        #{update_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ticket != null" >
+        #{ticket,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.com.qcc.pojo.SceneuserExample" resultType="java.lang.Integer" >
+    select count(*) from sceneuser
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sceneuser
+    <set >
+      <if test="record.sceneid != null" >
+        sceneid = #{record.sceneid,jdbcType=INTEGER},
+      </if>
+      <if test="record.comments != null" >
+        comments = #{record.comments,jdbcType=VARCHAR},
+      </if>
+      <if test="record.scene != null" >
+        scene = #{record.scene,jdbcType=VARCHAR},
+      </if>
+      <if test="record.url != null" >
+        url = #{record.url,jdbcType=VARCHAR},
+      </if>
+      <if test="record.allcount != null" >
+        allcount = #{record.allcount,jdbcType=INTEGER},
+      </if>
+      <if test="record.nearcount != null" >
+        nearcount = #{record.nearcount,jdbcType=INTEGER},
+      </if>
+      <if test="record.update_time != null" >
+        update_time = #{record.update_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.ticket != null" >
+        ticket = #{record.ticket,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sceneuser
+    set sceneid = #{record.sceneid,jdbcType=INTEGER},
+      comments = #{record.comments,jdbcType=VARCHAR},
+      scene = #{record.scene,jdbcType=VARCHAR},
+      url = #{record.url,jdbcType=VARCHAR},
+      allcount = #{record.allcount,jdbcType=INTEGER},
+      nearcount = #{record.nearcount,jdbcType=INTEGER},
+      update_time = #{record.update_time,jdbcType=TIMESTAMP},
+      ticket = #{record.ticket,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.Sceneuser" >
+    update sceneuser
+    <set >
+      <if test="comments != null" >
+        comments = #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="scene != null" >
+        scene = #{scene,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="allcount != null" >
+        allcount = #{allcount,jdbcType=INTEGER},
+      </if>
+      <if test="nearcount != null" >
+        nearcount = #{nearcount,jdbcType=INTEGER},
+      </if>
+      <if test="update_time != null" >
+        update_time = #{update_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ticket != null" >
+        ticket = #{ticket,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where sceneid = #{sceneid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Sceneuser" >
+    update sceneuser
+    set comments = #{comments,jdbcType=VARCHAR},
+      scene = #{scene,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      allcount = #{allcount,jdbcType=INTEGER},
+      nearcount = #{nearcount,jdbcType=INTEGER},
+      update_time = #{update_time,jdbcType=TIMESTAMP},
+      ticket = #{ticket,jdbcType=VARCHAR}
+    where sceneid = #{sceneid,jdbcType=INTEGER}
+  </update>
+  
+  
+  <select id="maxSceneId" resultType="integer">
+  	SELECT MAX(sceneid)+1 sceneid from  sceneuser
+  </select>
+  
+  <select id="getAllForverCode" resultType="cn.com.qcc.queryvo.WeiCustomer" >
+  		SELECT sceneuser.sceneid,sceneuser.comments,
+			f.allcount,t.currentcount ,sceneuser.url,sceneuser.ticket
+		from  sceneuser LEFT   JOIN  weixinUserInfo
+		on weixinUserInfo.ticket = sceneuser.ticket
+		LEFT JOIN (SELECT weixinUserInfo.ticket,count(1) currentcount FROM
+	      weixinUserInfo WHERE subscribeTime >= date(now()) AND subscribeTime  &lt; DATE_ADD(date(now()), INTERVAL 1 DAY)
+			and weixinUserInfo.subscribe='1'
+			GROUP BY weixinUserInfo.ticket
+			) t on weixinUserInfo.ticket = t.ticket
+		LEFT JOIN ( SELECT weixinUserInfo.ticket,count(1) allcount FROM weixinUserInfo
+		where 1=1 and weixinUserInfo.subscribe='1'
+        GROUP BY weixinUserInfo.ticket 
+		) f on f.ticket = weixinUserInfo.ticket GROUP BY sceneuser.sceneid
+		
+  </select>
+  
+  
+  
+  
+   <select id="getalluser" resultType="cn.com.qcc.queryvo.WeiCustomer" parameterType="integer">
+  		SELECT * from weixinUserInfo INNER   JOIN sceneuser 
+		on weixinUserInfo.ticket = sceneuser.ticket
+		 where sceneid = #{sceneid}
+		 ORDER BY weixinUserInfo.subscribeTime desc
+  </select>
+</mapper>

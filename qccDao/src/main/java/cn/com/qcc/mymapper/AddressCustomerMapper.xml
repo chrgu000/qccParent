@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.AddressCustomerMapper">
+	
+	<!-- 地址查询 -->
+	<select id="getarealist" resultType="cn.com.qcc.queryvo.AreaCustomer" parameterType="java.util.List">
+		SELECT *,ifnull(f.name,'中国') fname from area  
+		LEFT JOIN (SELECT * from area where code  in  
+		 <foreach item="item" collection="idsList" separator="," open="(" close=")" index="">    
+          #{item, jdbcType=VARCHAR}    
+        </foreach>    
+		  )f on area.parentId = f.code
+		where area.parentId in 
+		 <foreach item="item" collection="idsList" separator="," open="(" close=")" index="">    
+          #{item, jdbcType=VARCHAR}    
+        </foreach> 
+		
+	</select>
+	
+	<!-- 地铁查询 -->
+	<select id="metrosearch"  resultType="cn.com.qcc.queryvo.MetroCustomer">
+		SELECT metro.`code`,metro.metroid,metro.finalstop,area.`name` cityname ,metro.`name` from metro 
+		LEFT JOIN area on metro.`code` = area.`code`
+ 		where metro.code like CONCAT('',#{code},'%')
+ 		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+	    </if>
+	</select>   
+	<select id="metrosearchCount" parameterType="long" resultType="integer">
+		SELECT count(1) from metro 
+		LEFT JOIN area on metro.`code` = area.`code`
+ 		where metro.code like CONCAT('',#{code},'%')
+	</select>
+	
+	
+	<!-- 根据条件查询地铁-->
+	<select id="searchbycodeandfinalstop" parameterType="cn.com.qcc.pojo.Metro" resultType="cn.com.qcc.pojo.Metro">
+ 		SELECT * from metro where 
+ 		`code`  like CONCAT('',#{code},'%') and 
+ 		finalstop like CONCAT('%',#{finalstop},'%')
+	</select>
+
+
+	<!-- 根据条件查询地铁-->
+	<select id="metrobyname" parameterType="cn.com.qcc.pojo.Metro" resultType="cn.com.qcc.pojo.Metro">
+ 		SELECT code,name from metro  where code = #{code} GROUP BY name 
+	</select>
+	
+	<!-- 根据条件查询地铁-->
+	<select id="metrodetail" parameterType="cn.com.qcc.pojo.Metro" resultType="cn.com.qcc.pojo.Metro">
+ 		SELECT * from metro where code = #{code} and name = #{name}
+	</select>
+	
+	<!-- 查询类目和附近房源一起 -->
+	<select id="getneardetail" resultType="cn.com.qcc.queryvo.HouseCustomer" parameterType="cn.com.qcc.queryvo.HouseVo">
+	SELECT a.*,`profile`.avatar ,`profile`.user_name ,`user`.telephone from (
+		<if test="houseCustomer !=null"> 
+			<if test="houseCustomer.schedule == null ">
+					SELECT 
+			articledetail.articledetailid houseid ,
+			articletype.typename housetitle ,
+			articledetail.update_time ,
+			articledetail.picture onepicture ,
+			articledetail.userid user_id ,
+			articledetail.prices ,
+			'元' pricetype ,
+			IFNULL(bro.bcount,'0')bcount , 
+			IFNULL(zan.zcount,'0') zcount,
+			IFNULL(mess.mcount,'0')mcount,
+		    articledetail.detailid ,
+			t.detailes identity ,
+		    articledetail.code  ,
+			articledetail.description  ,
+			t.juli,
+			articletype.type ,
+			IFNULL(typedetail.detailname,'') detailname ,
+			'11' schedule
+		from articledetail 	
+			LEFT JOIN articletype on articledetail.articletypeid = articletype.articletypeid 
+			INNER JOIN	 (SELECT  articledetail.articledetailid ,detaileaddress.detailes
+				<!-- 导入距离 -->
+				<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli" />
+			from articledetail 
+			 LEFT JOIN detaileaddress on articledetail.detailid = detaileaddress.detailid
+			)t  on articledetail.articledetailid = t.articledetailid
+			LEFT JOIN (SELECT SUM(bcount) bcount ,browse.otherid FROM browse WHERE browse.type = 11 GROUP BY browse.otherid )bro 
+			on bro.otherid = articledetail.articledetailid
+			LEFT JOIN (SELECT COUNT(1)zcount ,zan.otherid  from zan  where type = '11' GROUP BY otherid) zan 
+			on zan.otherid = articledetail.articledetailid
+			LEFT JOIN (SELECT COUNT(1)mcount ,messages.house_id otherid from messages  where type = '11' GROUP BY messages.house_id)mess
+			on mess.otherid = articledetail.articledetailid
+			LEFT JOIN typedetail on typedetail.typedetailid = articledetail.typedetailid
+			where articletype.type = '11' and articledetail.state = '1' <!-- 这里只查家具建材之内的增值服务 -->
+		    union  all 
+			</if>
+		</if> 
+		SELECT 
+			house.houseid  ,
+			house.housetitle ,
+			house.update_time  ,
+			house.picture onepicture,
+			house.user_id  , 
+			price.prices ,
+			price.pricetype ,
+			IFNULL(bro.bcount,'0')bcount , 
+			IFNULL(zan.zcount,'0') zcount,
+			IFNULL(mess.mcount,'0')mcount,
+			building.detailid ,
+			building.identity,
+			village.`code` ,
+			house.description ,
+			t.juli,
+			'0' type  ,
+			''  detailname ,
+			IFNULL(house.`schedule`,2) schedule
+		 from house
+			LEFT JOIN price on house.price_id = price.priceid
+			LEFT JOIN building on house.buildingid = building.buildingid
+			LEFT JOIN village on village.villageid = building.villageid
+			INNER JOIN	 (SELECT  building.buildingid 
+					<!-- 导入距离 -->
+					<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli" />
+			from building 
+			 LEFT JOIN detaileaddress on building.detailid = detaileaddress.detailid
+			)t  on house.buildingid = t.buildingid
+			LEFT JOIN (SELECT SUM(bcount) bcount ,browse.otherid FROM browse WHERE browse.type = 1 GROUP BY browse.otherid )bro 
+			on bro.otherid = house.houseid 
+			LEFT JOIN (SELECT COUNT(1)zcount ,zan.otherid  from zan  where type = 1 GROUP BY otherid) zan 
+			on zan.otherid = house.houseid 
+			LEFT JOIN (SELECT COUNT(1)mcount ,messages.house_id otherid from messages  where type = 1 GROUP BY messages.house_id)mess
+			on mess.otherid = house.houseid 
+			where house.houstatus = '1' and house.housestatus = '1'
+			<!-- 房源的查询条件 -->
+			<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where" />
+		) a 
+		inner JOIN `profile` on a.user_id = `profile`.user_id 
+		INNER JOIN `user` on `user`.userid = `profile`.user_id
+		<if test="orderbytime !=null and orderbytime !=''"> 	ORDER BY  a.update_time desc </if>
+		<if test="orderbyjuli !=null and orderbyjuli !=''"> 	ORDER BY  a.juli asc , a.update_time desc </if>
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+	</if>
+	</select>
+	
+	<!-- 查询类目和附近房源一起 -->
+	<select id="getneardetailCount" resultType="integer" parameterType="cn.com.qcc.queryvo.HouseVo">
+			SELECT COUNT(1) from (
+			<if test="houseCustomer !=null">
+				<if test="houseCustomer.schedule ==null">
+					SELECT 
+						articledetail.articledetailid houseid 
+					from articledetail 	
+						LEFT JOIN articletype on articledetail.articletypeid = articletype.articletypeid 
+						where articletype.type = '11' and articledetail.state = '1'
+					union  all 
+				
+				</if>
+			</if>
+		SELECT 
+			house.houseid  
+		 from house
+			LEFT JOIN price on house.price_id = price.priceid
+			LEFT JOIN building on house.buildingid = building.buildingid
+			LEFT JOIN village on village.villageid = building.villageid
+			where house.houstatus = '1' and house.housestatus = '1'
+			<!-- 房源的查询条件 -->
+			<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where" />
+		) a 
+	</select>
+	
+	<!-- 品牌询 -->
+	<select id="getlikebrand" parameterType="string" resultType="cn.com.qcc.pojo.Brand">
+		select *  from brand
+ 		where 1=1  
+ 		<if test="likename !=null and likename != '' ">
+ 			and   brand.brand like CONCAT('%',#{likename},'%')
+ 		</if>
+ 		 and (
+ 			brand.codes = '0' or brand.codes like CONCAT('',#{likecode},'%')
+ 		) and brand.state != '3'
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<select id="getredecoraListBybuilid" parameterType="long" resultType="cn.com.qcc.queryvo.HouseCustomer">
+			SELECT buildingid, redecorat from house where buildingid = #{buildingid}
+	</select>
+	<select id="getproperListBybuilid" parameterType="long" resultType="cn.com.qcc.queryvo.HouseCustomer">
+			SELECT housetag_id , buildingid from house
+			<if test="buildingid !=null">
+				where buildingid = #{buildingid}
+			</if>
+	</select>
+	<select id="getapartmentnameListBybuilid" parameterType="long" resultType="cn.com.qcc.queryvo.HouseCustomer">
+			SELECT buildingid , apartmentname from house 
+			LEFT JOIN apartment on apartment.apartmentid = house.apartment_id
+		<if test="buildingid !=null">
+				where buildingid = #{buildingid}
+			</if>
+	</select>
+	<select id="getpayListBybuilid" parameterType="long" resultType="cn.com.qcc.queryvo.HouseCustomer">
+			SELECT buildingid, paystyle from house 
+		<if test="buildingid !=null">
+				where buildingid = #{buildingid}
+			</if>
+	</select>
+	<select id="getCountAndpricesBybuilid" parameterType="long" resultType="cn.com.qcc.queryvo.HouseCustomer">
+		SELECT ifnull( COUNT(1),0)floor , IFNULL( MIN(price.prices),10)prices ,buildingid from house
+	LEFT JOIN price on house.price_id = price.priceid
+	        <if test="buildingid !=null">
+				where buildingid = #{buildingid}
+			</if>
+			GROUP BY buildingid
+	</select>
+	
+	
+	<select id="getFatherCodeBycode" resultType="string">
+			SELECT parentId from area where area.`code` = #{code}
+	</select>
+</mapper>

@@ -1,0 +1,1625 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.HouseCustomerMapper" >
+ 		
+ 	<!-- 根据查询条件查询房态图 -->	
+ 	<select id="roompattern" resultType="cn.com.qcc.queryvo.HouseCustomer" parameterType="cn.com.qcc.queryvo.HouseVo">
+ 			SELECT house.houseid ,
+			price.prices ,
+			IFNULL(house.floor,'1')floor , house.housestatus,
+			house.buildingid , 
+			house.house_number,
+			house.update_time,
+			usercent.usercentnum,
+			IFNULL(paycent.cenntstate,'')centstate,
+			IFNULL(paymargin.managerstate,'')managerstate,
+			IFNULL(payother.otherpricespay,'0')otherpricespay,
+			IFNULL(payothernot.otherpricesnotpay,'0')otherpricesnotpay,
+			IFNULL(paycent.centprices,'')centprices,
+			IFNULL(paymargin.centprices,'') marginprices,
+			IFNULL(apartment.apartmentname,'') apartmentname ,
+			IFNULL(`user`.telephone,'')telephone,
+			IFNULL(`profile`.real_name,house.house_number)realname ,
+			IFNULL(payothernot.needpaytime,paycent.create_time)  needpaytime ,
+			usercent.end_time cententtime,
+			ifnull(housebuilding.housecount,'0')housecount,
+			ifnull(housebuilding.name,'')trading,
+			ifnull(housebuilding.villagename,'')villagename,
+			ifnull(housebuilding.building,'')building
+			from house
+			LEFT JOIN price on price.priceid = house.price_id
+			LEFT JOIN apartment on house.apartment_id = apartment.apartmentid
+		
+	        <!-- 这里是查询租金和租金需要缴费时间 账单状态为当前账单-->
+			LEFT JOIN ( 
+			SELECT house.houseid ,housepay.centprices ,housepay.paystate cenntstate,housepay.usercentid , 
+				MIN(housepay.create_time) create_time
+			from 
+				house LEFT JOIN housepay on house.houseid = housepay.houseid
+				where housepay.financeid = 29 and housepay.currentstate = 1 GROUP BY housepay.usercentid
+			) paycent on paycent.houseid = house.houseid
+
+			<!-- 这里主要查询合约的截止时间 合约的状态为当前租约 -->
+			LEFT JOIN (
+				SELECT house.houseid ,usercent.end_time ,historycent.historycenturl
+				 ,usercent.userid ,usercent.usercentnum from house 
+				LEFT JOIN usercent on usercent.houseid = house.houseid
+				LEFT JOIN historycent on usercent.usercentid = historycent.usercentid
+				where usercent.userstete = 1 and usercent.centstate not in (3 ,4 )
+			) usercent on usercent.houseid = house.houseid
+			LEFT JOIN `user` on `user`.userid = usercent.userid
+			LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+			
+            <!-- 这里查询其他金额已经支付的情况下。这里特别注意要查某一个月的？还是之前的 -->
+            LEFT JOIN (
+				    SELECT house.houseid ,SUM(housepay.centprices)otherpricespay   from 
+				house LEFT JOIN housepay on house.houseid = housepay.houseid
+				where housepay.financeid  not in (29,30 )  
+				and housepay.paystate = 2 
+				and housepay.create_time > #{start_time}
+				and housepay.create_time <![CDATA[<=#{end_time}]]> 
+				GROUP BY house.houseid
+			) payother on payother.houseid = house.houseid
+
+	        <!-- 这里要查询未支付的金额 --> 
+			LEFT JOIN (
+				SELECT MIN(housepay.create_time)needpaytime, house.houseid ,SUM(housepay.centprices)otherpricesnotpay   from 
+				house LEFT JOIN housepay on house.houseid = housepay.houseid
+				where housepay.financeid  not in (29,30 ) 
+				and housepay.paystate = 1 and housepay.currentstate = 1 
+				and housepay.create_time <![CDATA[<=#{end_time}]]> 
+				GROUP BY house.houseid 
+			) payothernot on payothernot.houseid = house.houseid
+			
+	        <!-- 这里统计押金  -->
+			LEFT JOIN (
+				SELECT house.houseid ,housepay.centprices ,housepay.paystate managerstate from 
+			house LEFT JOIN housepay on house.houseid = housepay.houseid
+			where housepay.financeid = 30 and housepay.currentstate = 1
+			) paymargin on paymargin.houseid = house.houseid 
+			
+            <!--  这里统计房源数量和基本信息 -->
+             left join (
+				SELECT house.buildingid ,building.building,COUNT(1)housecount ,village.villagename,area.`name`
+				from house LEFT JOIN building on house.buildingid = building.buildingid
+				LEFT JOIN village on building.villageid = village.villageid
+				LEFT JOIN area on village.`code` = area.`code`
+				where house.housestatus  !=3 and house.houstatus = '1' and house.user_id = #{userid}
+			GROUP BY building.buildingid 
+			) housebuilding on housebuilding.buildingid = house.buildingid
+			where house.user_id = #{userid} and house.houstatus = '1' and house.housestatus != '3'
+	 
+		<!-- 这里封装房源的查询条件 --> 
+ 	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_roomparrent_where"></include>
+ 	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"></include>
+ 	 	
+		ORDER BY house.buildingid ,house.floor
+		<!-- 分页的查询条件 -->
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+ 	</select>
+ 	
+ 	
+ 	<!-- 根据查询条件查询房态图count -->	
+ 	<select id="roompatternCount" resultType="integer" parameterType="cn.com.qcc.queryvo.HouseVo">
+ 			SELECT count(1)
+			from house
+			LEFT JOIN price on price.priceid = house.price_id
+			LEFT JOIN apartment on house.apartment_id = apartment.apartmentid
+		
+	        <!-- 这里是查询租金和租金需要缴费时间 账单状态为当前账单-->
+			LEFT JOIN ( 
+			SELECT house.houseid ,housepay.centprices ,housepay.paystate cenntstate,housepay.usercentid , 
+				MIN(housepay.create_time) create_time
+			from 
+				house LEFT JOIN housepay on house.houseid = housepay.houseid
+				where housepay.financeid = 5 and housepay.currentstate = 1 GROUP BY housepay.usercentid
+			) paycent on paycent.houseid = house.houseid
+
+			<!-- 这里主要查询合约的截止时间 合约的状态为当前租约 -->
+			LEFT JOIN (
+				SELECT house.houseid ,usercent.end_time ,historycent.historycenturl
+				 ,usercent.userid ,usercent.usercentnum from house 
+				LEFT JOIN usercent on usercent.houseid = house.houseid
+				LEFT JOIN historycent on usercent.usercentid = historycent.usercentid
+				where usercent.userstete = 1 
+			) usercent on usercent.houseid = house.houseid
+			LEFT JOIN `user` on `user`.userid = usercent.userid
+			LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+			
+            <!-- 这里查询其他金额已经支付的情况下。这里特别注意要查某一个月的？还是之前的 -->
+            LEFT JOIN (
+				    SELECT house.houseid ,SUM(housepay.centprices)otherpricespay   from 
+				house LEFT JOIN housepay on house.houseid = housepay.houseid
+				where housepay.financeid  not in (29,30 )  
+				and housepay.paystate = 2 
+				and housepay.create_time > #{start_time}
+				and housepay.create_time <![CDATA[<=#{end_time}]]> 
+				GROUP BY house.houseid
+			) payother on payother.houseid = house.houseid
+
+	        <!-- 这里要查询未支付的金额 --> 
+			LEFT JOIN (
+				SELECT MIN(housepay.create_time)needpaytime, house.houseid ,SUM(housepay.centprices)otherpricesnotpay   from 
+				house LEFT JOIN housepay on house.houseid = housepay.houseid
+				where housepay.financeid  not in (29,30) 
+				and housepay.paystate = 1 and housepay.currentstate = 1 
+				and housepay.create_time <![CDATA[<=#{end_time}]]> 
+				GROUP BY house.houseid 
+			) payothernot on payothernot.houseid = house.houseid
+			
+	        <!-- 这里统计押金  -->
+			LEFT JOIN (
+				SELECT house.houseid ,housepay.centprices ,housepay.paystate managerstate from 
+			house LEFT JOIN housepay on house.houseid = housepay.houseid
+			where housepay.financeid = 30 and housepay.currentstate = 1
+			) paymargin on paymargin.houseid = house.houseid 
+			
+            <!--  这里统计房源数量和基本信息 -->
+             left join (
+				SELECT house.buildingid ,building.building,COUNT(1)housecount ,village.villagename,area.`name`
+				from house LEFT JOIN building on house.buildingid = building.buildingid
+				LEFT JOIN village on building.villageid = village.villageid
+				LEFT JOIN area on village.`code` = area.`code`
+				where house.housestatus  !=3 and house.houstatus = '1' and house.user_id = #{userid}
+			GROUP BY building.buildingid 
+			) housebuilding on housebuilding.buildingid = house.buildingid
+			where house.user_id = #{userid} and house.houstatus = '1' and house.housestatus != '3'
+	 
+		<!-- 这里封装房源的查询条件 --> 
+ 	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_roomparrent_where"></include>
+ 	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"></include>
+ 	</select>
+ 	
+ 		
+ 	<!-- 动态获取支付类型计算租金和押金 -->
+ 	<select id="paymodals" resultType="cn.com.qcc.pojo.Paymodal">
+ 		SELECT * from paymodal ORDER BY paymodal.state ,paymodal.multiple asc 
+ 	</select>
+ 	
+ 	<!-- 计算收租日的格式分组-->
+ 	<select id="collectrents" resultType="cn.com.qcc.queryvo.RentmodalCustomer">
+ 		SELECT rentmodalid value , rentname text from rentmodal where fatherid = 0
+ 	</select>
+ 	
+ 	<!-- 计算收租日的父节点查询子节点-->
+ 	<select id="collectrentsson" resultType="cn.com.qcc.queryvo.RentmodalCustomer" parameterType="integer">
+ 		SELECT rentmodalid value, rentname text  from rentmodal where fatherid = #{fatherid} 
+ 		ORDER BY rentname+0 asc    
+ 	</select>
+ 	
+ 	<!-- 查询其他费用的分组-->
+ 	<select id="otherprices" resultType="cn.com.qcc.queryvo.RentmodalCustomer">
+ 		SELECT financeid value , categoryname text from finance where fatherid = 0 and financeid in (2,3,4)
+ 	</select>
+ 	
+ 	<!-- 其他价格查询的查询子节点-->
+ 	<select id="otherpricesson" resultType="cn.com.qcc.queryvo.RentmodalCustomer" parameterType="integer">
+ 		SELECT finance.financeid value ,
+				finance.categoryname text
+			from finance JOIN (
+			SELECT financeid fid ,categoryname fname from finance where financeid  in (
+			SELECT financeid from finance where fatherid = 1
+		) and financeid  ${order}
+		) ffd on ffd.fid = finance.fatherid
+		where finance.financeid not in (29 ,30)
+ 	</select>
+ 	
+ 	<!-- 查询更多的总分类-->
+ 	<select id="furniturelist" resultType="cn.com.qcc.queryvo.FurnitureCustomer" >
+ 		SELECT furnitureid , categoryname from furniture where fatherid = 0
+			ORDER BY furnitureid desc  
+ 	</select>
+ 	
+ 	<!-- 查询更多的小分类-->
+ 	<select id="furnituredetaillist" resultType="cn.com.qcc.queryvo.FurnitureCustomer" parameterType="long" >
+ 		SELECT furniture.furnitureid,
+				furniture.categoryname,
+				ffd.fname,
+				ffd.fid fatherid
+			from furniture JOIN (
+			SELECT furnitureid fid ,categoryname fname from furniture where furnitureid  in (
+			SELECT furnitureid from furniture where fatherid = #{furnitureid}
+		) 
+		) ffd on ffd.fid = furniture.fatherid
+		
+ 	</select>
+ 	
+ 	<!-- -->
+	<select id="furnituresbyids" parameterType="java.util.List"
+		resultType="cn.com.qcc.pojo.Furniture">
+		SELECT * from furniture where furnitureid in
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+	</select>
+	
+		<!-- -->
+	<select id="rentpaymodal" parameterType="long"
+		resultType="cn.com.qcc.queryvo.HouseCustomer">
+		SELECT * FROM rentmodal 
+		 LEFT JOIN (SELECT rentname fname , rentmodalid fid  from rentmodal) rent on rentmodal.fatherid = rent.fid
+		WHERE rentmodalid =#{rentmodalid}
+	</select>
+	
+		<!-- 催租吧-->
+	<select id="needpaycentlist" parameterType="cn.com.qcc.queryvo.HouseCustomer"
+		resultType="cn.com.qcc.queryvo.HouseCustomer">
+		SELECT MIN(housepay.create_time)needpaytime ,
+			payexpert.state payexstate ,house.house_number ,building.building ,house.buildingid,
+			village.villagename
+		  from housepay 
+			INNER JOIN payexpert on payexpert.payexpertid = housepay.payexpertid 
+			INNER JOIN usercent on usercent.usercentid = housepay.usercentid
+			INNER JOIN house on usercent.houseid = house.houseid 
+			INNER JOIN building on house.buildingid = building.buildingid
+			INNER JOIN village on building.villageid = village.villageid
+			where housepay.paystate = 1 and house.user_id = #{userid}
+			GROUP BY housepay.usercentid  
+		ORDER BY housepay.create_time asc  ,building.buildingid asc   
+	</select>
+	
+	<!-- 先查同一天的楼栋和时间-->
+	<select id="grouptimeandbuilding" parameterType="cn.com.qcc.queryvo.HouseCustomer"
+		resultType="cn.com.qcc.queryvo.HouseCustomer">
+			SELECT DISTINCT MIN(housepay.create_time)needpaytime ,
+			building.building ,house.buildingid,
+			village.villagename ,
+			housepay.usercentid 
+		  from housepay 
+			INNER JOIN payexpert on payexpert.payexpertid = housepay.payexpertid 
+			INNER JOIN usercent on usercent.usercentid = housepay.usercentid
+			INNER JOIN house on usercent.houseid = house.houseid 
+			INNER JOIN building on house.buildingid = building.buildingid
+			INNER JOIN village on building.villageid = village.villageid
+			where housepay.paystate = 1 and house.user_id = #{userid} 
+			<if test="start_time !=null">
+				and housepay.create_time >= #{start_time}
+			</if>
+			<if test="end_time !=null">
+				 and housepay.create_time <![CDATA[<=#{end_time}]]> 
+			</if>
+			GROUP BY housepay.usercentid  
+		ORDER BY housepay.create_time asc  ,building.buildingid asc   
+	</select>
+	
+	<!-- 先查同一天的楼栋和时间-->
+	<select id="grouptimeandtime" parameterType="cn.com.qcc.queryvo.HouseCustomer"
+		resultType="cn.com.qcc.queryvo.HouseCustomer">
+			SELECT DISTINCT MIN(housepay.create_time)needpaytime 
+		  from housepay 
+			INNER JOIN payexpert on payexpert.payexpertid = housepay.payexpertid 
+			INNER JOIN usercent on usercent.usercentid = housepay.usercentid
+			INNER JOIN house on usercent.houseid = house.houseid 
+			INNER JOIN building on house.buildingid = building.buildingid
+			INNER JOIN village on building.villageid = village.villageid
+			where housepay.paystate = 1 and house.user_id = #{userid}
+			<if test="start_time !=null">
+				and housepay.create_time >= #{start_time}
+			</if>
+			<if test="end_time !=null">
+				 and housepay.create_time <![CDATA[<=#{end_time}]]> 
+			</if>
+			GROUP BY housepay.usercentid  
+		ORDER BY housepay.create_time asc  ,building.buildingid asc   
+	</select>
+	
+	
+	
+	<!-- 根据房东ID查询出对应区域分组-->
+	<select id="getlandareaname" parameterType="cn.com.qcc.queryvo.BuildingCustomer"
+		resultType="cn.com.qcc.queryvo.BuildingCustomer">
+		SELECT area.`code` ,area.`name` trading from area where area.`code` in (
+			SELECT area.parentId from area where area.`code` in (
+		SELECT  DISTINCT village.`code`  from house LEFT JOIN building on house.buildingid = building.buildingid
+			LEFT JOIN village on building.villageid = village.villageid 
+		where house.user_id = #{userid} and village.`code` is not null 
+		) 
+		)
+	</select>
+	
+	<!-- 根据房东ID查询出楼栋列表-->
+	<select id="getlandbuildingname" parameterType="cn.com.qcc.queryvo.BuildingCustomer"
+		resultType="cn.com.qcc.queryvo.BuildingCustomer">
+				SELECT building.building ,village.villagename ,building.buildingid,
+			detaileaddress.detailes
+		 from building 
+			INNER JOIN village on building.villageid = village.villageid
+			and building.buildingid in (
+			SELECT DISTINCT house.buildingid from house where house.user_id = #{userid}
+		)
+		<if test="code != null and code !=''">
+			 and village.`code` like  CONCAT('',#{code},'%')
+		</if>
+		  INNER JOIN detaileaddress on detaileaddress.detailid = building.detailid
+	</select>
+	
+	<!-- 根据房东ID和楼栋Id查询对应的房源信息-->
+	<select id="housebybuildingid" parameterType="cn.com.qcc.queryvo.HouseCustomer"
+		resultType="cn.com.qcc.queryvo.HouseCustomer">
+				SELECT house.buildingid ,house.house_number ,house.picture , house.houseid ,
+			IFNULL(hydcoal.unitprice,'未配置')rentname
+			from house 
+			LEFT JOIN hydcoal on house.houseid = hydcoal.houseid
+			where house.buildingid = #{buildingid} and house.user_id = #{userid} 
+			and house.houstatus = '1'
+			<if test="housestatus !=null and housestatus != '' ">
+				and house.housestatus = #{housestatus}
+			</if>
+			GROUP BY house.houseid
+	</select>
+	
+	
+	<!-- 查询当前租约下一级交过的房租-->
+	<select id="centpricespay" parameterType="long"
+		resultType="double">
+		SELECT IFNULL(SUM(housepay.centprices),'0')  from housepay where housepay.financeid  in (
+			SELECT financeid from finance where fatherid = 6
+		) and housepay.houseid = #{houseid} and housepay.paystate = 2 
+				
+	</select>
+	
+	<!-- 查询当前房源下除出租价和押金的其他费用总和-->
+	<select id="centpricesnotpay" parameterType="cn.com.qcc.queryvo.HouseCustomer"
+		resultType="double">
+		SELECT IFNULL(SUM(housepay.centprices),'0')  from housepay where housepay.financeid not in (
+			SELECT financeid from finance where fatherid =6
+		) and housepay.houseid = #{houseid} and housepay.paystate =1 
+		and housepay.create_time <![CDATA[<=#{currentday}]]>   and housepay.financeid !=29
+	</select>
+	
+	<!-- 查询多收的费用总和-->
+	<select id="centpricespayout" parameterType="cn.com.qcc.queryvo.HouseCustomer"
+		resultType="double">
+		SELECT IFNULL(SUM(housepay.centprices),'0')  from housepay 
+			where housepay.houseid = 638  and housepay.paystate = 2 
+		and housepay.create_time >  #{currentday}
+	</select>
+	
+	<!-- 查询当前房源下除出租价和押金的其他费用总和-->
+	<select id="centpricesnow" parameterType="cn.com.qcc.queryvo.HouseCustomer"
+		resultType="cn.com.qcc.queryvo.HouseCustomer">
+	SELECT     payexpert.start_time  create_time,
+		       payexpert.end_time update_time,
+	           housepay.paystate payexstate ,
+               housepay.centprices ,
+	           payexpert.payexpertid ,
+			   house.house_number ,
+			   house.floor ,
+			   building.building , 
+			   village.villagename ,
+			   `profile`.real_name realname ,
+			   usercent.start_time ,
+			   usercent.end_time
+		 from housepay 
+		inner JOIN payexpert on housepay.payexpertid = payexpert.payexpertid
+		INNER JOIN usercent on usercent.usercentid = housepay.usercentid
+		INNER JOIN house on house.houseid = housepay.houseid
+		INNER JOIN building on house.buildingid = building.buildingid
+		INNER JOIN village on building.villageid = village.villageid
+		INNER JOIN `profile` on `profile`.user_id = usercent.userid
+	where housepay.houseid =#{houseid} and housepay.financeid = 29 
+	and housepay.create_time <![CDATA[<=#{currentday}]]>  ORDER BY housepay.create_time asc  LIMIT 0 ,1
+	</select>
+	
+	<!-- 当前房子的租约为历史租约-->
+	<select id="usercentbehistory" parameterType="long">
+			UPDATE usercent set centstate = 4 where houseid = #{houseid} and centstate  !=3
+	</select>
+	
+	<!-- 设置相关账单为历史账单-->
+	<select id="housepaybehistory" parameterType="long">
+			UPDATE housepay set housepay.paystate = 2 , currentstate = 2  
+				where housepay.houseid = #{houseid}
+	</select>
+	
+	
+	<!-- ================================================================================================================== -->
+	
+	
+	<!--按时间排序显示房源 -->
+	<select id="findHousebycondition" parameterType="cn.com.qcc.queryvo.HouseVo"
+		resultType="cn.com.qcc.queryvo.HouseCustomer">
+		
+		select * from (
+		select t.* ,IFNULL(brand.brand , '')brand 
+		<if test="userid !=null">
+			<!-- 导入距离 -->
+			<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli"/>
+		</if>
+		 from (
+		select	`profile`.avatar,`profile`.user_name,house.area,ifnull(building.brandid , house.brandid)brandid ,
+		 house.housestatus,house.houstatus,house.house_number,house.update_time,IFNULL(house.`schedule`,'2')schedule,
+		house.housetitle,area.`name`,village.villagename,house.houseid,house.redecorat,`profile`.user_id,
+		house.picture,price.prices,price.pricetype,IFNULL(house.paystyle,'')paystyle,house.picture onepicture,
+		IFNULL(apartment.apartmentname,'')apartmentname,building.building ,building.detailid ,metro.`name` metroname ,metro.finalstop
+		from house
+		left join housetag 	on house.housetag_id=housetag.housetagid
+		left join building on house.buildingid=building.buildingid
+		left join user on house.user_id=user.userid
+		left join profile on house.user_id=profile.user_id
+		left join property on house.property_id=property.propertyid
+		left join price on house.price_id=price.priceid
+		left join apartment 	on house.apartment_id=apartment.apartmentid
+		inner join village on village.villageid=building.villageid
+		inner JOIN area on area.`code` = village.`code`
+		LEFT JOIN metro on metro.metroid = building.metroid
+		where housestatus='1' and
+		houstatus='1' 
+		
+		<!-- 房间的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"/>
+		<!-- 价格的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_price_where"/>
+		<!-- 房屋类型的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_property_where"/>
+		<!-- 房屋几室几厅的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_apartment_where"/>
+		<!-- 小区的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where"/>
+		<!-- buildin的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_metro_where"/>
+		<!-- 地区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_area_where"/>
+		) t Left JOIN detaileaddress ON detaileaddress.detailid = t.detailid 
+		    left JOIN brand on t.brandid = brand.brandid) t
+		
+		where 1=1
+		<if test="juli !=null and juli != ''">
+			and  t.juli <![CDATA[   <=  ]]> #{ juli}
+		</if>
+		ORDER BY 
+		
+		<if test="orderbyjuli !=null and orderbyjuli !=''">
+			 t.juli ${orderbyjuli} ,
+		</if>
+		<if test="houseCustomer!=null">
+			<if test="houseCustomer.desc !=null and houseCustomer.desc !='' ">
+			 t.prices desc,
+			</if>
+			<if test="houseCustomer.asc !=null and houseCustomer.asc !='' ">
+			t.prices asc,
+			</if>
+		</if>
+		t.update_time desc
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+
+	</select>
+	
+	
+	<!--按时间排序显示房源 -->
+	<select id="findoldhouse" parameterType="cn.com.qcc.queryvo.HouseVo"
+		resultType="cn.com.qcc.queryvo.HouseCustomer">
+		select
+		*,house.redecorat,user.telephone,profile.*,price.prices,property.propertyname,apartment.apartmentname,village.*
+		,house.area*price.prices as houseprice
+		<if test="userid !=null">
+			<!-- 导入距离 -->
+			, metro.name metroname ,metro.finalstop<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli"/>
+		</if>
+		from house
+		left join housetag 	on house.housetag_id=housetag.housetagid
+		left join building on house.buildingid=building.buildingid
+		left join user on house.user_id=user.userid
+		left join profile on house.user_id=profile.user_id
+		left join property on house.property_id=property.propertyid
+		left join price on house.price_id=price.priceid
+		left join apartment 	on house.apartment_id=apartment.apartmentid
+		inner join village on village.villageid=building.villageid
+		inner JOIN area on area.`code` = village.`code`
+		INNER JOIN  metro ON metro.metroid = building.metroid
+		<if test="userid !=null">
+			INNER JOIN detaileaddress ON detaileaddress.detailid = building.detailid
+		</if>
+		where housestatus='1' and
+		houstatus='2' 
+		<!-- 房间的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"/>
+		<!-- 价格的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_price_where"/>
+		<!-- 地区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_area_where"/>
+		<!-- 房屋类型的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_property_where"/>
+		<!-- 房屋几室几厅的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_apartment_where"/>
+		<!-- 小区的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where"/>
+		<!-- 标签的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_housetarg_where"/>
+		<!-- buildin的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_metro_where"/>
+		<if test="houseCustomer!=null">
+		<if test="houseCustomer.smallhouseprice != null and houseCustomer.smallhouseprice !=''  ">
+  			and ( house.area*price.prices   between #{houseCustomer.smallhouseprice} and
+			#{houseCustomer.bighouseprice})
+  		</if>
+  		
+  				
+  		</if>
+		ORDER BY house.update_time desc
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , 8
+		</if>
+
+	</select>
+	
+	
+	<!--按时间排序显示房源 -->
+	<select id="findoldhouseCount" parameterType="cn.com.qcc.queryvo.HouseVo"
+		resultType="integer">
+		select
+		count (1)
+		from house
+		left join housetag 	on house.housetag_id=housetag.housetagid
+		left join building on house.buildingid=building.buildingid
+		left join user on house.user_id=user.userid
+		left join profile on house.user_id=profile.user_id
+		left join property on house.property_id=property.propertyid
+		left join price on house.price_id=price.priceid
+		left join apartment 	on house.apartment_id=apartment.apartmentid
+		inner join village on village.villageid=building.villageid
+		inner JOIN area on area.`code` = village.`code`
+		where housestatus='1' and
+		houstatus='2' 
+		
+		<!-- 房间的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"/>
+		<!-- 价格的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_price_where"/>
+		<!-- 地区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_area_where"/>
+		<!-- 房屋类型的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_property_where"/>
+		<!-- 房屋几室几厅的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_apartment_where"/>
+		<!-- 小区的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where"/>
+		<!-- 标签的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_housetarg_where"/>
+		<if test="houseCustomer!=null">
+		<if test="houseCustomer.smallhouseprice != null and houseCustomer.smallhouseprice != ''  ">
+  			and ( house.area*price.prices   between #{houseCustomer.smallhouseprice} and
+			#{houseCustomer.bighouseprice})
+  		</if>
+  		</if>
+	</select>
+
+	<!--按时间排序显示房源 -->
+	<select id="findHousebyconditionCount" parameterType="cn.com.qcc.queryvo.HouseVo"
+		resultType="integer">
+		select count(1)
+		from house
+		left join housetag 	on house.housetag_id=housetag.housetagid
+		left join building on house.buildingid=building.buildingid
+		left join user on house.user_id=user.userid
+		left join profile on house.user_id=profile.user_id
+		left join property on house.property_id=property.propertyid
+		left join price on house.price_id=price.priceid
+		left join apartment 	on house.apartment_id=apartment.apartmentid
+		inner join village on village.villageid=building.villageid
+		inner JOIN area on area.`code` = village.`code`
+		INNER JOIN detaileaddress ON detaileaddress.detailid = building.detailid
+		where housestatus='1' and
+		houstatus='1' 
+		
+		<!-- 房间的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"/>
+		<!-- 价格的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_price_where"/>
+		<!-- 地区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_area_where"/>
+		<!-- 房屋类型的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_property_where"/>
+		<!-- 房屋几室几厅的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_apartment_where"/>
+		<!-- 小区的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where"/>
+	</select>
+	<!--按时间排序显示房源 -->
+	<select id="findHouseByTime" parameterType="cn.com.qcc.queryvo.HouseVo"
+		resultType="cn.com.qcc.queryvo.HouseCustomer">
+		select `profile`.avatar,`profile`.user_name,house.picture onepicture,
+		house.housetitle,area.`name`,village.villagename,house.houseid,house.redecorat,`profile`.user_id userid,`profile`.user_id,
+		house.picture,price.prices,price.pricetype,property.propertyname,
+		IFNULL(apartment.apartmentname,'')apartmentname,IFNULL(house.`schedule`,'2')schedule,
+		building.building ,metro.`name` metroname ,metro.finalstop
+		<if test="userid !=null">
+			<!-- 导入距离 -->
+			<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli"/>
+		</if>
+		from house
+		left join housetag 	on house.housetag_id=housetag.housetagid
+		left join building on house.buildingid=building.buildingid
+		left join user on house.user_id=user.userid
+		left join profile on house.user_id=profile.user_id
+		left join property on house.property_id=property.propertyid
+		left join price on house.price_id=price.priceid
+		left join apartment 	on house.apartment_id=apartment.apartmentid
+		INNER JOIN detaileaddress ON detaileaddress.detailid = building.detailid
+		inner join village on village.villageid=building.villageid
+		inner JOIN area on area.`code` = village.`code`
+		LEFT JOIN metro on metro.metroid = building.metroid
+		where housestatus='1' and
+		houstatus='1' and  property.propertyname='房源'
+		<!-- 地区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_area_where"/>
+		<!-- 小区的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where"/>
+		ORDER
+		BY
+		house.update_time
+		desc
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , 8
+		</if>
+		
+
+	</select>
+	
+	
+
+	<!--按时间排序显示房源 -->
+	<select id="findHouseByTimeCount" parameterType="cn.com.qcc.queryvo.HouseVo"
+		resultType="integer">
+		select count(1)
+		from house
+		left join housetag 	on house.housetag_id=housetag.housetagid
+		left join building on house.buildingid=building.buildingid
+		left join user on house.user_id=user.userid
+		left join profile on house.user_id=profile.user_id
+		left join property on house.property_id=property.propertyid
+		left join price on house.price_id=price.priceid
+		left join apartment 	on house.apartment_id=apartment.apartmentid
+		INNER JOIN detaileaddress ON detaileaddress.detailid = building.detailid
+		inner join village on village.villageid=building.villageid
+		inner JOIN area on area.`code` = village.`code`
+		LEFT JOIN metro on metro.metroid = building.metroid
+		where housestatus='1' and
+		houstatus='1' and  property.propertyname='房源'
+		<!-- 地区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_area_where"/>
+		<!-- 小区的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where"/>
+	</select>
+	
+	
+	<!-- 首页一一加载显示的几个类 -->
+	<select id="findHouseByIndex" resultType="cn.com.qcc.queryvo.HouseCustomer">
+		select
+		house.area,
+		any_value(property.propertyname) as propertyname,
+		any_value(detaileaddress.detailes) as detailes,
+		any_value(area.`name`) as trading,
+		any_value(village.villagename) as villagename,
+		any_value(user.telephone) as
+		telephone,
+		any_value(user.userid) as userid,
+		any_value(profile.avatar)
+		as avatar,
+		any_value(profile.user_name) as user_name,
+		any_value(house.houseid) as houseid,
+		any_value(house.housetitle) as
+		housetitle,
+		any_value(house.picture) as
+		picture,
+		any_value(house.picture) as
+		onepicture,
+		any_value(house.redecorat) as redecorat,
+		any_value(house.area)
+		as area,
+		any_value(house.description) as description,
+		any_value(apartment.apartmentname) as apartmentname,
+		any_value(price.prices) as prices,
+		any_value(price.pricetype) as
+		pricetype
+		from house
+		left join housetag 	on house.housetag_id=housetag.housetagid
+		left join building on house.buildingid=building.buildingid
+		left join user on house.user_id=user.userid
+		left join profile on house.user_id=profile.user_id
+		left join property on house.property_id=property.propertyid
+		left join price on house.price_id=price.priceid
+		left join apartment 	on house.apartment_id=apartment.apartmentid
+		inner join village on village.villageid=building.villageid
+		inner JOIN area on area.`code` = village.`code`
+		left JOIN detaileaddress on detaileaddress.detailid = building.detailid
+		where housestatus='1' and houstatus='1'  and property.propertyname !='二手房'
+		and property.propertyname !='房源'
+		<!-- 地区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_area_where"/>
+		group by
+		propertyname
+	</select>
+	
+	<!-- 附近房源的查询SQL -->
+	<select id="findHouseBySize" resultType="cn.com.qcc.queryvo.HouseCustomer" parameterType="cn.com.qcc.queryvo.HouseVo">
+		
+		select	`profile`.avatar,`profile`.user_name,house.area,house.picture onepicture,building.detailid,t.juli,
+			house.housetitle,area.`name`,village.villagename,house.houseid,house.redecorat,`profile`.user_id,
+			house.picture,price.prices,price.pricetype,property.propertyname,
+			IFNULL(apartment.apartmentname,'')apartmentname,building.building, t.latitude ,t.longitude,
+			metro.`name` metroname, metro.finalstop ,IFNULL(house.`schedule`,'2')schedule
+		from house
+		left join housetag 	on house.housetag_id=housetag.housetagid
+		left join building on house.buildingid=building.buildingid
+		LEFT JOIN metro ON metro.metroid = building.metroid
+		left join user on house.user_id=user.userid
+		left join profile on house.user_id=profile.user_id
+		left join property on house.property_id=property.propertyid
+		left join price on house.price_id=price.priceid
+		left join apartment 	on house.apartment_id=apartment.apartmentid
+		LEFT  join village on village.villageid=building.villageid
+		LEFT JOIN area on area.`code` = village.`code`
+		
+		LEFT JOIN	 (SELECT building.detailid , building.buildingid ,
+					detaileaddress.latitude,
+					detaileaddress.longitude
+					<!-- 导入距离 -->
+					<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli" />
+		from building 
+			 LEFT JOIN detaileaddress on building.detailid = detaileaddress.detailid
+		)t  on house.buildingid = t.buildingid
+		where  
+		housestatus='1' and property.propertyname='房源' and  t.juli <![CDATA[   <=  ]]> 50000
+
+		<!-- 小区的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where"/>
+		
+	
+		ORDER BY t.juli asc  , house.update_time desc
+	
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+	
+	
+	<!-- 附近房源的查询COUNT -->
+	<select id="findHouseBySizeCount" resultType="integer" parameterType="cn.com.qcc.queryvo.HouseVo">
+			select
+			count(1)
+		from house
+		left join housetag 	on house.housetag_id=housetag.housetagid
+		left join building on house.buildingid=building.buildingid
+		left join user on house.user_id=user.userid
+		left join profile on house.user_id=profile.user_id
+		left join property on house.property_id=property.propertyid
+		left join price on house.price_id=price.priceid
+		left join apartment 	on house.apartment_id=apartment.apartmentid
+		left join village on village.villageid=building.villageid
+		left JOIN area on area.`code` = village.`code`
+			inner JOIN detaileaddress on detaileaddress.detailid = building.detailid
+		where  
+		housestatus='1' 
+		<!-- 小区的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where"/>
+		
+	</select>
+	
+	
+	
+	<select id="getHouserByUserid" parameterType="integer" resultType="cn.com.qcc.queryvo.HouseCustomer">
+		select p.user_name,p.avatar,pr.pricetype,pr.prices,h.*,h.picture as onepicture,h.picture as picture  
+		 , '1' type
+		from house h
+		INNER JOIN
+		profile p
+		on p.user_id=h.user_id
+		INNER JOIN
+		price pr
+		on h.price_id = pr.priceid
+		where  h.user_id=#{userid} and h.housestatus != '3' ORDER BY h.create_time desc 
+	</select>
+	
+	
+	<!-- 查看房源详情 -->
+	<select id="findHouseDetails" resultType="cn.com.qcc.queryvo.HouseCustomer" parameterType="long">
+		SELECT
+			  browse.bcount,
+				`user`.userid,
+				`profile`.user_name,
+				village.villageid,
+				IFNULL(building.brand, brand.brand) brand,
+				house.*, 
+				IFNULL(house.housetitle,house.redecorat)title,
+				price.prices, 
+			  price.pricetype , 
+				apartment.apartmentname,
+				`profile`.avatar,
+				`user`.telephone,
+				village.villagename,
+				detaileaddress.*,
+				area.`name` district,
+				building.building,
+				metro.`name` metroname,
+				metro.finalstop,
+				village.`code`,
+				village.userid villageuserid,
+				village.villagetypeid
+			FROM
+				house
+			LEFT JOIN housetag ON house.housetag_id = housetag.housetagid
+			LEFT JOIN (
+				SELECT
+					building.building,
+					building.buildingid,
+					IFNULL(brand.brand, '') brand,
+					building.detailid,
+					building.villageid,
+					building.metroid
+				FROM
+					building
+				LEFT JOIN brand ON building.brandid = brand.brandid
+			) building ON house.buildingid = building.buildingid
+			LEFT JOIN `user` ON house.user_id = `user` .userid
+			LEFT JOIN `profile` ON house.user_id = `profile`.user_id
+			LEFT JOIN property ON house.property_id = property.propertyid
+			LEFT JOIN price ON house.price_id = price.priceid
+			LEFT JOIN apartment ON house.apartment_id = apartment.apartmentid
+			LEFT JOIN detaileaddress ON building.detailid = detaileaddress.detailid
+			INNER JOIN village ON village.villageid = building.villageid
+			INNER JOIN area ON area.`code` = village.`code`
+			LEFT JOIN metro ON metro.metroid = building.metroid
+			LEFT JOIN brand ON house.brandid = brand.brandid
+			
+			JOIN (
+							SELECT IFNULL(SUM(bcount),0) bcount , browse.otherid FROM browse
+					WHERE
+						browse.type = 1
+					AND browse.otherid = #{houseid}
+			        ) browse
+			
+			WHERE
+				house.houseid = #{houseid}
+	</select>
+	
+	
+	
+	
+	
+	<!-- 我的出售查询 -->
+	<select id="findmysall"  resultType="cn.com.qcc.queryvo.HouseCustomer" parameterType="long">
+		select
+		*,user.telephone,profile.*,property.propertyname,apartment.apartmentname,price.prices,price.pricetype
+		from house
+		LEFT JOIN building on building.buildingid = house.buildingid
+		LEFT JOIN village on village.villageid = building.villageid
+		inner join user on house.user_id=user.userid
+		inner join profile on house.user_id=profile.user_id
+		inner join property on house.property_id=property.propertyid
+		inner join price on house.price_id=price.priceid
+		inner join apartment on house.apartment_id=apartment.apartmentid
+		where
+		user.userid=#{userid}
+		and
+		houstatus='2' and housestatus != '3'
+	</select>
+	
+	
+	<!-- 我的出租点击小区街道搜索 的数量 -->
+	<select id="findHouseCountByVillage2" resultType="int" parameterType="cn.com.qcc.queryvo.VillageeVo">
+		select count(*)
+		from house
+		inner join apartment on 	house.apartment_id=apartment.apartmentid
+		inner join building 	on house.buildingid = building.buildingid
+		inner 	join user 	on house.user_id=user.userid
+		inner join profile 	on 	house.user_id=profile.user_id
+		inner join village 	on village.villageid=building.villageid
+		where
+		building.buildingid=#{buildingid} and user.userid=#{userid} and
+		houstatus='1' and housestatus != '3'
+	</select>
+	
+	<!-- 我的出租点击小区街道搜索 -->
+	<select id="findHouseByVillage2" resultType="cn.com.qcc.queryvo.HouseCustomer" parameterType="cn.com.qcc.queryvo.VillageeVo">
+		select 
+		*,user.telephone,profile.*,property.propertyname,apartment.apartmentname,price.prices,price.pricetype
+			from house
+		LEFT JOIN building on building.buildingid = house.buildingid
+		LEFT JOIN village on village.villageid = building.villageid
+		inner join user on house.user_id=user.userid
+		inner join profile on house.user_id=profile.user_id
+		inner join property on house.property_id=property.propertyid
+		inner join price on house.price_id=price.priceid
+		inner join apartment on house.apartment_id=apartment.apartmentid
+		where
+		building.buildingid=#{buildingid} and user.userid=#{userid}
+		and
+		houstatus='1' and housestatus != '3'
+		ORDER BY house.house_number asc 
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} ,  #{pagequery.pagesize}
+		</if>
+	</select>
+	
+	
+	
+	<!-- 按小区或者楼栋搜查房源 -->
+	<select id="findHouseByNearVillage" resultType="cn.com.qcc.queryvo.HouseCustomer" parameterType="cn.com.qcc.queryvo.VillageeVo">
+		select 
+		house.housestatus,
+		house.houseid,
+		IFNULL(house.paystyle,'')paystyle,
+		house.picture,
+		user.telephone,profile.*,property.propertyname,
+		IFNULL(apartment.apartmentname,'')apartmentname,
+		price.prices,price.pricetype,
+		house.picture as onepicture
+		from house
+		left join housetag 	on house.housetag_id=housetag.housetagid
+		left join building on house.buildingid=building.buildingid
+		left join user on house.user_id=user.userid
+		left join profile on house.user_id=profile.user_id
+		left join property on house.property_id=property.propertyid
+		left join price on house.price_id=price.priceid
+		left join apartment 	on house.apartment_id=apartment.apartmentid
+		LEFT JOIN detaileaddress on building.detailid = detaileaddress.detailid
+		inner join village on village.villageid=building.villageid
+		inner JOIN area on area.`code` = village.`code`
+		where
+		houstatus='1' and housestatus != '3'
+		<!-- 房间的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"/>
+		<!-- 价格的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_price_where"/>
+		<!-- 地区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_area_where"/>
+		<!-- 房屋类型的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_property_where"/>
+		<!-- 房屋几室几厅的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_apartment_where"/>
+		<!-- 小区的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where"/>
+		ORDER BY 
+		<if test="houseCustomer!=null">
+		<if test="houseCustomer.desc !=null and houseCustomer.desc !='' ">
+		 price.prices desc,
+		</if>
+		<if test="houseCustomer.asc !=null and houseCustomer.asc !='' ">
+		price.prices asc,
+		</if>
+		</if>
+		house.create_time desc
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , 8
+		</if>
+	</select>
+	
+	<!-- 按小区或者楼栋搜查房源的统计 -->
+	<select id="findHouseByNearVillageCount" resultType="integer" parameterType="cn.com.qcc.queryvo.VillageeVo">
+		select 
+		count(1)
+		from house
+		left join housetag 	on house.housetag_id=housetag.housetagid
+		left join building on house.buildingid=building.buildingid
+		left join user on house.user_id=user.userid
+		left join profile on house.user_id=profile.user_id
+		left join property on house.property_id=property.propertyid
+		left join price on house.price_id=price.priceid
+		left join apartment 	on house.apartment_id=apartment.apartmentid
+		LEFT JOIN detaileaddress on building.detailid = detaileaddress.detailid
+		inner join village on village.villageid=building.villageid
+		inner JOIN area on area.`code` = village.`code`
+		where
+		houstatus='1' and housestatus != '3'
+		<!-- 房间的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"/>
+		<!-- 价格的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_price_where"/>
+		<!-- 地区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_area_where"/>
+		<!-- 房屋类型的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_property_where"/>
+		<!-- 房屋几室几厅的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_apartment_where"/>
+		<!-- 小区的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where"/>
+	</select>
+	
+	
+	
+	<!-- 查询一条品牌公寓 -->
+	<select id="findonebarnd" resultType="cn.com.qcc.queryvo.HouseCustomer" parameterType="cn.com.qcc.queryvo.HouseVo">
+		select 	
+		brand.brand,
+		any_value(property.propertyname) as propertyname,
+		any_value(detaileaddress.detailes) as detailes,
+		any_value(area.`name`) as trading,
+		any_value(village.villagename) as villagename,
+		any_value(user.telephone) as
+		telephone,
+		any_value(user.userid) as userid,
+		any_value(profile.avatar)
+		as avatar,
+		any_value(profile.user_name) as user_name,
+		any_value(house.houseid) as houseid,
+		any_value(house.housetitle) as
+		housetitle,
+		any_value(house.picture) as
+		picture,
+		any_value(house.picture) as
+		onepicture,
+		any_value(house.redecorat) as redecorat,
+		any_value(house.area)
+		as area,
+		any_value(house.description) as description,
+		any_value(apartment.apartmentname) as apartmentname,
+		any_value(price.prices) as prices,
+		any_value(price.pricetype) as
+		pricetype
+		from house
+		left join housetag 	on house.housetag_id=housetag.housetagid
+		left join building on house.buildingid=building.buildingid
+		left join user on house.user_id=user.userid
+		left join profile on house.user_id=profile.user_id
+		left join property on house.property_id=property.propertyid
+		left join price on house.price_id=price.priceid
+		left join apartment 	on house.apartment_id=apartment.apartmentid
+		inner join village on village.villageid=building.villageid
+		inner JOIN area on area.`code` = village.`code`
+		INNER JOIN brand on house.brandid = brand.brandid
+		left JOIN detaileaddress on detaileaddress.detailid = building.detailid
+		where housestatus='1' and houstatus='1' 
+		<!-- 地区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_area_where"/>
+		ORDER BY house.update_time desc
+		limit 0,1
+	</select>
+	
+	<!-- 查找部落物品信息 -->
+	<select id="singleablum" parameterType="integer" resultType="cn.com.qcc.queryvo.HouseCustomer">
+		SELECT
+				*
+			FROM
+				(
+					SELECT
+						articledetail.articledetailid houseid,
+						articledetail.update_time  ,
+			      articledetail.picture , 
+			      articledetail.articletypeid type ,
+			      articledetail.description ,
+			      `profile`.user_name ,
+			      `profile`.avatar,
+			  	   MIN(releasetable.prices) prices,
+			       '' pricetype
+					FROM
+						articledetail
+					LEFT JOIN `profile` ON articledetail.userid = `profile`.user_id
+					LEFT JOIN releasetable on releasetable.articledetailid = articledetail.articledetailid
+					WHERE
+						 articledetail.articletypeid IN (6, 7, 8)
+					AND articledetail.userid = #{userid}
+          GROUP BY articledetail.articledetailid
+					UNION ALL
+						SELECT
+							h.houseid,
+							h.update_time ,
+			        h.picture  , 
+			        '1' type ,
+			        h.description ,
+			        p.user_name ,
+			        p.avatar,
+			        pr.prices ,
+			        pr.pricetype
+			     
+						FROM
+							house h
+						INNER JOIN `profile` p ON p.user_id = h.user_id
+						INNER JOIN price pr ON h.price_id = pr.priceid
+						WHERE
+							h.user_id = #{userid}
+						AND h.housestatus != '3'
+				) a ORDER BY a.update_time desc 
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	
+	</select>
+	
+	
+	<!-- 查找部落物品信息 -->
+	<select id="singleablumCount"  resultType="integer">
+		SELECT
+				count(1)
+			FROM
+				(
+					SELECT
+						articledetail.articledetailid houseid,
+						articledetail.update_time  ,
+			      articledetail.picture , 
+			      articledetail.articletypeid type ,
+			      articledetail.description ,
+			      `profile`.user_name ,
+			      `profile`.avatar,
+			  	   MIN(releasetable.prices) prices,
+			       '' pricetype
+					FROM
+						articledetail
+					LEFT JOIN `profile` ON articledetail.userid = `profile`.user_id
+					LEFT JOIN releasetable on releasetable.articledetailid = articledetail.articledetailid
+					WHERE
+						 articledetail.articletypeid IN (6, 7, 8)
+					AND articledetail.userid = #{userid}
+          GROUP BY articledetail.articledetailid
+					UNION ALL
+						SELECT
+							h.houseid,
+							h.update_time ,
+			        h.picture  , 
+			        '1' type ,
+			        h.description ,
+			        p.user_name ,
+			        p.avatar,
+			        pr.prices ,
+			        pr.pricetype
+			     
+						FROM
+							house h
+						INNER JOIN `profile` p ON p.user_id = h.user_id
+						INNER JOIN price pr ON h.price_id = pr.priceid
+						WHERE
+							h.user_id = #{userid}
+						AND h.housestatus != '3'
+				) a 
+	</select>
+	
+	
+	
+	
+	
+	
+	<!-- 查找部落物品信息 -->
+	<select id="getmaxhouseNum" parameterType="long" resultType="string">
+		SELECT MAX(housecode)+1 from house where house.buildingid = #{buildingid}
+	</select>
+	
+	<!-- 查找部落物品信息 -->
+	<select id="buildinghousecode" resultType="cn.com.qcc.queryvo.HouseCustomer">
+		SELECT house.* , building.buildingcode from house LEFT JOIN building on house.buildingid = building.buildingid
+	</select>
+	
+	<!-- 品牌gon -->
+	<select id="brandlist" resultType="cn.com.qcc.queryvo.BrandCustomer" parameterType="cn.com.qcc.queryvo.HouseVo">
+		SELECT brandid , brand , onepicture , description , brand.update_time ,`profile`.avatar from brand
+			LEFT JOIN `profile` on brand.userid = `profile`.user_id
+			where brand.state =2
+		<!--品牌的查询的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_brand_where"/>
+		 ORDER BY brand.update_time desc 
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , 8
+		</if>
+		
+	</select>
+	
+	
+	<!-- 品牌gon -->
+	<select id="brandlistCount" resultType="integer" parameterType="cn.com.qcc.queryvo.HouseVo">
+		SELECT COUNT(1) from brand where brand.state !=3
+		<!--品牌的查询的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_brand_where"/>
+	</select>
+	<!-- 品牌公寓列表 -->
+	<select id="branddetail" resultType="cn.com.qcc.queryvo.BrandCustomer" parameterType="long">
+		SELECT 		COUNT(1)housecount ,
+			 		building.builcount ,
+			 			IFNULL(house.picture,building.pic)housepicture,
+				    IFNULL(MIN( price.prices ),building.prices)prices 
+		      		 from house 
+			LEFT JOIN price on house.price_id = price.priceid
+			JOIN  (SELECT COUNT(1)builcount , building.picture ,IFNULL(MIN(price.prices),'10')prices
+					,house.picture pic from building 
+							LEFT JOIN house on house.buildingid = building.buildingid
+							LEFT JOIN price on price.priceid = house.price_id
+					where building.brandid = #{brandid}  ) building
+		where brandid = #{brandid} and house.housestatus = '1' and house.houstatus = '1'
+	</select>
+	
+	<!-- 根据楼栋ID 删除房源品牌ID -->
+	<select id="deletebrandidbybuildingid"  parameterType="long">
+		UPDATE house SET brandid = null where buildingid = #{buildingid}
+	</select>
+	
+	<!-- 根据楼栋ID 删除房源品牌ID -->
+	<select id="addbrandidbybuildingid"  parameterType="cn.com.qcc.queryvo.HouseCustomer" >
+		UPDATE house SET brandid = #{brandid} where buildingid = #{buildingid}
+	</select>
+	
+	<!-- 查询7天没有更新的房子IDS -->
+	<select id="search7daysnotupdate" resultType="string">
+		select houseid from house  
+				where DATE_SUB(CURDATE(), INTERVAL 6 DAY) >= date(house.update_time)
+				and house.housestatus = '1' and house.houstatus = '1' 
+				LIMIT 0 ,1
+	</select>
+	
+	<!-- 该用户对应的房源下架的数量 -->
+	<select id="search7daysnotupdateuser" resultType="cn.com.qcc.queryvo.UserCustomer">
+		select COUNT(1)bcount  ,`user`.telephone from house
+				LEFT JOIN `user` on house.user_id = `user`.userid
+				where DATE_SUB(CURDATE(), INTERVAL 6 DAY) >= date(house.update_time)
+				and house.housestatus = '1' and house.houstatus = '1' 
+				and house.user_id in (10001765 , 10000003)
+		GROUP BY house.user_id
+	</select>
+	
+	
+	<!--获取用户的权限集合 -->
+	<select id="update7dayundercarriage" parameterType="java.util.List">
+		UPDATE house SET house.housestatus = '4' where houseid in 
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+	</select>
+	
+	
+	<!--根据 category 查询房源tag 类型 -->
+	<select id="getTargBycategory"   resultType="cn.com.qcc.pojo.Housetag">
+		SELECT housetagid ,type ,category ,category_name from housetag where category in  ( ${category} )
+		order by category asc 
+	</select>
+	
+	
+    <!--查询房源预定基本信息 -->
+	<select id="getHouseYudingMess"   resultType="cn.com.qcc.queryvo.HouseCustomer">
+			SELECT
+		house.housetag_id,
+		house.picture,
+		houseid,
+		IFNULL(house.centpercentnum, 0 ) centpercentnum  ,
+		IFNULL(house.landpercentnum,0) landpercentnum ,
+	  price.prices ,
+	  price.pricetype ,
+	  apartmentname ,
+	  detaileaddress.detailes ,
+	  house.floor ,
+	  house.house_number,
+	  house.houseid
+	FROM
+		house
+	  LEFT JOIN price on house.price_id = price.priceid
+	  LEFT JOIN apartment on apartment.apartmentid = house.apartment_id
+	  LEFT JOIN building on building.buildingid = house.buildingid
+	  LEFT JOIN detaileaddress on building.detailid = detaileaddress.detailid
+	WHERE
+		house.houseid = #{houseid}
+	</select>
+ 		
+ 		
+ 	<!-- 根据类型和TARGID 查询标签 -->
+ 	<select id="getTraName" resultType="string">
+ 		SELECT housetag.type from housetag 
+ 		LEFT JOIN preparatory on preparatory.housetagid =housetag.housetagid
+	     where preparatory.houseid =#{houseid} 
+	    and (preparatory.centpercentnum > 0 or preparatory.landpercentnum > 0 )
+	     ORDER BY preparatory.daycount asc LIMIT 0 ,1 
+ 	</select>
+ 	
+ 	<!-- 根据房源ID和userid查询最新预定 -->
+ 	<select id="gethouseorderstatue" resultType="string" parameterType="cn.com.qcc.pojo.Houseorder">
+ 		SELECT house.housestatus  from houseorder 
+			INNER JOIN house on house.houseid =  houseorder.houseid
+		where houseorder.userid != #{userid} and houseorder.houseid = #{houseid}
+		and houseorder.ordertime  >= CURRENT_TIMESTAMP - INTERVAL 10 MINUTE
+ 	</select>
+ 	
+ 	<!-- 查询我的历史预定信息 -->
+ 	<select id="searchhouselistCount" resultType="integer" parameterType="long">
+ 		SELECT  count(1)
+		 from houseorder LEFT JOIN house on house.houseid = houseorder.houseid
+		where houseorder.userid = #{userid}  AND  houseorder.buystate !=2
+ 	</select>
+ 	<select id="searchhouselist" resultType="cn.com.qcc.queryvo.HouseOrderCustomer" >
+ 		SELECT houseorder.houseorderid ,house.houseid ,
+			  house.house_number ,houseorder.paystate ,
+			  house.housetitle ,houseorder.ordertime ,houseorder.prices
+			 from houseorder LEFT JOIN house on house.houseid = houseorder.houseid
+			where houseorder.userid = #{userid} AND  houseorder.buystate !=2
+			<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+ 	</select>
+ 	
+ 	
+ 	<select id="updatehouseorder"  >
+ 			UPDATE houseorder set paystate = #{paystate} , refundmess = #{refundmess}
+ 			where userid =#{userid} and houseid = #{houseid}
+ 	
+ 	</select>
+ 	
+ 	
+ 	<!-- 查询租客已经交定金房东待确认的信息 -->
+ 	<select id="searchSureHousePayCount" resultType="integer" parameterType="long">
+ 		SELECT  count(1)
+			 from houseorder 
+				LEFT JOIN house on houseorder.houseid = house.houseid
+			where houseorder.paystate != 2 and house.user_id = #{userid}
+			and houseorder.sallstate = 1
+ 	</select>
+ 	<select id="searchSureHousePay" resultType="cn.com.qcc.queryvo.HouseOrderCustomer" >
+ 		SELECT house.house_number , houseorder.houseid ,  houseorder.houseorderid ,
+			houseorder.prices ,house.housetitle ,houseorder.paystate ,houseorder.ordertime
+			 from houseorder 
+				LEFT JOIN house on houseorder.houseid = house.houseid
+			where houseorder.paystate != 2 and house.user_id = #{userid}
+			and houseorder.sallstate = 1
+			<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+ 	</select>
+ 	
+ 	<!-- 查询待确认的信息  -->
+ 	<select id="searchorderpay" resultType="cn.com.qcc.queryvo.HouseOrderCustomer"  parameterType="long">
+		 SELECT
+		    house.house_number ,
+		    house.housetitle ,
+		    detaileaddress.detailes , 
+		    houseorder.*  ,
+		    house.houseid ,
+		    house.user_id senduserid
+		   
+		FROM
+			houseorder
+		LEFT JOIN house ON house.houseid = houseorder.houseid
+		LEFT JOIN building on house.buildingid = building.buildingid
+		LEFT JOIN detaileaddress on detaileaddress.detailid = building.detailid
+		WHERE
+			houseorder.houseorderid = #{houseorderid} 
+ 	</select>
+ 	
+ 	
+ 	<!-- 查询佣金的集合 -->
+ 	<select id="preparList" resultType="cn.com.qcc.queryvo.PreparatoryCustomer" parameterType="long">
+ 			SELECT preparatory.* ,housetag.type  from preparatory LEFT JOIN housetag
+				 on preparatory.housetagid = housetag.housetagid
+				where preparatory.houseid =#{houseid}
+				and (preparatory.centpercentnum > 0 or preparatory.landpercentnum > 0 )
+ 	</select>
+ 	<select id="preparListbyhouseids" resultType="cn.com.qcc.queryvo.PreparatoryCustomer" parameterType="list">
+ 			SELECT preparatory.centpercentnum ,preparatory.landpercentnum ,preparatory.houseid ,
+ 			      housetag.type  from preparatory LEFT JOIN housetag
+				 on preparatory.housetagid = housetag.housetagid
+				where preparatory.houseid  in 
+				<foreach item="item" collection="houseids" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=BIGINT}
+		       </foreach>
+				and (preparatory.centpercentnum > 0 or preparatory.landpercentnum > 0 )
+ 	</select>
+ 	
+ 	
+ 	<!-- 删除房子佣金 -->
+    <update id="deletepreparhouse" parameterType="long">
+    	UPDATE preparatory set landpercentnum = 0 and centpercentnum = 0 where houseid = #{houseid}
+    </update> 
+    
+    
+    
+    <!-- 查询房子详情 -->
+    <select id="findHouseByHouseID" parameterType="long" resultType="cn.com.qcc.queryvo.HouseCustomer">
+    	SELECT house.* ,building.villageid from 
+			house
+		LEFT JOIN building on house.buildingid = building.buildingid
+		where house.houseid = #{houseid}
+    </select> 
+    
+    
+    <!-- 查询房子的标签 -->
+    <select id="getTargByHouseTargId"  resultType="cn.com.qcc.pojo.Housetag">
+    	SELECT * from housetag where housetagid in ( ${housetagid} )
+         ORDER BY category desc 
+    </select> 
+    
+    
+    
+    <!-- 我的出租查询 -->
+	<select id="findmyrent"  resultType="cn.com.qcc.queryvo.HouseCustomer" parameterType="long">
+		SELECT buil.* , MAX(house.update_time) , house.contactstel  ,house.landlordtel from (
+
+		SELECT
+		  building.building ,
+		  building.buildingid ,
+		  village.villagename
+		FROM
+			building
+		LEFT JOIN village ON building.villageid = village.villageid
+		WHERE
+			buildingid IN (
+				SELECT DISTINCT
+					buildingid
+				FROM
+					house
+				WHERE
+					user_id = #{userid}  and
+				houstatus='1' and housestatus != '3'
+			)
+		
+	     <if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		 </if>
+		) buil LEFT JOIN house on house.buildingid = buil.buildingid 
+		GROUP BY buil.buildingid
+	</select>
+	<select id="findmyrentCount"  resultType="integer">
+			SELECT
+				 COUNT(1)
+				FROM
+					building
+				LEFT JOIN village ON building.villageid = village.villageid
+				WHERE
+					buildingid IN (
+						SELECT DISTINCT
+							buildingid
+						FROM
+							house
+						WHERE
+							user_id = #{userid}  and
+						houstatus='1' and housestatus != '3'
+			      )
+	</select>	
+	
+	
+	<select id="searchAllHouseToSolr" resultType="cn.com.qcc.queryvo.HouseCustomer" >
+		SELECT house.* ,ifnull(brand.brand,'')brand  from (
+			SELECT
+			  house.tribeids ,
+			  tribe.picture tribepicture ,
+			  house.houseid ,
+			  house.housetitle ,
+			  house.update_time ,
+			  house.picture onepicture ,
+			  house.picture,
+			  house.user_id userid ,
+			  house.property_id ,
+			  house.house_number ,
+			  price.prices ,
+			  price.pricetype ,
+			  IFNULL(mess.mcount,0)mcount ,
+			  IFNULL(zan.zcount,0)zcount ,
+			  IFNULL(bro.bcount,0)bcount ,
+			  house.buildingid ,
+			  IFNULL(building.brandid,house.brandid)brandid ,
+			  IFNULL(house.`schedule`,2)`schedule`,
+			   house.housestatus ,
+			  house.houstatus  ,
+			  '1' articletypeid ,
+			  apartment.apartmentname ,
+			  IFNULL(metro.`name`,'') metroname ,
+			   IFNULL(metro.finalstop ,'')finalstop ,
+			  metro.metroid ,
+			  house.redecorat, 
+				house.area ,
+			  metro.`code` citycode , 
+			  village.`code` likecode,
+			  house.housetag_id  ,
+			  house.paystyle , 
+			  propertyname ,
+			  avatar ,
+			  `profile`.user_name,
+			  villagename ,
+			  building.building,
+			  village.villageid ,
+			  house.description descname ,
+			  detaileaddress.* ,
+			  area.`name` trading 
+			FROM
+				house
+			LEFT JOIN tribe on house.houseid = tribe.tribeid
+			LEFT JOIN building on building.buildingid = house.buildingid
+			LEFT JOIN price on house.price_id = price.priceid
+			LEFT JOIN apartment on house.apartment_id = apartment.apartmentid
+			LEFT JOIN metro on building.metroid = metro.metroid
+			LEFT JOIN property on house.property_id = property.propertyid
+			LEFT JOIN village on building.villageid = village.villageid
+			LEFT JOIN `profile` on house.user_id = `profile`.user_id
+			LEFT JOIN detaileaddress on building.detailid = detaileaddress.detailid
+			LEFT JOIN area on area.`code` = village.`code`
+			LEFT JOIN (
+					SELECT COUNT(1) mcount, messages.house_id otherid
+							FROM messages WHERE type = 1 GROUP BY
+											messages.house_id
+			) mess ON mess.otherid = house.houseid
+			LEFT JOIN (
+						SELECT COUNT(1) zcount, zan.otherid
+								FROM 	zan WHERE
+					type = 1 GROUP BY otherid
+			) zan ON zan.otherid = house.houseid
+			LEFT JOIN (
+				SELECT	SUM(bcount) bcount, browse.otherid
+					FROM 	browse WHERE browse.type = 1
+					GROUP BY
+								browse.otherid
+			) bro ON bro.otherid = house.houseid 
+			) house LEFT JOIN brand on house.brandid = brand.brandid
+			WHERE house.housestatus !='3'
+		<if test="pagequery !=null ">
+			AND house.houseid > #{pagequery.pagestart} and 
+			<![CDATA[house.houseid<=#{pagequery.pageend}]]>
+		</if>
+	</select>
+	
+	
+	<select id="searchoneHouseToSolr" resultType="cn.com.qcc.queryvo.HouseCustomer" parameterType="long">
+		SELECT house.* ,ifnull(brand.brand,'')brand  from (
+			SELECT
+			  house.tribeids ,
+			  tribe.picture tribepicture ,
+			  house.houseid ,
+			  house.housetitle ,
+			  house.update_time ,
+			  house.picture onepicture ,
+			  house.picture,
+			  house.user_id userid ,
+			  house.property_id ,
+			  house.house_number ,
+			  price.prices ,
+			  price.pricetype ,
+			  IFNULL(mess.mcount,0)mcount ,
+			  IFNULL(zan.zcount,0)zcount ,
+			  IFNULL(bro.bcount,0)bcount ,
+			  house.buildingid ,
+			  IFNULL(building.brandid,house.brandid)brandid ,
+			  IFNULL(house.`schedule`,2)`schedule`,
+			   house.housestatus ,
+			  house.houstatus  ,
+			  '1' articletypeid ,
+			  apartment.apartmentname ,
+			  IFNULL(metro.`name`,'') metroname ,
+			   IFNULL(metro.finalstop ,'')finalstop ,
+			  metro.metroid ,
+			  house.redecorat, 
+				house.area ,
+			  metro.`code` citycode , 
+			  village.`code` likecode,
+			  house.housetag_id  ,
+			  house.paystyle , 
+			  propertyname ,
+			  avatar ,
+			  `profile`.user_name,
+			  villagename ,
+			  building.building,
+			  village.villageid ,
+			  house.description descname ,
+			  detaileaddress.* ,
+			  area.`name` trading 
+			FROM
+				house
+			LEFT JOIN tribe on house.houseid = tribe.tribeid
+			LEFT JOIN building on building.buildingid = house.buildingid
+			LEFT JOIN price on house.price_id = price.priceid
+			LEFT JOIN apartment on house.apartment_id = apartment.apartmentid
+			LEFT JOIN metro on building.metroid = metro.metroid
+			LEFT JOIN property on house.property_id = property.propertyid
+			LEFT JOIN village on building.villageid = village.villageid
+			LEFT JOIN `profile` on house.user_id = `profile`.user_id
+			LEFT JOIN detaileaddress on building.detailid = detaileaddress.detailid
+			LEFT JOIN area on area.`code` = village.`code`
+			LEFT JOIN (
+					SELECT COUNT(1) mcount, messages.house_id otherid
+							FROM messages WHERE type = 1 GROUP BY
+											messages.house_id
+			) mess ON mess.otherid = house.houseid
+			LEFT JOIN (
+						SELECT COUNT(1) zcount, zan.otherid
+								FROM 	zan WHERE
+					type = 1 GROUP BY otherid
+			) zan ON zan.otherid = house.houseid
+			LEFT JOIN (
+				SELECT	SUM(bcount) bcount, browse.otherid
+					FROM 	browse WHERE browse.type = 1
+					GROUP BY
+								browse.otherid
+			) bro ON bro.otherid = house.houseid 
+			) house LEFT JOIN brand on house.brandid = brand.brandid
+		
+			WHERE house.houseid =#{houseid}
+			
+	
+	</select>											
+</mapper>

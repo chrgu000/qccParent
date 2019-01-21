@@ -1,0 +1,1338 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.UserCustomerMapper" >
+  
+  <!-- 根据电话号码查询用户的基本信息 -->
+  <select id="getUserMessage" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="long">
+	SELECT 
+		IFNULL(`profile`.user_name,'') user_name,
+		IFNULL(`user`.userid,'')userid ,
+		IFNULL(`profile`.real_name,'')real_name,
+	    IFNULL(`profile`.identity,'')identity ,
+		IFNULL(landlord.landstate,'')landstate,
+		IFNULL(vipcount.balance,'0.0')balance,
+		IFNULL(vipcount.count,'100')vipcount,
+		`profile`.profileid ,
+		`user`.acctoken,
+		`user`.accestoken ,
+		`user`.password
+	   from 
+		     `user` LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+					LEFT JOIN landlord on `user`.userid = landlord.landuserid 
+					LEFT JOIN vipcount on `user`.userid = vipcount.user_id
+	 where `user`.telephone = #{telephone}
+  </select>
+  
+  	<!--获取用户的权限集合 -->
+	<select id="getallurls" parameterType="java.util.List"
+		resultType="cn.com.qcc.pojo.Access">
+		SELECT * from access where access.accessid in 
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+	</select>
+	
+  <!-- 根据token获取用户信息 -->
+  <select id="getUserByToken" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="string">
+  		SELECT landlord.fatheruserid ,`profile`.real_name ,`profile`.sex,
+	`profile`.avatar ,landlord.userid,`user`.accestoken,landlord.landstate,landlord.accessurlid 
+	from `user` LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+	INNER JOIN landlord on `user`.userid = landlord.userid
+	 where `user`.accestoken = #{token}
+  </select>
+  
+   <!-- 根据电话号码获取租客的真实信息 -->
+  <select id="getrealnamebyphone" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="string">
+  		SELECT IFNULL(`profile`.real_name,'')realname, 
+				IFNULL(`profile`.identity ,'')identity,
+						IFNULL(`profile`.sex,'')sex,
+						`user`.userid
+			from `user` INNER JOIN `profile` on `user`.userid = `profile`.user_id
+			where `user`.telephone = #{telephone} AND `profile`.signstate = 2
+  </select>
+  
+  <!-- 查询租客来源地址 -->
+  <select id="centfromlist" resultType="cn.com.qcc.queryvo.CentFromCustomer" >
+  			SELECT centfrom.centfromid ,
+				centfrom.categoryname ,
+				ffd.fname,
+				ffd.fid
+			from centfrom JOIN (
+			SELECT centfromid fid ,centfrom.categoryname fname from centfrom where fatherid = 0
+		) ffd on ffd.fid = centfrom.fatherid
+			ORDER BY ffd.fid desc  
+  </select>
+  
+   <!-- 根据租约ID和状态查询租约列表账单 -->
+  <select id="paylistshowbecent" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="cn.com.qcc.queryvo.UserCentCustomer" >
+  			SELECT payexpert.payexpertname ,
+					 housepay.centprices,
+		       housepay.create_time needpaytime ,
+		       payexpert.payexpertid,
+					 finance.categoryname,
+					 payexpert.start_time ,
+					 payexpert.end_time,
+					IFNULL(ffd.fid,'-1')fid,	
+					IFNULL(ffd.fname,'')fname,
+					housepay.financeid ,
+					sumadd.currentprices
+		  from housepay  INNER JOIN usercent
+			on housepay.usercentid = usercent.usercentid
+			INNER JOIN payexpert on housepay.payexpertid = payexpert.payexpertid
+			INNER JOIN finance on finance.financeid = housepay.financeid
+			 LEFT JOIN (
+			SELECT financeid fid ,categoryname fname from finance where financeid  in (
+			SELECT financeid from finance where fatherid = 1
+		) 
+		) ffd on ffd.fid = finance.fatherid
+		 INNER JOIN (SELECT SUM(housepay.centprices)currentprices ,payexpertid from housepay GROUP BY payexpertid)
+		sumadd on sumadd.payexpertid = payexpert.payexpertid
+		where housepay.usercentid = #{usercentid}
+  </select>
+  
+    <!-- 根据租户 的id查询租户的基本信息生成合同 -->
+  <select id="getcommonusermess" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="long" >
+  			SELECT `profile`.real_name realname,
+				user.telephone ,
+				`profile`.identity ,
+				`profile`.idpictures ,
+				`user`.userid,
+				`profile`.sex ,	`profile`.profileid ,`profile`.sign_time ,
+				 IFNULL(`profile`.signstate,'1')signstate 
+		  from `user` LEFT JOIN `profile` on `user`.userid = `profile`.user_id 
+			where  `user`.userid = #{user_id}
+  </select>
+  
+    <!-- 根据租户 的id查询租户的基本信息生成合同 -->
+  <select id="getlandusermess" resultType="cn.com.qcc.queryvo.HouseCustomer" parameterType="long" >
+			SELECT IFNULL(`profile`.real_name,'') realname ,
+			  detaileaddress.detailes ,
+			  house.house_number ,
+			  house.area ,
+			  IFNULL(landlord.landaddress ,'')landaddress
+			 from house LEFT JOIN `profile` on house.user_id = `profile`.user_id
+				INNER JOIN building on house.buildingid = building.buildingid
+				INNER JOIN detaileaddress on building.detailid = detaileaddress.detailid
+				INNER JOIN landlord on house.user_id = landlord.userid
+				where house.houseid =#{houseid}
+  </select>
+  
+    <!-- 根据租户 的id查询租户的基本信息生成合同 -->
+  <select id="getCentTimes" resultType="Integer" parameterType="string" >
+				SELECT 
+	IFNULL(MAX(usercent.centtimes)+1,1)s
+	from usercent where usercent.usercentnum = #{usercentnum};
+  </select>
+  
+    <!-- 根据租户 的id查询租户的基本信息生成合同 -->
+  <select id="usercentdetail" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="string" >
+			SELECT MIN(usercent.start_time)start_time ,
+					 MAX(usercent.end_time)end_time,
+					 usercent.usercentnum ,
+					 usercent.userid ,
+					 `profile`.real_name realname,
+			     `user`.telephone ,
+					usercent.houseid ,
+					house.house_number,
+		      house.floor ,
+					apartment.apartmentname ,
+		      building.building ,
+		      village.villagename
+					from usercent 
+					LEFT JOIN `profile` on `profile`.user_id = usercent.userid
+		      LEFT JOIN `user` on `profile`.user_id = `user`.userid
+		      LEFT JOIN house on usercent.houseid = house.houseid
+					LEFT JOIN building on house.buildingid = building.buildingid
+		      LEFT JOIN apartment on house.apartment_id = apartment.apartmentid
+		      LEFT JOIN village on village.villageid = building.villageid
+		where usercent.usercentnum = #{usercentnum}
+  </select>
+  
+   <!-- 这里是查询押金总和 -->
+  <select id="usercentdetailprices" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="string" >
+		SELECT SUM(centprices)centprices  from housepay where usercentid in (
+	SELECT usercentid from usercent where usercentnum = #{usercentnum}
+		) and  housepay.financeid in (SELECT financeid from finance where fatherid = 6)
+  </select>
+  
+  <!-- 根据租户 的id查询租户的基本信息生成合同 -->
+  <select id="usercentdetaillist" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="string" >
+		SELECT usercent.start_time,
+			 usercent.end_time,
+			 usercent.usercentid,
+       ss.fname,
+       rentmodal.rentname ,
+       housepay.centprices ,
+       IFNULL(payother.centprices,'0')currentprices ,
+       usercent.paystyleid ,
+			 historycent.historycenturl ,
+       usercent.centtimes
+		from usercent 
+	 INNER JOIN rentmodal on usercent.rentmodalid = rentmodal.rentmodalid 
+   INNER JOIN (SELECT rentmodalid ,rentname fname from rentmodal)ss on rentmodal.fatherid = ss.rentmodalid 
+   INNER JOIN housepay on housepay.usercentid = usercent.usercentid
+	 LEFT JOIN (SELECT  SUM(housepay.centprices)centprices , housepay.usercentid  from housepay where 
+	 housepay.financeid in (SELECT finance.financeid FROM finance where fatherid = 6) GROUP BY housepay.usercentid)
+		payother on payother.usercentid = usercent.usercentid
+  INNER JOIN historycent on historycent.usercentid = usercent.usercentid
+	where usercent.usercentnum = #{usercentnum} and housepay.financeid = 30
+ 
+  </select>
+  
+    <!-- 根据租户 的id查询租户的基本信息生成合同 -->
+  <select id="firstpay" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="long" >
+			SELECT housepay.centprices currentprices, finance.categoryname from housepay 
+		 LEFT JOIN finance on housepay.financeid = finance.financeid
+  where housepay.usercentid = #{usercentid}
+	and housepay.payexpertid = (SELECT MIN(payexpertid) from housepay where usercentid =  #{usercentid})
+  </select>
+  
+    <!-- 根据租户 的id查询租户的基本信息生成合同 -->
+  <select id="financialbycentnum" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="string" >
+			SELECT usercent.centtimes ,usercent.start_time ,usercent.end_time ,
+				usercent.usercentid
+			from usercent where usercent.usercentnum = #{usercentid}
+  </select>
+  
+    <!-- 根据租约ID查询分期信息 -->
+  <select id="centpayexbyid" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="long" >
+			SELECT payexpert.payexpertname ,payexpert.start_time 
+	,payexpert.end_time ,payexpert.payexpertid ,
+	IFNULL(tts.centprices,'0')centprices
+ from payexpert LEFT JOIN housepay on payexpert.payexpertid = housepay.payexpertid
+	LEFT JOIN (SELECT SUM(housepay.centprices)centprices ,housepay.payexpertid 
+	from housepay where housepay.paystate = 1 GROUP BY housepay.payexpertid)tts on tts.payexpertid = payexpert.payexpertid
+	where housepay.usercentid = #{usercentid}  GROUP BY housepay.payexpertid
+  </select>
+  
+    <!-- 根据分期ID查询账单信息 -->
+  <select id="housepaylistbyid" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="long" >
+		SELECT finance.categoryname ,housepay.create_time needpaytime,
+				housepay.centprices ,housepay.paystate,housepay.housepayid
+			from housepay 
+			LEFT JOIN finance on housepay.financeid = finance.financeid
+		where housepay.payexpertid = #{payexpertid}
+  </select>
+  
+    <!-- 这里是查询押金列表 -->
+  <select id="yacentsbycentnum" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="string" >
+		SELECT centprices ,finance.categoryname , housepay.create_time needpaytime ,
+			housepay.paystate ,housepay.update_time ,housepay.housepayid
+		 from housepay 
+			LEFT JOIN finance on housepay.financeid = finance.financeid
+		where usercentid in (
+			SELECT usercentid from usercent where usercentnum = #{usercentnum}
+				) and  housepay.financeid in (SELECT financeid from finance where finance.fatherid = 6)
+  </select>
+  
+  
+   <!-- 根据租户 的id查询租户的基本信息生成合同 -->
+  <select id="housepersionlist" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="cn.com.qcc.queryvo.HouseVo" >
+		 SELECT 
+		IFNULL(house.house_number,'1')house_number ,
+		IFNULL(house.floor,'1')floor ,
+		house.houseid,
+		IFNULL(usercent.usercentnum,'')usercentnum ,
+		IFNULL(housepersion.realname ,'')realname ,
+		IFNULL(housepersion.telephone,'')telephone ,
+		IFNULL(building.building,'')building ,
+		IFNULL(village.villagename,'') villagename , 
+		ifnull(building.buildingid,'0')buildingid ,
+		IFNULL(housepersion.identity,'')identity
+		
+	from house
+	LEFT JOIN building on house.buildingid  = building.buildingid
+	LEFT JOIN village on village.villageid = building.villageid
+	LEFT JOIN ( SELECT usercentnum ,usercent.houseid  from usercent 
+	where usercent.centstate in (1,2)
+	GROUP BY usercent.houseid ) usercent on usercent.houseid = house.houseid
+		LEFT JOIN housepersion on housepersion.usercentnum = usercent.usercentnum
+	where house.housestatus !='3' and house.houstatus = '1'
+	<if test="buildingCustomer !=null">
+		<if test="buildingCustomer.buildingid !=null">
+			and building.buildingid = #{buildingCustomer.buildingid}
+		</if>
+	</if>
+	ORDER BY house.buildingid ,house.floor asc   ,house.house_number asc , house.houseid
+	<!-- 分页的查询条件 -->
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+  </select>
+  
+  
+   <!-- 根据租户 的id查询租户的基本信息生成合同 -->
+  <select id="housepersionlistCount" resultType="integer" parameterType="cn.com.qcc.queryvo.HouseVo" >
+		 SELECT 
+		count(1)
+	from house
+	LEFT JOIN building on house.buildingid  = building.buildingid
+	LEFT JOIN village on village.villageid = building.villageid
+	LEFT JOIN ( SELECT usercentnum ,usercent.houseid  from usercent 
+	where usercent.centstate in (1,2)
+	GROUP BY usercent.houseid ) usercent on usercent.houseid = house.houseid
+		LEFT JOIN housepersion on housepersion.usercentnum = usercent.usercentnum
+	where house.housestatus !='3' and house.houstatus = '1'
+	<if test="buildingCustomer !=null">
+		<if test="buildingCustomer.buildingid !=null">
+			and building.buildingid = #{buildingCustomer.buildingid}
+		</if>
+	</if>
+  </select>
+  
+  <!-- 根据租户 的id查询租户的基本信息生成合同 -->
+  <select id="mailsbyuserid" resultType="cn.com.qcc.queryvo.MailCustomer" parameterType="cn.com.qcc.queryvo.MailVo" >
+          
+               SELECT   maillist.phoneNumbers,
+							maillist.avatar ,
+							maillist.displayName,
+							IFNULL(`maillist`.userid,'-1')userid ,
+							IFNULL(fans.fanStatus,0) fansState
+				from (
+			SELECT DISTINCT
+				maillist.phoneNumbers,
+        IFNULL(`profile`.avatar,'') avatar , 
+			  IFNULL(`profile`.user_name,maillist.displayName) displayName ,
+				IFNULL(`user`.userid,'-1')userid 
+			FROM
+				maillist
+			LEFT JOIN `user` ON `user`.telephone = maillist.phoneNumbers
+	    LEFT JOIN `profile` on `user`.userid = `profile`.user_id 
+			where maillist.userid = #{userid}
+			and maillist.phoneNumbers not in 
+			(SELECT `user`.telephone from `user` where `user`.userid= #{userid})
+			<if test="searchwhere !=null and searchwhere !=''">
+				and (
+					maillist.phoneNumbers like concat('%',#{searchwhere},'%')
+				or maillist.displayName like concat('%',#{searchwhere},'%')
+				or  `profile`.user_name like concat('%',#{searchwhere},'%')
+     		)
+			</if>
+			
+			ORDER BY `user`.userid desc  
+					
+				<if test="pagequery !=null ">
+							limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		            </if>
+		         
+			)  maillist
+		
+			LEFT JOIN  fans on  fans.followUserId = `maillist`.userid and   fans.userId = #{userid}
+          
+          
+          
+          
+           
+			
+  </select>
+  
+   <!-- 根据租户 的id查询租户的基本信息生成合同 -->
+  <select id="mailsbyuseridCount" resultType="integer" parameterType="cn.com.qcc.queryvo.MailVo" >
+		SELECT count(1) from maillist 
+		 LEFT JOIN `user` ON `user`.telephone = maillist.phoneNumbers
+		LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+		where maillist.userid = #{userid}
+		and maillist.phoneNumbers not in 
+			(SELECT `user`.telephone from `user` where `user`.userid=  #{userid} )
+			<if test="searchwhere !=null and searchwhere !=''">
+				and	( maillist.phoneNumbers like concat('%',#{searchwhere},'%')
+				or  `profile`.user_name like concat('%',#{searchwhere},'%')
+				or maillist.displayName like concat('%',#{searchwhere},'%')
+				
+				  )
+			</if>
+  </select>
+  
+    <!-- 找经纪 人 -->
+  <select id="searchbroker" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="cn.com.qcc.queryvo.UserCentVo" >
+		SELECT `profile`.avatar ,`profile`.user_name ,`profile`.user_id userid,broker.update_time create_time,
+			IFNULL(t.encount,'0')encount from broker 
+				LEFT JOIN `profile` on broker.userid = `profile`.user_id
+				LEFT JOIN `user` on `user`.userid = broker.userid
+				LEFT JOIN ( SELECT browse.userid,count(1) encount from
+					browse GROUP BY browse.userid ) t on t.userid = `user`.userid
+			where 1=1
+			<if test="code != '' and code !=null ">
+			AND	broker.codes like concat('%',#{code},'%')
+			</if>
+			  ORDER BY 
+			  <if test="ordername !='' and ordername !=null">
+			  	  t.encount  ${ordername}, 
+			  </if>
+			  broker.update_time  desc 
+			  <if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+  </select>
+  
+     <!-- 找经纪 人 -->
+  <select id="searchbrokerCount" resultType="integer" parameterType="cn.com.qcc.queryvo.UserCentVo" >
+		SELECT count(1) from broker 
+				LEFT JOIN `profile` on broker.userid = `profile`.user_id
+				LEFT JOIN `user` on `user`.userid = broker.userid
+				INNER JOIN ( SELECT browse.userid,count(1) encount from
+					browse GROUP BY browse.userid ) t on t.userid = `user`.userid
+			where 1=1
+			<if test="code != '' and code !=null ">
+			AND	broker.codes like concat('%',#{code},'%')
+			</if>
+			
+  </select>
+  
+   <!-- 我的待办 -->
+  <select id="backlog" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="cn.com.qcc.queryvo.UserCentVo" >
+		<!-- 水电煤气欠款 -->
+		SELECT IFNULL(SUM(housepay.centprices) ,'0') hycprices ,
+						centout.centoutcount ,
+						daishou.daishoucount ,
+						centprices.centpricescount
+			from housepay 
+		JOIN (
+			<!-- 有多少租约需要退房 -->
+			SELECT  IFNULL(COUNT(1),'0')centoutcount from usercent where usercent.centstate = 1 
+		  AND usercent.end_time <![CDATA[<=#{start}]]>  and usercent.houseid in (
+			SELECT houseid from house where house.user_id = #{userid}
+		)
+		)centout 
+		JOIN (
+			<!-- 未来三天待收款 -->
+			SELECT IFNULL(SUM(housepay.centprices),'0') daishoucount from housepay where housepay.paystate = 1 
+			AND housepay.create_time > #{start} AND housepay.create_time  <![CDATA[<=#{end}]]>
+		  AND housepay.houseid in (
+				SELECT houseid from house where house.user_id = #{userid}
+		  )
+		)daishou 
+		join (
+			<!-- 房租欠款 -->
+			SELECT IFNULL(SUM(housepay.centprices),'0')centpricescount from housepay where housepay.paystate = 1 
+		AND housepay.create_time <![CDATA[<=#{start}]]> and housepay.financeid = 29 
+		AND housepay.houseid in (
+			SELECT houseid from house where user_id = #{userid}
+		)
+		)centprices 
+		where housepay.paystate = 1 and housepay.financeid in (19,20,21,22,23)
+		AND housepay.create_time  <![CDATA[<=#{start}]]> and housepay.houseid in (
+			SELECT houseid from house where house.user_id = #{userid}
+		)
+  </select>
+  
+    <!-- 根据租约编号查询续租信息 -->
+  <select id="xuzusearch" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="string" >
+		SELECT  usercent.end_time ,
+			    usercent.userid ,
+			    usercent.userid ,
+			    `profile`.real_name realname ,
+			    `user`.telephone,
+				`profile`.identity
+		from housepay
+			LEFT JOIN usercent on housepay.usercentid = usercent.usercentid
+			LEFT JOIN `profile` on usercent.userid = `profile`.user_id
+			LEFT JOIN `user` on `user`.userid = `profile`.user_id
+		where usercent.usercentnum = #{usercentnum}  AND usercent.centstate in (1,2)
+		ORDER BY usercent.end_time asc  LIMIT 0 ,1
+  </select>
+  
+  <!--  ========================================================================================== -->
+  
+  <!--根据userid查询用户信息和profile -->
+	<select id="getUserAndProfileByUserid" parameterType="long"
+		resultType="cn.com.qcc.queryvo.UserCustomer">
+		select `user`.* ,`profile`.* ,ifnull (house.housecount,'0') housecount
+		from user
+		inner join profile	on  user.userid=profile.user_id
+		LEFT JOIN (
+			SELECT house.user_id ,COUNT(1) housecount from house 
+			where   house.housestatus  !='3' and house.houstatus = '1'
+			GROUP BY house.user_id
+		) house on house.user_id = `user`.userid
+		where userid = #{userid}
+	</select>
+
+	<!-- 查询所有的关注者 的集合 -->
+	<select id="findFollowByUserId"  resultType="cn.com.qcc.queryvo.UserCustomer">
+		SELECT       follow.followUserId user_id ,
+					 follow.update_time ,
+					 `profile`.user_name ,
+					 `profile`.avatar ,
+					 IFNULL(broker.state,'1')state 
+				FROM `user`
+			INNER JOIN `profile` on `user`.userid = `profile`.user_id
+			INNER JOIN (select fans.followUserId , fans.update_time from fans where 
+			userid =#{userid} and fanStatus='1') follow 
+			on follow.followUserId = `profile`.user_id
+			LEFT JOIN broker on broker.userid = `profile`.user_id
+		   ORDER BY broker.state desc , follow.update_time desc 
+		   <if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		   </if>
+	</select>
+	<select id="findFollowByUserIdCount"  resultType="integer">
+		SELECT      count(1)
+				FROM `user`
+			INNER JOIN `profile` on `user`.userid = `profile`.user_id
+			INNER JOIN (select fans.followUserId , fans.update_time from fans where 
+			userid =#{userid} and fanStatus='1') follow 
+			on follow.followUserId = `profile`.user_id
+			LEFT JOIN broker on broker.userid = `profile`.user_id
+	</select>
+
+	<!-- 查询所有的粉丝 -->
+	<select id="findFansByUserId"  resultType="cn.com.qcc.queryvo.UserCustomer">
+		select p.*,f.followUserId,f.update_time from user u,profile
+		p,(select * from fans where followUserId=#{userid} and fanStatus='1')
+		f
+		where u.userid=p.user_id and p.user_id=f.userid
+		 <if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		   </if>
+	</select>
+	<select id="findFansByUserIdCount"  resultType="integer">
+		select count(1) from user u,profile
+		p,(select * from fans where followUserId=#{userid} and fanStatus='1')
+		f
+		where u.userid=p.user_id and p.user_id=f.userid
+	</select>
+
+	<!-- 找房东 -->
+	<select id="findland" parameterType="cn.com.qcc.queryvo.UserVo"
+		resultType="cn.com.qcc.queryvo.UserCustomer">
+		SELECT * from (
+		SELECT `profile`.user_name ,
+		`user`.userid ,t.encount ,
+		village.`code`,
+		`profile`.avatar,
+		`user`.update_time
+		from `user`
+		INNER JOIN ( SELECT browse.userid,count(1) encount from
+		browse GROUP BY browse.userid ) t on t.userid = `user`.userid
+		INNER
+		JOIN house on `user`.userid = house.user_id
+		INNER JOIN `profile` on
+		`user`.userid = `profile`.user_id
+		INNER JOIN building on
+		house.buildingid = building.buildingid
+		INNER JOIN village on
+		village.villageid = building.villageid
+		where 1=1
+		<!-- 小区的查询条件 -->
+		<include
+			refid="cn.com.qcc.mymapper.SearchWhere.query_village_where" />
+		<!-- 用户的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_user_where" />
+		GROUP BY `user`.userid ,village.`code` ) t GROUP BY t.userid
+		ORDER BY
+		<if test="enorder !=null and enorder != '' ">
+			t.encount ${enorder} ,
+		</if>
+		t.update_time desc
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+
+	<!-- 找房东的count -->
+	<select id="findlandCount" parameterType="cn.com.qcc.queryvo.UserVo"
+		resultType="integer">
+		SELECT count(1) from (
+		SELECT `profile`.user_name ,
+		`user`.userid ,t.encount ,
+		village.`code`,
+		`profile`.avatar
+		from `user`
+		INNER JOIN ( SELECT browse.userid,count(1) encount from
+		browse GROUP BY browse.userid ) t on t.userid = `user`.userid
+		INNER
+		JOIN house on `user`.userid = house.user_id
+		INNER JOIN `profile` on
+		`user`.userid = `profile`.user_id
+		INNER JOIN building on
+		house.buildingid = building.buildingid
+		INNER JOIN village on
+		village.villageid = building.villageid
+		where 1=1
+		<!-- 小区的查询条件 -->
+		<include
+			refid="cn.com.qcc.mymapper.SearchWhere.query_village_where" />
+		<!-- 用户的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_user_where" />
+		GROUP BY `user`.userid
+		) t
+	</select>
+
+
+	<!--根据userid查询用户信息和profile -->
+	<select id="getuserinfo" parameterType="java.util.List"
+		resultType="cn.com.qcc.queryvo.UserCustomer">
+		SELECT * from `user` LEFT JOIN `profile` on user.userid =
+		`profile`.user_id
+		where 1=1 and `user`.userid in
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+	</select>
+
+	<update id="updateToken" parameterType="cn.com.qcc.pojo.User">
+		update user set token = #{token} where userid= #{userid}
+	</update>
+
+	<update id="updateAvatar" parameterType="cn.com.qcc.pojo.Profile">
+		UPDATE `profile` set avatar = #{avatar} where user_id = #{user_id}
+	</update>
+
+
+	<!-- /移除黑名单 / 删除好友 / 拉入黑名单 -->
+	<select id="romoveblack" parameterType="cn.com.qcc.pojo.Userconn">
+		UPDATE userconn set state = #{state} where userid = #{userid} and
+		followuserid = #{followuserid}
+	</select>
+
+	<!-- / 查询好友 / 黑名单 / 申请列表 -->
+	<select id="myfriend" resultType="cn.com.qcc.queryvo.UserCustomer"
+		parameterType="cn.com.qcc.pojo.Userconn">
+		SELECT userconn.userconnid ,`profile`.user_id ,
+		`profile`.avatar ,`profile`.user_name ,1 usertype
+		from userconn LEFT
+		JOIN `profile` on userconn.followuserid = `profile`.user_id
+		where
+		userconn.userid = #{userid} and userconn.state = #{state}
+	</select>
+
+
+	<!-- 查询想要加好友的对象 -->
+	<select id="searchadd" resultType="cn.com.qcc.queryvo.UserCustomer"
+		parameterType="cn.com.qcc.queryvo.UserCustomer">
+		SELECT
+		`user`.userid
+		,`profile`.avatar,user.telephone,`profile`.user_name
+		from `profile`
+		INNER JOIN `user` on `user`.userid = `profile`.user_id
+		where
+		`profile`.user_id not in (
+		SELECT followuserid from userconn where userid = #{userid} and state = 3
+		UNION all
+		SELECT userid from userconn where followuserid = #{userid} and state = 4
+		) and `profile`.user_name like CONCAT('%',#{user_name},'%') or
+		`user`.telephone like CONCAT('%',#{user_name},'%')
+		limit 0 , 10
+	</select>
+
+
+	<!-- 邀请好友入群的查询 -->
+	<select id="inviting" resultType="cn.com.qcc.queryvo.UserCustomer"
+		parameterType="cn.com.qcc.pojo.Ronggroup">
+		SELECT userconn.userconnid ,`profile`.user_id ,
+		`profile`.avatar ,`profile`.user_name,
+		IFNULL(t.state,-1)usertype
+		from userconn LEFT JOIN `profile` on userconn.followuserid =
+		`profile`.user_id
+		LEFT JOIN (
+		SELECT rongconn.userid , rongconn.state ,ronggroup.`name`
+		from rongconn LEFT JOIN ronggroup on ronggroup.groupid = rongconn.groupid
+		where rongconn.state in (1,3) and ronggroup.groupid = #{groupid}
+		GROUP BY rongconn.userid
+		)t on t.userid = `profile`.user_id
+		where userconn.userid = #{userid} and
+		userconn.state = 3
+		ORDER BY t.state desc
+	</select>
+
+
+	<!-- 邀请好友入群的查询 -->
+	<select id="mygrouplist" resultType="cn.com.qcc.queryvo.UserCustomer"
+		parameterType="cn.com.qcc.pojo.Userconn">
+		SELECT ronggroup.groupid user_id ,ronggroup.picture avatar,
+		ronggroup.`name`
+		user_name ,4 usertype
+		from rongconn LEFT JOIN
+		ronggroup on
+		rongconn.groupid = ronggroup.groupid
+		where rongconn.state = '4' and
+		rongconn.userid = #{userid}
+	</select>
+
+	<!-- 邀请好友入群的查询 -->
+	<select id="searchbalance" resultType="cn.com.qcc.queryvo.UserCustomer"
+		parameterType="long">
+		SELECT vipcount.balance ,`user`.telephone from vipcount
+		LEFT JOIN `user` on vipcount.user_id = `user`.userid
+		where vipcount.user_id = #{userid}
+	</select>
+
+
+	<!-- 根据电话号码查询用户角色关系 -->
+	<select id="getalluser_role" resultType="cn.com.qcc.queryvo.UserCustomer"
+		parameterType="cn.com.qcc.queryvo.UserVo">
+		SELECT * FROM (
+		SELECT user.userid, `user`.telephone ,	IFNULL(`profile`.user_name,'')user_name
+		,IFNULL(user_role.roleid,1000)
+		roleid,IFNULL(role.rolename,'XXXXXX')rolename from `user`
+		LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+		LEFT JOIN user_role on `user`.userid = user_role.userid
+		LEFT JOIN role on user_role.roleid = role.roleid
+		where 1=1
+		<if test="telephone !=null  ">
+			and `user`.telephone like
+			concat('%',#{telephone},'%')
+		</if>
+		<if test="rolename !=null and rolename !=''  ">
+			and role.rolename like
+			concat('%',#{rolename},'%')
+		</if>  ) user
+		ORDER BY `user`.roleid ASC 
+		<if test="pagequery !=null "> limit #{pagequery.pagestart} , #{pagequery.pagesize} </if>
+	</select>
+		<select id="getalluser_roleCount" resultType="integer"
+		parameterType="cn.com.qcc.queryvo.UserVo">
+		SELECT count(1) from `user`
+		LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+		LEFT JOIN user_role on `user`.userid = user_role.userid
+		LEFT JOIN role on user_role.roleid = role.roleid
+		where 1=1
+		<if test="telephone !=null  ">
+			and `user`.telephone like
+			concat('%',#{telephone},'%')
+		</if>
+		<if test="rolename !=null and rolename !=''  ">
+			and role.rolename like
+			concat('%',#{rolename},'%')
+		</if>
+	</select>
+
+	<!-- 根据电话号码查询用户角色关系 -->
+	<select id="getallmanager_user" resultType="cn.com.qcc.queryvo.UserCustomer"
+		parameterType="cn.com.qcc.queryvo.UserVo">
+		SELECT user.userid, `user`.telephone ,`profile`.user_name
+		,user_role.roleid,role.rolename from `user`
+		LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+		INNER JOIN user_role on `user`.userid = user_role.userid
+		LEFT JOIN role on user_role.roleid = role.roleid
+		where 1=1
+		<if test="telephone !=null  ">
+			and `user`.telephone like
+			concat('%',#{telephone},'%')
+		</if>
+		<if test="rolename !=null and rolename !=''  ">
+			and role.rolename like
+			concat('%',#{rolename},'%')
+		</if>
+		ORDER BY user_role.roleid asc  
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+	<select id="getallmanager_userCount" resultType="integer"
+		parameterType="cn.com.qcc.queryvo.UserCustomer">
+		SELECT count(1) from `user`
+		LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+		INNER JOIN user_role on `user`.userid = user_role.userid
+		LEFT JOIN role on user_role.roleid = role.roleid
+		where 1=1
+		<if test="telephone !=null  ">
+			and `user`.telephone like
+			concat('%',#{telephone},'%')
+		</if>
+		<if test="rolename !=null and rolename !=''  ">
+			and role.rolename like
+			concat('%',#{rolename},'%')
+		</if>
+	</select>
+
+
+	<!-- 查询权限集合 -->
+	<select id="getaccessbyuserid" resultType="cn.com.qcc.pojo.Access"
+		parameterType="cn.com.qcc.queryvo.UserCustomer">
+		SELECT * from role_access LEFT JOIN access on role_access.accessid =
+		access.accessid
+		where role_access.roleid in (SELECT roleid from user_role where userid =
+		#{userid})
+	</select>
+
+	<!--  根据用户的ID,查询用户的角色ID 和角色名称 -->
+	<select id="getRoleName" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="cn.com.qcc.pojo.User">
+		SELECT rolename ,user_role.roleid  from role LEFT JOIN user_role on role.roleid =
+		user_role.roleid
+		where user_role.userid = #{userid}
+	</select>
+
+
+	<!--统计管理下面的用户 -->
+	<select id="totaluser" resultType="cn.com.qcc.queryvo.UserCustomer"
+		parameterType="cn.com.qcc.queryvo.UserVo">
+		SELECT manage_user.followuserid userid, `profile`.user_name
+		,`user`.telephone ,IFNULL(outm.outmonetary,'0')
+		outmonetary,IFNULL(inm.inmonetary,'0')inmonetary
+		,IFNULL(vipm.vipmonetary,'0')vipmonetary ,IFNULL(qm.qcount,'0')qcount
+		,IFNULL(sm.scount,'0')scount ,IFNULL(hm.fcount,'0') fcount
+		,IFNULL(blm.balance,'0')balance
+		from manage_user
+		LEFT JOIN `profile` on manage_user.followuserid =
+		`profile`.user_id
+		LEFT JOIN `user` on manage_user.followuserid =
+		`user`.userid
+		LEFT JOIN (SELECT SUM(monetary)outmonetary,user_id from
+		consume where type = '1' 
+		GROUP BY user_id ) outm on
+		outm.user_id = manage_user.followuserid
+		LEFT JOIN (SELECT SUM(monetary)
+		inmonetary,user_id from consume where type = '9' 
+		GROUP BY
+		user_id ) inm on inm.user_id = manage_user.followuserid
+		LEFT JOIN
+		(SELECT SUM(monetary) vipmonetary,user_id from consume where type =
+		'5' 
+		GROUP BY user_id ) vipm on vipm.user_id =
+		manage_user.followuserid
+		LEFT JOIN (SELECT COUNT(1)qcount,user_id from
+		qiuzu GROUP BY user_id) qm on qm.user_id = manage_user.followuserid
+		LEFT JOIN(SELECT COUNT(1)scount, userid from sugges GROUP BY userid)
+		sm on sm.userid = manage_user.followuserid
+		LEFT JOIN (SELECT
+		COUNT(1)fcount, user_id from house where houstatus = '1' and
+		housestatus ='1' GROUP BY user_id) hm on hm.user_id =
+		manage_user.followuserid
+		LEFT JOIN (SELECT balance ,user_id from
+		vipcount) blm on blm.user_id = manage_user.followuserid
+		<if test="userid !=null and userid != ''">
+			where manage_user.userid = #{userid}
+		</if>
+		<if test="searchwhere !=null and searchwhere != '' ">
+			 ${searchwhere}
+		</if>
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+	
+	<select id="totaluserCount" resultType="integer"
+		parameterType="cn.com.qcc.queryvo.UserVo">
+		SELECT  count(1)
+		from manage_user
+		LEFT JOIN `profile` on manage_user.followuserid =
+		`profile`.user_id
+		LEFT JOIN `user` on manage_user.followuserid =
+		`user`.userid
+		LEFT JOIN (SELECT SUM(monetary)outmonetary,user_id from
+		consume where type = '1' 
+		GROUP BY user_id ) outm on
+		outm.user_id = manage_user.followuserid
+		LEFT JOIN (SELECT SUM(monetary)
+		inmonetary,user_id from consume where type = '9' 
+		GROUP BY
+		user_id ) inm on inm.user_id = manage_user.followuserid
+		LEFT JOIN
+		(SELECT SUM(monetary) vipmonetary,user_id from consume where type =
+		'5'
+		GROUP BY user_id ) vipm on vipm.user_id =
+		manage_user.followuserid
+		LEFT JOIN (SELECT COUNT(1)qcount,user_id from
+		qiuzu GROUP BY user_id) qm on qm.user_id = manage_user.followuserid
+		LEFT JOIN(SELECT COUNT(1)scount, userid from sugges GROUP BY userid)
+		sm on sm.userid = manage_user.followuserid
+		LEFT JOIN (SELECT
+		COUNT(1)fcount, user_id from house where houstatus = '1' and
+		housestatus ='1' GROUP BY user_id) hm on hm.user_id =
+		manage_user.followuserid
+		LEFT JOIN (SELECT balance ,user_id from
+		vipcount) blm on blm.user_id = manage_user.followuserid
+		<if test="userid !=null and userid != ''">
+			where manage_user.userid = #{userid}
+		</if>
+	</select>
+
+	<!-- 查询所有需要被管理的用户排除userid -->
+	<select id="alltobemanager" resultType="cn.com.qcc.queryvo.UserCustomer"
+		parameterType="cn.com.qcc.queryvo.UserVo">
+		SELECT `user`.userid , `profile`.user_name ,`user`.telephone
+		,IFNULL(outm.outmonetary,'0')
+		outmonetary,IFNULL(inm.inmonetary,'0')inmonetary
+		,IFNULL(vipm.vipmonetary,'0')vipmonetary ,IFNULL(qm.qcount,'0')qcount
+		,IFNULL(sm.scount,'0')scount ,IFNULL(hm.fcount,'0') fcount,
+		IFNULL(blm.balance,'0')balance
+		from `user`
+		LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+		LEFT JOIN (SELECT SUM(monetary)outmonetary,user_id from consume where type
+		= '1' 
+		GROUP BY user_id ) outm on outm.user_id = `user`.userid
+		LEFT JOIN (SELECT
+		SUM(monetary) inmonetary,user_id from consume where type = '9' 
+		GROUP BY user_id ) inm on inm.user_id = `user`.userid
+		LEFT JOIN (SELECT
+		SUM(monetary) vipmonetary,user_id from consume where type = '5' 
+		GROUP BY user_id ) vipm on vipm.user_id = `user`.userid
+		LEFT JOIN (SELECT
+		COUNT(1)qcount,user_id from qiuzu GROUP BY user_id) qm on qm.user_id =
+		`user`.userid
+		LEFT JOIN(SELECT COUNT(1)scount, userid from sugges GROUP BY userid) sm on
+		sm.userid =`user`.userid
+		LEFT JOIN (SELECT COUNT(1)fcount, user_id from house where houstatus = '1'
+		and housestatus ='1' GROUP BY user_id) hm
+		on hm.user_id = `user`.userid
+		LEFT JOIN (SELECT balance ,user_id from
+		vipcount) blm on blm.user_id = `user`.userid
+		where 1=1 and
+		`user`.userid not in (SELECT followuserid from manage_user where
+		userid = #{userCustomer.userid}) and `user`.userid not in (SELECT DISTINCT
+		userid from manage_user) and `user`.userid !=   #{userCustomer.userid}
+		<if test="orderinmonetary !=null and orderinmonetary != '' ">
+			${orderinmonetary}
+		</if>
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+
+
+	<!-- 查询所有需要被管理的用户排除userid -->
+	<select id="alltobemanagercount" resultType="integer"
+		parameterType="cn.com.qcc.queryvo.UserVo">
+		SELECT count(1)
+		from `user`
+		LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+		LEFT JOIN (SELECT SUM(monetary)outmonetary,user_id from consume where type
+		= '1' 
+		GROUP BY user_id ) outm on outm.user_id = `user`.userid
+		LEFT JOIN (SELECT
+		SUM(monetary) inmonetary,user_id from consume where type = '9'
+		GROUP BY user_id ) inm on inm.user_id = `user`.userid
+		LEFT JOIN (SELECT
+		SUM(monetary) vipmonetary,user_id from consume where type = '5' 
+		GROUP BY user_id ) vipm on vipm.user_id = `user`.userid
+		LEFT JOIN (SELECT
+		COUNT(1)qcount,user_id from qiuzu GROUP BY user_id) qm on qm.user_id =
+		`user`.userid
+		LEFT JOIN(SELECT COUNT(1)scount, userid from sugges GROUP BY userid) sm on
+		sm.userid =`user`.userid
+		LEFT JOIN (SELECT COUNT(1)fcount, user_id from house where houstatus = '1'
+		and housestatus ='1' GROUP BY user_id) hm
+		on hm.user_id = `user`.userid
+		LEFT JOIN (SELECT balance ,user_id from
+		vipcount) blm on blm.user_id = `user`.userid
+		where 1=1 and
+		`user`.userid not in (SELECT followuserid from manage_user where
+		userid = #{userCustomer.userid}) and `user`.userid not in (SELECT DISTINCT
+		userid from manage_user) and `user`.userid !=   #{userCustomer.userid}
+	</select>
+
+
+	<!--根据userid查询用户信息和profile -->
+	<select id="getmanageruserchongzhi" parameterType="java.util.List"
+		resultType="cn.com.qcc.queryvo.UserCustomer">
+		SELECT consume.update_time,consume.consume_id ,consume.monetary
+		inmonetary,
+		consume.user_id ,`profile`.user_name,`user`.telephone
+		from consume
+		LEFT JOIN `user` on consume.user_id = `user`.userid
+		LEFT JOIN `profile` on `profile`.user_id = consume.user_id
+		where type ='9'
+		and consume.user_id in
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+	<select id="getmanageruserchongzhiCount" parameterType="java.util.List"
+		resultType="integer">
+		SELECT  count(1)
+		from consume
+		LEFT JOIN `user` on consume.user_id = `user`.userid
+		LEFT JOIN `profile` on `profile`.user_id = consume.user_id
+		where type ='9'
+		and consume.user_id in
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+	</select>
+
+	<!--消费记录 -->
+	<select id="getmanageruserxiaofei" parameterType="java.util.List"
+		resultType="cn.com.qcc.queryvo.UserCustomer">
+		SELECT consume.update_time,consume.consume_id ,consume.monetary
+		outmonetary,
+		consume.user_id ,`profile`.user_name,`user`.telephone
+		from consume
+		LEFT JOIN `user` on consume.user_id = `user`.userid
+		LEFT JOIN `profile` on `profile`.user_id = consume.user_id
+		where type ='1'
+		and consume.user_id in
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+	<!--消费记录 -->
+	<select id="getmanageruserxiaofeiCount" parameterType="java.util.List"
+		resultType="integer">
+		SELECT  count(1)
+		from consume
+		LEFT JOIN `user` on consume.user_id = `user`.userid
+		LEFT JOIN `profile` on `profile`.user_id = consume.user_id
+		where type ='1'
+		and consume.user_id in
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+	</select>
+
+	<!--会员记录 -->
+	<select id="getmanageruservip" parameterType="java.util.List"
+		resultType="cn.com.qcc.queryvo.UserCustomer">
+		SELECT consume.update_time,consume.consume_id ,consume.monetary
+		vipmonetary,
+		consume.user_id ,`profile`.user_name,`user`.telephone
+		from consume
+		LEFT JOIN `user` on consume.user_id = `user`.userid
+		LEFT JOIN `profile` on `profile`.user_id = consume.user_id
+		where type ='5'
+		and consume.user_id in
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+	<select id="getmanageruservipCount" parameterType="java.util.List"
+		resultType="integer">
+		SELECT  count(1)
+		from consume
+		LEFT JOIN `user` on consume.user_id = `user`.userid
+		LEFT JOIN `profile` on `profile`.user_id = consume.user_id
+		where type ='5'
+		and consume.user_id in
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+	</select>
+
+
+	<!--房源记录 -->
+	<select id="gethousefabu" parameterType="java.util.List"
+		resultType="cn.com.qcc.queryvo.UserCustomer">
+		SELECT house.housestatus ,
+		price.prices,
+		price.pricetype ,
+		IFNULL(house.contacts,'')contacts ,
+		IFNULL(house.contactstel,'')contactstel,
+		IFNULL(apartment.apartmentname,'')apartmentname,
+		IFNULL(building.building,'')building ,
+		IFNULL(village.villagename,'')villagename ,
+		IFNULL(area.`name`,'')trading,
+		`user`.telephone,
+		`profile`.user_name,
+		house.update_time
+		from house
+		LEFT JOIN price on house.price_id = price.priceid
+		LEFT JOIN apartment on house.apartment_id = apartment.apartmentid
+		LEFT JOIN building on house.buildingid = building.buildingid
+		LEFT JOIN village on village.villageid = building.villageid
+		LEFT JOIN area on village.`code` = area.`code`
+		INNER JOIN user on house.user_id = `user`.userid
+		INNER JOIN `profile` on house.user_id = `profile`.user_id
+		where house.houstatus = '1' and house.user_id in
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		and house.housestatus in
+		<foreach item="item" collection="order" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+		<select id="gethousefabuCount" parameterType="java.util.List"
+		resultType="integer">
+		SELECT  count(1)
+		from house
+		LEFT JOIN price on house.price_id = price.priceid
+		LEFT JOIN apartment on house.apartment_id = apartment.apartmentid
+		LEFT JOIN building on house.buildingid = building.buildingid
+		LEFT JOIN village on village.villageid = building.villageid
+		LEFT JOIN area on village.`code` = area.`code`
+		INNER JOIN user on house.user_id = `user`.userid
+		INNER JOIN `profile` on house.user_id = `profile`.user_id
+		where house.houstatus = '1' and house.user_id in
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		and house.housestatus in
+		<foreach item="item" collection="order" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+	</select>
+
+
+	<!--求租记录 -->
+	<select id="gethouseqiuzu" parameterType="java.util.List"
+		resultType="cn.com.qcc.queryvo.UserCustomer">
+		SELECT qiuzu.areas ,
+		qiuzu.housetype apartmentname,
+		`user`.telephone,
+		`profile`.user_name,
+		qiuzu.linkman contacts,
+		qiuzu.phone contactstel,
+		area.`name` trading ,
+		qiuzu.classification ,
+		qiuzu.qiuzustatus housestatus,
+		qiuzu.price prices,
+		qiuzu.update_time
+
+		from qiuzu
+		LEFT JOIN `user` on qiuzu.user_id = `user`.userid
+		LEFT JOIN `profile` on `profile`.user_id = qiuzu.user_id
+		LEFT JOIN area on `area`.`code` = qiuzu.`code`
+		where qiuzu.user_id in
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		and qiuzu.qiuzustatus in
+		<foreach item="item" collection="order" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+		<select id="gethouseqiuzuCount" parameterType="java.util.List"
+		resultType="integer">
+		SELECT count(1)
+		from qiuzu
+		LEFT JOIN `user` on qiuzu.user_id = `user`.userid
+		LEFT JOIN `profile` on `profile`.user_id = qiuzu.user_id
+		LEFT JOIN area on `area`.`code` = qiuzu.`code`
+		where qiuzu.user_id in
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		and qiuzu.qiuzustatus in
+		<foreach item="item" collection="order" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+	</select>
+	
+	
+	<!--根据userid查询用户信息和profile -->
+	<select id="updateweixinmess" parameterType="cn.com.qcc.pojo.Profile"
+		>
+		UPDATE `profile` set  avatar = #{avatar} , user_name = #{user_name} 
+		where user_id = #{user_id}
+	</select>
+	
+	<!-- 通过搜查出类似的用户 -->
+	<select id="updateUserName" parameterType="cn.com.qcc.pojo.Profile">
+		UPDATE `profile` set user_name = #{user_name} where user_id = #{user_id}
+	</select>
+	
+	<select id="updateMail" parameterType="cn.com.qcc.pojo.Profile">
+		UPDATE `profile` set mail = #{mail} where user_id = #{user_id}
+	</select>
+	
+	
+	<select id="myteam" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="long">
+		SELECT `profile`.user_name , `profile`.avatar ,invite.account inmonetary
+				,invite.userid ,invite.followuserid
+	from invite 
+	LEFT JOIN `user` on invite.followuserid = `user`.userid
+	LEFT JOIN `profile` on `profile`.user_id = invite.followuserid
+	where invite.`level` = 1 and invite.userid = #{userid}
+	</select>
+	
+	
+	<select id="myteamson" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="cn.com.qcc.queryvo.UserCustomer">
+		SELECT invite.account inmonetary , `profile`.user_name ,`profile`.avatar from invite 
+		LEFT JOIN `profile` on invite.followuserid = `profile`.user_id
+	where invite.userid = #{userid}
+	and invite.followuserid in ( SELECT followuserid from invite where invite.userid = #{followUserId})
+	and invite.`level` = 2
+	</select>
+	
+	<!-- 查询我的收益列表 -->
+	<select id="mylurnce" resultType="cn.com.qcc.pojo.Lucre" parameterType="cn.com.qcc.queryvo.UserVo">
+		SELECT * from lucre where lucre.userid = #{userid} 
+		
+		ORDER BY lucre.update_time desc 
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+	<select id="mylurnceCount" resultType="integer" parameterType="cn.com.qcc.queryvo.UserVo">
+		SELECT count(1) from lucre where lucre.userid = #{userid}  
+		
+	</select>
+	
+	<!-- 查询我的收益列表 -->
+	<select id="getmaxuserlevel" resultType="cn.com.qcc.pojo.Invite" parameterType="long">
+		SELECT IFNULL(MAX(`level`),'0')`level` ,userid   from invite where followuserid =  #{userid}
+	</select>
+	
+	<!--查询经营范围 -->
+	<select id="getjiyin" parameterType="java.util.List"
+		resultType="cn.com.qcc.pojo.Area">
+		SELECT * from area where area.`code` in 
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+	</select>
+	
+	<!--我的品牌 -->
+	<select id="getmybranduser" parameterType="cn.com.qcc.queryvo.UserVo"
+		resultType="cn.com.qcc.pojo.Brand">
+			SELECT brand.* , IFNULL(branduser.userstate,3)userstate from brand
+				LEFT JOIN branduser on brand.brandid = branduser.brandid 
+				and branduser.userid = #{userid} 
+				where brand.state = 2 
+				<if test="userstate !=null and userstate !='' and userstate == 'mybrand' ">
+					and userstate in (1,2)
+				</if>
+				<!--品牌的查询的查询条件 -->
+				<include refid="cn.com.qcc.mymapper.SearchWhere.query_brand_where"/>
+				ORDER BY userstate asc 
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+	
+	<!--我的品牌 -->
+	<select id="getmybranduserCount" parameterType="cn.com.qcc.queryvo.UserVo"
+		resultType="integer">
+		SELECT count(1) from brand
+				LEFT JOIN branduser on brand.brandid = branduser.brandid 
+				and branduser.userid = #{userid} 
+				where brand.state = 2 
+				<if test="userstate !=null and userstate !='' and userstate == 'mybrand' ">
+					and userstate in (1,2)
+				</if>
+		<!--品牌的查询的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_brand_where"/>
+	</select>
+	
+	<!--根据城市查询我的品牌 -->
+	<select id="getmybranduserbycity" parameterType="cn.com.qcc.queryvo.HouseVo"
+		resultType="cn.com.qcc.pojo.Brand">
+		SELECT * from brand where brandid in (
+			SELECT brandid  from branduser where branduser.userstate != 3 
+			and branduser.userid = #{userid}
+		) and state = 2
+		<!--品牌的查询的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_brand_where"/>
+	</select>
+	
+	<!--品牌下的用户 -->
+	<select id="followbrand" parameterType="long"
+		resultType="cn.com.qcc.queryvo.UserCustomer">
+		SELECT `profile`.user_name ,`profile`.avatar ,branduser.userid   from branduser
+			LEFT JOIN `profile` on branduser.userid = `profile`.user_id
+			where branduser.brandid = #{brandid} and branduser.userstate = 2
+	</select>
+	
+	<!--品牌下可以添加的用户 -->
+	<select id="searchaddbranduser" parameterType="cn.com.qcc.queryvo.UserCustomer"
+		resultType="cn.com.qcc.queryvo.UserCustomer">
+		 SELECT DISTINCT  `profile`.user_name , `profile`.avatar ,`user`.userid  	,
+		 IFNULL(branduser.userstate , '3') fanStatus from `user` 
+			INNER JOIN `profile` on `user`.userid = `profile`.user_id
+			LEFT JOIN (SELECT * from branduser  where userstate = 2 and brandid = #{brandid} )branduser
+			 on `user`.userid = branduser.userid
+		where  `user`.userid not in  (
+			SELECT userid from branduser where brandid = #{brandid} and userstate =1
+		)  and (`user`.telephone like
+				concat('',#{searchwhere},'%') or `profile`.user_name   like
+				concat('',#{searchwhere},'%') )  
+		LIMIT 0 ,10 
+	</select>
+	
+	<select id="getuseridbytoken" resultType="string" parameterType="string">
+		SELECT userid
+ 			from `user` where accestoken = #{accestoken} 
+	</select>
+	
+	<!-- 查询权限的结合 -->
+	<select id="getallaccess" resultType="cn.com.qcc.pojo.Access" parameterType="cn.com.qcc.queryvo.UserVo">
+		SELECT * FROM access 
+		<if test="pagequery !=null "> limit #{pagequery.pagestart} , #{pagequery.pagesize} </if>
+	</select>
+	<select id="getallaccessCount" resultType="integer" parameterType="cn.com.qcc.queryvo.UserVo">
+		SELECT count(1) FROM access 
+	</select>
+	
+	<!-- 获取历史导出excle记录 -->
+	<select id="getexclebyuserid" resultType="cn.com.qcc.pojo.Historyexcle" parameterType="cn.com.qcc.queryvo.UserVo">
+		SELECT * from historyexcle where userid = #{userid}
+		<if test="pagequery !=null "> limit #{pagequery.pagestart} , #{pagequery.pagesize} </if>
+	</select>
+	<select id="getexclebyuseridCount" resultType="integer" parameterType="cn.com.qcc.queryvo.UserVo">
+		SELECT count(1) from historyexcle where userid = #{userid}
+	</select>
+	<delete id="deletemanageruser" >
+		DELETE from manage_user where manage_user.userid = #{userid} 
+		and manage_user.followuserid in (${deleteid})
+	</delete>
+	
+	
+	<!-- 查询用户的提现信息 -->
+	<select id="checkcash" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="long">
+				SELECT
+			IFNULL(vipcount.`password`,'')password,
+			IFNULL(vipcount.weixinaccount,'')weixinaccount,
+			vipcount.user_id userid,
+			vipcount.balance,
+			`profile`.signstate,
+			`profile`.real_name realname,
+			IFNULL(`user`.unionid,'')unionid ,
+			vipcount.account
+		
+		FROM
+			vipcount
+		LEFT JOIN `profile` ON vipcount.user_id = `profile`.user_id
+		LEFT JOIN `user` ON `user`.userid = `profile`.user_id
+		WHERE
+			`vipcount`.user_id = #{userid}
+	</select>
+	
+	
+	<!-- 通过微信 的唯一ID 查询用户信息 -->
+	<select id="getusermessbyunionid" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="string">
+				 SELECT
+			`profile`.real_name realname ,
+		   vipcount.weixinaccount ,
+		   `user`.userid ,
+		   `user`.telephone
+		FROM
+			`user`
+		LEFT JOIN vipcount ON `user`.userid = vipcount.user_id
+		LEFT JOIN `profile` ON `user`.userid = `profile`.user_id
+		WHERE
+			`user`.unionid =  #{unionid}
+	</select>
+	
+	<!-- 解绑微信账号 -->
+	<update id="deleteunionid" parameterType="long"> 
+		UPDATE `user` SET unionid = '' where userid = #{userid}
+	</update>
+	<update id="delteopenid" parameterType="long">
+		UPDATE vipcount set weixinaccount = '' where vipcount.user_id = #{userid}
+	</update>
+	
+	
+  
+</mapper>

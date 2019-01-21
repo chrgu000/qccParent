@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.CommunityCustomerMapper">
+
+
+
+	<!-- 根据小区ID查询小区详情 -->
+	<select id="searchCommByCommid" resultType="cn.com.qcc.queryvo.CommunityCustomer"
+		parameterType="long">
+		SELECT
+		*  FROM  community
+		LEFT JOIN village ON community.villageid = village.villageid
+		LEFT JOIN address ON address.village_id = village.villageid
+		LEFT JOIN detaileaddress on detaileaddress.detailid = village.detailid
+		where community.villageid = #{communityid}
+	</select>
+
+	
+	
+	
+	<!-- 根据楼栋ID查询楼栋详情 -->
+	<select id="searchbuilding" resultType="cn.com.qcc.queryvo.BanCustomer"
+		parameterType="cn.com.qcc.queryvo.CommunityVo">
+		SELECT
+		*  FROM  ban
+		INNER  JOIN village ON ban.villageid = village.villageid
+		INNER  JOIN address ON address.village_id = village.villageid
+		INNER  JOIN detaileaddress on detaileaddress.detailid = village.detailid
+		where ban.villageid =#{banid}
+	</select>
+	
+	
+
+
+
+
+
+
+
+
+
+	<!-- 楼栋的查询 -->
+	<select id="searchbuildlist" resultType="cn.com.qcc.queryvo.CommunityCustomer"
+		parameterType="cn.com.qcc.queryvo.CommunityVo">
+		SELECT * FROM ban LEFT JOIN village ON ban.villageid = village.villageid INNER JOIN (
+ 			SELECT detaileaddress.*,IFNULL(avg(prices),200) avgprices,
+				village.villagename, address.trading,address.district 
+				FROM house
+				inner JOIN price ON house.price_id = price.priceid
+				inner JOIN address ON address.addressid = house.address_id
+				inner JOIN village ON village.villageid = address.village_id
+				inner JOIN apartment on house.apartment_id = apartment.apartmentid
+				inner JOIN housetag on house.housetag_id = housetag.housetagid
+				inner JOIN detaileaddress on detaileaddress.detailid = village.detailid
+		<!-- 房间的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"/>
+		<!-- 标签的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_housetarg_where"/>
+		<!-- 房屋类型的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_property_where"/>
+		<!-- 房屋几室几厅的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_apartment_where"/>
+		<!-- 地址的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_address_where"/>
+			GROUP BY address.trading, village.villagename
+			) t ON village.villagename = t.villagename
+		<if test="communityCustomer !=null">
+				<if test="communityCustomer.smallprices != null and
+				communityCustomer.smallprices != '' and communityCustomer.bigprices != ''
+				and communityCustomer.bigprices != null ">
+  					and (t.avgprices between #{communityCustomer.smallprices} and
+						#{communityCustomer.bigprices})
+  				</if>
+		</if>
+		ORDER BY  ban.update_time desc
+		<if test="communityCustomer !=null">
+			<if test="communityCustomer.desc != null and communityCustomer.desc != '' ">
+				, t.avgprices desc
+			</if>
+			<if test="communityCustomer.asc != null and communityCustomer.asc != '' ">
+				,t.avgprices asc
+			</if>
+		</if>
+		
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , 8
+		</if>
+	</select>
+	
+	
+	<!-- 楼栋的count查询 -->
+	<select id="searchbuildlistCount" resultType="integer"
+		parameterType="cn.com.qcc.queryvo.CommunityVo">
+		select count(1) from village LEFT JOIN address on village.villageid = address.village_id
+		INNER  JOIN ban on village.villageid = ban.villageid
+ 		and village.building !='XXXXXXXXXX'
+		<!-- 地址的查询条件 -->
+		<include  refid="cn.com.qcc.mymapper.SearchWhere.query_address_where" />
+	</select>
+	
+	
+	<!-- 楼栋的count查询 -->
+	<select id="checkbuildingExist" resultType="cn.com.qcc.queryvo.VillageCustomer"
+		parameterType="cn.com.qcc.queryvo.VillageeVo">
+		SELECT * from village INNER  JOIN address on village.villageid = address.village_id
+		where  1= 1
+		<if test="villageCustomer !=null  ">
+			<if test="villageCustomer.villagename != null and villageCustomer.villagename != '' ">
+				and village.villagename = #{villageCustomer.villagename}
+			</if>
+			<if test="villageCustomer.building != null and villageCustomer.building != '' ">
+				and village.building = #{villageCustomer.building}
+			</if>
+		</if>
+		<!-- 地址的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_address_where"/>
+	</select>
+	
+	
+	
+	<!-- 楼栋下面房源的查询条件 -->
+	<select id="searchhouseList" resultType="cn.com.qcc.queryvo.HouseCustomer"
+		parameterType="cn.com.qcc.queryvo.CommunityVo">
+		SELECT house.house_number,property.propertyname,house.houseid ,house.picture onepicture,
+		house.area,house.user_id,
+	house.housestatus,price.prices,price.pricetype,property.propertyname,apartment.apartmentname
+	FROM house LEFT JOIN address ON house.address_id = address.addressid
+	LEFT JOIN apartment on house.apartment_id = apartment.apartmentid
+	LEFT JOIN price on house.price_id = price.priceid
+	LEFT JOIN property on house.property_id = property.propertyid
+	LEFT JOIN village on address.village_id = village.villageid
+	INNER  JOIN detaileaddress on detaileaddress.detailid = village.detailid
+	and  house.houstatus = '1' and house.housestatus in (1,2)
+		<!-- 地址的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_address_where"/>
+		<!-- 小区的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where"/>
+		ORDER BY house.update_time desc
+	</select>
+	
+</mapper>

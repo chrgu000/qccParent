@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.CentCustomerMapper" >
+  	
+  	  <!-- 根据房源ID查询该房源下面的历史租客 -->
+	  <select id="historyhouserpersion" resultType="cn.com.qcc.pojo.Housepersion" parameterType="long" >
+			SELECT * from housepersion where housepersion.usercentnum in (
+				SELECT usercentnum from usercent where  usercent.houseid =  #{houseid}
+			) 
+	  </select>
+	  
+	    <!-- 根据账单ID查询账单详情 -->
+	  <select id="gethousepaybyid" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="long" >
+			SELECT finance.categoryname ,housepay.centprices,
+				housepay.create_time needpaytime, housepay.update_time,
+				housepay.paystate,
+				IFNULL(`profile`.real_name,house.house_number)realname ,
+				`user`.telephone ,
+				payexpert.start_time,
+				payexpert.end_time,
+				housepay.housepayid,
+				IFNULL(housepay.description,'无')description
+				from housepay 
+				LEFT JOIN finance on housepay.financeid = finance.financeid
+				LEFT JOIN usercent on housepay.usercentid = usercent.usercentid
+				LEFT JOIN `profile` on `profile`.user_id = usercent.userid
+				LEFT JOIN `user` on `profile`.user_id = `user`.userid
+				LEFT JOIN house on house.houseid = usercent.houseid
+				LEFT JOIN payexpert on payexpert.payexpertid = housepay.payexpertid
+				where housepayid = #{housepayid}
+		  </select>
+		  
+	  <!-- 根据账单ID查询账单详情 -->
+	  <select id="getcentuserbyCentnum" resultType="cn.com.qcc.pojo.Housepersion" parameterType="string" >
+			SELECT `profile`.real_name realname ,
+				`user`.telephone,
+				`profile`.sex
+			from `profile` LEFT JOIN `user`
+				on `profile`.user_id = `user`.userid
+			where `user`.userid in ( SELECT userid from usercent where usercentnum = #{usercentnum}) 
+		  </select>
+		  
+      <!-- 根据账单ID查询出租户的基本信息 -->
+	  <select id="messdetailrent" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="long" >
+			  	SELECT village.villagename ,
+					 building.building ,
+					 IFNULL(`profile`.real_name,house.house_number) realname ,
+			     `user`.telephone,
+			     house.house_number,
+		       house.floor,
+		       apartment.apartmentname ,
+					 house.user_id userid
+					from housepay
+			LEFT JOIN house on house.houseid = housepay.houseid
+			LEFT JOIN building on house.buildingid = building.buildingid
+			LEFT JOIN village on building.villageid = village.villageid
+			LEFT JOIN usercent on housepay.usercentid = usercent.usercentid
+			LEFT JOIN `user` on usercent.userid = `user`.userid
+			LEFT JOIN apartment on house.apartment_id = apartment.apartmentid
+			LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+			where housepay.housepayid = #{housepayid}
+	  </select>
+	  
+	  
+	  
+	  <!-- 营业报表 -->
+	  <select id="statement" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="cn.com.qcc.queryvo.UserCentVo" >
+			SELECT calendar.datelist categoryname ,
+					 IFNULL(otherpay.prices,'0')otherprices ,
+					 IFNULL(pancent.prices,'0')centprices
+			 from calendar 
+			  <!--  如果是实收日期 （查房租）  ||||  如果是应收款日 （查待收 ）   -->
+			  LEFT JOIN (
+					SELECT SUM(housepay.centprices)prices ,
+						DATE_FORMAT(housepay.create_time,"%Y-%m-%d")create_time,
+						DATE_FORMAT(housepay.update_time,"%Y-%m-%d")update_time,
+						housepay.housepayid from housepay where housepay.houseid in (
+						SELECT houseid from house where house.user_id = #{userid}
+						<!-- 小区楼栋的查询条件 -->
+						<include refid="cn.com.qcc.mymapper.SearchWhere.query_startement_where"/>
+					)
+					<!-- 如果是应收款日 （查待收 ）   -->
+					<if test="centtime !=null and centtime == 'create'  ">
+					and housepay.paystate = 1 	GROUP BY DATE_FORMAT(housepay.create_time,"%Y-%m-%d")
+					</if>
+					<!-- 如果是实收日期 （查房租） -->
+					<if test="centtime !=null and centtime == 'update'  ">
+					and housepay.financeid in (29,30)  and housepay.paystate = 2 	GROUP BY DATE_FORMAT(housepay.update_time,"%Y-%m-%d")
+					</if>
+					
+			) pancent 
+			<!-- 查看日期和 应该需要收款的条件账单创建时间 -->
+			<if test="centtime !=null and centtime == 'create'  ">
+				on pancent.create_time = calendar.datelist
+			</if>
+			<!-- 查看日期和 实际收款时间 -->
+			<if test="centtime !=null and centtime == 'update'  ">
+				on pancent.update_time = calendar.datelist
+			</if>
+			 
+			<!--  如果是实收日期 （查水电煤气）  ||||  如果是应收款日 （对应收款已经收款 ）   -->
+			LEFT JOIN (
+					SELECT SUM(housepay.centprices)prices ,
+								 DATE_FORMAT(housepay.create_time,"%Y-%m-%d")create_time,
+								 DATE_FORMAT(housepay.update_time,"%Y-%m-%d")update_time,
+								 housepay.housepayid from housepay where housepay.houseid in (
+						SELECT houseid from house where house.user_id = #{userid}
+						<!-- 小区楼栋的查询条件 -->
+						<include refid="cn.com.qcc.mymapper.SearchWhere.query_startement_where"/>
+					)
+					<!-- 如果是应收款日 （对应收款已经收款 ） -->
+					<if test=" centtime !=null and centtime == 'create'  ">
+					and housepay.paystate = 2	 GROUP BY DATE_FORMAT(housepay.create_time,"%Y-%m-%d")
+					</if>
+					<!-- 如果是实收日期 （查水电煤气） -->
+					<if test=" centtime !=null and centtime == 'update'  ">
+					and housepay.financeid not in (29,30)   and housepay.paystate = 2 	 GROUP BY DATE_FORMAT(housepay.update_time,"%Y-%m-%d")
+					</if>
+			) otherpay 
+			<!-- 查看日期和 应该需要收款的条件账单创建时间 -->
+			<if test="centtime !=null and centtime == 'create'  ">
+				on otherpay.create_time = calendar.datelist
+			</if>
+			<!-- 查看日期和 和实际收款的金额-->
+			<if test="centtime !=null and centtime == 'update'  ">
+				on otherpay.update_time = calendar.datelist
+			</if>
+			 
+			 
+				where calendar.datelist >=  #{start} 
+				and calendar.datelist  <![CDATA[<=#{end}]]>
+				ORDER BY calendar.datelist desc 
+				<!-- 分页的查询条件 -->
+				<if test="pagequery !=null ">
+					limit #{pagequery.pagestart}, #{pagequery.pagesize}
+				</if>
+	  </select>
+	  
+	  
+	   <!-- 营业报表 -->
+	  <select id="statementCount" resultType="integer" parameterType="cn.com.qcc.queryvo.UserCentVo" >
+			SELECT count(1)
+			 from calendar 
+				where calendar.datelist >= #{start} 
+				and calendar.datelist  <![CDATA[<=#{end}]]>
+	  </select>
+	  
+	  
+	  <!-- 营业报表根据房源分组 -->
+	  <select id="bussiness" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="cn.com.qcc.queryvo.UserCentVo" >
+	  		SELECT 	house.houseid ,house.house_number categoryname ,
+					 IFNULL(otherpay.prices,'0')otherprices ,
+		             IFNULL(pancent.prices,'0')centprices
+		from house 
+		<!--  如果是实收日期 （查房租）  ||||  如果是应收款日 （查待收 ）   -->
+		LEFT JOIN (
+				SELECT SUM(housepay.centprices)prices ,housepay.houseid   from housepay  
+				where housepay.create_time  >= #{start}  and housepay.create_time <![CDATA[<=#{end}]]>
+			 <!-- 如果是应收款日 （查待收 ） -->
+			 <if  test = "centtime !=null and centtime == 'create'  "> 
+			 	and housepay.paystate  = 1
+			 </if>
+			 <!-- 如果是实收日期 （查房租） -->
+			 <if  test = "centtime !=null and centtime == 'update'  "> 
+			 	and housepay.financeid in (29,30) and housepay.paystate  = 2
+			 </if>
+			 and housepay.houseid in (
+				SELECT houseid from house where house.user_id = #{userid}
+				<!-- 小区楼栋的查询条件 -->
+				<include refid="cn.com.qcc.mymapper.SearchWhere.query_startement_where"/>
+			)  
+			GROUP BY housepay.houseid 
+		) pancent on pancent.houseid = house.houseid 
+		
+		<!--  如果是实收日期 （查水电煤气）  ||||  如果是应收款日 （对应收款已经收款 ）   -->
+		LEFT JOIN (
+			SELECT SUM(housepay.centprices)prices ,housepay.houseid   from housepay  
+			where housepay.create_time >= #{start} and housepay.create_time <![CDATA[<=#{end}]]>
+			 <!-- 如果是实收日期 （查水电煤气） -->
+			 <if  test = "centtime !=null and centtime == 'update'  "> 
+			 	and housepay.financeid not in (29,30) and housepay.paystate  = 2
+			 </if>
+			 <!-- 如果是应收款日 （对应收款已经收款 ） -->
+			<if test=" centtime !=null and centtime == 'create'  ">
+			and housepay.paystate = 2	 
+			</if>
+			 and housepay.houseid in (
+				SELECT houseid from house where house.user_id = #{userid}
+				<!-- 小区楼栋的查询条件 -->
+				<include refid="cn.com.qcc.mymapper.SearchWhere.query_startement_where"/>
+			)  
+			GROUP BY housepay.houseid 
+		) otherpay on otherpay.houseid = house.houseid 
+		where house.user_id = #{userid}
+		<!-- 小区楼栋的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_startement_where"/>
+		<!-- 分页的查询条件 -->
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	  </select>
+	  
+	   <!-- 营业报表根据房源分组COUNT -->
+	  <select id="bussinessCount" resultType="integer" parameterType="cn.com.qcc.queryvo.UserCentVo" >
+	  		SELECT count(1)
+		from house 
+		<!--  如果是实收日期 （查房租）  ||||  如果是应收款日 （查待收 ）   -->
+		LEFT JOIN (
+				SELECT SUM(housepay.centprices)prices ,housepay.houseid   from housepay  
+				where housepay.create_time  >= #{start}  and housepay.create_time <![CDATA[<=#{end}]]>
+			 <!-- 如果是应收款日 （查待收 ） -->
+			 <if  test = "centtime !=null and centtime == 'create'  "> 
+			 	and housepay.paystate  = 1
+			 </if>
+			 <!-- 如果是实收日期 （查房租） -->
+			 <if  test = "centtime !=null and centtime == 'update'  "> 
+			 	and housepay.financeid in (29,30) and housepay.paystate  = 2
+			 </if>
+			 and housepay.houseid in (
+				SELECT houseid from house where house.user_id = #{userid}
+				<!-- 小区楼栋的查询条件 -->
+				<include refid="cn.com.qcc.mymapper.SearchWhere.query_startement_where"/>
+			)  
+			GROUP BY housepay.houseid 
+		) pancent on pancent.houseid = house.houseid 
+		
+		<!--  如果是实收日期 （查水电煤气）  ||||  如果是应收款日 （对应收款已经收款 ）   -->
+		LEFT JOIN (
+			SELECT SUM(housepay.centprices)prices ,housepay.houseid   from housepay  
+			where housepay.create_time >= #{start} and housepay.create_time <![CDATA[<=#{end}]]>
+			 <!-- 如果是实收日期 （查水电煤气） -->
+			 <if  test = "centtime !=null and centtime == 'update'  "> 
+			 	and housepay.financeid not in (29,30) and housepay.paystate  = 2
+			 </if>
+			 <!-- 如果是应收款日 （对应收款已经收款 ） -->
+			<if test="centtime !=null and centtime == 'create'  ">
+			and housepay.paystate = 2	 
+			</if>
+			 and housepay.houseid in (
+				SELECT houseid from house where house.user_id = #{userid}
+				<!-- 小区楼栋的查询条件 -->
+				<include refid="cn.com.qcc.mymapper.SearchWhere.query_startement_where"/>
+			)  
+			GROUP BY housepay.houseid 
+		) otherpay on otherpay.houseid = house.houseid 
+		where house.user_id = #{userid}
+		<!-- 小区楼栋的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_startement_where"/>
+	  </select>
+  	
+  	
+  	<!-- 根据查询条件查询营业报表待收款和未收款-->
+  	<select id="totalbil" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="cn.com.qcc.queryvo.UserCentVo"  >
+  	 SELECT   ifnull(SUM(housepay.centprices),'0')  currentprices, 
+  	 		ifnull(sst.centprices1,'0') otherprices
+	     from housepay 
+			 JOIN (
+			 SELECT SUM(housepay.centprices)centprices1 , housepay.paystate
+	     from housepay where housepay.create_time >= #{start} and housepay.create_time <![CDATA[<=#{end}]]>
+	     and  housepay.paystate = 2 and housepay.houseid in (
+						SELECT houseid from house where house.user_id = #{userid}
+						<!-- 小区楼栋的查询条件 -->
+						<include refid="cn.com.qcc.mymapper.SearchWhere.query_startement_where"/>
+					)) sst 
+			where housepay.create_time >= #{start} and housepay.create_time <![CDATA[<=#{end}]]>
+	     and  housepay.paystate = 1 and  housepay.houseid in (
+						SELECT houseid from house where house.user_id = #{userid}
+						<!-- 小区楼栋的查询条件 -->
+						<include refid="cn.com.qcc.mymapper.SearchWhere.query_startement_where"/>
+		)
+  	</select>
+  	
+  		<!-- 根据查询条件查询营业报表待收款和未收款-->
+  	<select id="totalbilreal" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="cn.com.qcc.queryvo.UserCentVo"  >
+  	     SELECT  ifnull(SUM(housepay.centprices) ,'0') currentprices , 
+  	     		ifnull(sst.centprices1 ,'0') otherprices
+	     from housepay 
+			 JOIN (
+			 SELECT SUM(housepay.centprices)centprices1 , housepay.paystate
+	     from housepay where housepay.update_time >= #{start} and housepay.update_time <![CDATA[<=#{end}]]>
+	     and  housepay.paystate = 2 and housepay.financeid not in (29,30) and housepay.houseid in (
+						SELECT houseid from house where house.user_id = #{userid}
+						<!-- 小区楼栋的查询条件 -->
+						<include refid="cn.com.qcc.mymapper.SearchWhere.query_startement_where"/>
+			) ) sst 
+			where housepay.update_time >= #{start} and housepay.update_time <![CDATA[<=#{end}]]>
+	     and  housepay.paystate = 2 and housepay.financeid in (29,30) and  housepay.houseid in (
+						SELECT houseid from house where house.user_id = #{userid}
+						<!-- 小区楼栋的查询条件 -->
+						<include refid="cn.com.qcc.mymapper.SearchWhere.query_startement_where"/>
+		)
+  	</select>
+  	
+  	  <!-- 根据房东的账号ID。查询小区列表 -->
+	  <select id="villagesbylanduserid" resultType="cn.com.qcc.queryvo.BuildingCustomer" parameterType="long" >
+			SELECT village.villagename ,village.villageid from village where village.villageid in (
+		SELECT DISTINCT villageid from building where buildingid in (
+					SELECT DISTINCT  buildingid  from house where house.user_id = #{userid}
+			  )
+			)
+		  </select>
+		  
+       <!--根据房东ID 查询账单列表 -->
+	  <select id="bileist" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="cn.com.qcc.queryvo.UserCentVo" >
+		  		SELECT housepay.paystate ,
+			  		   housepay.centprices ,
+		               housepay.create_time needpaytime ,
+				       finance.categoryname ,
+		               house.house_number ,
+	                   building.building ,
+	                   village.villagename ,
+	                   housepay.housepayid
+				 from housepay 
+				 LEFT JOIN finance on housepay.financeid = finance.financeid
+		         LEFT JOIN house on housepay.houseid = house.houseid
+				 LEFT JOIN building on house.buildingid = building.buildingid
+	             LEFT JOIN village on building.villageid = village.villageid
+		         where housepay.houseid in ( SELECT houseid from house where user_id = #{userid}) 
+				 and  housepay.create_time >= #{start} and housepay.create_time <![CDATA[<=#{end}]]>
+				 <!-- 账单的查询条件 -->
+				 <include refid="cn.com.qcc.mymapper.SearchWhere.query_housepay_where"/>
+			     ORDER BY housepay.create_time desc  
+			     <!-- 分页的查询条件 -->
+				<if test="pagequery !=null ">
+					limit #{pagequery.pagestart} , #{pagequery.pagesize}
+				</if>
+		  	
+	  </select>
+	  
+	   <!--根据房东ID 查询账单列表 -->
+	  <select id="bilelistCount" resultType="integer" parameterType="cn.com.qcc.queryvo.UserCentVo" >
+		  		SELECT count(1)
+				 from housepay 
+				 LEFT JOIN finance on housepay.financeid = finance.financeid
+		         LEFT JOIN house on housepay.houseid = house.houseid
+				 LEFT JOIN building on house.buildingid = building.buildingid
+	             LEFT JOIN village on building.villageid = village.villageid
+		         where housepay.houseid in ( SELECT houseid from house where user_id = #{userid}) 
+				 and  housepay.create_time >= #{start} and housepay.create_time <![CDATA[<=#{end}]]>
+				 <!-- 账单的查询条件 -->
+				 <include refid="cn.com.qcc.mymapper.SearchWhere.query_housepay_where"/>
+	  </select>
+	  
+	  
+	   <!--统计整体数据 -->
+	  <select id="bilelisttotal" resultType="cn.com.qcc.queryvo.HouseCustomer" parameterType="cn.com.qcc.queryvo.UserCentVo" >
+		  		  SELECT  COUNT(1)housecount  ,
+		IFNULL(SUM(housepay.centprices),'0')prices ,d.* ,f.* from 
+		housepay 
+		JOIN ( SELECT  COUNT(1)notcentday  ,
+				IFNULL(SUM(housepay.centprices),'0')otherpricesnotpay from housepay 
+				LEFT JOIN house on house.houseid = housepay.houseid
+				where housepay.paystate=1 
+				and  housepay.houseid in ( SELECT houseid from house where user_id = #{userid}) 
+			    and housepay.create_time >= #{start} and housepay.create_time <![CDATA[<=#{end}]]>
+			 <!-- 账单的查询条件 -->
+			 <include refid="cn.com.qcc.mymapper.SearchWhere.query_housepay_where"/>
+		)d 
+		JOIN ( SELECT  COUNT(1)paycount  ,
+			  IFNULL(SUM(housepay.centprices),'0')otherpricespay from housepay
+			  LEFT JOIN house on house.houseid = housepay.houseid
+			  where housepay.paystate=2 
+			  and  housepay.houseid in ( SELECT houseid from house where user_id = #{userid}) 
+			  and housepay.create_time >= #{start} and housepay.create_time <![CDATA[<=#{end}]]>
+			 <!-- 账单的查询条件 -->
+			 <include refid="cn.com.qcc.mymapper.SearchWhere.query_housepay_where"/>
+		)f 
+		LEFT JOIN house on house.houseid = housepay.houseid 
+		and housepay.houseid in ( SELECT houseid from house where user_id = #{userid}) 
+		where housepay.create_time >= #{start} and housepay.create_time <![CDATA[<=#{end}]]>
+		<!-- 账单的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_housepay_where"/>
+	  </select>
+	  
+	  
+	  <!-- 这里是查询交易流水-->
+	  <select id="builnum" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="cn.com.qcc.queryvo.UserCentVo" >
+			SELECT DATE_FORMAT(housepay.update_time,"%Y-%m-%d")updateTime ,housepay.centprices ,
+					 IFNULL(intpay.prices,'0') currentprices ,IFNULL(outpay.prices,'0')otherprices ,finance.categoryname ,
+			     building.building ,village.villagename ,house.house_number ,housepay.housepayid
+					 from housepay
+					 LEFT JOIN (
+						SELECT DATE_FORMAT(housepay.update_time,"%Y-%m-%d")update_time ,SUM(housepay.centprices)prices 
+								from housepay 
+						where  housepay.update_time >= #{start} and  housepay.update_time <![CDATA[<=#{end}]]>
+									and housepay.paystate = 2
+						GROUP BY DATE_FORMAT(housepay.update_time,"%Y-%m-%d")
+		             ) intpay on intpay.update_time = DATE_FORMAT(housepay.update_time,"%Y-%m-%d")
+					 
+					 LEFT JOIN (
+						SELECT DATE_FORMAT(housepay.update_time,"%Y-%m-%d")update_time ,SUM(housepay.centprices)prices 
+								from housepay 
+						where housepay.update_time >= #{start} and  housepay.update_time <![CDATA[<=#{end}]]>
+									and housepay.paystate = 3
+						GROUP BY DATE_FORMAT(housepay.update_time,"%Y-%m-%d")
+		            ) outpay on outpay.update_time = DATE_FORMAT(housepay.update_time,"%Y-%m-%d")
+		      
+				   LEFT JOIN finance on finance.financeid = housepay.financeid
+					 LEFT JOIN house on housepay.houseid = house.houseid
+					 LEFT JOIN building on house.buildingid = building.buildingid
+		       LEFT JOIN village on building.villageid = village.villageid
+			      where housepay.update_time >= #{start} and  housepay.update_time <![CDATA[<=#{end}]]>
+		          and housepay.financeid not in  (SELECT financeid from finance where fatherid = 6)
+			      and housepay.houseid in (SELECT houseid from house where user_id = #{userid} ) 
+			      <!-- 账单的查询条件 -->
+		         <include refid="cn.com.qcc.mymapper.SearchWhere.query_housepay_where"/>
+			ORDER BY housepay.update_time desc, housepay.houseid 
+		     <!-- 分页的查询条件 -->
+			<if test="pagequery !=null ">
+				limit #{pagequery.pagestart} , #{pagequery.pagesize}
+			</if>
+	  </select>
+	  
+	  <!-- 这里是查询交易流水-->
+	  <select id="builnumCount" resultType="integer" parameterType="cn.com.qcc.queryvo.UserCentVo" >
+			SELECT  count(1)
+					 from housepay
+					 LEFT JOIN (
+						SELECT DATE_FORMAT(housepay.update_time,"%Y-%m-%d")update_time ,SUM(housepay.centprices)prices 
+								from housepay 
+						where  housepay.update_time >= #{start} and  housepay.update_time <![CDATA[<=#{end}]]>
+									and housepay.paystate = 2
+						GROUP BY DATE_FORMAT(housepay.update_time,"%Y-%m-%d")
+		             ) intpay on intpay.update_time = DATE_FORMAT(housepay.update_time,"%Y-%m-%d")
+					 
+					 LEFT JOIN (
+						SELECT DATE_FORMAT(housepay.update_time,"%Y-%m-%d")update_time ,SUM(housepay.centprices)prices 
+								from housepay 
+						where housepay.update_time >= #{start} and  housepay.update_time <![CDATA[<=#{end}]]>
+									and housepay.paystate = 3
+						GROUP BY DATE_FORMAT(housepay.update_time,"%Y-%m-%d")
+		            ) outpay on outpay.update_time = DATE_FORMAT(housepay.update_time,"%Y-%m-%d")
+		      
+				   LEFT JOIN finance on finance.financeid = housepay.financeid
+					 LEFT JOIN house on housepay.houseid = house.houseid
+					 LEFT JOIN building on house.buildingid = building.buildingid
+		       LEFT JOIN village on building.villageid = village.villageid
+			      where housepay.update_time >= #{start} and  housepay.update_time <![CDATA[<=#{end}]]>
+		          and housepay.financeid not in  (SELECT financeid from finance where fatherid = 6)
+			      and housepay.houseid in (SELECT houseid from house where user_id = #{userid} ) 
+			      <!-- 账单的查询条件 -->
+		          <include refid="cn.com.qcc.mymapper.SearchWhere.query_housepay_where"/>
+	  </select>
+	  
+	  
+	  
+	   <!--查询当前时间内的进出账-->
+	  <select id="builnumdetail" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="cn.com.qcc.queryvo.UserCentVo" >
+		  	SELECT IFNULL(SUM(housepay.centprices) ,'0')currentprices ,
+		  			IFNULL(SUM(outpay.prices) ,'0')  otherprices from housepay 
+		  		 LEFT JOIN house on housepay.houseid = house.houseid
+				JOIN (SELECT IFNULL(SUM(housepay.centprices),'0') prices from housepay 
+				 LEFT JOIN house on housepay.houseid = house.houseid
+				where housepay.paystate = 3
+				AND housepay.update_time >= #{start} and  housepay.update_time <![CDATA[<=#{end}]]>
+				and housepay.houseid in (SELECT houseid from house where user_id = #{userid} ) 
+				 <!-- 账单的查询条件 -->
+		          <include refid="cn.com.qcc.mymapper.SearchWhere.query_housepay_where"/>
+				)outpay
+			where housepay.paystate = 2 AND housepay.update_time >= #{start} and  housepay.update_time <![CDATA[<=#{end}]]>
+			and housepay.houseid in (SELECT houseid from house where user_id = #{userid} ) 
+			 <!-- 账单的查询条件 -->
+		     <include refid="cn.com.qcc.mymapper.SearchWhere.query_housepay_where"/>
+	  </select>
+	  
+	  <!--房东查询租户合同统计 -->
+	  <select id="landsearchusercentCount" resultType="integer" parameterType="cn.com.qcc.queryvo.HouseVo" >
+		SELECT count(1)
+				from historycent 
+			INNER JOIN usercent on usercent.usercentid = historycent.usercentid
+			INNER JOIN `profile` on usercent.userid = `profile`.user_id
+			INNER JOIN house on usercent.houseid = house.houseid
+			INNER JOIN building on house.buildingid = building.buildingid
+		where house.user_id = #{userid}
+	  </select>
+	  
+	   <!--房东查询租户合同 -->
+	  <select id="landsearchusercent" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="cn.com.qcc.queryvo.HouseVo" >
+		SELECT historycent.historycenturl  ,
+					 `profile`.real_name realname,
+					 `profile`.avatar ,
+						usercent.end_time , 
+			     usercent.start_time ,
+						house.house_number ,
+						building.building ,
+						village.villagename
+						
+				from historycent 
+			INNER JOIN usercent on usercent.usercentid = historycent.usercentid
+			INNER JOIN `profile` on usercent.userid = `profile`.user_id
+			INNER JOIN house on usercent.houseid = house.houseid
+			INNER JOIN building on house.buildingid = building.buildingid
+			INNER JOIN village on building.villageid = village.villageid
+		where house.user_id = #{userid}
+		ORDER BY house.buildingid , house.house_number
+		 <!-- 分页的查询条件 -->
+			<if test="pagequery !=null ">
+				limit #{pagequery.pagestart} , #{pagequery.pagesize}
+			</if>
+	  </select>
+</mapper>

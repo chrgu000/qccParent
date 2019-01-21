@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mapper.SystemstateMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Systemstate" >
+    <id column="systemid" property="systemid" jdbcType="INTEGER" />
+    <result column="descname" property="descname" jdbcType="VARCHAR" />
+    <result column="stateabout" property="stateabout" jdbcType="VARCHAR" />
+    <result column="defaultstate" property="defaultstate" jdbcType="INTEGER" />
+    <result column="typeword" property="typeword" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    systemid, descname, stateabout, defaultstate, typeword
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.SystemstateExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from systemstate
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from systemstate
+    where systemid = #{systemid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from systemstate
+    where systemid = #{systemid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.com.qcc.pojo.SystemstateExample" >
+    delete from systemstate
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.com.qcc.pojo.Systemstate" >
+    insert into systemstate (systemid, descname, stateabout, 
+      defaultstate, typeword)
+    values (#{systemid,jdbcType=INTEGER}, #{descname,jdbcType=VARCHAR}, #{stateabout,jdbcType=VARCHAR}, 
+      #{defaultstate,jdbcType=INTEGER}, #{typeword,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Systemstate" >
+    insert into systemstate
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="systemid != null" >
+        systemid,
+      </if>
+      <if test="descname != null" >
+        descname,
+      </if>
+      <if test="stateabout != null" >
+        stateabout,
+      </if>
+      <if test="defaultstate != null" >
+        defaultstate,
+      </if>
+      <if test="typeword != null" >
+        typeword,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="systemid != null" >
+        #{systemid,jdbcType=INTEGER},
+      </if>
+      <if test="descname != null" >
+        #{descname,jdbcType=VARCHAR},
+      </if>
+      <if test="stateabout != null" >
+        #{stateabout,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultstate != null" >
+        #{defaultstate,jdbcType=INTEGER},
+      </if>
+      <if test="typeword != null" >
+        #{typeword,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.com.qcc.pojo.SystemstateExample" resultType="java.lang.Integer" >
+    select count(*) from systemstate
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update systemstate
+    <set >
+      <if test="record.systemid != null" >
+        systemid = #{record.systemid,jdbcType=INTEGER},
+      </if>
+      <if test="record.descname != null" >
+        descname = #{record.descname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stateabout != null" >
+        stateabout = #{record.stateabout,jdbcType=VARCHAR},
+      </if>
+      <if test="record.defaultstate != null" >
+        defaultstate = #{record.defaultstate,jdbcType=INTEGER},
+      </if>
+      <if test="record.typeword != null" >
+        typeword = #{record.typeword,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update systemstate
+    set systemid = #{record.systemid,jdbcType=INTEGER},
+      descname = #{record.descname,jdbcType=VARCHAR},
+      stateabout = #{record.stateabout,jdbcType=VARCHAR},
+      defaultstate = #{record.defaultstate,jdbcType=INTEGER},
+      typeword = #{record.typeword,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.Systemstate" >
+    update systemstate
+    <set >
+      <if test="descname != null" >
+        descname = #{descname,jdbcType=VARCHAR},
+      </if>
+      <if test="stateabout != null" >
+        stateabout = #{stateabout,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultstate != null" >
+        defaultstate = #{defaultstate,jdbcType=INTEGER},
+      </if>
+      <if test="typeword != null" >
+        typeword = #{typeword,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where systemid = #{systemid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Systemstate" >
+    update systemstate
+    set descname = #{descname,jdbcType=VARCHAR},
+      stateabout = #{stateabout,jdbcType=VARCHAR},
+      defaultstate = #{defaultstate,jdbcType=INTEGER},
+      typeword = #{typeword,jdbcType=VARCHAR}
+    where systemid = #{systemid,jdbcType=INTEGER}
+  </update>
+  
+</mapper>

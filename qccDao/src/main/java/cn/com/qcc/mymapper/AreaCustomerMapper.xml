@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.AreaCustomerMapper" >
+  	
+  	
+  	
+  	<!-- 根据城市名称获得code -->
+  	<select id="getcodebycity" resultType="long" parameterType="string">
+  		SELECT MIN(code)code  from area where name like CONCAT('%',#{city},'%') and `level` &lt;3
+  	</select>
+  	
+  	
+  		<!-- 根据城市名称获得code -->
+  	<select id="getmaxareacode" resultType="cn.com.qcc.pojo.Area" parameterType="long">
+  		SELECT MAX(code)code ,area.* from area where parentId =#{code}
+  	</select>
+</mapper>

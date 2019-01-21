@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.LandLordCustomerMapper" >
+
+	<select id="landloadsearch" resultType="cn.com.qcc.queryvo.LandlordCustomer">
+			SELECT landlord.landuserid userid , identity , idpictures , realname , landstate , 
+			area.`name` address ,update_time   
+		    from 
+			landlord 
+		    LEFT JOIN area on landlord.`code` = area.`code`
+		    where 1=1 
+		     <if test="landstate !=null and landstate !='' ">
+		    	AND  landlord.landstate  = #{landstate}
+		    </if>
+		   <if test="pagequery !=null  ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+	    </if>
+	</select>
+	
+	
+	<select id="landloadsearchCount" resultType="integer">
+			SELECT  count(1)
+		    from 
+			landlord 
+		    LEFT JOIN area on landlord.`code` = area.`code`
+		    WHERE 1=1 
+		    <if test="landstate !=null and landstate !=''">
+		    	AND  landlord.landstate  = #{landstate}
+		    </if>
+	</select>
+	
+	
+	<select id="landloadsearchdetail" resultType="cn.com.qcc.queryvo.LandlordCustomer">
+			SELECT landlord.landuserid userid , identity , idpictures , realname , landstate , 
+			area.`name` address ,update_time   
+		    from 
+			landlord 
+		    LEFT JOIN area on landlord.`code` = area.`code`
+		    where landlord.landuserid = #{userid}
+	</select>
+ 
+</mapper>

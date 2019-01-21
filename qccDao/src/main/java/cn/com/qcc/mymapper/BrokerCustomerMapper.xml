@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.BrokerCustomerMapper" >
+  	
+  	<!-- 查询我的房东 -->
+ 	<select id="searchmylandload" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="cn.com.qcc.queryvo.UserVo" >
+ 		SELECT `profile`.real_name realname, `profile`.avatar ,
+ 		`user`.telephone  , `profile`.user_name username , `user`.userid 
+		 from  `user`
+			LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+		 where `user`.userid in (
+			SELECT landload_broker.landuserid from landload_broker 
+		  where landload_broker.brokeruserid = #{userid} and landload_broker.state = 3
+		)
+ 		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+ 	</select>
+ 	<select id="searchmylandloadCount" resultType="integer" parameterType="cn.com.qcc.queryvo.UserVo" >
+ 		SELECT count(1)
+		 from  `user`
+			LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+		 where `user`.userid in (
+			SELECT landload_broker.landuserid from landload_broker 
+		  where landload_broker.brokeruserid = #{userid} and landload_broker.state = 3
+		)
+ 	</select>
+ 	
+ 	<!-- 我是经纪 哪些房东 申请加 我为他的经纪人 -->
+ 	<select id="searchmylandloadnewcount" resultType="integer" parameterType="cn.com.qcc.queryvo.UserVo" >
+ 		SELECT COUNT(1) from landload_broker 
+ 		where landload_broker.state = 1 and landload_broker.brokeruserid = #{userid}
+ 	</select>
+ 	
+ 	
+ 	<!-- 查询我 的经济 -->
+ 	<select id="searchmybroker" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="cn.com.qcc.queryvo.UserVo" >
+ 		SELECT  `profile`.real_name realname, `profile`.avatar ,
+ 		`user`.telephone  , `profile`.user_name username , `user`.userid 
+		 from  `user`
+		LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+		where `user`.userid in (
+			SELECT landload_broker.brokeruserid from 
+			landload_broker where landload_broker.landuserid = #{userid} AND landload_broker.state = 3 
+		)
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+ 	</select>
+ 	
+ 	<!-- 查询我的经济人 count -->
+ 	<select id="searchmybrokerCount" resultType="integer" parameterType="cn.com.qcc.queryvo.UserVo" >
+ 		SELECT  count(1)
+		 from  `user`
+		LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+		where `user`.userid in (
+			SELECT landload_broker.brokeruserid from 
+			landload_broker where landload_broker.landuserid = #{userid} AND landload_broker.state = 3 
+		)
+ 	</select>
+ 	
+ 	
+ 	<!-- 哪些经济人 申请 加 我为房东-->
+ 	<select id="searchmybrokernewcount" resultType="integer" parameterType="cn.com.qcc.queryvo.UserVo" >
+ 		SELECT COUNT(1) from landload_broker
+		where landload_broker.landuserid = #{userid} AND landload_broker.state =2
+ 	</select>
+ 	
+ 	
+ 	<!-- 根据条件查询经纪【需要添加的经纪人】-->
+ 	<select id="searchlikebroker" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="cn.com.qcc.queryvo.UserCustomer" >
+			SELECT `profile`.real_name realname ,`user`.userid ,
+				`profile`.user_name username ,`user`.telephone ,`profile`.avatar
+ 			from broker 
+		INNER JOIN `user` on broker.userid = `user`.userid
+		INNER JOIN `profile` on `profile`.user_id = `user`.userid
+			where broker.userid not in  (
+			SELECT brokeruserid  from landload_broker where landuserid = #{userid} and state !=4) 
+			and broker.userid != #{userid}  and broker.state = 2
+			 and  (   `user`.telephone like CONCAT('%',#{searchwhere},'%') 
+			or `profile`.real_name like CONCAT('%',#{searchwhere},'%')
+			 or `profile`.user_name like CONCAT('%',#{searchwhere},'%')       )
+			 limit 0, 50
+ 	</select>
+ 	
+ 	
+ 	<!-- 根据条件查询经纪【需要添加的房东】-->
+ 	<select id="searchlikeaddlandlord" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="cn.com.qcc.queryvo.UserCustomer" >
+			SELECT `profile`.real_name realname ,`user`.userid ,
+				`profile`.user_name username ,`user`.telephone ,`profile`.avatar
+ 		from landlord 
+	  INNER JOIN `user` on landlord.landuserid = `user`.userid
+		INNER JOIN `profile` on `profile`.user_id = `user`.userid
+	where landlord.landstate = 2 and landlord.landuserid != #{userid} 
+	and landlord.landuserid not in ( SELECT landuserid from landload_broker where brokeruserid = #{userid}
+	and  state != 4)   and  (   `user`.telephone like CONCAT('%',#{searchwhere},'%') 
+			 or `profile`.real_name like CONCAT('%',#{searchwhere},'%')
+			 or `profile`.user_name like CONCAT('%',#{searchwhere},'%')             )
+			 limit 0, 50
+ 	</select>
+ 	
+ 	
+ 	<!-- 更新房东和经纪人关系 -->
+ 	<update id="updatelandaddbroker" parameterType="long" >
+  		UPDATE landload_broker set state = #{state} where landuserid = #{landuserid}  
+  		and brokeruserid = #{brokeruserid}
+    </update>
+    
+    
+    <!-- 房东查询经纪人的申请-->
+ 	<select id="landsearchbrokerapply" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="long" >
+ 		SELECT `profile`.real_name realname ,`user`.userid ,
+				`profile`.user_name username ,`user`.telephone ,`profile`.avatar
+ 		from landlord 
+	  INNER JOIN `user` on landlord.landuserid = `user`.userid
+		INNER JOIN `profile` on `profile`.user_id = `user`.userid
+	
+	where `user`.userid in (
+		SELECT landload_broker.brokeruserid from landload_broker where 
+	 landload_broker.landuserid = #{userid} AND landload_broker.state =2 )
+ 	</select>
+ 	
+ 	
+ 	 <!-- 经纪人查询房东的申请-->
+ 	<select id="brokersearchlandapply" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="long" >
+ 		SELECT `profile`.real_name realname ,`user`.userid ,
+				`profile`.user_name username ,`user`.telephone ,`profile`.avatar
+ 		from landlord 
+	  INNER JOIN `user` on landlord.landuserid = `user`.userid
+		INNER JOIN `profile` on `profile`.user_id = `user`.userid
+	
+	where `user`.userid in (
+		SELECT landload_broker.landuserid from landload_broker where 
+	 landload_broker.brokeruserid = #{userid} AND landload_broker.state =1 )
+ 	</select>
+ 	
+ 	
+ 	<!-- 查询推送的用户 -->
+ 	<select id="searchlikebrokerbyCode" resultType="cn.com.qcc.queryvo.UserCustomer">
+ 			SELECT landlord.landuserid userid  from landlord 
+
+				where landlord.landstate in (2 , 4)
+				and landlord.`code` like  CONCAT('%',#{code},'%')
+			
+			UNION
+			
+			SELECT userid from broker where  broker.codes like  CONCAT('%',#{code},'%')
+			
+			and  broker.state = 2
+ 		
+ 	</select>
+ 	
+</mapper>

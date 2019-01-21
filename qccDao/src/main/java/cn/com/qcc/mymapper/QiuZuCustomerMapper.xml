@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.qcc.mymapper.QiuZuCustomerMapper">
+
+	<!-- 求租列表 -->
+	<select id="qiuzuaddtosolr" resultType="cn.com.qcc.queryvo.QiuzuCustomer" >
+		SELECT 	qiuzu.* ,detaileaddress.* ,
+						IFNULL(area.`name`,'')trading,
+						IFNULL(fcode.name,'')district,
+						ifnull(`profile`.avatar,'-1')avatar
+		 from (
+		SELECT qiuzu.qiuzuid ,
+		ifnull(metro.metroid,'-1')metroid ,
+		ifnull(metro.code,'-1')citycode ,
+		qiuzu.user_id ,
+		qiuzu.detailid,
+		qiuzu.`code`  ,
+		qiuzu.qiuzustatus , 
+		ifnull(metro.`name` ,'-1')metroname,
+		ifnull(metro.finalstop , '-1')finalstop,
+		qiuzu.update_time create_time,
+		ifnull(qiuzu.classification,'-1')classification ,
+		qiuzu.housetype ,
+		ifnull(qiuzu.price,'0')price
+		from qiuzu 
+		LEFT JOIN metro on qiuzu.metroid = metro.metroid
+		where 1=1  and qiuzu.user_id > 1 AND qiuzu.qiuzustatus != '0'
+		<if test="pagequery !=null ">
+			AND qiuzu.qiuzuid > #{pagequery.pagestart} and 
+			<![CDATA[qiuzu.qiuzuid<=#{pagequery.pageend}]]>
+		</if> ) qiuzu 
+		LEFT JOIN detaileaddress on qiuzu.detailid = detaileaddress.detailid
+		LEFT JOIN `user` on qiuzu.user_id = `user`.userid
+		LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+		left  join area ON qiuzu.`code` = area.`code`
+		LEFT JOIN (SELECT * from area) fcode on area.parentId = fcode.code		
+	</select>
+	
+	<!-- 求租列表 -->
+	<select id="findQiuzuListCount" resultType="integer" parameterType="cn.com.qcc.queryvo.HouseVo">
+		select count(1)
+		from qiuzu
+		left  join area ON qiuzu.`code` = area.`code`
+		LEFT join user on qiuzu.user_id=user.userid
+		left join profile on user.userid=profile.user_id
+		<if test="userid !=null">
+			INNER JOIN detaileaddress ON detaileaddress.detailid = building.detailid
+		</if>
+		where
+		qiuzu.qiuzustatus = '1'
+		<!-- 求租的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_qiuzu_where"/>
+		<!-- buildin的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_metro_where"/>
+	</select>
+	
+	
+	<!-- 求租详情 -->
+	<select id="qiuzuDetail" resultType="cn.com.qcc.queryvo.QiuzuCustomer" parameterType="long">
+		select 	`profile`.user_name,
+				IFNULL('','')city,	
+				IFNULL(area.`name`,'')trading,
+				IFNULL(fcode.name,'')district,
+				`profile`.avatar,
+		qiuzu.* ,metro.name metroname,metro.finalstop ,detaileaddress.*,
+		browse.bcount 
+		from qiuzu
+		left  join area ON qiuzu.`code` = area.`code`
+		LEFT JOIN (SELECT * from area) fcode on area.parentId = fcode.code
+		LEFT join user on qiuzu.user_id=user.userid
+		left join profile on user.userid=profile.user_id
+		LEFT JOIN metro on qiuzu.metroid = metro.metroid 
+		LEFT JOIN detaileaddress on qiuzu.detailid = detaileaddress.detailid
+
+		JOIN (
+				SELECT IFNULL(SUM(bcount),0) bcount , browse.otherid FROM browse
+		WHERE
+			browse.type = 2
+		AND browse.otherid = #{qiuzuid}
+        ) browse
+
+		where qiuzuid=#{qiuzuid}
+	</select>
+	
+	<!-- 我的求租列表 -->
+	<select id="findQiuzuByUserid" resultType="cn.com.qcc.queryvo.QiuzuCustomer" parameterType="cn.com.qcc.queryvo.HouseVo">
+		select  qiuzu.* ,area.`name` district ,ifnull(metro.`name`,'') metroname ,ifnull(metro.finalstop,'')finalstop,
+		detaileaddress.*
+		from qiuzu
+		left  join area  on area.`code` = qiuzu.`code`
+		LEFT JOIN metro on metro.metroid = qiuzu.metroid
+		LEFT JOIN detaileaddress on detaileaddress.detailid = qiuzu.detailid
+		where user_id= #{userid}
+		and qiuzustatus != '0'
+		order by qiuzu.update_time
+		desc
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , 8
+		</if> 
+	</select>
+	
+	<!-- 我的求租列表 -->
+	<select id="findQiuzuByUseridCount" resultType="integer" parameterType="cn.com.qcc.queryvo.HouseVo">
+		select  count(1)
+		from qiuzu
+		left  join area  on area.`code` = qiuzu.`code`
+		LEFT JOIN metro on metro.metroid = qiuzu.metroid
+		LEFT JOIN detaileaddress on detaileaddress.detailid = qiuzu.detailid
+		where user_id= #{userid}
+		and qiuzustatus != '0'
+	
+	</select>
+	
+	
+	<!-- 我的求购列表 -->
+	<select id="findBuyByUserid" resultType="cn.com.qcc.queryvo.BuyCustomer"  parameterType="long">
+		select  buy.* ,area.`name` district ,ifnull(metro.`name`,'') metroname ,ifnull(metro.finalstop,'')finalstop,
+		detaileaddress.*
+		from buy
+		left  join area  on area.`code` = buy.`code`
+		LEFT JOIN metro on metro.metroid = buy.metroid
+		LEFT JOIN detaileaddress on detaileaddress.detailid = buy.detailid
+		where user_id= #{userid}
+		and buy.buystatus != '0'
+		order by buy.update_time
+		desc
+	</select>
+	
+	
+		<!-- 求租发布的统计 -->
+		<select id="qiuzutotal" resultType="cn.com.qcc.queryvo.QiuzuCustomer"  parameterType="cn.com.qcc.pojo.Qiuzu">
+		SELECT IFNULL(b.count,'0') bcount,IFNULL(COUNT(1),'0')tcount, `profile`.user_name, `user`.telephone,`user`.userid user_id 
+			from  qiuzu 
+			INNER JOIN `profile` on qiuzu.user_id=`profile`.user_id
+			INNER JOIN `user` on qiuzu.user_id = `user`.userid
+			LEFT JOIN (
+				select COUNT(1)count ,qiuzu.user_id from qiuzu 
+		where month(qiuzu.update_time) =
+		month(curdate()) and year(qiuzu.update_time) = year(curdate())
+		<if test="code !=null and code != '' ">
+			and qiuzu.`code` like  CONCAT('',#{code},'%')
+		</if>
+		GROUP BY qiuzu.user_id
+		)b on b.user_id = qiuzu.user_id
+		<if test="code !=null and code != '' ">
+		  	where qiuzu.`code` like  CONCAT('',#{code},'%')
+		</if>
+		GROUP BY qiuzu.user_id
+	</select>
+	
+	
+	<!-- 统计发布的求租 -->
+	<select id="totalcout" resultType="integer" parameterType="cn.com.qcc.pojo.Qiuzu">
+		select IFNULL(COUNT(1),'0')count from qiuzu where  update_time >= DATE_SUB( CURRENT_DATE() , INTERVAL 3 MONTH )
+		and qiuzu.user_id = #{user_id} and qiuzu.`code` LIKE CONCAT('',#{code},'%') and phone =#{phone}
+	</select>
+	
+	<!-- 查询需要导入索引库的数据 -->
+	<select id="getoneqiuzutosolr" resultType="cn.com.qcc.queryvo.QiuzuCustomer" parameterType="long">
+		SELECT qiuzu.qiuzuid ,
+		ifnull(metro.metroid ,'')metroid,qiuzu.user_id ,qiuzu.`code`  ,ifnull(qiuzu.housetype,'-1')housetype,
+		ifnull(metro.`name` ,'') metroname,
+		ifnull(metro.finalstop,'')finalstop,qiuzu.update_time create_time,
+		ifnull(qiuzu.classification,'') classification,qiuzu.housetype ,
+		ifnull(qiuzu.price ,'')price	,
+		IFNULL(area.`name`,'')trading,
+		IFNULL( metro.`code` ,1) citycode,
+		IFNULL(fcode.name,'')district ,
+		ifnull(`profile`.avatar,'')avatar,
+		ifnull(`profile`.user_name ,'')user_name,
+		IFNULL(detaileaddress.detailes,'')detailes
+		from qiuzu 
+		LEFT JOIN metro on qiuzu.metroid = metro.metroid
+		LEFT JOIN `user` on qiuzu.user_id = `user`.userid
+		LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+		left  join area ON qiuzu.`code` = area.`code`
+		LEFT JOIN (SELECT * from area) fcode on area.parentId = fcode.code	
+		LEFT JOIN detaileaddress on qiuzu.detailid = detaileaddress.detailid
+		where qiuzu.qiuzuid = #{qiuzuid}
+	</select>
+	
+	
+	
+	<!-- 查询需要导入索引库的数据 -->
+	<select id="getmyqiuzutosolr" resultType="cn.com.qcc.queryvo.QiuzuCustomer" parameterType="cn.com.qcc.pojo.Qiuzu">
+		SELECT qiuzu.qiuzuid ,
+		ifnull(metro.metroid ,'-1')metroid,qiuzu.user_id ,qiuzu.`code`  ,ifnull(qiuzu.housetype,'-1')housetype,
+		ifnull(metro.`name` ,'-1') metroname,
+		ifnull(metro.finalstop,'-1')finalstop,qiuzu.update_time create_time,
+		ifnull(qiuzu.classification,'-1') classification,qiuzu.housetype ,
+		ifnull(qiuzu.price ,'-1')price	,
+		IFNULL(area.`name`,'')trading,
+		IFNULL(fcode.name,'')district ,
+		ifnull(`profile`.avatar,'-1')avatar
+		from qiuzu 
+		LEFT JOIN metro on qiuzu.metroid = metro.metroid
+		LEFT JOIN `user` on qiuzu.user_id = `user`.userid
+		LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+		left  join area ON qiuzu.`code` = area.`code`
+		LEFT JOIN (SELECT * from area) fcode on area.parentId = fcode.code	
+		where qiuzu.user_id = #{user_id}
+	</select>
+	
+	<!-- 求租详情 -->
+	<select id="findOneById" resultType="cn.com.qcc.queryvo.BuyCustomer" parameterType="long">
+		select  buy.* ,area.`name` district ,ifnull(metro.`name`,'') metroname ,
+		ifnull(metro.finalstop,'')finalstop,
+		detaileaddress.*
+		from buy
+		left  join area  on area.`code` = buy.`code`
+		LEFT JOIN metro on metro.metroid = buy.metroid
+		LEFT JOIN detaileaddress on detaileaddress.detailid = buy.detailid
+		where buy.buyid = #{buyid}
+	</select>
+
+
+
+	<!-- 查询所有的委托 -->
+	<select id="getallauth" resultType="cn.com.qcc.queryvo.AuthCustomer" parameterType="cn.com.qcc.queryvo.HouseVo">
+		SELECT `profile`.user_name,
+				`user`.telephone,area.`name` trading,
+				authorize.classification,authorize.area,
+				authorize.prices,
+				authorize.linkman,
+				authorize.linkphone,
+				authorize.state,
+				authorize.update_time
+		from 
+		authorize LEFT JOIN `profile` on authorize.userid = `profile`.user_id
+		LEFT JOIN area on authorize.`code` = area.`code`
+		LEFT JOIN `user` on authorize.userid = `user`.userid
+		where 1=1
+		<!-- 发布房东委托的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_auth_where"/>
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , 8
+		</if> 
+	</select>
+	
+	
+	<!-- 查询所有的委托 -->
+	<select id="getallauthCount" resultType="integer" parameterType="cn.com.qcc.queryvo.HouseVo">
+		SELECT count(1)
+		from 
+		authorize LEFT JOIN `profile` on authorize.userid = `profile`.user_id
+		LEFT JOIN area on authorize.`code` = area.`code`
+		LEFT JOIN `user` on authorize.userid = `user`.userid
+		where 1=1
+		<!-- 发布房东委托的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_auth_where"/>
+	</select>
+	
+	<!-- 群发短信的求租用户 -->
+	<select id="sendmess" resultType="cn.com.qcc.queryvo.QiuzuCustomer" parameterType="cn.com.qcc.queryvo.QiuzuCustomer">
+		select MAX(qiuzu.update_time)update_time ,qiuzu.user_id ,
+		`profile`.user_name ,qiuzu.phone,qiuzu.linkman 
+		from qiuzu LEFT JOIN `profile` on qiuzu.user_id = `profile`.user_id
+		where 1=1	and (qiuzu.update_time between date_add(#{start_date}, interval 1 day) and
+		date_add(#{end_date}, interval 1 day)) group by qiuzu.phone order by qiuzu.update_time desc 
+	</select>
+	
+</mapper>
+
+

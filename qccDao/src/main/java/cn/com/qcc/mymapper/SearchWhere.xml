@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.SearchWhere" >
+ 	
+	<!-- =====================================封装房源的查询条件======================================= -->
+	<sql id="query_house_where">
+		<if test="houseCustomer!=null">
+			<!-- 房源对应的楼栋ID -->
+			<if test="houseCustomer.buildingid != null ">
+				and house.buildingid = #{houseCustomer.buildingid}
+			</if>
+			
+			<!-- 房源对应的楼栋ID -->
+			<if test="houseCustomer.schedule != null ">
+				and house.schedule = #{houseCustomer.schedule}
+			</if>
+			
+			<if test="houseCustomer.searchbrandid != null and houseCustomer.searchbrandid !='' ">
+				and  house.brandid = #{houseCustomer.searchbrandid} 
+			</if>
+			<!-- 房源的ID -->
+			<if test="houseCustomer.houseid != null and houseCustomer.houseid !='' ">
+				and house.houseid = #{houseCustomer.houseid}
+			</if>
+			<!-- 品牌公寓不为空的为品牌公寓 -->
+			<if test="houseCustomer.brand != null and houseCustomer.brand !='' ">
+				and  house.brand !=''
+			</if>
+			<!-- 房源的标题 -->
+			<if test="houseCustomer.housetitle != null and houseCustomer.housetitle !='' ">
+				and house.housetitle = #{houseCustomer.housetitle}
+			</if>
+			<!-- 支付方式(押一付一) -->
+			<if test="houseCustomer.paystyle != null and houseCustomer.paystyle !='' ">
+				and house.paystyle = #{houseCustomer.paystyle}
+			</if>
+			<!-- 房源朝向 -->
+			<if test="houseCustomer.turn != null and houseCustomer.turn !='' ">
+				and house.turn = #{houseCustomer.turn}
+			</if>
+			<!-- 附近地铁站。(有地铁表此字段目前无意义) -->
+			<if  test="houseCustomer.underground != null and houseCustomer.underground !='' ">
+				and house.underground = #{houseCustomer.underground}
+			</if>
+			<!-- 1为租的  2为卖的 -->
+			<if test="houseCustomer.houstatus != null and houseCustomer.houstatus !='' ">
+				and house.houstatus = #{houseCustomer.houstatus}
+			</if>
+			<!-- 房屋的状态  冻结0 未租1 已租2  默认1  3是移除 -->
+			<if test="houseCustomer.housestatus != null and houseCustomer.housestatus !='' ">
+				and house.housestatus = #{houseCustomer.housestatus}
+			</if>
+			<!-- 房屋装修类型 -->
+			<if test="houseCustomer.redecorat != null and houseCustomer.redecorat !='' ">
+				and house.redecorat = #{houseCustomer.redecorat}
+			</if>
+			<!-- 房屋的年龄 -->
+			<if test="houseCustomer.ages != null and houseCustomer.ages !='' ">
+				and house.ages = #{houseCustomer.ages}
+			</if>
+			<!-- 用户的过滤条件 -->
+			<if test="houseCustomer.userid != null and houseCustomer.userid !='' ">
+				and house.user_id = #{houseCustomer.userid}
+			</if>
+		</if>
+	</sql>
+	<sql id="query_address_where"></sql>
+	
+	<!-- ===========================封装房态图的查询条件单独封装======================================= -->
+	<sql id="query_roomparrent_where"> 
+		<if test="houseCustomer != null">
+			<!-- 租客欠款 -->
+			<if test="houseCustomer.rentname !=null and 'qiankuan'==houseCustomer.rentname">
+				  and house.housestatus = '2' and (paycent.create_time <![CDATA[<=#{houseCustomer.currentday}]]>   
+		          and paycent.cenntstate = 1 ) or 
+		          ( payothernot.otherpricesnotpay > 0 and  payothernot.needpaytime  <![CDATA[<=#{houseCustomer.currentday}]]> )
+			</if>
+			
+			<!-- 租客待登记 传2 -->
+			<if test="houseCustomer.rentname !=null and 'dengji'==houseCustomer.rentname ">
+				and house.housestatus = '1'
+			</if>
+			
+			<!-- 合同快到期当前时间 -10 租客待登记 两个条件同时成历 -->
+			<if test="houseCustomer.rentname !=null and houseCustomer.rentname == 'centkuai' ">
+				and house.housestatus = '2' and 
+				usercent.end_time > #{houseCustomer.currentday} and 
+				usercent.end_time <![CDATA[<=#{houseCustomer.end_time}]]>
+			</if>
+			
+			<!-- 3天待收款 -->
+			<if test="houseCustomer.rentname !=null and houseCustomer.rentname == 'daishoukuan' ">
+				  and house.housestatus = '2' and (
+				  paycent.create_time  >#{houseCustomer.currentday} and
+				  paycent.create_time <![CDATA[<=#{houseCustomer.end_time}]]>   
+		          and paycent.cenntstate = 1 ) or 
+		          ( payothernot.otherpricesnotpay > 0 and 
+		           payothernot.needpaytime   >#{houseCustomer.currentday} and 
+		           payothernot.needpaytime  <![CDATA[<=#{houseCustomer.end_time}]]> )
+			</if>
+			
+		</if>
+	</sql>
+	
+	<!-- ===========================查询营业报表时候单独封装查询条件 小区VS楼栋======================================= -->
+	<sql id="query_startement_where">
+		<if test="buildingCustomer!=null ">
+		 	<!-- 如果选中了其中一栋楼 -->
+			<if test="buildingCustomer.buildingid !=null">
+				AND house.buildingid  = #{buildingCustomer.buildingid}
+			</if>
+			
+			<!-- 如果选中了其中小区 -->
+			<if test="buildingCustomer.villageid !=null">
+				AND house.buildingid  in (SELECT buildingid from building where building.villageid = #{buildingCustomer.villageid})
+			</if>
+		</if>
+	 </sql>
+	 
+	 
+	 <!-- ===========================这里是封装housepay 账单的查询条件======================================= -->
+	<sql id="query_housepay_where">
+		<if test="housepayCustomer!=null ">
+		 	<!-- 这里是封装的支付状态 -->
+			<if test="housepayCustomer.paystate !=null">
+				AND housepay.paystate  = #{housepayCustomer.paystate}
+			</if>
+			<!-- 账单对应的类目 -->
+			<if test="housepayCustomer.financeids !=null and housepayCustomer.financeids != '' ">
+				AND housepay.financeid  in  ( ${housepayCustomer.financeids})
+			</if>
+		</if>
+		<if test="buildingCustomer!=null ">
+		 	<!-- 如果选中了其中一栋楼 -->
+			<if test="buildingCustomer.buildingid !=null">
+				AND house.buildingid  = #{buildingCustomer.buildingid}
+			</if>
+			
+			<!-- 如果选中了其中小区 -->
+			<if test="buildingCustomer.villageid !=null">
+				AND house.buildingid  in (SELECT buildingid from building where building.villageid = #{buildingCustomer.villageid})
+			</if>
+		</if>
+		
+	 </sql>
+	 
+	 
+	 <!-- ===========================这里封装的是历史抄表查询条件======================================= -->
+	<sql id="query_meter_where">
+		<if test="historymeterCustomer!=null ">
+		 	<!-- 这里是封装的支付状态 -->
+			<if test="historymeterCustomer.financeid !=null ">
+				AND historymeter.financeid  = #{historymeterCustomer.financeid}
+			</if>
+			<!-- 账单对应的类目 -->
+			<if test="historymeterCustomer.houseid !=null  ">
+				AND historymeter.houseid  = #{historymeterCustomer.houseid}
+			</if>
+		</if>
+	 </sql>
+	 
+	 <!--  ================================地图的查询条件===================================== -->
+	<sql id="query_map_where">
+		<if test="buildingCustomer!=null">
+			<if test="buildingCustomer.code !=null and buildingCustomer.code!='' ">
+				and map.code  like CONCAT('',#{buildingCustomer.code},'%')
+			</if>
+			<if test="buildingCustomer.juli !=null and  buildingCustomer.juli  !='' ">
+				and map.juli &lt; #{buildingCustomer.juli}
+			</if>
+			<if test="buildingCustomer.smallprices != null and buildingCustomer.bigprices != null ">
+	  			and (map.avgprices between #{buildingCustomer.smallprices} and
+				#{buildingCustomer.bigprices})
+	  		</if>
+		</if>
+	</sql>
+	
+	<!-- ===================导入距离==================================================== -->
+	<sql id="getjuli">
+		,
+		round(6378.138*2*asin(sqrt(pow(sin((#{userCustomer.latitude}*pi()/180-detaileaddress.latitude*pi()/180)/2),2)+cos(#{userCustomer.latitude}*pi()/180)*cos(detaileaddress.latitude*pi()/180)*
+		pow(sin((#{userCustomer.longitude}*pi()/180-detaileaddress.longitude*pi()/180)/2),2)))*1000)
+		as
+		juli
+	</sql>
+	<sql id="getjuli_address_customer">
+		,
+		round(6378.138*2*asin(sqrt(pow(sin((#{addressCustomer.nearLatude}*pi()/180-groupaddress.latitude*pi()/180)/2),2)+cos(#{addressCustomer.nearLatude}*pi()/180)*cos(groupaddress.latitude*pi()/180)*
+		pow(sin((#{addressCustomer.nearLongitude}*pi()/180-groupaddress.longitude*pi()/180)/2),2)))*1000)
+		as
+		juli
+	</sql>
+	<sql id="getjuli_near_persion">
+		,
+		round(6378.138*2*asin(sqrt(pow(sin((#{addressCustomer.nearLatude}*pi()/180-`user`.latitude*pi()/180)/2),2)+cos(#{addressCustomer.nearLatude}*pi()/180)*cos(`user`.latitude*pi()/180)*
+		pow(sin((#{addressCustomer.nearLongitude}*pi()/180-`user`.longitude*pi()/180)/2),2)))*1000)
+		as
+		juli
+	</sql>
+	
+	<!-- =========================房子几室几厅的查询条件============================================= -->
+	<sql id="query_apartment_where">
+		<if test="apartmentCustomer!=null">
+			<if
+				test="apartmentCustomer.apartmentname != null and apartmentCustomer.apartmentname !='' ">
+				and apartment.apartmentname like CONCAT('${apartmentCustomer.apartmentname}','%')
+			</if>
+
+			<if test="apartmentCustomer.fourroom != null and apartmentCustomer.fourroom!=''">
+			and (apartment.apartmentname like '%五室%' or
+			apartment.apartmentname like '%六室%'or
+			apartment.apartmentname like
+			'%七室%' or
+			apartment.apartmentname like '%八室%' or
+			apartment.apartmentname like '%九室%'
+			)
+		</if>
+		</if>
+	</sql>
+	
+	<!-- ======================== 区域查询条件 ========================================================== -->
+	<sql id="query_area_where">
+  		<if test="areaCustomer !=null">
+  			<if test="areaCustomer.code !=null   ">
+  				and area.`code` = #{areaCustomer.code}
+  			</if>
+  			<if test="areaCustomer.likecode !=null   ">
+  				and area.`code` like CONCAT('%',#{areaCustomer.likecode},'%')
+  			</if>
+  		</if>
+  	</sql>
+  	
+  	  	<sql id="query_articletype_where">
+  		<if test="articleTypeCustomer !=null ">
+  			<if test="articleTypeCustomer.type !=null and articleTypeCustomer.type !='' ">
+  				and articletype.type = #{articleTypeCustomer.type}
+  			</if>
+  			<if test="articleTypeCustomer.articletypeid !=null and articleTypeCustomer.articletypeid !='' ">
+  				and articletype.articletypeid = #{articleTypeCustomer.articletypeid}
+  			</if>
+  		</if>
+  	</sql>
+  	
+  	<sql id="query_typedetail_where">
+  		<if test="typedetailCustomer !=null ">
+  			<if test="typedetailCustomer.typedetailid !=null   ">
+  				and typedetail.typedetailid = #{typedetailCustomer.typedetailid}
+  			</if>
+  		</if>
+  	</sql>
+  	
+  	<!-- 品牌的查询条件 -->
+  	<sql id="query_brand_where">
+  		<if test="brandCustomer !=null">
+				<if test="brandCustomer.brandid !=null and brandCustomer.brandid != '' ">
+					AND brand.brandid = #{brandCustomer.brandid}
+				</if>
+				<if test="brandCustomer.codes !=null and brandCustomer.codes != '' ">
+					AND  (
+						brand.codes like CONCAT('%',#{brandCustomer.codes},'%') or
+						brand.codes = '0'
+					)
+				</if>
+				<if test="brandCustomer.brand !=null and brandCustomer.brand != '' ">
+					AND brand.brand like  CONCAT('%',#{brandCustomer.brand},'%') 
+					
+				</if>
+				
+		</if>
+  	
+  	</sql>
+ 
+ 
+  	<sql id="query_browse_where">
+  		<if test="browerCustomer !=null ">
+  			<if test="browerCustomer.userid != null">
+  				and browse.userid =  #{browerCustomer.userid}
+  			</if>
+  		</if>
+  	</sql>
+  	
+  	
+  		<sql id="query_housetarg_where">
+		
+		<if test="housetagCustomer !=null">
+			<if test="housetagCustomer.houseyear !=null and  housetagCustomer.houseyear != ''">
+				and house.housetag_id  like CONCAT('%',#{housetagCustomer.houseyear},'%')
+			</if>
+			
+			<if test="housetagCustomer.buildingyear !=null and  housetagCustomer.buildingyear != ''">
+				and house.housetag_id  like CONCAT('%',#{housetagCustomer.buildingyear},'%')
+			</if>
+			
+			<if test="housetagCustomer.elevator !=null and  housetagCustomer.elevator != ''">
+				and house.housetag_id  like CONCAT('%',#{housetagCustomer.elevator},'%')
+			</if>
+			
+			<if test="housetagCustomer.propertyright !=null and  housetagCustomer.propertyright != ''">
+				and house.housetag_id  like CONCAT('%',#{housetagCustomer.propertyright},'%')
+			</if>
+			
+		</if>
+	
+	</sql>
+	
+	
+	  <!-- 价格的查询条件 -->
+  <sql id="query_price_where">
+  	<if test="priceCustomer!=null">
+  		<!-- 价格的类型是 元/月，还是  元/m2-->
+  		<if test="priceCustomer.pricetype != null and priceCustomer.pricetype!=''">
+  			and price.pricetype = #{priceCustomer.pricetype}
+  		</if>
+  		<if test="priceCustomer.smallprices != null and priceCustomer.bigprices != null ">
+  			and (price.prices between #{priceCustomer.smallprices} and
+			#{priceCustomer.bigprices})
+  		</if>
+  	</if>
+  </sql>
+  
+  
+   <!--租房类型的查询条件  -->
+  <sql id="query_property_where">
+  	<if test="propertyCustomer!=null"> 
+  		<if test="propertyCustomer.propertytype !=null and propertyCustomer.propertytype !=''">
+  			and property.propertytype = #{propertyCustomer.propertytype}
+  		</if>
+  		<if test="propertyCustomer.propertyname !=null and propertyCustomer.propertyname !='' and 
+  		propertyCustomer.propertyname !='isppgy' and  propertyCustomer.propertyname !='notppgy' "  >
+  			and property.propertyname= #{propertyCustomer.propertyname}
+  		</if>
+  		<if test="propertyCustomer.propertyname !=null and 'isppgy' == propertyCustomer.propertyname ">
+  			 and ( house.brandid is not null   or building.brandid is not null )
+  			and property.propertyname='房源'
+  		</if>
+  		<if test="propertyCustomer.propertyname !=null and propertyCustomer.propertyname == 'notppgy'">
+  			 and ( house.brandid is  null   and building.brandid is  null )
+  			and property.propertyname='房源'
+  		</if>
+  	</if>
+  </sql>
+  
+  
+  <!-- 求租的的查询条件 -->
+	<sql id="query_qiuzu_where">
+		<if test="qiuzuCustomer != null">
+			<if test="qiuzuCustomer.classification !=null and qiuzuCustomer.classification != '' ">
+				and qiuzu.classification = #{qiuzuCustomer.classification}
+			</if>
+			<if test="qiuzuCustomer.housetype !=null and qiuzuCustomer.housetype != ''  ">
+				and qiuzu.housetype like CONCAT('${qiuzuCustomer.housetype}','%')
+			</if>
+			<if test="qiuzuCustomer.fourroom !=null and qiuzuCustomer.fourroom != ''  ">
+				and (qiuzu.housetype like '%五室%' or
+			qiuzu.housetype like '%六室%'or
+			qiuzu.housetype like '%七室%' or
+			qiuzu.housetype like '%八室%' or
+			qiuzu.housetype like '%九室%'
+			)
+			</if>
+			<!-- 小区的ID -->
+			<if test="qiuzuCustomer.likecode != null and qiuzuCustomer.likecode !='' ">
+				and qiuzu.code like concat('',#{qiuzuCustomer.likecode},'%')
+			</if>
+		</if>
+	</sql>
+	
+	
+	<!-- 房东委托的查询条件 -->
+	<sql id="query_auth_where">
+		<if test="authCustomer != null">
+			
+			<if test="authCustomer.title !=null and authCustomer.title != ''  ">
+				and authorize.title like CONCAT('${authCustomer.title}','%')
+			</if>
+			
+			<if test="authCustomer.classify !=null and authCustomer.classify != ''  ">
+				and authorize.classify like CONCAT('${authCustomer.classify}','%')
+			</if>
+			
+			<if test="authCustomer.area !=null and authCustomer.area != ''  ">
+				and authorize.area like CONCAT('${authCustomer.area}','%')
+			</if>
+			
+			<if test="authCustomer.fourroom !=null and authCustomer.fourroom != ''  ">
+				and (authorize.housetype like '%五室%' or
+			authorize.housetype like '%六室%'or
+			authorize.housetype like '%七室%' or
+			authorize.housetype like '%八室%' or
+			authorize.housetype like '%九室%'
+			)
+			</if>
+			
+			<if test="authCustomer.state !=null ">
+				and authorize.state = #{authCustomer.state}
+			</if>
+			
+			
+		</if>
+	</sql>
+ 
+ 
+ 	<!--   ===========================         部落控制条件       ============================== -->
+ 	<sql id="query_tribecontroller_where">
+ 		<if test="tribecontrollerCustomer != null ">
+ 			<if test="tribecontrollerCustomer.debarid !=null and tribecontrollerCustomer.debarid !='' ">
+ 				and tribe.tribeid not in 
+					(SELECT tribeid from tribecontroller where tribecontroller.userid = #{tribecontrollerCustomer.debarid})
+ 			</if>
+ 		</if>
+ 	</sql>
+ 	
+ 	
+ 	<!-- ===================================部落名称的查询条件================================== -->
+	  <sql id="quert_tribe_where">
+	  	<if test="tribeCustomer !=null">
+	  		<if test="tribeCustomer.tribeid !=null">
+	  			and tribe.tribeid = #{tribeCustomer.tribeid}
+	  		</if>
+	  		<if test="tribeCustomer.name !=null and tribeCustomer.name != ''  ">
+	  			and tribe.`name`  like CONCAT('%',#{tribeCustomer.name},'%')
+	  		</if>
+	  	</if>
+	  </sql>
+	  
+	  <!-- ===================================部落类型的查询条件=================================== -->
+	  <sql id="quert_tribetype_where">
+	  	<if test="tribeTypeCustomer !=null">
+	  		<if test="tribeTypeCustomer.typecode !=null">
+	  			and tribetype.typecode = #{tribeTypeCustomer.typecode}
+	  		</if>
+	  	</if>
+	  	
+	  	
+	  </sql>
+	  
+	  <!-- 小区Village的查询条件 -->
+	<sql id="query_village_where">
+		<if test="villageCustomer!=null">
+			<!-- 小区的名字 -->
+			<if test="villageCustomer.villagename != null and villageCustomer.villagename!=''">
+				and village.villagename like
+				concat('%',#{villageCustomer.villagename},'%')
+			</if>
+			<!-- 关键字 -->
+			<if test="villageCustomer.keyword != null and villageCustomer.keyword!=''">
+				and (village.villagename like
+				concat('%',#{villageCustomer.keyword},'%') 
+				or village.keyword  like
+				concat('%',#{villageCustomer.keyword},'%')) 
+			</if>
+
+
+			<!-- 小区的ID -->
+			<if test="villageCustomer.villageid != null ">
+				and village.villageid = #{villageCustomer.villageid}
+			</if>
+			
+			<!-- 小区的类型 -->
+			<if test="villageCustomer.villagetypeid != null ">
+				and village.villagetypeid = #{villageCustomer.villagetypeid}
+			</if>
+			
+			
+
+			<!-- 小区的ID -->
+			<if
+				test="villageCustomer.likecode != null and villageCustomer.likecode != ''  ">
+				and village.code like
+				concat('',#{villageCustomer.likecode},'%')
+			</if>
+
+			<!-- 小区的ID -->
+			<if test="villageCustomer.code != null  ">
+				and village.code = #{villageCustomer.code}
+
+			</if>
+			
+			<if test="villageCustomer.state != null  ">
+				and village.state = #{villageCustomer.state}
+
+			</if>
+
+			<!-- 小区的名字 -->
+			<if
+				test="villageCustomer.building != null and villageCustomer.building!=''">
+				and building.building like
+				concat('%',#{villageCustomer.building},'%')
+			</if>
+
+		</if>
+	</sql>
+
+	<!-- 楼栋的查询条件 -->
+	<sql id="query_building_where">
+		<if test="buildingCustomer!=null">
+		
+			<!-- 根据楼栋的名称，模糊过滤 -->
+			<if test="buildingCustomer.building != null and buildingCustomer.building!=''">
+				and building.building like
+				concat('%',#{buildingCustomer.building},'%')
+			</if>
+			<if test="buildingCustomer.identity != null and buildingCustomer.identity!=''">
+				and ( building.identity like
+				concat('%',#{buildingCustomer.identity},'%')
+					or brand.brand like
+				concat('%',#{buildingCustomer.identity},'%')
+				    or building.bnumber like 
+				 concat('%',#{buildingCustomer.identity},'%')
+				)
+			</if>
+			
+			<!-- 楼栋的状态 1-通过审核2-需要审核 -->
+			<if test="buildingCustomer.state != null">
+				and building.state = #{buildingCustomer.state}
+			</if>
+			<!-- 根据楼栋的ID查询对应的数据-->
+			<if test="buildingCustomer.buildingid != null">
+				and building.buildingid = #{buildingCustomer.buildingid}
+			</if>
+			<!-- 品牌公寓的查询条件 -->
+			<if test="buildingCustomer.brandid != null and buildingCustomer.brandid!=''">
+				and building.brandid = #{buildingCustomer.brandid}
+			</if>
+
+			<!-- 地铁的查询条件 -->
+			<if test="buildingCustomer.metroid != null">
+				and building.metroid = #{buildingCustomer.metroid}
+			</if>
+		</if>
+	</sql>
+	  
+	  
+	 <!-- 地铁的查询条件 -->
+	<sql id="query_metro_where">
+		<if test="metro!=null">
+			<if test="metro.name !=null and metro.name != ''">
+				and metro.name = #{metro.name}
+			</if>
+			<if test="metro.finalstop !=null and metro.finalstop != ''">
+				and metro.finalstop = #{metro.finalstop}
+			</if>
+			<if test="metro.metroid !=null">
+				and metro.metroid = #{metro.metroid}
+			</if>
+		</if>
+	</sql>
+	
+	<sql id="query_user_where">
+		<if test="userCustomer !=null">
+			<if test="userCustomer.telephone !=null and userCustomer.telephone !='' ">
+				and user.telephone = #{userCustomer.telephone}
+			</if>
+		</if>
+	</sql>
+   
+   <sql id="query_alluserburse_where">
+   		<if test="searchwhere != null and searchwhere != '' ">
+   			and  (`profile`.user_name like concat('%',#{searchwhere},'%') or 
+   					`user`.telephone like  concat('%',#{searchwhere},'%') or 
+   					`profile`.real_name like  concat('%',#{searchwhere},'%')) 
+   		</if>
+   </sql>
+  
+</mapper>

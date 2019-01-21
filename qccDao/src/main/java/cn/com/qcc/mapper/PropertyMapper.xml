@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mapper.PropertyMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Property" >
+    <id column="propertyid" property="propertyid" jdbcType="INTEGER" />
+    <result column="propertytype" property="propertytype" jdbcType="VARCHAR" />
+    <result column="propertyname" property="propertyname" jdbcType="VARCHAR" />
+    <result column="create_time" property="create_time" jdbcType="DATE" />
+    <result column="update_time" property="update_time" jdbcType="DATE" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    propertyid, propertytype, propertyname, create_time, update_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.PropertyExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from property
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from property
+    where propertyid = #{propertyid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from property
+    where propertyid = #{propertyid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.com.qcc.pojo.PropertyExample" >
+    delete from property
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.com.qcc.pojo.Property" >
+   <selectKey  resultType="integer"  order="AFTER"  keyProperty="propertyid" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into property (propertyid, propertytype, propertyname, 
+      create_time, update_time)
+    values (#{propertyid,jdbcType=INTEGER}, #{propertytype,jdbcType=VARCHAR}, #{propertyname,jdbcType=VARCHAR}, 
+      #{create_time,jdbcType=DATE}, #{update_time,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Property" >
+   <selectKey  resultType="integer"  order="AFTER"  keyProperty="propertyid" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into property
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="propertyid != null" >
+        propertyid,
+      </if>
+      <if test="propertytype != null" >
+        propertytype,
+      </if>
+      <if test="propertyname != null" >
+        propertyname,
+      </if>
+      <if test="create_time != null" >
+        create_time,
+      </if>
+      <if test="update_time != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="propertyid != null" >
+        #{propertyid,jdbcType=INTEGER},
+      </if>
+      <if test="propertytype != null" >
+        #{propertytype,jdbcType=VARCHAR},
+      </if>
+      <if test="propertyname != null" >
+        #{propertyname,jdbcType=VARCHAR},
+      </if>
+      <if test="create_time != null" >
+        #{create_time,jdbcType=DATE},
+      </if>
+      <if test="update_time != null" >
+        #{update_time,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.com.qcc.pojo.PropertyExample" resultType="java.lang.Integer" >
+    select count(*) from property
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update property
+    <set >
+      <if test="record.propertyid != null" >
+        propertyid = #{record.propertyid,jdbcType=INTEGER},
+      </if>
+      <if test="record.propertytype != null" >
+        propertytype = #{record.propertytype,jdbcType=VARCHAR},
+      </if>
+      <if test="record.propertyname != null" >
+        propertyname = #{record.propertyname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.create_time != null" >
+        create_time = #{record.create_time,jdbcType=DATE},
+      </if>
+      <if test="record.update_time != null" >
+        update_time = #{record.update_time,jdbcType=DATE},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update property
+    set propertyid = #{record.propertyid,jdbcType=INTEGER},
+      propertytype = #{record.propertytype,jdbcType=VARCHAR},
+      propertyname = #{record.propertyname,jdbcType=VARCHAR},
+      create_time = #{record.create_time,jdbcType=DATE},
+      update_time = #{record.update_time,jdbcType=DATE}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.Property" >
+    update property
+    <set >
+      <if test="propertytype != null" >
+        propertytype = #{propertytype,jdbcType=VARCHAR},
+      </if>
+      <if test="propertyname != null" >
+        propertyname = #{propertyname,jdbcType=VARCHAR},
+      </if>
+      <if test="create_time != null" >
+        create_time = #{create_time,jdbcType=DATE},
+      </if>
+      <if test="update_time != null" >
+        update_time = #{update_time,jdbcType=DATE},
+      </if>
+    </set>
+    where propertyid = #{propertyid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Property" >
+    update property
+    set propertytype = #{propertytype,jdbcType=VARCHAR},
+      propertyname = #{propertyname,jdbcType=VARCHAR},
+      create_time = #{create_time,jdbcType=DATE},
+      update_time = #{update_time,jdbcType=DATE}
+    where propertyid = #{propertyid,jdbcType=INTEGER}
+  </update>
+  
+  
+  <!-- 搜索栏下面写死的类别的搜索的数量 -->
+	<select id="findHouseBypropertyCount" parameterType="cn.com.qcc.queryvo.HouseVo" resultType="int">
+		select count(1)
+		from house
+		left join housetag 	on house.housetag_id=housetag.housetagid
+		left join building on house.buildingid=building.buildingid
+		left join user on house.user_id=user.userid
+		left join profile on house.user_id=profile.user_id
+		left join property on house.property_id=property.propertyid
+		left join price on house.price_id=price.priceid
+		left join apartment 	on house.apartment_id=apartment.apartmentid
+		inner join village on village.villageid=building.villageid
+		inner JOIN area on area.`code` = village.`code`
+		where housestatus='1' and
+		houstatus='1'
+		<!-- 小区的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where"/>
+		<!-- 地区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_area_where"/>
+		<!-- 房屋类型的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_property_where"/>
+	</select>
+	
+	<!-- 首页查看更多 以及 搜索栏下面写死的类别的搜索到房源列表 -->
+	<select id="findHouseByCategory" parameterType="cn.com.qcc.queryvo.HouseVo" resultType="cn.com.qcc.queryvo.HouseCustomer">
+		select house.housestatus,house.houstatus,`profile`.avatar,`profile`.user_name,house.area,
+		house.housetitle,area.`name`,village.villagename,house.houseid,house.redecorat,`profile`.user_id,
+		house.picture picture,price.prices,price.pricetype,IFNULL(house.paystyle,'')paystyle,
+		IFNULL(apartment.apartmentname,'')apartmentname,building.building ,house.picture onepicture,
+		metro.`name` metroname, metro.finalstop
+		<if test="userid !=null">
+			<!-- 导入距离 -->
+			<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli"/>
+		</if>
+		from house
+		left join housetag 	on house.housetag_id=housetag.housetagid
+		left join building on house.buildingid=building.buildingid
+		left join user on house.user_id=user.userid
+		left join profile on house.user_id=profile.user_id
+		LEFT JOIN metro ON metro.metroid = building.metroid
+		left join property on house.property_id=property.propertyid
+		left join price on house.price_id=price.priceid
+		left join apartment 	on house.apartment_id=apartment.apartmentid
+		left join village on village.villageid=building.villageid
+		left JOIN detaileaddress ON detaileaddress.detailid = building.detailid
+		left JOIN area on area.`code` = village.`code`
+		where
+		housestatus='1' and
+		houstatus='1'
+		<!-- 小区的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where"/>
+		<!-- 地区的查询条件 -->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_area_where"/>
+		<!-- 房屋类型的查询条件-->
+		<include refid="cn.com.qcc.mymapper.SearchWhere.query_property_where"/>
+		order by house.update_time desc
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , 8
+		</if>
+	</select>
+</mapper>

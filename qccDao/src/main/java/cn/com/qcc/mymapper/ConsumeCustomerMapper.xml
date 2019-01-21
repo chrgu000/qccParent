@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.ConsumeCustomerMapper" >
+  	
+  	
+  	<!-- 查询充值记录 -->
+ 	<select id="searchrecharge"  resultType="cn.com.qcc.pojo.Consume" parameterType="cn.com.qcc.queryvo.UserVo">
+ 		SELECT * from consume where user_id = #{userid} and type >=4 and type <![CDATA[<=10]]>
+		ORDER BY consume.update_time desc 
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+ 	</select>
+ 	
+ 	
+ 	<!-- 查询充值记录的count -->
+ 	<select id="searchrechargeCount"  resultType="integer" parameterType="cn.com.qcc.queryvo.UserVo">
+ 		SELECT count(1) from consume where user_id = #{userid} and type  = 1 
+ 	</select>
+ 	
+ 	<!-- 查询消费记录 -->
+ 	<select id="searchexpense"  resultType="cn.com.qcc.pojo.Consume" parameterType="cn.com.qcc.queryvo.UserVo">
+ 		SELECT * from consume where user_id = #{userid} and type  = 1 
+		ORDER BY consume.update_time desc 
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+ 	</select>
+ 	
+ 	<!-- 查询消费记录COUNT -->
+ 	<select id="searchexpenseCount"  resultType="integer" parameterType="cn.com.qcc.queryvo.UserVo">
+ 		SELECT count(1) from consume where user_id = #{userid} and type >=1 and type <![CDATA[<=6]]>
+ 	</select>
+  
+  
+  <!-- 获得订单号 -->
+  <select id="getordernum" resultType="long">
+  		SELECT MAX(consume_id)+1 from consume
+  </select>
+  
+  
+  <!-- 我的钱包-->
+  <select id="getmyburse" resultType="cn.com.qcc.queryvo.VipCountCustomer" >
+  
+		SELECT
+				vipcount.user_id,
+				IFNULL(inteconn.count, '0') intecount,
+				vipcount.count,
+				vipcount.balance,
+				vipcount.account,
+				IFNULL(masonryconn.count, '0') mascount,
+				vipcount.is_vip,
+				IFNULL(todaylurcey.account, 0) todayaccount,
+				IFNULL(monthlurcey.account, 0) monthaccount,
+				IFNULL(totalurcey.account, 0) totalaccount
+			FROM
+				vipcount
+			LEFT JOIN inteconn ON vipcount.user_id = inteconn.userid
+			LEFT JOIN masonryconn ON vipcount.user_id = masonryconn.userid
+			JOIN (
+				SELECT
+					SUM(account) account
+				FROM
+					lucre
+				WHERE
+					DATEDIFF(update_time, NOW()) = #{daycount}
+				AND lucre.state = 1
+				AND lucre.userid = #{userid}
+			) todaylurcey
+			JOIN (
+				SELECT
+					SUM(account) account
+				FROM
+					lucre
+				WHERE
+					MONTH (lucre.update_time) = MONTH (curdate())
+				AND YEAR (lucre.update_time) = YEAR (curdate())
+				AND lucre.state = 1
+				AND lucre.userid = #{userid}
+			) monthlurcey
+			JOIN (
+				SELECT
+					SUM(account) account
+				FROM
+					lucre
+				WHERE
+					lucre.state = 1
+				AND lucre.userid = #{userid}
+			) totalurcey
+			WHERE
+				vipcount.user_id = #{userid}
+  
+  
+  
+  		<!-- SELECT vipcount.user_id ,IFNULL(inteconn.count,'0') intecount ,
+  				vipcount.count ,vipcount.balance,vipcount.account,
+			IFNULL(masonryconn.count,'0')mascount ,vipcount.is_vip
+			FROM vipcount 
+			LEFT JOIN inteconn ON vipcount.user_id = inteconn.userid
+			LEFT JOIN masonryconn on vipcount.user_id = masonryconn.userid
+			where vipcount.user_id = #{userid} -->
+  </select>
+  
+  
+   <!-- 我的洪币-->
+  <select id="mymasonrylist" resultType="cn.com.qcc.pojo.Masonry" parameterType="cn.com.qcc.queryvo.UserVo">
+  			SELECT * from masonry 
+			where userid = #{userid} 
+			<if test="type == 2 or type ==1 ">AND type = #{type}</if>
+			ORDER BY masonry.update_time desc 
+			<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+  </select>
+  
+   <!-- 我的洪币-->
+  <select id="mymasonrylistCount" resultType="integer" parameterType="cn.com.qcc.queryvo.UserVo">
+  			SELECT count(1) from masonry 
+			where userid = #{userid} 
+			<if test="type == 2 or type ==1">AND type = #{type}</if>
+  </select>
+  
+  <!-- 我的积分消费事件 -->
+  <select id="myinteout" resultType="cn.com.qcc.pojo.Integral" parameterType="cn.com.qcc.queryvo.UserVo">
+  		SELECT * from integral where userid = #{userid} 
+  		<if test="type == 2 or type ==1 ">
+  			and type = #{type}
+  		</if>
+  		ORDER BY update_time desc
+  		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+  </select>
+  
+  <!-- 我的积分消费事件 -->
+  <select id="myinteoutCount" resultType="integer" parameterType="cn.com.qcc.queryvo.UserVo">
+  		SELECT count(1) from integral where userid = #{userid} 
+  		<if test="type == 2 or type ==1 ">
+  			and type = #{type}
+  		</if>
+  </select>
+  
+  
+  <!-- 查询本系统用户的钱包-->
+  <select id="getalluserburse" resultType="cn.com.qcc.queryvo.VipCountCustomer" parameterType="cn.com.qcc.queryvo.UserVo">
+	SELECT vipcount.user_id ,IFNULL(inteconn.count,'0') intecount ,
+				vipcount.count ,vipcount.balance,vipcount.account,
+	IFNULL(masonryconn.count,'0')mascount ,
+	`user`.telephone ,
+	IFNULL(`profile`.user_name,'') username
+	FROM `user`
+	LEFT JOIN vipcount on `user`.userid = vipcount.user_id
+	LEFT JOIN inteconn ON vipcount.user_id = inteconn.userid
+	LEFT JOIN masonryconn on vipcount.user_id = masonryconn.userid
+	LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+	where 1=1
+	
+	<include refid="cn.com.qcc.mymapper.SearchWhere.query_alluserburse_where" />
+	<if test="enorder != null and enorder != '' "> ${enorder}</if>
+	
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+	</if>
+  </select>
+  
+   <!-- 查询本系统用户的钱包-->
+  <select id="getalluserburseCount" resultType="integer" parameterType="cn.com.qcc.queryvo.UserVo">
+	SELECT  count(1)
+	FROM `user`
+	LEFT JOIN vipcount on `user`.userid = vipcount.user_id
+	LEFT JOIN inteconn ON vipcount.user_id = inteconn.userid
+	LEFT JOIN masonryconn on vipcount.user_id = masonryconn.userid
+	LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+	where 1=1
+	<include refid="cn.com.qcc.mymapper.SearchWhere.query_alluserburse_where" />
+  </select>
+  
+  
+   <!-- 查询金币明细-->
+  <select id="searchjbmx" resultType="cn.com.qcc.queryvo.VipCountCustomer" parameterType="java.util.List">
+		SELECT integral.userid ,
+		 `profile`.user_name username ,
+		 integral.update_time ,
+		 integral.count ,
+    		  integral.`event` ,
+		 integral.type ,
+		 `user`.telephone
+			from integral
+		INNER JOIN `user` on `user`.userid = integral.userid
+		LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+		where integral.userid in 
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		ORDER BY integral.update_time desc 
+		<if test="pagequery !=null "> limit #{pagequery.pagestart} , #{pagequery.pagesize} </if>
+  </select>
+  
+  <select id="searchjbmxCount" resultType="integer" parameterType="java.util.List">
+		SELECT count(1)
+			from integral
+		INNER JOIN `user` on `user`.userid = integral.userid
+		LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+		where integral.userid in 
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+  </select>
+  
+  
+   <!-- 查询收益明细-->
+  <select id="searchsymx" resultType="cn.com.qcc.queryvo.VipCountCustomer" parameterType="java.util.List">
+	SELECT 	 `user`.userid,
+			`profile`.user_name username,
+			`user`.telephone ,
+			 lucre.descname 'event' , 
+		     lucre.account count ,
+			lucre.update_time,
+			'1' type 
+		from lucre
+		INNER JOIN `user` on lucre.userid = `user`.userid
+		INNER JOIN `profile` on `user`.userid = `profile`.user_id
+	where lucre.userid in  
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		ORDER BY lucre.update_time desc 
+		<if test="pagequery !=null "> limit #{pagequery.pagestart} , #{pagequery.pagesize} </if>
+  </select>
+  
+    <select id="searchsymxCount" resultType="integer" parameterType="java.util.List">
+		SELECT 	 count(1)
+		from lucre
+		INNER JOIN `user` on lucre.userid = `user`.userid
+		INNER JOIN `profile` on `user`.userid = `profile`.user_id
+		where lucre.userid in  
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+  </select>
+  
+  
+   <!-- 查询红币明细-->
+  <select id="searchhbmx" resultType="cn.com.qcc.queryvo.VipCountCustomer" parameterType="java.util.List">
+	SELECT   masonry.userid ,
+		    `user`.telephone ,
+            `profile`.user_name username,
+			 masonry.update_time ,
+			 masonry.`event` ,
+      	     masonry.type ,
+			 masonry.count
+	from masonry
+	INNER JOIN `user` on `user`.userid = masonry.userid
+	INNER JOIN `profile` on `profile`.user_id = masonry.userid
+	where masonry.userid in 
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		ORDER BY masonry.update_time desc 
+		<if test="pagequery !=null "> limit #{pagequery.pagestart} , #{pagequery.pagesize} </if>
+  </select>
+  
+    <select id="searchhbmxCount" resultType="integer" parameterType="java.util.List">
+	SELECT   count(1)
+	from masonry
+	INNER JOIN `user` on `user`.userid = masonry.userid
+	INNER JOIN `profile` on `profile`.user_id = masonry.userid
+		where masonry.userid in  
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+  </select>
+  
+  
+     <!-- 查询会员明细-->
+  <select id="searchhymx" resultType="cn.com.qcc.queryvo.VipCountCustomer" parameterType="java.util.List">
+		SELECT 
+			consume.descname 'event' ,
+			consume.monetary count ,
+			consume.user_id userid ,
+			consume.update_time ,
+			'2' type ,
+			`user`.telephone ,
+	    `profile`.user_name username 
+	 from consume 
+		LEFT JOIN `user` on `user`.userid = consume.user_id
+		LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+	where consume.type = 5  and consume.user_id in
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		ORDER BY consume.update_time desc 
+		<if test="pagequery !=null "> limit #{pagequery.pagestart} , #{pagequery.pagesize} </if>
+  </select>
+  
+  
+   <!-- 查询会员明细-->
+  <select id="searchhymxCount" resultType="integer" parameterType="java.util.List">
+		SELECT 
+			 count(1)
+	 from consume 
+		LEFT JOIN `user` on `user`.userid = consume.user_id
+		LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+	where consume.type = 5  and consume.user_id in
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+  </select>
+  
+  
+       <!-- 查询消费明细-->
+  <select id="searchxfmx" resultType="cn.com.qcc.queryvo.VipCountCustomer" parameterType="java.util.List">
+		SELECT 
+			consume.descname 'event' ,
+			consume.monetary count ,
+			consume.user_id userid ,
+			consume.update_time ,
+			'2' type ,
+			`user`.telephone ,
+	    `profile`.user_name username 
+	 from consume 
+		LEFT JOIN `user` on `user`.userid = consume.user_id
+		LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+	where consume.type in (1,9) and consume.user_id in
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		ORDER BY consume.update_time desc 
+		<if test="pagequery !=null "> limit #{pagequery.pagestart} , #{pagequery.pagesize} </if>
+  </select>
+  
+   <!-- 查询会员明细-->
+  <select id="searchxfmxCount" resultType="integer" parameterType="java.util.List">
+		SELECT 
+			 count(1)
+	 from consume 
+		LEFT JOIN `user` on `user`.userid = consume.user_id
+		LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+	where consume.type in(1,9) and consume.user_id in
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+  </select>
+  
+  
+    <!-- 查询获得积分的当天数据 -->
+	<select id="searchcurrntlength" resultType="integer" >
+			SELECT count(1) from integral where TO_DAYS(update_time) = TO_DAYS(NOW())
+            AND integral.userid = #{userid}  and integral.commonid = #{commonid} 
+	</select>
+	
+	
+	<!-- 查询当前类目今天是否扣过积分 -->
+	<select id="todaylength" resultType="integer" >
+			SELECT count(1) from integral where TO_DAYS(update_time) = TO_DAYS(NOW())
+            AND integral.userid = #{userid}  and integral.commonid = #{commonid} 
+            AND integral.otherid = #{otherid}
+	</select>
+	
+	
+	<!-- 查询第 n天的收益是否正常到账 -->
+	<select id="searchNeedAddLurceByTime" resultType="cn.com.qcc.pojo.Lucre" parameterType="integer">
+		SELECT lucre.* , `user`.telephone descname  from (
+		       SELECT
+							SUM(account)account,
+							userid
+						FROM
+							lucre
+						WHERE
+							DATEDIFF(update_time, NOW()) = #{daycount}
+						AND lucre.state = 1
+						GROUP BY lucre.userid 
+		) lucre LEFT JOIN `user` on `user`.userid = lucre.userid
+	</select>
+	
+	<update id="updateLurceIsAddByTime"  parameterType="integer">
+			UPDATE
+			lucre
+			SET lucre.state = 3 
+		WHERE
+			DATEDIFF(update_time, NOW()) = #{daycount}
+		AND lucre.state =1
+	
+	</update>
+</mapper>

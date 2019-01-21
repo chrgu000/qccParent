@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.RongCustomerMapper" >
+  
+  
+  	<!-- 查询想要加入的群不过滤自己加入的群 -->
+  	<select id="searchjoingroup" resultType="cn.com.qcc.queryvo.RongCustomer" parameterType="cn.com.qcc.queryvo.GroupVo">
+		SELECT * from (
+				SELECT
+					ronggroup.*,
+					conn.tcount,
+					IFNULL(rongconn.state, 2) userstate
+					<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli_address_customer"></include>
+				FROM
+					ronggroup
+				LEFT JOIN (
+					SELECT
+						COUNT(1) tcount,
+						rongconn.groupid
+					FROM
+						rongconn
+					WHERE
+						rongconn.state IN (1,3,4)
+					GROUP BY
+						rongconn.groupid
+				) conn ON conn.groupid = ronggroup.groupid
+				LEFT JOIN grouptype ON grouptype.grouptypeid = ronggroup.grouptypeid
+				LEFT JOIN (SELECT * FROM grouptype) fathertype ON grouptype.fatherid = fathertype.grouptypeid
+				LEFT JOIN groupaddress ON ronggroup.detailid = groupaddress.detailid
+				LEFT JOIN rongconn ON rongconn.groupid = ronggroup.groupid
+				AND rongconn.userid = #{userid}
+				where jointype  in (0 , 1)  
+				<if test="grouptypeid != null ">
+					 and ronggroup.grouptypeid = #{grouptypeid}
+				</if>
+				<if test="addressName !=null and addressName != '' ">
+					 and ronggroup.addressName = #{addressName}
+				</if>
+				<if test="searchwhere !=null and searchwhere != '' ">
+					and  (ronggroup.`name` like  CONCAT('%',#{searchwhere},'%')
+							 or ronggroup.groupid=#{searchwhere} or grouptype.typename like CONCAT('%',#{searchwhere},'%')
+									or fathertype.typename like  CONCAT('%',#{searchwhere},'%')
+							)
+				</if>
+				) g
+				WHERE
+				<![CDATA[ g.juli <=#{maxJuli}]]> 
+				ORDER by g.juli asc
+				<if test="pagequery !=null ">
+			       limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		        </if>
+  	</select>
+  	<select id="searchjoingroupCount" resultType="integer" parameterType="cn.com.qcc.queryvo.GroupVo">
+		SELECT count(1) from (
+				SELECT
+					ronggroup.*,
+					conn.tcount,
+					IFNULL(rongconn.state, 2) userstate
+					<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli_address_customer"></include>
+				FROM
+					ronggroup
+				LEFT JOIN (
+					SELECT
+						COUNT(1) tcount,
+						rongconn.groupid
+					FROM
+						rongconn
+					WHERE
+						rongconn.state IN (1, 3,4)
+					GROUP BY
+						rongconn.groupid
+				) conn ON conn.groupid = ronggroup.groupid
+				LEFT JOIN grouptype ON grouptype.grouptypeid = ronggroup.grouptypeid
+				LEFT JOIN (SELECT * FROM grouptype) fathertype ON grouptype.fatherid = fathertype.grouptypeid
+				LEFT JOIN groupaddress ON ronggroup.detailid = groupaddress.detailid
+				LEFT JOIN rongconn ON rongconn.groupid = ronggroup.groupid
+				AND rongconn.userid = #{userid}
+				where jointype  in (1 , 0 )   
+				<if test="grouptypeid != null ">
+					 and ronggroup.grouptypeid = #{grouptypeid}
+				</if>
+				<if test="addressName !=null and addressName != '' ">
+					 and ronggroup.addressName = #{addressName}
+				</if>
+				<if test="searchwhere !=null and searchwhere != '' ">
+					and  (ronggroup.`name` like  CONCAT('%',#{searchwhere},'%')
+							 or ronggroup.groupid=#{searchwhere} or grouptype.typename like CONCAT('%',#{searchwhere},'%')
+									or fathertype.typename like  CONCAT('%',#{searchwhere},'%')
+							)
+				</if>
+				) g
+				WHERE
+				<![CDATA[ g.juli <=#{maxJuli}]]> 
+  	</select>
+  	
+  	
+  
+    <!-- 查询想要加入的群 过滤自己加入的群-->
+	<select id="searchjoingroupnotin" resultType="cn.com.qcc.queryvo.RongCustomer" parameterType="cn.com.qcc.queryvo.GroupVo">
+			SELECT ronggroup.* ,conn.tcount 
+					<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli_address_customer"></include>
+					from ronggroup 
+					LEFT JOIN (
+						SELECT COUNT(1)tcount  ,rongconn.groupid from rongconn
+							where rongconn.state in (1 ,3,4 )
+						GROUP BY rongconn.groupid
+				
+			    )conn on conn.groupid = ronggroup.groupid
+			
+			    LEFT JOIN grouptype on grouptype.grouptypeid = ronggroup.grouptypeid
+				LEFT JOIN (SELECT * from grouptype) fathertype on grouptype.fatherid = fathertype.grouptypeid 
+				LEFT JOIN groupaddress ON ronggroup.detailid = groupaddress.detailid
+			    where ronggroup.groupid not in (
+						SELECT groupid from rongconn where userid = #{userid}
+						and state in (1 , 3,4 )
+				) 
+				 and  jointype  in (1 , 0 )  
+				<if test="grouptypeid != null ">
+					 and ronggroup.grouptypeid = #{grouptypeid}
+				</if>
+				<if test="addressName !=null and addressName != '' ">
+					 and ronggroup.addressName = #{addressName}
+				</if>
+				<if test="searchwhere !=null and searchwhere != '' ">
+					and  (ronggroup.`name` like  CONCAT('%',#{searchwhere},'%')
+							 or ronggroup.groupid=#{searchwhere} or grouptype.typename like CONCAT('%',#{searchwhere},'%')
+									or fathertype.typename like  CONCAT('%',#{searchwhere},'%')
+							)
+				</if>
+			     ORDER BY juli desc 
+			    
+			<if test="pagequery !=null ">
+			       limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		    </if>
+	</select>
+	<select id="searchjoingroupnotinCount" resultType="integer">
+		SELECT  count(1)
+					from ronggroup 
+					LEFT JOIN (
+						SELECT COUNT(1)tcount  ,rongconn.groupid from rongconn
+							where rongconn.state in (1 , 3,4 )
+						GROUP BY rongconn.groupid
+				
+			    )conn on conn.groupid = ronggroup.groupid
+			
+			    LEFT JOIN grouptype on grouptype.grouptypeid = ronggroup.grouptypeid
+				LEFT JOIN (SELECT * from grouptype) fathertype on grouptype.fatherid = fathertype.grouptypeid 
+				LEFT JOIN groupaddress ON ronggroup.detailid = groupaddress.detailid
+			    where ronggroup.groupid not in (
+						SELECT groupid from rongconn where userid = #{userid}
+						and state in (1 , 3,4 )
+				) and jointype  in (1 , 0)  
+				<if test="grouptypeid != null ">
+					 and ronggroup.grouptypeid = #{grouptypeid} 
+				</if>
+				<if test="addressName !=null and addressName != '' ">
+					 and ronggroup.addressName = #{addressName}
+				</if>
+				<if test="searchwhere !=null and searchwhere != '' ">
+					and  (ronggroup.`name` like  CONCAT('%',#{searchwhere},'%')
+							 or ronggroup.groupid=#{searchwhere} or grouptype.typename like CONCAT('%',#{searchwhere},'%')
+									or fathertype.typename like  CONCAT('%',#{searchwhere},'%')
+							)
+				</if>
+			
+	</select>
+	
+	
+	
+	<!-- 根据用户id查询用户加入的群组 -->
+	<select id="searchgroupbyuser" resultType="cn.com.qcc.pojo.Ronggroup" >
+		SELECT
+			*
+		FROM
+			rongconn
+		INNER JOIN ronggroup ON rongconn.groupid = ronggroup.groupid
+		where rongconn.state in (1,3,4) and rongconn.userid = #{userid}
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+	<select id="searchgroupbyuserCount" resultType="integer" >
+		SELECT
+			 count(1)
+		FROM
+			rongconn
+		INNER JOIN ronggroup ON rongconn.groupid = ronggroup.groupid
+		where rongconn.state in (1,3,4) and rongconn.userid = #{userid}
+	</select>
+	
+	
+	
+	
+	<!-- 根据分组查询群聊 -->
+	<select id="searchAddgroupbyAddressName" parameterType="cn.com.qcc.queryvo.GroupVo" resultType="cn.com.qcc.queryvo.RongCustomer">
+			SELECT * FROM (
+				SELECT COUNT(1) tcount , 
+					ronggroup.detailid,
+					ronggroup.addressname 
+					<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli_address_customer"></include>
+				FROM
+					ronggroup
+				LEFT JOIN groupaddress on groupaddress.detailid = ronggroup.detailid 
+				GROUP BY detailid
+			) ronggroup WHERE  <![CDATA[ ronggroup.juli <=#{maxJuli}]]>  
+			ORDER BY ronggroup.juli asc 
+			<if test="pagequery !=null ">
+			       limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		    </if>
+	</select>
+	<select id="searchAddgroupbyAddressNameCount" parameterType="cn.com.qcc.queryvo.GroupVo" resultType="integer">
+		SELECT count(1) FROM (
+				SELECT COUNT(1) tcount , 
+					ronggroup.detailid,
+					ronggroup.addressname 
+					<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli_address_customer"></include>
+				FROM
+					ronggroup
+				LEFT JOIN groupaddress on groupaddress.detailid = ronggroup.detailid 
+				GROUP BY detailid
+			) ronggroup WHERE  <![CDATA[ ronggroup.juli <=#{maxJuli}]]>  
+	</select>
+	
+	
+	
+	<!-- 根据详情地址id查询群组 -->
+	<select id="searchGroupbyIds" resultType="cn.com.qcc.queryvo.RongCustomer" >
+		SELECT ronggroup.* , IFNULL(rongconn.state ,'2')userstate ,conn.tcount   from  ronggroup 
+			LEFT JOIN (
+				SELECT COUNT(1)tcount  ,rongconn.groupid from rongconn
+					where rongconn.state in (1 , 3,4 )
+				GROUP BY rongconn.groupid
+			)conn on conn.groupid = ronggroup.groupid
+			LEFT JOIN rongconn on rongconn.groupid = ronggroup.groupid  and rongconn.userid = #{userid}
+			where ronggroup.detailid in 
+		 <foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+	
+	</select>
+	
+	
+	
+	
+	<select id="searchgroupdetail" resultType="cn.com.qcc.queryvo.RongCustomer" parameterType="cn.com.qcc.queryvo.GroupVo">
+			SELECT
+			  ronggroup.picture ,
+			  IFNULL(ronggroup.description,'')description ,
+			  ronggroup.`name` groupname ,
+			  ronggroup.groupid ,
+			  ronggroup.update_time,
+			  grouptype.typename ,
+			  fathertype.typename fathername ,
+			  groupaddress.detailes ,
+			  conn.tcount ,
+			  IFNULL(rongconn.state,2)userstate 
+			  <include refid="cn.com.qcc.mymapper.SearchWhere.getjuli_address_customer"></include>
+			FROM
+				ronggroup
+			LEFT JOIN grouptype on grouptype.grouptypeid = ronggroup.grouptypeid
+			LEFT JOIN (SELECT * from grouptype) fathertype on fathertype.grouptypeid = grouptype.fatherid 
+			LEFT JOIN groupaddress on ronggroup.detailid = groupaddress.detailid
+			LEFT JOIN (SELECT COUNT(1) tcount, groupid  from  rongconn where rongconn.state in (1,3,4)
+			 GROUP BY rongconn.groupid )
+			conn on conn.groupid = ronggroup.groupid
+			LEFT JOIN rongconn on rongconn.groupid = ronggroup.groupid and rongconn.userid = #{userid}
+			WHERE
+				ronggroup.groupid =#{groupid}
+	</select>
+	
+	
+	<!-- 解散群组时候清空数据 -->
+	<delete id="deleteGroup" parameterType="long">
+		DELETE from ronggroup where ronggroup.groupid = #{groupid}
+	</delete>
+	<delete id="deleteGroupConn" parameterType="long">
+		DELETE from rongconn where rongconn.groupid = #{groupid}
+	</delete>
+	
+	
+	<!-- 查询附近的人 -->
+	<select id="nearpersion" resultType="cn.com.qcc.queryvo.ArticleDetailCustomer" 
+					parameterType="cn.com.qcc.queryvo.VillageeVo">
+			SELECT      `user`.userid , 
+						`user`.create_time update_time,
+				        `profile`.user_name username,
+           				`profile`.avatar ,
+					    area.`name` cityname  ,
+						IFNULL(house.picture,qiuzu.`name`) detailname,
+						IFNULL(house.houseid,qiuzu.qiuzuid) detailid ,
+						IFNULL(house.articletypeid,qiuzu.articletypeid) articletypeid,
+						IFNULL(fans.fanStatus,0)fanStatus
+					<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli_near_persion"></include>
+				from `user`
+			LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+			LEFT JOIN area on area.`code` = `profile`.`code`
+			LEFT JOIN (
+				SELECT MAX(house.update_time) , house.user_id , house.picture , house.houseid  , '1' articletypeid
+				from house 
+				where house.houstatus = '1' and house.housestatus = '1'
+				GROUP BY house.user_id
+		  ) house on house.user_id = `user`.userid
+		
+			LEFT JOIN (
+					SELECT MAX(qiuzu.update_time) , qiuzu.user_id ,area.`name` , qiuzu.qiuzuid ,'2' articletypeid
+					from qiuzu 
+					LEFT JOIN area on area.`code` = qiuzu.`code`
+					GROUP BY qiuzu.user_id
+			)qiuzu on qiuzu.user_id = `user`.userid
+			LEFT JOIN  fans on  fans.followUserId = `user`.userid and fans.userId = #{userid}
+			where `user`.userid != #{userid}
+			ORDER BY juli asc 
+			<if test="pagequery !=null ">
+			       limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		    </if>
+	</select>
+	<select id="nearpersionCount" resultType="integer" 
+					parameterType="cn.com.qcc.queryvo.VillageeVo">
+			SELECT      count(1)
+				from `user`
+			LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+			LEFT JOIN area on area.`code` = `profile`.`code`
+			LEFT JOIN (
+				SELECT MAX(house.update_time) , house.user_id , house.picture , house.houseid  , '1' articletypeid
+				from house 
+				where house.houstatus = '1' and house.housestatus = '1'
+				GROUP BY house.user_id
+		  ) house on house.user_id = `user`.userid
+		
+			LEFT JOIN (
+					SELECT MAX(qiuzu.update_time) , qiuzu.user_id ,area.`name` , qiuzu.qiuzuid ,'2' articletypeid
+					from qiuzu 
+					LEFT JOIN area on area.`code` = qiuzu.`code`
+					GROUP BY qiuzu.user_id
+			)qiuzu on qiuzu.user_id = `user`.userid
+			LEFT JOIN  fans on  fans.followUserId = `user`.userid and fans.userId = #{userid}
+			where `user`.userid != #{userid}
+	</select>
+	
+</mapper>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mapper.GrouptypeMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Grouptype" >
+    <id column="grouptypeid" property="grouptypeid" jdbcType="BIGINT" />
+    <result column="typename" property="typename" jdbcType="VARCHAR" />
+    <result column="fatherid" property="fatherid" jdbcType="BIGINT" />
+    <result column="typeurl" property="typeurl" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    grouptypeid, typename, fatherid, typeurl
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.GrouptypeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from grouptype
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from grouptype
+    where grouptypeid = #{grouptypeid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from grouptype
+    where grouptypeid = #{grouptypeid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.com.qcc.pojo.GrouptypeExample" >
+    delete from grouptype
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.com.qcc.pojo.Grouptype" >
+    insert into grouptype (grouptypeid, typename, fatherid, 
+      typeurl)
+    values (#{grouptypeid,jdbcType=BIGINT}, #{typename,jdbcType=VARCHAR}, #{fatherid,jdbcType=BIGINT}, 
+      #{typeurl,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Grouptype" >
+    insert into grouptype
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="grouptypeid != null" >
+        grouptypeid,
+      </if>
+      <if test="typename != null" >
+        typename,
+      </if>
+      <if test="fatherid != null" >
+        fatherid,
+      </if>
+      <if test="typeurl != null" >
+        typeurl,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="grouptypeid != null" >
+        #{grouptypeid,jdbcType=BIGINT},
+      </if>
+      <if test="typename != null" >
+        #{typename,jdbcType=VARCHAR},
+      </if>
+      <if test="fatherid != null" >
+        #{fatherid,jdbcType=BIGINT},
+      </if>
+      <if test="typeurl != null" >
+        #{typeurl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.com.qcc.pojo.GrouptypeExample" resultType="java.lang.Integer" >
+    select count(*) from grouptype
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update grouptype
+    <set >
+      <if test="record.grouptypeid != null" >
+        grouptypeid = #{record.grouptypeid,jdbcType=BIGINT},
+      </if>
+      <if test="record.typename != null" >
+        typename = #{record.typename,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fatherid != null" >
+        fatherid = #{record.fatherid,jdbcType=BIGINT},
+      </if>
+      <if test="record.typeurl != null" >
+        typeurl = #{record.typeurl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update grouptype
+    set grouptypeid = #{record.grouptypeid,jdbcType=BIGINT},
+      typename = #{record.typename,jdbcType=VARCHAR},
+      fatherid = #{record.fatherid,jdbcType=BIGINT},
+      typeurl = #{record.typeurl,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.Grouptype" >
+    update grouptype
+    <set >
+      <if test="typename != null" >
+        typename = #{typename,jdbcType=VARCHAR},
+      </if>
+      <if test="fatherid != null" >
+        fatherid = #{fatherid,jdbcType=BIGINT},
+      </if>
+      <if test="typeurl != null" >
+        typeurl = #{typeurl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where grouptypeid = #{grouptypeid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Grouptype" >
+    update grouptype
+    set typename = #{typename,jdbcType=VARCHAR},
+      fatherid = #{fatherid,jdbcType=BIGINT},
+      typeurl = #{typeurl,jdbcType=VARCHAR}
+    where grouptypeid = #{grouptypeid,jdbcType=BIGINT}
+  </update>
+</mapper>

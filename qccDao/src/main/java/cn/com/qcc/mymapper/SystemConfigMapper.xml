@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.SystemConfigMapper" >
+  
+  
+   <!-- 查询系统设定的百分比 -->
+  <select id="searchpercent"  resultType="cn.com.qcc.pojo.Percent" >
+  		SELECT * from percent  LEFT JOIN percenttype on percent.type = percenttype.type
+  		<if test="type !=null">
+  			where percent.type =#{type}
+  		</if>
+	    ORDER BY percent.type asc , percentnum asc 
+  </select>
+</mapper>

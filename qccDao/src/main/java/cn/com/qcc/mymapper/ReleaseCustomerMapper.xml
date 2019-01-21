@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.ReleaseCustomerMapper" >
+
+	<!-- 获得大标签 -->
+	<select id="gettypename" resultType="cn.com.qcc.pojo.Parametype" parameterType="java.util.List">
+        SELECT * from parametype where typeid in
+	         <foreach item="item" collection="idsList" separator="," open="(" close=")" index="">    
+	          #{item, jdbcType=VARCHAR}    
+	        </foreach>    
+	        GROUP BY typeid
+	</select>
+	
+	<!-- 获得的标签和规格参数 -->
+	<select id="findtypenameandcodename" resultType="cn.com.qcc.pojo.Parametype" parameterType="java.util.List">
+        SELECT * from parametype where codeid in
+	         <foreach item="item" collection="idsList" separator="," open="(" close=")" index="">    
+	          #{item, jdbcType=VARCHAR}    
+	        </foreach>    
+	</select>
+	
+	<!-- 获得小标签 -->
+	<select id="getcodename" resultType="cn.com.qcc.pojo.Parametype" parameterType="long">
+       SELECT codeid,codename from parametype where typeid = #{typeid}
+	</select>
+	
+	
+	<!-- 查询主页加载的最新商品的count-->
+	<select id="getnewreleaseCount" resultType="integer" parameterType="cn.com.qcc.queryvo.ReleaseVo">
+     	SELECT count(1) from (
+		SELECT articledetail.articledetailid 
+		from releasetable 
+		INNER JOIN articledetail on releasetable.articledetailid = articledetail.articledetailid
+		LEFT JOIN `profile` ON releasetable.userid = `profile`.user_id
+		GROUP BY articledetail.articledetailid  )t
+	</select>
+	
+	<!-- 查询主页加载的最新商品的count-->
+	<select id="getnewrelease" resultType="cn.com.qcc.queryvo.ReleaseCustomer" parameterType="cn.com.qcc.queryvo.ReleaseVo">
+			    SELECT articledetail.articledetailid ,`profile`.user_id userid,`profile`.user_name,`profile`.avatar,
+				articledetail.update_time,IFNULL(articledetail.prices,'200')prices,articledetail.picture,articledetail.title,
+				IFNULL(store.cityname,'')cityname ,IFNULL(tribe.`name`,'') tribename , IFNULL(t.mescount,0)mescount ,IFNULL(z.zancount,0)zancount
+				<if test="userid !=null">
+					<!-- 导入距离 -->
+					<include refid="cn.com.qcc.mymapper.SearchWhere.getjuli"/>
+				</if>
+				from releasetable 
+				INNER JOIN articledetail on releasetable.articledetailid = articledetail.articledetailid
+				LEFT JOIN `profile` ON releasetable.userid = `profile`.user_id
+				LEFT JOIN store on store.userid = `profile`.user_id
+				LEFT JOIN article on article.articledetailid = articledetail.articledetailid
+				LEFT JOIN tribe on article.tribeid = tribe.tribeid
+				left JOIN detaileaddress on detaileaddress.detailid = store.detailid
+				LEFT JOIN (
+					SELECT messages.house_id , COUNT(1)mescount from messages  
+					where messages.type = '6' GROUP BY messages.house_id 
+				)t on t.house_id = articledetail.articledetailid
+				LEFT JOIN (
+					SELECT zan.otherid ,  COUNT(1)zancount from zan 
+					where zan.type = '6' GROUP BY zan.otherid
+				) z on z.otherid = articledetail.articledetailid
+				GROUP BY articledetail.articledetailid ORDER BY 
+				<if test="userid !=null">
+					juli asc,
+				</if>
+				 articledetail.update_time DESC
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+	
+	
+	<!-- 我的收货地址列表 -->
+	<select id="mydelivery" resultType="cn.com.qcc.pojo.Delivery" parameterType="long">
+     	 SELECT * from delivery where userid = #{userid} and type = '1' ORDER BY update_time desc
+	</select>
+	
+	
+	<!-- 物品的基本参数 -->
+	<select id="getsimpledetail" resultType="cn.com.qcc.queryvo.ReleaseCustomer" parameterType="cn.com.qcc.pojo.Releasetable">
+     	 SELECT releasetable.releaseid,releasetable.articledetailid ,releasetable.codeid,releasetable.count,releasetable.prices,
+			releasetable.userid ,store.`name` shopname,articledetail.picture ,articledetail.title
+			from 
+			releasetable 
+		INNER JOIN store on store.userid = releasetable.userid
+		INNER JOIN articledetail on releasetable.articledetailid = articledetail.articledetailid
+		where releasetable.articledetailid = #{articledetailid} and releasetable.codeid = #{codeid}
+	</select>
+	
+		<!-- 根据codeid获取标签-->
+	<select id="getnames" resultType="cn.com.qcc.pojo.Parametype" parameterType="java.util.List">
+        SELECT * from parametype where codeid in
+	         <foreach item="item" collection="idsList" separator="," open="(" close=")" index="">    
+	          #{item, jdbcType=VARCHAR}    
+	        </foreach>    
+	        GROUP BY typeid
+	</select>
+	
+	
+	<select id="getbalanceandphone" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="cn.com.qcc.pojo.Myorder">
+       SELECT `user`.telephone ,vipcount.balance from vipcount INNER JOIN `user` on vipcount.user_id = `user`.userid
+			where `user`.userid = #{userid}
+	</select>
+	
+	
+	<!-- 获得街道名称 -->
+	<select id="getTrandname" resultType="cn.com.qcc.pojo.Delivery" parameterType="long">
+       SELECT area.`code` discode ,area.`name` disname ,a.code tracode ,a.name tradname from area 
+				join (
+				SELECT * from area where code = (SELECT parentId from area where `code` = #{code})  
+		)  a on a.code = area.parentId
+		where area.`code` = #{code}
+	</select>
+	
+	<!-- 获得市名称 -->
+	<select id="getquname" resultType="cn.com.qcc.pojo.Delivery" parameterType="long">
+      SELECT area.`code` tracode ,area.`name` traname ,a.code citycode ,a.name cityname from area 
+				join (
+				SELECT * from area where code = (SELECT parentId from area where `code` = #{tracode})  
+		)  a on a.code = area.parentId
+		where area.`code` = #{tracode}
+	</select>
+	
+	<!-- 获得省名称 -->
+	<select id="getcityname" resultType="cn.com.qcc.pojo.Delivery" parameterType="long">
+     SELECT area.`code` tracode ,area.`name` traname ,a.code procode ,a.name proname from area 
+				join (
+				SELECT * from area where code = (SELECT parentId from area where `code` = #{citycode})  
+		)  a on a.code = area.parentId
+		where area.`code` = #{citycode}
+	</select>
+	
+	
+	<!--获得所有的物品规格参数 -->
+	<select id="allarticle" resultType="cn.com.qcc.pojo.Parametype" parameterType="integer" >
+    	 SELECT  *  from parametype 
+			where fatherid = #{fatherid}
+	</select>
+	
+	
+	<!-- 查询一级分类的名称 -->
+	<select id="searchFirstTypeName" parameterType="java.util.List" resultType="cn.com.qcc.queryvo.ReleaseCustomer">
+			SELECT * from parametype where fatherid = 0 
+			AND codeid in 
+			<foreach item="item" collection="idsList" separator="," open="("
+				close=")" index="">
+				#{item, jdbcType=VARCHAR}
+			</foreach>
+	</select>
+	
+	
+	<!-- 查询二级分类的名称 -->
+	<select id="searchSecondTypeName" parameterType="java.util.List" resultType="cn.com.qcc.pojo.Parametype">
+			SELECT * from parametype 
+			where fatherid in
+			<foreach item="item" collection="idsList" separator="," open="("
+				close=")" index="">
+				#{item, jdbcType=VARCHAR}
+			</foreach>
+	</select>
+	
+	
+	<select id="searchTrans" parameterType="cn.com.qcc.pojo.Transmitsend" resultType="cn.com.qcc.pojo.Transmitsend">
+			SELECT
+					*
+				FROM
+					transmitsend
+				WHERE
+					transmitsend.userid =#{userid}
+				AND transmitsend.articletypeid =#{articletypeid}
+				AND transmitsend.otherid=#{otherid}
+	</select>
+	
+	<update id="updateTrans"  parameterType="cn.com.qcc.pojo.Transmitsend">
+			UPDATE
+				transmitsend
+			
+			set update_time = #{update_time}
+			WHERE
+					transmitsend.userid =#{userid}
+				AND transmitsend.articletypeid =#{articletypeid}
+				AND transmitsend.otherid=#{otherid}
+	
+	</update>
+</mapper>

@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mapper.IntegralMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Integral" >
+    <id column="integralid" property="integralid" jdbcType="BIGINT" />
+    <result column="userid" property="userid" jdbcType="BIGINT" />
+    <result column="otherid" property="otherid" jdbcType="BIGINT" />
+    <result column="commonid" property="commonid" jdbcType="BIGINT" />
+    <result column="count" property="count" jdbcType="BIGINT" />
+    <result column="event" property="event" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="update_time" property="update_time" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    integralid, userid, otherid, commonid, count, event, type, update_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.IntegralExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from integral
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from integral
+    where integralid = #{integralid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from integral
+    where integralid = #{integralid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.com.qcc.pojo.IntegralExample" >
+    delete from integral
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.com.qcc.pojo.Integral" >
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="integralid" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into integral (integralid, userid, otherid, 
+      commonid, count, event, 
+      type, update_time)
+    values (#{integralid,jdbcType=BIGINT}, #{userid,jdbcType=BIGINT}, #{otherid,jdbcType=BIGINT}, 
+      #{commonid,jdbcType=BIGINT}, #{count,jdbcType=BIGINT}, #{event,jdbcType=VARCHAR}, 
+      #{type,jdbcType=INTEGER}, #{update_time,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Integral" >
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="integralid" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into integral
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="integralid != null" >
+        integralid,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="otherid != null" >
+        otherid,
+      </if>
+      <if test="commonid != null" >
+        commonid,
+      </if>
+      <if test="count != null" >
+        count,
+      </if>
+      <if test="event != null" >
+        event,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="update_time != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="integralid != null" >
+        #{integralid,jdbcType=BIGINT},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="otherid != null" >
+        #{otherid,jdbcType=BIGINT},
+      </if>
+      <if test="commonid != null" >
+        #{commonid,jdbcType=BIGINT},
+      </if>
+      <if test="count != null" >
+        #{count,jdbcType=BIGINT},
+      </if>
+      <if test="event != null" >
+        #{event,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="update_time != null" >
+        #{update_time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.com.qcc.pojo.IntegralExample" resultType="java.lang.Integer" >
+    select count(*) from integral
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update integral
+    <set >
+      <if test="record.integralid != null" >
+        integralid = #{record.integralid,jdbcType=BIGINT},
+      </if>
+      <if test="record.userid != null" >
+        userid = #{record.userid,jdbcType=BIGINT},
+      </if>
+      <if test="record.otherid != null" >
+        otherid = #{record.otherid,jdbcType=BIGINT},
+      </if>
+      <if test="record.commonid != null" >
+        commonid = #{record.commonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.count != null" >
+        count = #{record.count,jdbcType=BIGINT},
+      </if>
+      <if test="record.event != null" >
+        event = #{record.event,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.update_time != null" >
+        update_time = #{record.update_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update integral
+    set integralid = #{record.integralid,jdbcType=BIGINT},
+      userid = #{record.userid,jdbcType=BIGINT},
+      otherid = #{record.otherid,jdbcType=BIGINT},
+      commonid = #{record.commonid,jdbcType=BIGINT},
+      count = #{record.count,jdbcType=BIGINT},
+      event = #{record.event,jdbcType=VARCHAR},
+      type = #{record.type,jdbcType=INTEGER},
+      update_time = #{record.update_time,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.Integral" >
+    update integral
+    <set >
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="otherid != null" >
+        otherid = #{otherid,jdbcType=BIGINT},
+      </if>
+      <if test="commonid != null" >
+        commonid = #{commonid,jdbcType=BIGINT},
+      </if>
+      <if test="count != null" >
+        count = #{count,jdbcType=BIGINT},
+      </if>
+      <if test="event != null" >
+        event = #{event,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="update_time != null" >
+        update_time = #{update_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where integralid = #{integralid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Integral" >
+    update integral
+    set userid = #{userid,jdbcType=BIGINT},
+      otherid = #{otherid,jdbcType=BIGINT},
+      commonid = #{commonid,jdbcType=BIGINT},
+      count = #{count,jdbcType=BIGINT},
+      event = #{event,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      update_time = #{update_time,jdbcType=TIMESTAMP}
+    where integralid = #{integralid,jdbcType=BIGINT}
+  </update>
+</mapper>
