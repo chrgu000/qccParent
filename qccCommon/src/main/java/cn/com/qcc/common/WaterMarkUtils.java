@@ -20,7 +20,7 @@ public class WaterMarkUtils {
 	// 下载到本地服务器的地址
 	private final static String downloanpath = "d://shuiyin//";
 	// 下载到服务器临时文件夹
-	private final static String batchloadpath = "/root/cents/batchpicure";
+	private final static String batchloadpath = "/root/cents/batchpicure/";
 	/**
      * @param key : 图片名称
      * @param srcImgPath : 图片文件

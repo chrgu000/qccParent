@@ -62,7 +62,7 @@ public class PictureController {
 	        String key = IDUtils.genItemId()+ ".png";
 	        // 2 , 本上传的文件以新文件名的形式保存在本地服务器[加水印]
 	        String filePath = WaterMarkUtils.addWaterMark(image, key);
-	        sendData += filePath +"," ;
+	        sendData += filePath +"-" ;
 	        // 3 , 上传到七牛云服务器
 	        SimpleUpload.upload(filePath, key);
 	        //4 ,删除本地文件
