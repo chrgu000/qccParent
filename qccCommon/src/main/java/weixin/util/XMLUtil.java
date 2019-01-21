@@ -1,0 +1,126 @@
+package weixin.util;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.core.util.QuickWriter;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.io.naming.NoNameCoder;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
+import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
+import com.thoughtworks.xstream.io.xml.XppDriver;
+
+import cn.com.qcc.common.ResultObj;
+import cn.com.qcc.common.SendRedPack;
+
+
+public class XMLUtil {
+
+	/**
+	 * 35 * 解析字符串（XML） 36 * 37 * @param request 38 * @return 39 * @throws
+	 * Exception 40
+	 */
+	@SuppressWarnings({ "unchecked", "unused" })
+	public Map<String, String> parseXml(String msg) throws Exception {
+		ResultObj obj = new ResultObj();
+		// 将解析结果存储在HashMap中
+		Map<String, String> map = new HashMap<String, String>();
+		// 从request中取得输入流
+		InputStream inputStream = new ByteArrayInputStream(msg.getBytes("UTF-8"));
+		// 读取输入流
+		SAXReader reader = new SAXReader();
+		Document document = reader.read(inputStream);
+		// 得到xml根元素
+		Element root = document.getRootElement();
+		// 得到根元素的所有子节点
+		List<Element> elementList = root.elements();
+		// 遍历所有子节点
+		for (Element e : elementList) {
+			map.put(e.getName(), e.getText());
+		}
+
+		// 释放资源
+		inputStream.close();
+		inputStream = null;
+		return map;
+	}
+
+	/**
+	 * 扩展xstream，使其支持CDATA块
+	 */
+	private XStream xstream = new XStream(new XppDriver(new NoNameCoder()) {
+
+		@Override
+		public HierarchicalStreamWriter createWriter(Writer out) {
+			return new PrettyPrintWriter(out) {
+				// 对所有xml节点的转换都增加CDATA标记
+				boolean cdata = true;
+
+				@Override
+				@SuppressWarnings("rawtypes")
+				public void startNode(String name, Class clazz) {
+					super.startNode(name, clazz);
+				}
+
+				@Override
+				public String encodeNode(String name) {
+					return name;
+				}
+
+				@Override
+				protected void writeText(QuickWriter writer, String text) {
+					if (cdata) {
+						writer.write("<![CDATA[");
+						writer.write(text);
+						writer.write("]]>");
+					} else {
+						writer.write(text);
+					}
+				}
+			};
+		}
+	});
+
+	private XStream inclueUnderlineXstream = new XStream(new DomDriver(null, new XmlFriendlyNameCoder("_-", "_")));
+
+	public XStream getXstreamInclueUnderline() {
+		return inclueUnderlineXstream;
+	}
+
+	public XStream xstream() {
+		return xstream;
+	}
+
+	/**
+	 * 2 * 生成签名 3 *
+	 */
+	public String createSendRedPackOrderSign(SendRedPack redPack) {
+		StringBuffer sign = new StringBuffer();
+		sign.append("act_name=").append(redPack.getAct_name());
+		sign.append("&client_ip=").append(redPack.getClient_ip());
+		sign.append("&mch_billno=").append(redPack.getMch_billno());
+		sign.append("&mch_id=").append(redPack.getMch_id());
+		sign.append("&nonce_str=").append(redPack.getNonce_str());
+		sign.append("&re_openid=").append(redPack.getRe_openid());
+		sign.append("&remark=").append(redPack.getRemark());
+		sign.append("&send_name=").append(redPack.getSend_name());
+		sign.append("&total_amount=").append(redPack.getTotal_amount());
+		sign.append("&total_num=").append(redPack.getTotal_num());
+		sign.append("&wishing=").append(redPack.getWishing());
+		sign.append("&wxappid=").append(redPack.getWxappid());
+		sign.append("&key=").append("");
+		return DigestUtils.md5Hex(sign.toString()).toUpperCase();
+	}
+
+}
