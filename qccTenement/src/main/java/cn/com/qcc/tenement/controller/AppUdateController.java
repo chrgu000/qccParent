@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Appversion;
 import cn.com.qcc.service.AppUpdatesService;
@@ -66,6 +67,19 @@ public class AppUdateController {
 	public ResultMap doUpate(String phoneAddress ,String versionid) {
 		appUpdatesService.doUpate(phoneAddress , versionid);
 		return ResultMap.IS_200();
+	}
+	
+	
+	
+	// 查询最新版本APP
+	@RequestMapping("/app/searchNewAppservice/{type}")
+	@ResponseBody
+	public ResultMap searchNewAppservice (@PathVariable Integer type) {
+		Appversion version = appUpdatesService.searchNewAppservice(type);
+		if (CheckDataUtil.checkNotEmpty(version)) {
+			return ResultMap.build(400, "没有找到对应APP");
+		}
+		return ResultMap.IS_200(version);
 	}
 
 }

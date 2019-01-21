@@ -164,6 +164,12 @@ public class AppUpdateServiceImpl implements AppUpdatesService{
 		}
 	}
 
+	/** 获取服务器最新版本APP	**/
+	public Appversion searchNewAppservice(Integer type) {
+		Appversion version = versionMapper.newVersionByType(type);
+		return version;
+	}
+
 	
 	
 	

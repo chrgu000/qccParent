@@ -30,19 +30,18 @@ public class UpdateHouseStatusMess implements MessageListener{
 			// 拿到TEXT 需要休眠一会儿。等待数据库提交事务
 			Thread.sleep(500);
 			Long houseid = Long.valueOf(text.split("-")[0]);
-			//String state =text.split("-")[1];
-			//if (CheckDataUtil.checkNotEqual(state, 3)) 
+			String state = (String)text.split("-")[1];
+			// 同步索引库
+			HouseCustomer houseCustomer = houseCustomerMapper.searchoneHouseToSolr(houseid);
+			if (CheckDataUtil.checkNotEqual(state, 3)) 
 				{
-					// 同步索引库
-					HouseCustomer houseCustomer = houseCustomerMapper.searchoneHouseToSolr(houseid);
 					if (CheckDataUtil.checkNotEmpty(houseCustomer)) {
 						houseSolrDao.AddOneHouseToSolr(houseCustomer);
 					}
-				
-			//	} else {
-			//		System.out.println("走删除方法");
-			//		//删除索引库
-			//		houseSolrDao.deletehousebyhouseid(houseid);
+				} else {
+					System.out.println("走删除方法");
+					//删除索引库
+					houseSolrDao.oneHouseDeleteFromSolr(houseCustomer);
 				}
 			
 		} catch (Exception e) {

@@ -29,6 +29,7 @@ import cn.com.qcc.pojo.Pararule;
 import cn.com.qcc.pojo.Price;
 import cn.com.qcc.pojo.User;
 import cn.com.qcc.pojo.Village;
+import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.BuyCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.HouseOrderCustomer;
@@ -170,13 +171,18 @@ public class HouseController {
 		if (CheckDataUtil.checkNotEmpty(villageCustomer.getLikecode())) {
 			likecode = villageCustomer.getLikecode();
 		}
+		BuildingCustomer buildingCustomer = houseVo.getBuildingCustomer();
+		HouseCustomer houseCustomer = houseVo.getHouseCustomer();
+		if (CheckDataUtil.checkNotEmpty(buildingCustomer.getBrandid())) {
+			houseCustomer.setBrandid(buildingCustomer.getBrandid());
+		}
 		PageQuery pagequery = new PageQuery();
 		pagequery.setCurrentpage(currentpage);
 		pagequery.setPagesize(pagesize);
 		SearchResult result = houseService.findHousebycondition(
 			 houseVo.getOrderbyjuli(),	houseVo.getMetro(),houseVo.getPriceCustomer()
 			,houseVo.getUserid()	,likecode ,houseVo.getPropertyCustomer(),houseVo.getApartmentCustomer(),
-			houseVo.getAddressCustomer(),houseVo.getHouseCustomer() , houseVo.getJuli() , houseVo.getHousetagCustomer(),pagequery);
+			houseVo.getAddressCustomer(),houseCustomer , houseVo.getJuli() , houseVo.getHousetagCustomer(),pagequery);
 		// 截取地址
 		List<HouseCustomer> findHousetarding = result.getHouselist();
 		int infocount = result.getRecordCount();

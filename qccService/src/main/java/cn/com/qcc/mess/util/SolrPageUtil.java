@@ -93,6 +93,11 @@ public class SolrPageUtil {
 			if (CheckDataUtil.checkNotEmpty(houseCustomer.getUserid())) {
 				query.add("fq", "userid:"+houseCustomer.getUserid()+"");
 			}
+			//过滤品牌的查询条件
+			if (CheckDataUtil.checkNotEmpty(houseCustomer.getBrandid())) {
+				
+			}
+			
 			
 			// 房源预定
 			if (CheckDataUtil.checkNotEmpty(houseCustomer.getSchedule())) {

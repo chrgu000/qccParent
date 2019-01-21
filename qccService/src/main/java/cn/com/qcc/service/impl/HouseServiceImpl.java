@@ -1116,10 +1116,10 @@ public class HouseServiceImpl implements HouseService {
 		SolrQuery query = new SolrQuery();
 		query.setQuery("*:*");
 		//查询所有出租的
-		query.set("fq", "housetype:1");
-		query.set("fq", "housestatus:(NOT 3)");
-		query.set("fq", "userid:"+userid+"");
-		query.set("fq", "buildingid:"+buildingid+"");
+		query.add("fq", "housetype:1");
+		query.add("fq", "housestatus:(NOT 3)");
+		query.add("fq", "userid:"+userid+"");
+		query.add("fq", "buildingid:"+buildingid+"");
 		query.addSort("house_number",ORDER.asc);
 		SolrPageUtil.setStartAndEnd(pagequery, query);
 		return query;

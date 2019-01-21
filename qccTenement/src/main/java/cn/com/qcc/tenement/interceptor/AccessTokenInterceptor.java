@@ -29,7 +29,7 @@ public class AccessTokenInterceptor implements HandlerInterceptor{
 		List<String> inteper_urls = ResourcesUtil.gekeyList(Config.Accestoken_url);
 		// 用户访问的url
 		String current_url = request.getRequestURI();
-		//System.out.println( "当前访问的地址=========" +  current_url);
+		System.out.println( "当前访问的地址=========" +  current_url);
 		// 遍历拦截的url 如果是当前访问的url 需要进行拦截
 		for (String inteper_url : inteper_urls) { 
 			//说明这是需要拦截的url

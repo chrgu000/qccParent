@@ -16,7 +16,7 @@ import cn.com.qcc.service.solrdao.HouseSolrDao;
  * 1,缓存是否需要同步 ---> 重置缓存
  * 2,索引库需要同步
  * 3,插入浏览表数据
- * 
+ * 编辑房源状态收到的消息：3065-3
  * **/
 public class HouseSearchMessage implements MessageListener{
 	
