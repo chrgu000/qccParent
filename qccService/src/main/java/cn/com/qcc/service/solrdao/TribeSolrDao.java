@@ -72,6 +72,7 @@ public class TribeSolrDao {
 		query.append(" AND articletypeid:" + detailCustomer.getArticletypeid() + "");
 		try {
 			houseSolrServer.deleteByQuery(query.toString());
+			houseSolrServer.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

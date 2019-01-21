@@ -403,11 +403,14 @@ public class HouseSolrDao {
 		query.append(" AND articletypeid:" + houseCustomer.getArticletypeid() + "");
 		try {
 			houseSolrServer.deleteByQuery(query.toString());
+			houseSolrServer.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
+	
+	
 
 	public SearchResult findHouseBySize(SolrQuery query) {
 		try {

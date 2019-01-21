@@ -33,6 +33,7 @@ import cn.com.qcc.pojo.Percenttype;
 import cn.com.qcc.pojo.Role;
 import cn.com.qcc.pojo.User;
 import cn.com.qcc.pojo.UserRole;
+import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.LandlordCustomer;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.queryvo.UserVo;
@@ -41,6 +42,7 @@ import cn.com.qcc.service.InteService;
 import cn.com.qcc.service.LandLordService;
 import cn.com.qcc.service.UserService;
 import cn.com.qcc.service.VillageService;
+import cn.com.qcc.service.solrdao.HouseSolrDao;
 import sun.misc.BASE64Decoder;
 
 @SuppressWarnings("restriction")
@@ -54,6 +56,13 @@ public class BackController{
 	@Autowired InteService inteService;
 	@Autowired VillageService villageService;
 	@Autowired LandLordService landLordService;
+	@Autowired HouseSolrDao houseSolrDao;
+	
+	@RequestMapping("/deleteSolr")
+	public ResultMap del (HouseCustomer houseCustomer) {
+		houseSolrDao.oneHouseDeleteFromSolr(houseCustomer);
+		return ResultMap.IS_200();
+	}
 
 	/** 用户通过密码登录后台
 	 * @param password : 账号密码
