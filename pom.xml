@@ -50,5 +50,6 @@
   	<module>qccDao</module>
   	<module>qccService</module>
   	<module>qccTenement</module>
+  	<module>qccPojo</module>
   </modules>
 </project>
