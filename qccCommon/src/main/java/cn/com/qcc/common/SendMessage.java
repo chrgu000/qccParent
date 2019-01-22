@@ -25,6 +25,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import WangYiUtil.WangYiCommon;
+
 /*
 功能:		1xinxi.cn HTTP接口 发送短信
 
@@ -36,7 +38,6 @@ ime=发送时间&type=pt&extno=自定义扩展码
 public class SendMessage {
 
 	// 发送验证码的请求路径URL
-	private static final String SERVER_URL = "https://api.netease.im/sms/sendcode.action";
 	// 网易云信分配的账号，请替换你在管理后台应用下申请的Appkey
 	private static final String APP_KEY = "00481cb45c031fe722c155d3f321dac0";
 	// 网易云信分配的密钥，请替换你在管理后台应用下申请的appSecret
@@ -202,6 +203,8 @@ public class SendMessage {
 		return resutMap;
 	}
 	
+	
+	
 	/**
 	 * 验证码短信的发送
 	 * @param TEMPLATEID : 模板id
@@ -210,7 +213,7 @@ public class SendMessage {
 	private static Map<String, Object> CodeCheckMess(String TEMPLATEID, String PHONE) {
 		Map<String, Object> returnmap  = new HashMap<>();;
 		DefaultHttpClient httpClient = new DefaultHttpClient();
-		HttpPost httpPost = new HttpPost(SERVER_URL);
+		HttpPost httpPost = new HttpPost(WangYiCommon.SENDCODEURL);
 		String curTime = String.valueOf((new Date()).getTime() / 1000L);
 		// 设置请求的的参数，requestBody参数
 		int radomInt = new Random().nextInt(9999);
@@ -593,7 +596,7 @@ public class SendMessage {
 	/**
 	 * @param args
 	 * @throws IOException
-	 *             注册的验证码
+	 * 注册的验证码
 	 */
 	public static void sendHouseOrder(String phone, HttpServletRequest request) {
 
@@ -801,7 +804,7 @@ public class SendMessage {
 
 	public static void main(String[] args) {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
-		HttpPost httpPost = new HttpPost(SERVER_URL);
+		HttpPost httpPost = new HttpPost(WangYiCommon.SENDCODEURL);
 		String curTime = String.valueOf((new Date()).getTime() / 1000L);
 		// 设置请求的的参数，requestBody参数
 		int radomInt = new Random().nextInt(999999);

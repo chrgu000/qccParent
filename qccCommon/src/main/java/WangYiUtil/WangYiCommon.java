@@ -1,5 +1,7 @@
 package WangYiUtil;
 
+import java.net.URI;
+
 public class WangYiCommon {
 	
 	/** * 撤回消息*/
@@ -34,6 +36,12 @@ public class WangYiCommon {
 
 	/**编辑群组**/
 	public static final String UPDATETEAM = "https://api.netease.im/nimserver/team/update.action";
+
+	/**发送短信验证码的URL**/
+	public static final String SENDCODEURL = "https://api.netease.im/sms/sendcode.action";
+	
+	/**发送通知类短信**/
+	public static final String SENDTEMPLATE = "https://api.netease.im/sms/sendtemplate.action";
 	
 	
 

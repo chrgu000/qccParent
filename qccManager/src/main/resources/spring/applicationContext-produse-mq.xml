@@ -120,4 +120,20 @@
 	<bean id="userUpdate" class="org.apache.activemq.command.ActiveMQQueue">
 		<constructor-arg value="userUpdate" />
 	</bean>  
+	
+	<bean id="deletepicture" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="deletepicture" />
+	</bean>  
+	
+	<bean id="builUpdate" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="builUpdate" />
+	</bean>  
+	
+	<bean id="updateHouseByBuildingid" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="updateHouseByBuildingid" />
+	</bean>  
+	
+	<bean id="groupLaren" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="groupLaren" />
+	</bean>  
 </beans>

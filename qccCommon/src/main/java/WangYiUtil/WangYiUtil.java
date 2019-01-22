@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -390,8 +392,38 @@ public class WangYiUtil {
 		Map<String, Object> map = (Map<String, Object>) jsonobj;
 		return Integer.parseInt(map.get("code").toString());
 	}
+	
+	
+	/**发送通知短信**/
+	private static Map<String, Object> CodeCheckMess(String TEMPLATEID, String PHONE) {
+		Map<String, Object> returnmap = null;
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpPost httpPost = SetSendHead(WangYiCommon.SENDTEMPLATE);
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("templateid", TEMPLATEID));
+		nvps.add(new BasicNameValuePair("mobiles", "["+PHONE+"]"));
+		nvps.add(new BasicNameValuePair("params", "['【','】']"));
+		try {
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
+			// 执行请求
+			HttpResponse response = httpClient.execute(httpPost);
+			String str = EntityUtils.toString(response.getEntity(), "utf-8");
+			net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
+			returnmap = (Map<String, Object>) jsonobj;
+			System.out.println(returnmap);
+			return returnmap;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return returnmap;
+		}
+		
+		
+	}
 
 	public static void main(String[] args) {
+		String  tid= "9314772";
+		String phone = "18316999864,13714559758";
+		CodeCheckMess(tid,phone);
 	}
 
 }

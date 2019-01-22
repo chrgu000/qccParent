@@ -1,7 +1,12 @@
 package cn.com.qcc.service.impl;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Resource;
+import javax.jms.Destination;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import WangYiUtil.WangYiUtil;
 import cn.com.qcc.common.CheckDataUtil;
@@ -15,6 +20,7 @@ import cn.com.qcc.mapper.RongconnMapper;
 import cn.com.qcc.mapper.RonggroupMapper;
 import cn.com.qcc.mapper.TribetypeMapper;
 import cn.com.qcc.mapper.UserMapper;
+import cn.com.qcc.mess.util.SendMessUtil;
 import cn.com.qcc.mymapper.RongCustomerMapper;
 import cn.com.qcc.pojo.Groupaddress;
 import cn.com.qcc.pojo.GroupaddressExample;
@@ -57,6 +63,8 @@ public class RongServiceImpl implements RongService {
 	GroupaddressMapper groupaddressMapper;
 	@Autowired
 	UserMapper userMapper;
+	@Resource  Destination groupLaren;
+	@Autowired JmsTemplate jmsTemplate;
 
 	@Override
 	public void insert(Long userid, Long followUserId) {
@@ -240,9 +248,10 @@ public class RongServiceImpl implements RongService {
 		// 0-需要同意(默认),1-不需要同意。
 		if (CheckDataUtil.checkisEqual(magree, 0))
 		return ResultMap.build(200, "操作成功等待对方回应");
-		
+		String sendData = userid + "-" + groupid +"-" +  otherids; 
+		SendMessUtil.sendData(jmsTemplate, groupLaren, sendData);
 		// 建立和其他成员的关系
-		if (CheckDataUtil.checkisEmpty(otherids)) {
+		/*if (CheckDataUtil.checkisEmpty(otherids)) {
 			try {
 				String [] otherid = otherids.split(",");
 				for (int i =0;i<otherid.length;i++) {
@@ -258,7 +267,7 @@ public class RongServiceImpl implements RongService {
 				System.out.println("群成员格式错误");
 				e.printStackTrace();
 			}
-		}
+		}*/
 		
 		return ResultMap.build(200, "对方已经拉入群组中");
 	};

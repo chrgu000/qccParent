@@ -258,4 +258,17 @@
 		<property name="destination" ref="updateHouseByBuildingid" />
 		<property name="messageListener" ref="updateHouseByBuildingidMess" />
 	</bean> 
+	
+	
+	
+		<!-- 拉入时候同步好友关系 -->
+	<bean id="groupLaren" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="groupLaren" />
+	</bean>  
+	<bean id="groupLarenMess" class="cn.com.qcc.tenement.mqmess.GroupLarenMess"/>
+	<bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="groupLaren" />
+		<property name="messageListener" ref="groupLarenMess" />
+	</bean> 
 </beans>
