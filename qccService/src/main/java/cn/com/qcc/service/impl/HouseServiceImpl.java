@@ -99,6 +99,7 @@ public class HouseServiceImpl implements HouseService {
 	@Autowired private  PreparatoryMapper preparatoryMapper;
 	@Resource  Destination houseAddOrUpdate;
 	@Resource  Destination houseAddBatch;
+	@Resource  Destination updateHouseByBuildingid;
 	@Resource  Destination updateHousestates;
 	@Resource  Destination houseSaleAddOrUpdate;
 	@Resource  Destination houseSearch;
@@ -1353,6 +1354,9 @@ public class HouseServiceImpl implements HouseService {
 	 * **/
 	public void deletebrandidbybuildingid(Long buildingid) {
 		houseCustomerMapper.deletebrandidbybuildingid(buildingid);
+		
+		// 发送消息同步房源品牌
+		SendMessUtil.sendData(jmsTemplate, updateHouseByBuildingid, buildingid.toString());
 	}
 
 	/**
@@ -1360,6 +1364,8 @@ public class HouseServiceImpl implements HouseService {
 	 * **/
 	public void addbrandidbybuildingid(HouseCustomer houseCustomer) {
 		houseCustomerMapper.addbrandidbybuildingid(houseCustomer);
+		// 发送消息同步房源品牌
+		SendMessUtil.sendData(jmsTemplate, updateHouseByBuildingid, houseCustomer.getBuildingid().toString());
 	}
 
 	// 查询上架7天没有更新房源信息的IDS

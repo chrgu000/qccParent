@@ -841,4 +841,41 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<![CDATA[building.buildingid<=#{pagequery.pageend}]]>
 		</if>
 	</select>
+	
+	
+	<!-- 查询一条楼栋导入索引库 -->
+	<select id="oneBuildToSolr"  resultType="cn.com.qcc.queryvo.BuildingCustomer" parameterType="long">
+		SELECT
+			building.building ,
+		  building.villageid , 
+		  building.buildingid , 
+		  detaileaddress.*,
+	    village.`code` likecode,
+		  building.picture onepicture,
+		  IFNULL(metro.`name`,'') metroname ,
+		  IFNULL(metro.finalstop ,'')finalstop,
+		  metro.`code` citycode ,
+		  metro.metroid,
+		  '' propertyright ,
+		  '' redecorat  , 
+		  '' apartmentname ,
+		  '' avgprices ,
+		  area.`name` trading ,
+		  '' housecount , 
+		  IFNULL(fcode.name,'')district ,
+		  brand.brand,
+		  brand.brandid ,
+		  building.update_time ,
+		  `profile`.avatar
+		FROM
+			building
+		LEFT JOIN metro ON metro.metroid = building.metroid
+		LEFT JOIN detaileaddress on detaileaddress.detailid = building.detailid
+		LEFT JOIN village on village.villageid = building.villageid
+		LEFT JOIN area on area.`code` = village.`code`
+		LEFT JOIN (SELECT * from area) fcode on area.parentId = fcode.`code` 
+		LEFT JOIN brand on  brand.brandid = building.brandid
+		LEFT JOIN `profile` on `profile`.user_id = building.userid
+		where building.buildingid =#{buildingid}
+	</select>
 </mapper>

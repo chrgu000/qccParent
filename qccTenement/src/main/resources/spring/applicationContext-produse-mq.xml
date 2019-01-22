@@ -234,4 +234,28 @@
 		<property name="destination" ref="deletepicture" />
 		<property name="messageListener" ref="deletepictureMess" />
 	</bean> 
+	
+	
+	<!-- 后台编辑楼栋后更新索引库 -->
+	<bean id="builUpdate" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="builUpdate" />
+	</bean>  
+	<bean id="builUpdateMess" class="cn.com.qcc.tenement.mqmess.BuilUpdateMess"/>
+	<bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="builUpdate" />
+		<property name="messageListener" ref="builUpdateMess" />
+	</bean> 
+	
+	
+	<!-- 根据楼栋id同步房源信息 -->
+	<bean id="updateHouseByBuildingid" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="updateHouseByBuildingid" />
+	</bean>  
+	<bean id="updateHouseByBuildingidMess" class="cn.com.qcc.tenement.mqmess.UpdateHouseByBuildingIdMess"/>
+	<bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="updateHouseByBuildingid" />
+		<property name="messageListener" ref="updateHouseByBuildingidMess" />
+	</bean> 
 </beans>

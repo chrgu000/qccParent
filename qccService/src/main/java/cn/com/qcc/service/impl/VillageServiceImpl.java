@@ -85,6 +85,7 @@ public class VillageServiceImpl implements VillageService {
 	@Autowired HousertargService housertargService;
 	@Autowired BuilSolrDao builSolrDao;
 	@Resource  Destination builAdd;
+	@Resource  Destination builUpdate;
 	@Resource  Destination builSearch;
 	@Autowired JmsTemplate jmsTemplate;
 	@Autowired JedisClient jedisClient;
@@ -612,6 +613,10 @@ public class VillageServiceImpl implements VillageService {
 		updateaddress.setDetailes(detailes);
 		updateaddress.setDetailid(search.getDetailid());
 		detaileaddressMapper.updateByPrimaryKeySelective(updateaddress);
+		
+		// 编辑成功以后需要发送消息同步楼栋的信息
+		SendMessUtil.sendData(jmsTemplate, builUpdate, building.getBuildingid().toString());
+		
 		return ResultMap.build(200, "更新成功",search.getBrandid());
 	}
 

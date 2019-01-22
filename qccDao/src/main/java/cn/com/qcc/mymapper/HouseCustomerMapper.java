@@ -226,8 +226,12 @@ public interface HouseCustomerMapper {
 	
 	/**所有的房子导入索引库**/
 	List<HouseCustomer> searchAllHouseToSolr(@Param("pagequery")PageQuery pagequery);
+	
 	/**一个房子导入索引库**/
 	HouseCustomer searchoneHouseToSolr(@Param("houseid")Long valueOf);
+	
+	/**根据楼栋的id查询同步索引库的数据**/
+	List<HouseCustomer> searchHouseToSolrByBuildingid(Long buildingid);
 	
 	
 

@@ -543,9 +543,10 @@
 		SELECT count(1)
 		 from articledetail 
 		INNER JOIN `profile` on articledetail.userid = `profile`.user_id
-		INNER JOIN articletype on articledetail.articletypeid = articletype.articletypeid
+		INNER JOIN articletype on articledetail.onetypeid = articletype.onetypeid
 		INNER JOIN detaileaddress on articledetail.detailid = detaileaddress.detailid
 		where  `profile`.user_id = #{userid} and articledetail.state in (1,2)
+	
 		<include refid="cn.com.qcc.mymapper.SearchWhere.query_articletype_where"></include>
 	</select>
 	
@@ -553,13 +554,13 @@
 		SELECT `profile`.avatar ,`profile`.user_name ,articledetail.topday ,articledetail.articledetailid,
 			articletype.typename,articledetail.description ,detaileaddress.detailes ,articledetail.update_time,
 			articledetail.state ,articledetail.picture onepicture,articledetail.topprices,articledetail.picture
-			,IFNULL(typedetail.detailname,'')detailname
+			,IFNULL(articletype.typename,'')detailname
 		 from articledetail 
 		INNER JOIN `profile` on articledetail.userid = `profile`.user_id
-		INNER JOIN articletype on articledetail.articletypeid = articletype.articletypeid
+		INNER JOIN articletype on articledetail.onetypeid = articletype.onetypeid
 		INNER JOIN detaileaddress on articledetail.detailid = detaileaddress.detailid
-		LEFT JOIN typedetail on typedetail.typedetailid = articledetail.typedetailid
 		where  `profile`.user_id = #{userid} and articledetail.state in (1,2)
+	
 		<include refid="cn.com.qcc.mymapper.SearchWhere.query_articletype_where"></include>
 		order by articledetail.update_time desc 
 		<if test="pagequery !=null ">
@@ -577,6 +578,7 @@
 					FROM
 						(
 							SELECT
+								articledetail.userid ,
 								articledetail.title,
 								articledetail.description,
 								articledetail.articledetailid,
@@ -612,11 +614,12 @@
 			FROM
 				(
 					SELECT
-            articledetail.title ,
+						articledetail.userid ,
+                        articledetail.title ,
 						articledetail.description , 
 						articledetail.articledetailid,
 						articledetail.update_time,
-            articledetail.articletypeid,
+                        articledetail.articletypeid,
 						`profile`.user_name username,
 						`profile`.avatar,
 						articledetail.picture onepicture,

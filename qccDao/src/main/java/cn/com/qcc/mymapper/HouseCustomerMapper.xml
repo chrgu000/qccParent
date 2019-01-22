@@ -1621,5 +1621,84 @@
 			WHERE house.houseid =#{houseid}
 			
 	
-	</select>											
+	</select>	
+	
+	
+	
+	
+	<select id="searchHouseToSolrByBuildingid" resultType="cn.com.qcc.queryvo.HouseCustomer" >
+		SELECT house.* ,ifnull(brand.brand,'')brand  from (
+			SELECT
+			  house.tribeids ,
+			  tribe.picture tribepicture ,
+			  house.houseid ,
+			  house.housetitle ,
+			  house.update_time ,
+			  house.picture onepicture ,
+			  house.picture,
+			  house.user_id userid ,
+			  house.property_id ,
+			  house.house_number ,
+			  price.prices ,
+			  price.pricetype ,
+			  IFNULL(mess.mcount,0)mcount ,
+			  IFNULL(zan.zcount,0)zcount ,
+			  IFNULL(bro.bcount,0)bcount ,
+			  house.buildingid ,
+			  IFNULL(building.brandid,house.brandid)brandid ,
+			  IFNULL(house.`schedule`,2)`schedule`,
+			   house.housestatus ,
+			  house.houstatus  ,
+			  '1' articletypeid ,
+			  apartment.apartmentname ,
+			  IFNULL(metro.`name`,'') metroname ,
+			   IFNULL(metro.finalstop ,'')finalstop ,
+			  metro.metroid ,
+			  house.redecorat, 
+				house.area ,
+			  metro.`code` citycode , 
+			  village.`code` likecode,
+			  house.housetag_id  ,
+			  house.paystyle , 
+			  propertyname ,
+			  avatar ,
+			  `profile`.user_name,
+			  villagename ,
+			  building.building,
+			  village.villageid ,
+			  house.description descname ,
+			  detaileaddress.* ,
+			  area.`name` trading 
+			FROM
+				house
+			LEFT JOIN tribe on house.houseid = tribe.tribeid
+			LEFT JOIN building on building.buildingid = house.buildingid
+			LEFT JOIN price on house.price_id = price.priceid
+			LEFT JOIN apartment on house.apartment_id = apartment.apartmentid
+			LEFT JOIN metro on building.metroid = metro.metroid
+			LEFT JOIN property on house.property_id = property.propertyid
+			LEFT JOIN village on building.villageid = village.villageid
+			LEFT JOIN `profile` on house.user_id = `profile`.user_id
+			LEFT JOIN detaileaddress on building.detailid = detaileaddress.detailid
+			LEFT JOIN area on area.`code` = village.`code`
+			LEFT JOIN (
+					SELECT COUNT(1) mcount, messages.house_id otherid
+							FROM messages WHERE type = 1 GROUP BY
+											messages.house_id
+			) mess ON mess.otherid = house.houseid
+			LEFT JOIN (
+						SELECT COUNT(1) zcount, zan.otherid
+								FROM 	zan WHERE
+					type = 1 GROUP BY otherid
+			) zan ON zan.otherid = house.houseid
+			LEFT JOIN (
+				SELECT	SUM(bcount) bcount, browse.otherid
+					FROM 	browse WHERE browse.type = 1
+					GROUP BY
+								browse.otherid
+			) bro ON bro.otherid = house.houseid 
+			) house LEFT JOIN brand on house.brandid = brand.brandid
+			WHERE house.housestatus !='3'
+			AND house.buildingid = #{buildingid}
+	</select>										
 </mapper>
