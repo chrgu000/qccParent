@@ -233,7 +233,7 @@
   	  	<sql id="query_articletype_where">
   		<if test="articleTypeCustomer !=null ">
   			<if test="articleTypeCustomer.type !=null and articleTypeCustomer.type !='' ">
-  				and articletype.type = #{articleTypeCustomer.onetypeid}
+  				and articletype.onetypeid = #{articleTypeCustomer.type}
   			</if>
   			<if test="articleTypeCustomer.articletypeid !=null and articleTypeCustomer.articletypeid !='' ">
   				and articletype.articletypeid = #{articleTypeCustomer.articletypeid}
