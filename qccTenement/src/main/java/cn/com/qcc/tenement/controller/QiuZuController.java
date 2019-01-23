@@ -137,7 +137,6 @@ public class QiuZuController {
 		map.put("qiuzcount", bcount);
 		map.put("qiuzu", search);
 		return ResultMap.IS_200(map);
-		// inteService.consumebranch(3, userid);
 	}
 
 	/**在查看求租之前校验求租次数是否足够**/

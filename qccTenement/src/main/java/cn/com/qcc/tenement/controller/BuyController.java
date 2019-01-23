@@ -51,7 +51,7 @@ public class BuyController {
 		if ("".equals(buy.getPicture()) || buy.getPicture() ==null) {
 			return ResultMap.build(400, "请检查发布的图片！");
 		}
-		if ("".equals(buy.getHead()) || "".equals(buy.getHead())) {
+		if ("".equals(buy.getHead()) || buy.getHead()==null) {
 			return ResultMap.build(400, "请检查发布求购的标题！");
 		}
 		buy.setUser_id(Long.valueOf(userid));

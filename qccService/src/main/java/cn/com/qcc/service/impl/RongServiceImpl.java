@@ -493,7 +493,6 @@ public class RongServiceImpl implements RongService {
 
 	@Override
 	public ResultMap editgroup(Ronggroup group) {
-		System.out.println("进入群编辑..." + group.getBeinvitemode());
 		if (CheckDataUtil.checkisEmpty(group.getGroupid())
 				|| CheckDataUtil.checkisEmpty(group.getUserid())) {
 			return ResultMap.build(400, "少参数");

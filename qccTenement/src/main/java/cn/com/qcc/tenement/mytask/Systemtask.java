@@ -127,13 +127,6 @@ public class Systemtask {
 				String xcxpicture_gzf = XiaoChengXuCodeUtil.make_gzf_xcxqcode(village.getVillageid(), "villagedetail");
 				village.setXcxpicture(xcxpicture_qcc + "," + xcxpicture_gzf);
 				villageMapper.updateByPrimaryKeySelective(village);
-				
-				//置空缓存
-				/*try {
-					jedisClient.del(RedisUtil.getvi+building.getBuildingid());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}*/
 			}
 		}
 	}

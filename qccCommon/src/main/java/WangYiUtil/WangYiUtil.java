@@ -4,11 +4,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
@@ -49,13 +46,16 @@ public class WangYiUtil {
 		
 		// 设置请求头部信息
 		DefaultHttpClient httpClient = new DefaultHttpClient();
-		HttpPost httpPost = SetSendHead(WangYiCommon.createUser);
+		HttpPost httpPost = SetSendHead(WangYiCommon.CREATEUSER);
 		
 		// 设置请求的参数
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-		nvps.add(new BasicNameValuePair("accid", userid + "")); // 用户唯一标识用userid
-		nvps.add(new BasicNameValuePair("name", name)); // 用户昵称
-		nvps.add(new BasicNameValuePair("icon", icon)); // 用户头像
+		// 用户的userid 对应的云唯一约束
+		nvps.add(new BasicNameValuePair("accid", userid + "")); 
+		// 用户昵称
+		nvps.add(new BasicNameValuePair("name", name)); 
+		// 用户头像
+		nvps.add(new BasicNameValuePair("icon", icon)); 
 		httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
 		
 		// 执行请求
@@ -76,12 +76,15 @@ public class WangYiUtil {
 		
 		// 设置请求的参数
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-		nvps.add(new BasicNameValuePair("fromAccid", "10088")); // 用户唯一标识用userid
-		nvps.add(new BasicNameValuePair("toAccids", toAccids)); // 用户唯一标识用userid
-																// "[10000525,10001696]"
-		nvps.add(new BasicNameValuePair("type", "0")); // 用户唯一标识用userid
-		nvps.add(new BasicNameValuePair("body", "{'msg':'" + body + "'}")); // 用户唯一标识用userid
-																			// "{'msg':'深圳最新上市20+求租--深圳求租--EDIT--18316999864'}"
+		// 10088 求租推送的唯一标识
+		nvps.add(new BasicNameValuePair("fromAccid", "10088"));
+		// 推送的用户的id集合
+		nvps.add(new BasicNameValuePair("toAccids", toAccids)); 
+		// type推送模式
+		nvps.add(new BasicNameValuePair("type", "0")); 
+		// 推送的消息体
+		nvps.add(new BasicNameValuePair("body", "{'msg':'" + body + "'}")); 
+		// "{'msg':'深圳最新上市20+求租--深圳求租--EDIT--18316999864'}"
 		try {
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
 		} catch (UnsupportedEncodingException e) {
@@ -92,10 +95,8 @@ public class WangYiUtil {
 		try {
 			httpClient.execute(httpPost);
 		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -106,16 +107,21 @@ public class WangYiUtil {
 			throws ParseException, IOException {
 		//设置请求头部
 		DefaultHttpClient httpClient = new DefaultHttpClient();
-		HttpPost httpPost = SetSendHead(WangYiCommon.recallurl);
+		HttpPost httpPost = SetSendHead(WangYiCommon.RECALURL);
 		// 设置请求的参数
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-		nvps.add(new BasicNameValuePair("deleteMsgid", msgid)); // 用户唯一标识用userid
-		nvps.add(new BasicNameValuePair("from", fromuserid)); // 用户唯一标识用userid
-		nvps.add(new BasicNameValuePair("timetag", time)); // 用户昵称
-		nvps.add(new BasicNameValuePair("type", "7")); // 用户昵称
-		nvps.add(new BasicNameValuePair("to", userid)); // 用户昵称
+		// 删除的消息id
+		nvps.add(new BasicNameValuePair("deleteMsgid", msgid)); 
+		// 发送人id
+		nvps.add(new BasicNameValuePair("from", fromuserid));
+		// 消息的时间戳
+		nvps.add(new BasicNameValuePair("timetag", time)); 
+		// type 标识消息类型
+		nvps.add(new BasicNameValuePair("type", "7")); 
+		// 消息抵达的id
+		nvps.add(new BasicNameValuePair("to", userid)); 
+		// ignoreTime 1 表示忽略最大撤回时间
 		nvps.add(new BasicNameValuePair("ignoreTime", "1"));
-
 		httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
 		// 执行请求
 		HttpResponse response = httpClient.execute(httpPost);
@@ -134,6 +140,7 @@ public class WangYiUtil {
 
 		// 设置请求的参数
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		//用户id
 		nvps.add(new BasicNameValuePair("accid", userid + ""));
 		httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
 		// 执行请求
@@ -203,7 +210,6 @@ public class WangYiUtil {
 		String str = EntityUtils.toString(response.getEntity(), "utf-8");
 		net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
 		Map<String, Object> map = (Map<String, Object>) jsonobj;
-		System.out.println(jsonobj);
 		String code = map.get("code").toString();
 		System.out.println(code);
 		String tid = "";
@@ -232,7 +238,6 @@ public class WangYiUtil {
 		String str = EntityUtils.toString(response.getEntity(), "utf-8");
 		net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
 		Map<String, Object> map = (Map<String, Object>) jsonobj;
-		System.out.println(jsonobj);
 		String ssobj = map.get("infos").toString();
 		List<TeamPojo> team = JsonUtils.jsonToList(ssobj, TeamPojo.class);
 		return team;
@@ -260,9 +265,13 @@ public class WangYiUtil {
 		HttpPost httpPost = SetSendHead(WangYiCommon.UPDATETEAM);
 		// 设置请求的参数
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		// 群组id
 		nvps.add(new BasicNameValuePair("tid", tid.toString()));
+		// 群组名称
 		nvps.add(new BasicNameValuePair("tname", tname));
+		// 群主id
 		nvps.add(new BasicNameValuePair("owner", ownid.toString()));
+		// 群组描述
 		nvps.add(new BasicNameValuePair("intro", descName));
 		// 群建好后，sdk操作时，0不用验证，1需要验证,2不允许任何人加入。
 		nvps.add(new BasicNameValuePair("joinmode", joinmode.toString()));
@@ -277,13 +286,11 @@ public class WangYiUtil {
 		}
 		nvps.add(new BasicNameValuePair("beinvitemode", beinvitemode.toString()));
 		nvps.add(new BasicNameValuePair("magree", magredCode));
-		/* nvps.add(new BasicNameValuePair("advanced","true")); */
 		httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
 		// 执行请求
 		HttpResponse response = httpClient.execute(httpPost);
 		String str = EntityUtils.toString(response.getEntity(), "utf-8");
 		net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
-		System.out.println(jsonobj);
 		Map<String, Object> map = (Map<String, Object>) jsonobj;
 		return Integer.parseInt(map.get("code").toString());
 	}
@@ -301,7 +308,6 @@ public class WangYiUtil {
 		HttpResponse response = httpClient.execute(httpPost);
 		String str = EntityUtils.toString(response.getEntity(), "utf-8");
 		net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
-		System.out.println(jsonobj);
 		Map<String, Object> map = (Map<String, Object>) jsonobj;
 		return Integer.parseInt(map.get("code").toString());
 	}
@@ -312,14 +318,15 @@ public class WangYiUtil {
 		HttpPost httpPost = SetSendHead(WangYiCommon.TEAMLEVEL);
 		// 设置请求的参数
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		// 群id
 		nvps.add(new BasicNameValuePair("tid", tid.toString()));
+		// 用户id
 		nvps.add(new BasicNameValuePair("accid", userid.toString()));
 		httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
 		// 执行请求
 		HttpResponse response = httpClient.execute(httpPost);
 		String str = EntityUtils.toString(response.getEntity(), "utf-8");
 		net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
-		System.out.println(jsonobj);
 		Map<String, Object> map = (Map<String, Object>) jsonobj;
 		return Integer.parseInt(map.get("code").toString());
 	}
@@ -337,7 +344,9 @@ public class WangYiUtil {
 		
 		// 设置请求的参数
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		// 群id
 		nvps.add(new BasicNameValuePair("tid", groupid.toString()));
+		// 群组id
 		nvps.add(new BasicNameValuePair("owner", userid.toString()));
 		String magredCode = "";
 		if (magree == 0) {
@@ -348,13 +357,13 @@ public class WangYiUtil {
 		}
 		nvps.add(new BasicNameValuePair("magree", magredCode));
 		nvps.add(new BasicNameValuePair("msg", "邀请你加入"));
+		// 成员id的集合
 		nvps.add(new BasicNameValuePair("members", "[" + otherids + "]"));
 		httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
 		// 执行请求
 		HttpResponse response = httpClient.execute(httpPost);
 		String str = EntityUtils.toString(response.getEntity(), "utf-8");
 		net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
-		System.out.println(jsonobj);
 		Map<String, Object> map = (Map<String, Object>) jsonobj;
 		return Integer.parseInt(map.get("code").toString());
 	}
@@ -369,18 +378,25 @@ public class WangYiUtil {
 		// 设置请求的参数
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		nvps.add(new BasicNameValuePair("accid", accid.toString()));
+		// 用户昵称
 		if (CheckDataUtil.checkNotEmpty(name))
 			nvps.add(new BasicNameValuePair("name", name));
+		// 用户头像
 		if (CheckDataUtil.checkNotEmpty(icon))
 			nvps.add(new BasicNameValuePair("icon", icon));
+		// 用户签名
 		if (CheckDataUtil.checkNotEmpty(sign))
 			nvps.add(new BasicNameValuePair("sign", sign));
+		// 电话号码
 		if (CheckDataUtil.checkNotEmpty(mobile))
 			nvps.add(new BasicNameValuePair("mobile", mobile));
+		// 邮箱地址
 		if (CheckDataUtil.checkNotEmpty(email))
 			nvps.add(new BasicNameValuePair("email", email));
+		// 生日
 		if (CheckDataUtil.checkNotEmpty(birth))
 			nvps.add(new BasicNameValuePair("birth", birth));
+		// 性别
 		if (CheckDataUtil.checkNotEmpty(gender))
 			nvps.add(new BasicNameValuePair("gender", gender));
 		httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
@@ -388,7 +404,6 @@ public class WangYiUtil {
 		HttpResponse response = httpClient.execute(httpPost);
 		String str = EntityUtils.toString(response.getEntity(), "utf-8");
 		net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
-		System.out.println(jsonobj);
 		Map<String, Object> map = (Map<String, Object>) jsonobj;
 		return Integer.parseInt(map.get("code").toString());
 	}
@@ -410,7 +425,6 @@ public class WangYiUtil {
 			String str = EntityUtils.toString(response.getEntity(), "utf-8");
 			net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
 			returnmap = (Map<String, Object>) jsonobj;
-			System.out.println(returnmap);
 			return returnmap;
 		} catch (Exception e) {
 			e.printStackTrace();

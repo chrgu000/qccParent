@@ -65,9 +65,6 @@ public class PictureController {
 	        sendData += filePath +"-" ;
 	        // 3 , 上传到七牛云服务器
 	        SimpleUpload.upload(filePath, key);
-	        //4 ,删除本地文件
-	       //File file = new File(filePath);
-	       //file.delete();
 	       //发出消息通知后台删除本地图片
 			String imagepath =  qnweb_path + key;
 			returnpath += imagepath + "-";
@@ -97,9 +94,6 @@ public class PictureController {
 	    String filePath = WaterMarkUtils.addWaterMarkNot(images, key);
 	    // 3 , 上传到七牛云服务器
 	    SimpleUpload.upload(filePath, key);
-	    // 4 ,删除本地文件
-	    //File file = new File(filePath);
-	    // file.delete();
 	    //发放删除本地图片的消息
 		if (CheckDataUtil.checkNotEmpty(filePath)) {
 			SendMessUtil.sendData(jmsTemplate, deletepicture, filePath);

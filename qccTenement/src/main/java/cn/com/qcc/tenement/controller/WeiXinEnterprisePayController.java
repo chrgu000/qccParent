@@ -105,14 +105,6 @@ public class WeiXinEnterprisePayController {
 	        vipCountService.insertpartner(partner_trade_no , outaccount , paydesc , userid , 1);
 		}
 		return checkmap;
-		
-		
-		
-		///String openid = "oYQk1xEFu9EjR38rhxDh2v2HOg3w"; // 老板 的OPENID
-		//String realname = "王玉林";
-		//String account = "100";
-		//String desc = "企业付款";
-		
 	}
 
 

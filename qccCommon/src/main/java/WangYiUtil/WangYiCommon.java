@@ -1,14 +1,13 @@
 package WangYiUtil;
 
-import java.net.URI;
 
 public class WangYiCommon {
 	
 	/** * 撤回消息*/
-	public static final String recallurl = "https://api.netease.im/nimserver/msg/recall.action";
+	public static final String RECALURL = "https://api.netease.im/nimserver/msg/recall.action";
 	
 	/** 创建新用户*/
-	public static final String createUser = "https://api.netease.im/nimserver/user/create.action";
+	public static final String CREATEUSER = "https://api.netease.im/nimserver/user/create.action";
 
 	/**更新用户信息**/
 	public static final String UPDATEUSERINFO = "https://api.netease.im/nimserver/user/updateUinfo.action";
