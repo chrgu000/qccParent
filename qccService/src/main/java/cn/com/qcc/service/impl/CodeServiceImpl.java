@@ -11,7 +11,6 @@ import cn.com.qcc.service.CodeService;
 public class CodeServiceImpl implements CodeService {
 
 	public void addCode(Code code) {
-		// TODO Auto-generated method stub
 
 	}
 

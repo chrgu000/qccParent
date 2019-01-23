@@ -78,9 +78,6 @@ public class CentServiceImpl implements CentService {
 	 **/
 	public ResultMap addhousepersion(Housepersion housepersion ,Long userid) {
 		
-		//处理掉不合理的电话号码
-		//String phone = housepersion.getTelephone();
-		//housepersion.setTelephone(IDUtils.checkphone(phone));
 		String jinjiphone = housepersion.getJinjitelephone();
 		housepersion.setJinjilanname(jinjiphone);
 		

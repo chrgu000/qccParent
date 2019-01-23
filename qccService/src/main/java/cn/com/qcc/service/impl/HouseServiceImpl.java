@@ -175,7 +175,8 @@ public class HouseServiceImpl implements HouseService {
 		List<RentmodalCustomer> rents = houseCustomerMapper.collectrents();
 		// 这里获取收租日的子节点
 		for (RentmodalCustomer rent : rents) {
-			List<RentmodalCustomer> rentsong = houseCustomerMapper.collectrentsson(Integer.parseInt(rent.getValue()));
+			List<RentmodalCustomer> rentsong = 
+					houseCustomerMapper.collectrentsson(Integer.parseInt(rent.getValue()));
 			rent.setChildren(rentsong);
 		}
 		return rents;

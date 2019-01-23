@@ -417,11 +417,9 @@ public class VillageServiceImpl implements VillageService {
 
 	// 设置楼栋的solr查询条件
 	private SolrQuery setbuildingquerysolr(VillageeVo villageeVo) {
-
 		// 创建一个查询对象
 		SolrQuery solrQuery = new SolrQuery();
 		StringBuilder params = new StringBuilder("*:" + "*");
-
 		params.append(" AND fq:{!geofilt}");// 距离过滤函数
 		params.append(" AND sort:geodist() asc");// 距离过滤函数
 		params.append(" AND sfield:latlng");// 距离过滤函数

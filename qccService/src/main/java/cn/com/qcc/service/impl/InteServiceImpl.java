@@ -369,7 +369,6 @@ public class InteServiceImpl implements InteService {
 
 	// 将第n天已经收益的更新为已经添加到正常收益状态
 	public void updateLurceIsAddByTime(int daycount) {
-		// TODO Auto-generated method stub
 		consumeCustomerMapper.updateLurceIsAddByTime(daycount);
 	}
 

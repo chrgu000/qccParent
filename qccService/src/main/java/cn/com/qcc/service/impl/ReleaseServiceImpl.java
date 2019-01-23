@@ -60,8 +60,6 @@ import cn.com.qcc.service.ReleaseService;
 
 @Service
 public class ReleaseServiceImpl implements ReleaseService {
-	//@Autowired
-	//ArticleMapper articleMapper;
 	@Autowired
 	ArticledetailMapper articledetailMapper;
 	@Autowired

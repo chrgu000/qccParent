@@ -38,7 +38,6 @@ public class SceneuserServiceImpl implements SceneuserService{
 
 	@Override
 	public List<WeiCustomer> getalluser(Integer sceneid) {
-		// TODO Auto-generated method stub
 		return sceneuserMapper.getalluser(sceneid);
 	}
 

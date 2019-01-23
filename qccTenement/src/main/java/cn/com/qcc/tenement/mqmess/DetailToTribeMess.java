@@ -75,15 +75,8 @@ public class DetailToTribeMess implements MessageListener{
 						articelDeail.setTribepicture(tribe.getPicture());
 					
 					}
-			
 				tribeSolrDao.oneArticleDetailToSolr(articelDeail);
-				
-				
-				
 			}
-			
-			
-			
 			// 这里需要同步索引库
 		} catch (Exception e) {
 			// 这里是发生未知异常

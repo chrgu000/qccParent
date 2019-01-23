@@ -209,7 +209,6 @@ public class BrowseServiceImpl implements BrowseService {
 		return browseMapper.mybrowList(houseVo);
 	}
 	public int findmyBrowListCount(HouseVo houseVo) {
-		// TODO Auto-generated method stub
 		return browseMapper.findmyBrowListCount(houseVo);
 	}
 	

@@ -97,9 +97,7 @@ public class BuyServiceImpl implements BuyService {
 	 * 
 	 * **/
 	public BuyCustomer findOneById(Long buyid) {
-		// TODO Auto-generated method stub
 		BuyCustomer delivery= qiuZuCustomerMapper.findOneById(buyid);
-		
 		if (delivery.getCode() !=null && !"".equals(delivery.getCode())) {
 			//获得街道和区一级
 			Delivery de_tr = releaseCustomerMapper.getTrandname(Long.valueOf(delivery.getCode()));

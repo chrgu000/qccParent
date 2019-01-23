@@ -14,12 +14,11 @@ import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
+@SuppressWarnings("unchecked")
 @Controller
 @RequestMapping("/userService")
 public class WeiXinServiceImpl implements WeiXinService {
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public String weixinPay(String userId, String rechargeAmount, HttpServletRequest request) throws Exception {
 
@@ -61,9 +60,8 @@ public class WeiXinServiceImpl implements WeiXinService {
 
 		String requestXML = PayToolUtil.getRequestXml(packageParams);
 		String resXml = HttpUtil.postData(PayConfigUtil.UFDODER_URL, requestXML);
-		Map map = XMLUtil4jdom.doXMLParse(resXml);
+		Map<String,Object> map = XMLUtil4jdom.doXMLParse(resXml);
 		String urlCode = (String) map.get("code_url");
-
 		return urlCode;
 	}
 

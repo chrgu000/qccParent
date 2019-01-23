@@ -42,7 +42,6 @@ public class VipCountServiceImpl implements VipCountService {
 
 	@Override
 	public void insertVipCount(Vipcount vip_new) {
-		// TODO Auto-generated method stub
 		vipcountMapper.insertSelective(vip_new);
 	}
 
@@ -85,64 +84,44 @@ public class VipCountServiceImpl implements VipCountService {
 		vipcountMapper.updateByPrimaryKeySelective(vipcount);
 	}
 
-	@Override
 	public int getalluserburseCount(UserVo userVo) {
-		// TODO Auto-generated method stub
 		return consumeCustomerMapper.getalluserburseCount(userVo);
 	}
 
-	@Override
 	public List<VipCountCustomer> getalluserburse(UserVo userVo) {
-		// TODO Auto-generated method stub
 		return consumeCustomerMapper.getalluserburse(userVo);
 	}
 
-	@Override
 	public List<VipCountCustomer> searchjbmx(String[] userid, PageQuery pagequery) {
-		// TODO Auto-generated method stub
 		return consumeCustomerMapper.searchjbmx(userid , pagequery);
 	}
 
-	@Override
 	public int searchjbmxCount(String[] userid) {
-		// TODO Auto-generated method stub
 		return consumeCustomerMapper.searchjbmxCount(userid);
 	}
 	
 	
-	@Override
 	public List<VipCountCustomer> searchsymx(String[] userid, PageQuery pagequery) {
-		// TODO Auto-generated method stub
 		return consumeCustomerMapper.searchsymx(userid , pagequery);
 	}
 
-	@Override
 	public int searchsymxCount(String[] userid) {
-		// TODO Auto-generated method stub
 		return consumeCustomerMapper.searchsymxCount(userid);
 	}
 
-	@Override
 	public List<VipCountCustomer> searchhbmx(String[] userid, PageQuery pagequery) {
-		// TODO Auto-generated method stub
 		return consumeCustomerMapper.searchhbmx(userid , pagequery);
 	}
 
-	@Override
 	public int searchhbmxCount(String[] userid) {
-		// TODO Auto-generated method stub
 		return consumeCustomerMapper.searchhbmxCount(userid);
 	}
 
-	@Override
 	public List<VipCountCustomer> searchhymx(String[] userid, PageQuery pagequery) {
-		// TODO Auto-generated method stub
 		return consumeCustomerMapper.searchhymx(userid , pagequery);
 	}
 
-	@Override
 	public int searchhymxCount(String[] userid) {
-		// TODO Auto-generated method stub
 		return consumeCustomerMapper.searchhymxCount(userid);
 	}
 
@@ -182,7 +161,6 @@ public class VipCountServiceImpl implements VipCountService {
 
 	@Override
 	public void deleteweixinaccount(Long userid) {
-		// TODO Auto-generated method stub
 		userCustomerMapper.deleteunionid(userid);
 		userCustomerMapper.delteopenid(userid);
 	}

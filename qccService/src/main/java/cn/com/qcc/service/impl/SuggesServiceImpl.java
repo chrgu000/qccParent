@@ -63,7 +63,6 @@ public class SuggesServiceImpl implements SuggesService{
 	}
 	@Override
 	public SuggesCustomer getdetail(Long suggesid) {
-		// TODO Auto-generated method stub
 		return suggesMapper.searchbyid (suggesid);
 	}
 	@Override

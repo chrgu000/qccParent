@@ -28,7 +28,6 @@ public class PropertyServiceImpl implements PropertyService {
 	private HouseSolrDao houseSolrDao;
 
 	public Property getHouseByProperty(Property property) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

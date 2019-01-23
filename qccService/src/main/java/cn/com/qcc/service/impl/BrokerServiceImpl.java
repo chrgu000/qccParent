@@ -108,11 +108,9 @@ public class BrokerServiceImpl implements BrokerService{
 	 * 查询我的房东
 	 * **/
 	public List<UserCustomer> searchmylandload(UserVo userVo) {
-		// TODO Auto-generated method stub
 		return brokerCustomerMapper.searchmylandload(userVo);
 	}
 	public int searchmylandloadCount(UserVo userVo) {
-		// TODO Auto-generated method stub
 		return brokerCustomerMapper.searchmylandloadCount(userVo);
 	}
 
@@ -126,19 +124,16 @@ public class BrokerServiceImpl implements BrokerService{
 	 * 查询我的的经济人
 	 * **/ 
 	public List<UserCustomer> searchmybroker(UserVo userVo) {
-		// TODO Auto-generated method stub
 		return brokerCustomerMapper.searchmybroker(userVo);
 	}
 	//查询我的经济人COUNT
 	public int searchmybrokerCount(UserVo userVo) {
-		// TODO Auto-generated method stub
 		return brokerCustomerMapper.searchmybrokerCount(userVo);
 	}
 
 
 	//查询 哪些经济人申请加入我这个房东
 	public int searchmybrokernewcount(UserVo userVo) {
-		// TODO Auto-generated method stub
 		return brokerCustomerMapper.searchmybrokernewcount(userVo);
 	}
 
@@ -156,7 +151,6 @@ public class BrokerServiceImpl implements BrokerService{
 	 * 根据userid 查询经纪人
 	 * **/
 	public Broker searchbrokeruserbyid(Long userid) {
-		// TODO Auto-generated method stub
 		return brokerMapper.selectByPrimaryKey(userid);
 	}
 
@@ -165,7 +159,6 @@ public class BrokerServiceImpl implements BrokerService{
 	 * 查询想要添加的房东
 	 * **/
 	public List<UserCustomer> searchlikeaddlandlord(UserCustomer search) {
-		// TODO Auto-generated method stub
 		return brokerCustomerMapper.searchlikeaddlandlord(search);
 	}
 
@@ -247,7 +240,6 @@ public class BrokerServiceImpl implements BrokerService{
 	 * @param landuserid : 房东的userid
 	 * **/
 	public List<UserCustomer> landsearchbrokerapply(Long userid) {
-		// TODO Auto-generated method stub
 		return brokerCustomerMapper.landsearchbrokerapply(userid);
 	}
 
@@ -256,7 +248,6 @@ public class BrokerServiceImpl implements BrokerService{
 	 * @param brokeruserid : 经纪人的userid
 	 * **/
 	public List<UserCustomer> brokersearchlandapply(Long userid) {
-		// TODO Auto-generated method stub
 		return brokerCustomerMapper.brokersearchlandapply(userid);
 	}
 

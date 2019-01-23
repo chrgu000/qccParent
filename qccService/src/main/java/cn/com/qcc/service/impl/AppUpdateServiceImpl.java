@@ -134,6 +134,9 @@ public class AppUpdateServiceImpl implements AppUpdatesService{
 				conn.setVersionid(versionid);
 				appconnMapper.insertSelective(conn);
 			} else {
+				
+				//判断是不是最新版本
+				
 				conn.setCount(conn.getCount() + 1);
 				conn.setUpdatetime(new Date());
 				conn.setVersionid(versionid);

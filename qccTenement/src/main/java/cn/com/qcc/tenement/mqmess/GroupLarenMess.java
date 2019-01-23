@@ -17,6 +17,10 @@ import cn.com.qcc.pojo.Userconn;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.service.UserService;
 
+
+/**
+ * 处理群组拉入的消息
+ * **/
 public class GroupLarenMess implements MessageListener{
 
 	@Autowired
