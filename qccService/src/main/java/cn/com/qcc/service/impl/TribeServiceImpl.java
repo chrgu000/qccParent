@@ -913,13 +913,6 @@ public class TribeServiceImpl implements TribeService {
 		return ResultMap.IS_200(tribetypes);
 	}
 
-	@Override
-	public List<Typedetail> getdetailtype1(Integer articletypeid) {
-		if (articletypeid ==null) {
-			return null;
-		}
-		return tribeCustomerMapper.getdetailtype1(articletypeid);
-	}
 
 	@Override
 	public ResultMap updatetypedetail(Typedetail typedetail) {

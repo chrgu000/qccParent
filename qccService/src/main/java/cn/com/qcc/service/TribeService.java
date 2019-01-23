@@ -143,8 +143,6 @@ public interface TribeService {
 	ResultMap createtribetype(Tribetype tribetype, Integer type);
 	//城市部落的查询
 	ResultMap tribecity();
-	//获得物品分类的下一级
-	List<Typedetail> getdetailtype1(Integer articletypeid);
 	
 	//更新物品二级分类
 	ResultMap updatetypedetail(Typedetail typedetail);

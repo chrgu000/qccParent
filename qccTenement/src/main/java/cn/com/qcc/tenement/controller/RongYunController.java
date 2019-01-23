@@ -188,7 +188,7 @@ public class RongYunController {
 	// 拉入进群
 	@RequestMapping("/group/laren")
 	@ResponseBody
-	public ResultMap laren(Long groupid ,String otherids ,Long userid) {
+	public ResultMap laren(Long groupid ,String otherids ,Long userid ) {
 		ResultMap resultMap = rongService.laren(groupid , otherids , userid); 
 		return resultMap;
 	}

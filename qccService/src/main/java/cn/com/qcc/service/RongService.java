@@ -31,9 +31,19 @@ public interface RongService {
 
 	// 移除谁和我的聊天记录
 	void romovebetouch(Rong rong);
-
+	
+	/**创建群组
+	 * @param Ronggroup : 群组相关信息
+	 * @param detailaddress : 详情地址
+	 * @param tribetype : 部落类型
+	 * @param otherids : 创建群组时候啦的人
+	 * **/
 	ResultMap creategroup(Ronggroup rongroup, Groupaddress detaileaddress, Tribetype tribetype , String otherids);
-
+	
+	/**加入群组
+	 * @param userid : 用户id
+	 * @param groupid : 群组id
+	 * **/
 	ResultMap joingroup(Long userid, Long groupId ,Integer state);
 
 	// 群列表
@@ -87,7 +97,11 @@ public interface RongService {
 
 	ResultMap editgroup(Ronggroup ronggoup);
 	
-	/**拉入进群**/
+	/**拉入进群
+	 * @param groupid : 群组id
+	 * @param otherids : 拉入的人的id
+	 * @param userid : 操作人id
+	 * **/
 	ResultMap laren(Long groupid, String otherids ,Long userid);
 	
 	/**查询**/

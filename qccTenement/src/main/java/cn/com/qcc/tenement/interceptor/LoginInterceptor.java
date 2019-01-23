@@ -26,19 +26,14 @@ public class LoginInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws IOException {
-
 		// 先获得需要拦截 的URL
 		List<String> open_urls = ResourcesUtil.gekeyList(Config.Intercepted_url);
-		
 		// 用户访问的url
 		String url = request.getRequestURI();
-		
-		
 		String urlname = userService.getaccessurl_name(url);
 		if ("/Tenement/userback/login".equals(url)) {
 			return true;
 		}
-
 		for (String open_url : open_urls) {
 			if (url.indexOf(open_url) >= 0) {
 				// 校验用户身份是否合法
@@ -98,8 +93,6 @@ public class LoginInterceptor implements HandlerInterceptor {
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
-		// 返回ModelAndView之后。
-		// 响应用户之后。
 
 	}
 

@@ -834,7 +834,6 @@ public class BackController{
     	String filePath = request.getSession().getServletContext().getRealPath("/")+"landlordpicture/"+newName;
 		filePath = filePath.replace("/Tenement", "");
         File newFile=new File(filePath);
-        //通过CommonsMultipartFile的方法直接写文件（注意这个时候）
         file.transferTo(newFile);
         String returnstr = "https//www.zzw777.com/landlordpicture/"+ newName;
         return ResultMap.IS_200(returnstr);

@@ -435,9 +435,13 @@ public class WangYiUtil {
 	}
 
 	public static void main(String[] args) {
-		String  tid= "9314772";
-		String phone = "18316999864,13714559758";
-		CodeCheckMess(tid,phone);
+		//
+		try {
+			larenGroup(1572379244L, 10005740L, 1, "10000525");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

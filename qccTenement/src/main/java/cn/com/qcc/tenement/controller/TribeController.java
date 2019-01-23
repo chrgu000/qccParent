@@ -281,7 +281,7 @@ public class TribeController {
 	@RequestMapping("/tribe/getTribedetailtype/{type}")
 	@ResponseBody
 	public ResultMap getTribedetailtype(@PathVariable Integer type) {
-		if (type == 11) {return ResultMap.build(400, "");}
+		//if (type == 11) {return ResultMap.build(400, "");}
 		List<Articletype> tribelist = tribeService.getTribeDetailType(type);
 		return ResultMap.IS_200(tribelist);
 	}
@@ -443,23 +443,9 @@ public class TribeController {
 	
 	//获得物品分类的下一级
 	@ResponseBody
-	@RequestMapping("/tribe/getdetailtype1")
+	@RequestMapping("/tribe/getdetailtype")
 	public ResultMap getdetailtype (Integer articletypeid) {
-		String [] types = {"-1"};
-		List<Typedetail> details = tribeService.getdetailtype1(articletypeid);
-		for (Typedetail type : details) {
-			String str = "";
-			if (type.getTypeid() !=null && !"".equals(type.getTypeid())) {
-				 types = type.getTypeid().split(",");
-			}
-			
-			List<Parametype> parsms = tribeService.gettypenames(types);
-			for (Parametype p: parsms) {
-				str += p.getTypename() +",";
-			}
-			type.setTypenames(str);
-			str = "";
-		}
+		List<Articletype> details = tribeService.getTribeDetailType(articletypeid);
 		return ResultMap.IS_200(details);
 	}
 	

@@ -236,7 +236,7 @@ public class RongServiceImpl implements RongService {
 		Integer magree = group.getBeinvitemode();
 		Integer code = 0 ;
 		try {
-			code = WangYiUtil.larenGroup(groupid , group.getUserid(), magree , otherids);
+			code = WangYiUtil.larenGroup(groupid , userid, magree , otherids);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -250,25 +250,6 @@ public class RongServiceImpl implements RongService {
 		return ResultMap.build(200, "操作成功等待对方回应");
 		String sendData = userid + "-" + groupid +"-" +  otherids; 
 		SendMessUtil.sendData(jmsTemplate, groupLaren, sendData);
-		// 建立和其他成员的关系
-		/*if (CheckDataUtil.checkisEmpty(otherids)) {
-			try {
-				String [] otherid = otherids.split(",");
-				for (int i =0;i<otherid.length;i++) {
-					Rongconn follow = new Rongconn();
-					follow.setState(1);
-					follow.setUserid(Long.valueOf( otherid[i]  ) );
-					follow.setUpdate_time(new Date());
-					follow.setGroupid(groupid);
-					rongconnMapper.insertSelective(follow);
-					follow.setConnid(null);
-				}
-			} catch (Exception e) {
-				System.out.println("群成员格式错误");
-				e.printStackTrace();
-			}
-		}*/
-		
 		return ResultMap.build(200, "对方已经拉入群组中");
 	};
 
@@ -540,7 +521,7 @@ public class RongServiceImpl implements RongService {
 		int code = 0;
 		try {
 			code = WangYiUtil.editGroup(group.getGroupid(), 
-					searchupdate.getUserid(), teanName, deascName, icon, jointype , invitemode , beinvitemode);
+					group.getUserid(), teanName, deascName, icon, jointype , invitemode , beinvitemode);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResultMap.build(400, "网易云异常");
