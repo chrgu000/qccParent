@@ -157,11 +157,9 @@ public class Systemtask {
 				Long telephone = Long.valueOf(lurce.getDescname());
 				String content = "尊敬的用户您好,您有新增收益:"  +
 				updateaccount +"元,目前总收益余额为:"+totalaccount;
-		        try {
-					SendMessage.lurceAddSuccess(telephone , content );
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+		       
+					//SendMessage.lurceAddSuccess(telephone , content );
+			
 			}
 		}
 		

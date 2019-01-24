@@ -42,6 +42,19 @@ public class WangYiCommon {
 	/**发送通知类短信**/
 	public static final String SENDTEMPLATE = "https://api.netease.im/sms/sendtemplate.action";
 	
+	/***修改手机号码发送验证码 的模板ID*/
+	public static final String CODE_PHONE_UPDATE = "9744091";
+	
+	/***使用手机验证码登录 的模板ID*/
+	public static final String CODE_PHONE_LOGIN = "9414704";
+	
+	/**修改登录密码 的模板ID*/
+	public static final String CODE_PHONE_PASSWORDCHANGE = "9414704";
+	
+	/**注册验证码 的模板ID*/
+	public static final String CODE_PHONE_REGISTER = "9414704";
+	
+	
 	
 
 }

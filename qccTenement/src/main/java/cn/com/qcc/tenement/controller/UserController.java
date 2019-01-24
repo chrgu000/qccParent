@@ -258,8 +258,7 @@ public class UserController {
 			map.put("lat", user.getLatitude());
 			map.put("userId", userId);
 			map.put("log", user.getLongitude());
-			SendMessage.getCodeByLogin(telephone, request);
-			///SendMessage.passwordrelive(telephone, request);
+			SendMessage.passwordrelive(telephone, request);
 			// 这里是网易云TOKEN验证
 			if (user.getAcctoken() != null && !"".equals(user.getAcctoken())) {
 				acctoken = user.getAcctoken();

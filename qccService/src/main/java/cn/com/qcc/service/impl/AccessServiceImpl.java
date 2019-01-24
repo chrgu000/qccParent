@@ -711,12 +711,6 @@ public class AccessServiceImpl implements AccessService {
 			}
 			
 		}
-		try {
-			SendMessage.updatesuccess(18316999864L ,request);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return ResultMap.IS_200();
 	}
 	

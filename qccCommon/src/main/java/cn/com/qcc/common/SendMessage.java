@@ -44,80 +44,22 @@ public class SendMessage {
 	private static final String APP_SECRET = "f2f1c46cc596";
 	// 验证码长度，范围4～10，默认为4
 	private static final String CODELEN = "4";
-
+	
+	
 	/**
-	 * @param args
-	 * @throws IOException
-	 *             注册的验证码
-	 */
-	public static Map<String, String> getCodeByRegister(Long phone, HttpServletRequest request) throws IOException {
-		int radomInt = new Random().nextInt(999999);
-		String code = String.valueOf(radomInt);
-		// 发送内容
-		String content = "注册的手机验证码为:" + code + ",验证码五分种内有效。";
-		String sign = "七彩巢";
-
-		// 创建StringBuffer对象用来操作字符串
-		StringBuffer sb = new StringBuffer("http://sms.1xinxi.cn/asmx/smsservice.aspx?");
-
-		// 向StringBuffer追加用户名
-		sb.append("name=wylsz888@163.com");
-
-		// 向StringBuffer追加密码（登陆网页版，在管理中心--基本资料--接口密码，是28位的）
-		sb.append("&pwd=0899CED2A4D504A25A49D6712145");
-
-		// 向StringBuffer追加手机号码
-		sb.append("&mobile=" + phone);
-
-		// 向StringBuffer追加消息内容转URL标准码
-		content = java.net.URLEncoder.encode(content, "UTF-8");
-		content = java.net.URLEncoder.encode(content, "UTF-8");
-		content = java.net.URLDecoder.decode(content, "UTF-8");
-		sb.append("&content=" + java.net.URLDecoder.decode(content, "UTF-8"));
-
-		// 加签名
-		sign = java.net.URLEncoder.encode(sign, "UTF-8");
-		sign = java.net.URLEncoder.encode(sign, "UTF-8");
-		sign = java.net.URLDecoder.decode(sign, "UTF-8");
-		sb.append("&sign=" + java.net.URLDecoder.decode(sign, "UTF-8"));
-
-		// 追加发送时间，可为空，为空为及时发送
-		sb.append("&stime=");
-
-		// type为固定值pt extno为扩展码，必须为数字 可为空
-		sb.append("&type=pt&extno=");
-
-		// 创建url对象
-		// String temp = new String(sb.toString().getBytes("GBK"),"UTF-8");
-		URL url = new URL(sb.toString());
-
-		// 打开url连接
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-		// 设置url请求方式 ‘get’ 或者 ‘post’
-		connection.setRequestMethod("POST");
-
-		// 发送
-		InputStream is = url.openStream();
-
-		// 转换返回值
-		String returnStr = SendMessage.convertStreamToString(is);
-
-		// 返回结果为‘0，20140009090990,1，提交成功’ 发送成功 具体见说明文档
-		// 返回发送结果
-
-		Map<String, String> ss = new HashMap<String, String>();
-		ss.put("returnStr", returnStr);
-		ss.put("code", code);
-		// 尝试用session解决
-		HttpSession session = request.getSession();
-		// session存活时间
-		session.setMaxInactiveInterval(300);
-		// session.removeAttribute("code");
-		session.setAttribute("code", code);
-		return ss;
-
+	 * 发送验证码相关的模板方法
+	 * @param TEMPLATEID : 模板ID主键
+	 * @param phone : 电话号码
+	 * **/
+	public static Map<String, Object> doCodeSendMess(String TEMPLATEID , Long phone) {
+		Map<String, Object> resutMap = CodeCheckMess(TEMPLATEID , phone.toString());
+		return resutMap;
 	}
+	
+	
+	
+	
+
 
 	/**
 	 * @param args
@@ -192,16 +134,6 @@ public class SendMessage {
 		return ss;
 	}
 
-	/**
-	 * 登录的验证码
-	 */
-	public static Map<String, Object> getCodeByLogin(Long phone, HttpServletRequest request) throws IOException {
-		// 短信模板ID
-		String TEMPLATEID = "9414704";
-		/**通过模板Id 和 电话号码发送 短信**/
-		Map<String, Object> resutMap = CodeCheckMess(TEMPLATEID , phone.toString());
-		return resutMap;
-	}
 	
 	
 	
@@ -410,14 +342,6 @@ public class SendMessage {
 
 	/**
 	 * 找回密码
-	 * 
-	 * @param phone
-	 * @param request
-	 * @return
-	 * @throws UnsupportedEncodingException
-	 * @throws MalformedURLException
-	 * @throws ProtocolException
-	 * @throws IOException
 	 */
 	public static Map<String, String> qunfa(Long phone, String content, HttpServletRequest request) throws Exception {
 		int radomInt = new Random().nextInt(9999);
@@ -487,83 +411,6 @@ public class SendMessage {
 
 	}
 
-	/**
-	 * 换绑手机号
-	 * 
-	 * @param phone
-	 * @param request
-	 * @return
-	 * @throws IOException
-	 */
-	public static Map<String, String> getCodeByUpdateTel(Long phone, HttpServletRequest request) throws IOException {
-		int radomInt = new Random().nextInt(9999);
-		String code = String.valueOf(radomInt);
-		// 发送内容
-		String content = "亲爱的七彩巢用户您好,您此次换绑手机号的验证码为:" + code + ",验证码五分钟内有效。";
-		String sign = "七彩巢";
-
-		// 创建StringBuffer对象用来操作字符串
-		StringBuffer sb = new StringBuffer("http://sms.1xinxi.cn/asmx/smsservice.aspx?");
-
-		// 向StringBuffer追加用户名
-		sb.append("name=wylsz888@163.com");
-
-		// 向StringBuffer追加密码（登陆网页版，在管理中心--基本资料--接口密码，是28位的）
-		sb.append("&pwd=0899CED2A4D504A25A49D6712145");
-
-		// 向StringBuffer追加手机号码
-		sb.append("&mobile=" + phone);
-
-		// 向StringBuffer追加消息内容转URL标准码
-		content = java.net.URLEncoder.encode(content, "UTF-8");
-		content = java.net.URLEncoder.encode(content, "UTF-8");
-		content = java.net.URLDecoder.decode(content, "UTF-8");
-		sb.append("&content=" + java.net.URLDecoder.decode(content, "UTF-8"));
-
-		// 加签名
-		sign = java.net.URLEncoder.encode(sign, "UTF-8");
-		sign = java.net.URLEncoder.encode(sign, "UTF-8");
-		sign = java.net.URLDecoder.decode(sign, "UTF-8");
-		sb.append("&sign=" + java.net.URLDecoder.decode(sign, "UTF-8"));
-
-		// 追加发送时间，可为空，为空为及时发送
-		sb.append("&stime=");
-
-		// type为固定值pt extno为扩展码，必须为数字 可为空
-		sb.append("&type=pt&extno=");
-
-		// 创建url对象
-		// String temp = new String(sb.toString().getBytes("GBK"),"UTF-8");
-		URL url = new URL(sb.toString());
-
-		// 打开url连接
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-		// 设置url请求方式 ‘get’ 或者 ‘post’
-		connection.setRequestMethod("POST");
-
-		// 发送
-		InputStream is = url.openStream();
-
-		// 转换返回值
-		String returnStr = SendMessage.convertStreamToString(is);
-
-		// 返回结果为‘0，20140009090990,1，提交成功’ 发送成功 具体见说明文档
-		// 返回发送结果
-
-		Map<String, String> ss = new HashMap<String, String>();
-		ss.put("returnStr", returnStr);
-		ss.put("code", code);
-		// ss.put("code", code);
-		// 尝试用session解决
-		HttpSession session = request.getSession();
-		// session存活时间
-		session.setMaxInactiveInterval(300);
-		// session.removeAttribute("code");
-		session.setAttribute("code", code);
-		return ss;
-
-	}
 
 	/**
 	 * 转换返回值类型为UTF-8格式.
@@ -594,251 +441,18 @@ public class SendMessage {
 	}
 
 	/**
-	 * @param args
-	 * @throws IOException
-	 * 注册的验证码
 	 */
 	public static void sendHouseOrder(String phone, HttpServletRequest request) {
-
-		try {
-
-			// int radomInt = new Random().nextInt(9999);
-			// String code = String.valueOf(radomInt);
-			// 发送内容
-			String content = "您好，您预订的房源订金已支付成功等待房东确认。";
-			String sign = "七彩巢";
-
-			// 创建StringBuffer对象用来操作字符串
-			StringBuffer sb = new StringBuffer("http://sms.1xinxi.cn/asmx/smsservice.aspx?");
-
-			// 向StringBuffer追加用户名
-			sb.append("name=wylsz888@163.com");
-
-			// 向StringBuffer追加密码（登陆网页版，在管理中心--基本资料--接口密码，是28位的）
-			sb.append("&pwd=0899CED2A4D504A25A49D6712145");
-
-			// 向StringBuffer追加手机号码
-			sb.append("&mobile=" + phone);
-
-			// 向StringBuffer追加消息内容转URL标准码
-			content = java.net.URLEncoder.encode(content, "UTF-8");
-			content = java.net.URLEncoder.encode(content, "UTF-8");
-			content = java.net.URLDecoder.decode(content, "UTF-8");
-			sb.append("&content=" + java.net.URLDecoder.decode(content, "UTF-8"));
-
-			// 加签名
-			sign = java.net.URLEncoder.encode(sign, "UTF-8");
-			sign = java.net.URLEncoder.encode(sign, "UTF-8");
-			sign = java.net.URLDecoder.decode(sign, "UTF-8");
-			sb.append("&sign=" + java.net.URLDecoder.decode(sign, "UTF-8"));
-
-			// 追加发送时间，可为空，为空为及时发送
-			sb.append("&stime=");
-
-			// type为固定值pt extno为扩展码，必须为数字 可为空
-			sb.append("&type=pt&extno=");
-
-			// 创建url对象
-			// String temp = new String(sb.toString().getBytes("GBK"),"UTF-8");
-			URL url = new URL(sb.toString());
-
-			// 打开url连接
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-			// 设置url请求方式 ‘get’ 或者 ‘post’
-			connection.setRequestMethod("POST");
-
-			// 发送
-			InputStream is = url.openStream();
-
-			// 转换返回值
-			String returnStr = SendMessage.convertStreamToString(is);
-
-			// 返回结果为‘0，20140009090990,1，提交成功’ 发送成功 具体见说明文档
-			// 返回发送结果
-
-			Map<String, String> ss = new HashMap<String, String>();
-			ss.put("returnStr", returnStr);
-			// 尝试用session解决
-			HttpSession session = request.getSession();
-			// session存活时间
-			session.setMaxInactiveInterval(300);
-			// session.removeAttribute("code");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		String content = "您好，您预订的房源订金已支付成功等待房东确认。";
 	}
 
-	/**
-	 * @param args
-	 * @throws IOException
-	 *             注册的验证码
-	 */
-	public static Map<String, String> updatesuccess(Long phone, HttpServletRequest request) throws IOException {
-		int radomInt = new Random().nextInt(9999);
-		String code = String.valueOf(radomInt);
-		// 发送内容
-		String content = "本次数据维护完成!!!!!!";
-		String sign = "七彩巢";
 
-		// 创建StringBuffer对象用来操作字符串
-		StringBuffer sb = new StringBuffer("http://sms.1xinxi.cn/asmx/smsservice.aspx?");
-
-		// 向StringBuffer追加用户名
-		sb.append("name=wylsz888@163.com");
-
-		// 向StringBuffer追加密码（登陆网页版，在管理中心--基本资料--接口密码，是28位的）
-		sb.append("&pwd=0899CED2A4D504A25A49D6712145");
-
-		// 向StringBuffer追加手机号码
-		sb.append("&mobile=" + phone);
-
-		// 向StringBuffer追加消息内容转URL标准码
-		content = java.net.URLEncoder.encode(content, "UTF-8");
-		content = java.net.URLEncoder.encode(content, "UTF-8");
-		content = java.net.URLDecoder.decode(content, "UTF-8");
-		sb.append("&content=" + java.net.URLDecoder.decode(content, "UTF-8"));
-
-		// 加签名
-		sign = java.net.URLEncoder.encode(sign, "UTF-8");
-		sign = java.net.URLEncoder.encode(sign, "UTF-8");
-		sign = java.net.URLDecoder.decode(sign, "UTF-8");
-		sb.append("&sign=" + java.net.URLDecoder.decode(sign, "UTF-8"));
-
-		// 追加发送时间，可为空，为空为及时发送
-		sb.append("&stime=");
-
-		// type为固定值pt extno为扩展码，必须为数字 可为空
-		sb.append("&type=pt&extno=");
-
-		// 创建url对象
-		// String temp = new String(sb.toString().getBytes("GBK"),"UTF-8");
-		URL url = new URL(sb.toString());
-
-		// 打开url连接
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-		// 设置url请求方式 ‘get’ 或者 ‘post’
-		connection.setRequestMethod("POST");
-
-		// 发送
-		InputStream is = url.openStream();
-
-		// 转换返回值
-		String returnStr = SendMessage.convertStreamToString(is);
-
-		// 返回结果为‘0，20140009090990,1，提交成功’ 发送成功 具体见说明文档
-		// 返回发送结果
-
-		Map<String, String> ss = new HashMap<String, String>();
-		ss.put("returnStr", returnStr);
-		ss.put("code", code);
-		// 尝试用session解决
-		HttpSession session = request.getSession();
-		// session存活时间
-		session.setMaxInactiveInterval(300);
-		// session.removeAttribute("code");
-		session.setAttribute("code", code);
-		return ss;
-	}
-
-	/**
-	 * @param args
-	 * @throws IOException
-	 *             注册的验证码
-	 */
-	public static void lurceAddSuccess(Long phone, String content) throws IOException {
-		// 发送内容
-		// String content = "本次数据维护完成!!!!!!";
-		String sign = "七彩巢";
-
-		// 创建StringBuffer对象用来操作字符串
-		StringBuffer sb = new StringBuffer("http://sms.1xinxi.cn/asmx/smsservice.aspx?");
-
-		// 向StringBuffer追加用户名
-		sb.append("name=wylsz888@163.com");
-
-		// 向StringBuffer追加密码（登陆网页版，在管理中心--基本资料--接口密码，是28位的）
-		sb.append("&pwd=0899CED2A4D504A25A49D6712145");
-
-		// 向StringBuffer追加手机号码
-		sb.append("&mobile=" + phone);
-
-		// 向StringBuffer追加消息内容转URL标准码
-		content = java.net.URLEncoder.encode(content, "UTF-8");
-		content = java.net.URLEncoder.encode(content, "UTF-8");
-		content = java.net.URLDecoder.decode(content, "UTF-8");
-		sb.append("&content=" + java.net.URLDecoder.decode(content, "UTF-8"));
-
-		// 加签名
-		sign = java.net.URLEncoder.encode(sign, "UTF-8");
-		sign = java.net.URLEncoder.encode(sign, "UTF-8");
-		sign = java.net.URLDecoder.decode(sign, "UTF-8");
-		sb.append("&sign=" + java.net.URLDecoder.decode(sign, "UTF-8"));
-
-		// 追加发送时间，可为空，为空为及时发送
-		sb.append("&stime=");
-
-		// type为固定值pt extno为扩展码，必须为数字 可为空
-		sb.append("&type=pt&extno=");
-
-		// 创建url对象
-		// String temp = new String(sb.toString().getBytes("GBK"),"UTF-8");
-		URL url = new URL(sb.toString());
-
-		// 打开url连接
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-		// 设置url请求方式 ‘get’ 或者 ‘post’
-		connection.setRequestMethod("POST");
-
-		// 发送
-		InputStream is = url.openStream();
-
-		// 转换返回值
-		String returnStr = SendMessage.convertStreamToString(is);
-		// 返回结果为‘0，20140009090990,1，提交成功’ 发送成功 具体见说明文档
-		// 返回发送结果
-
-	}
 
 	public static void main(String[] args) {
-		DefaultHttpClient httpClient = new DefaultHttpClient();
-		HttpPost httpPost = new HttpPost(WangYiCommon.SENDCODEURL);
-		String curTime = String.valueOf((new Date()).getTime() / 1000L);
-		// 设置请求的的参数，requestBody参数
-		int radomInt = new Random().nextInt(999999);
-		String code = String.valueOf(radomInt);
-		
-		// * 参考计算CheckSum的java代码，在上述文档的参数列表中，有CheckSum的计算文档示例
-		 
-		String checkSum = CheckSumBuilder.getCheckSum(APP_SECRET, code, curTime);
-		// 设置请求的header
-		httpPost.addHeader("AppKey", APP_KEY);
-		httpPost.addHeader("Nonce", code);
-		httpPost.addHeader("CurTime", curTime);
-		httpPost.addHeader("CheckSum", checkSum);
-		httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-		String MOBILE = "18316999864";
-		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-		nvps.add(new BasicNameValuePair("templateid", ""));
-		nvps.add(new BasicNameValuePair("mobile", MOBILE));
-		nvps.add(new BasicNameValuePair("codeLen", CODELEN));
-		try {
-			httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
-			// 执行请求
-			HttpResponse response = httpClient.execute(httpPost);
-			
-			// * 1.打印执行结果，打印结果一般会200、315、403、404、413、414、500
-			// * 2.具体的code有问题的可以参考官网的Code状态表
-			 
-			String str = EntityUtils.toString(response.getEntity(), "utf-8");
-			net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
-			Map<String, Object> returnmap = (Map<String, Object>) jsonobj;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
 	}
+
+
+	
 
 }
