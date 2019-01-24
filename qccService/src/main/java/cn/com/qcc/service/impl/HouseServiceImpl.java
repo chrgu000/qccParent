@@ -437,7 +437,6 @@ public class HouseServiceImpl implements HouseService {
 	 */
 	public ResultMap publishouse(Building building, Price price, House house, Village village, Long userid,
 			HousetagCustomer housetag, String propertyname, String apartmentname, String brand,String preparatory) {
-
 		// 检查小区
 		ResultMap check_village = checkvillage(village);
 		if (CheckDataUtil.checkNotEqual(check_village.getCode(), 200)) {return check_village;}
@@ -466,10 +465,12 @@ public class HouseServiceImpl implements HouseService {
 		if (CheckDataUtil.checkNotEmpty(housetag.getTribeid())) {
 			tribeid = housetag.getTribeid();
 		}
+		String message = "";
 		if (CheckDataUtil.checkNotEmpty(house.getHouseid())) {
 			house.setUpdate_time(new Date());
 			houseMapper.updateByPrimaryKeySelective(house);
 			sendData = house.getHouseid()+"-update-"+tribeid+"-"+userid;
+			message = "编辑成功";
 		} else {
 			// 插入之前设置房间号码
 			String housenum = IDUtils.appendzero(house.getHouse_number() + "", 4);
@@ -492,12 +493,13 @@ public class HouseServiceImpl implements HouseService {
 			houseMapper.insert(house);
 			//发送消息
 			sendData = house.getHouseid()+"-insert-"+tribeid+"-"+userid;
+			message = "发布成功";
 		}
 		SendMessUtil.sendData(jmsTemplate, houseAddOrUpdate, sendData);
 		//设置佣金规则
 		preparatoryhouse( preparatory , house.getHouseid() );
 		
-		return ResultMap.build(200, "恭喜你发布成功！");
+		return ResultMap.build(200, message);
 	}
 	private void checbrandData(Long userid, Long buildingid,House house) {
 		Brand search_brand = getbranddetail(userid + "", buildingid);

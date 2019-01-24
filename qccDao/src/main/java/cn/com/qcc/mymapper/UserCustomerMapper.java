@@ -12,8 +12,6 @@ import cn.com.qcc.pojo.Historyexcle;
 import cn.com.qcc.pojo.Housepersion;
 import cn.com.qcc.pojo.Invite;
 import cn.com.qcc.pojo.Lucre;
-import cn.com.qcc.pojo.Maillist;
-import cn.com.qcc.pojo.Percent;
 import cn.com.qcc.pojo.Profile;
 import cn.com.qcc.pojo.Ronggroup;
 import cn.com.qcc.pojo.User;

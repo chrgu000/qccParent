@@ -281,7 +281,7 @@ public class TribeController {
 	@RequestMapping("/tribe/getTribedetailtype/{type}")
 	@ResponseBody
 	public ResultMap getTribedetailtype(@PathVariable Integer type) {
-		//if (type == 11) {return ResultMap.build(400, "");}
+		if (type == 11) {return ResultMap.build(400, "");}
 		List<Articletype> tribelist = tribeService.getTribeDetailType(type);
 		return ResultMap.IS_200(tribelist);
 	}

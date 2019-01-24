@@ -1,13 +1,9 @@
 package cn.com.qcc.mymapper;
 
 import java.util.List;
-
-import org.apache.activemq.camel.component.broker.BrokerConsumer;
 import org.apache.ibatis.annotations.Param;
-
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.queryvo.UserVo;
-
 public interface BrokerCustomerMapper {
 	
 	// 查询我的房东

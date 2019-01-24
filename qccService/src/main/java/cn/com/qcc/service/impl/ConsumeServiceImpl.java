@@ -49,13 +49,7 @@ public class ConsumeServiceImpl implements ConsumeService {
 
 	}
 
-	/**
-	 * 增加余额
-	 * **//* 
-	public void increaseBalance(Consume consume) {
-		// TODO Auto-generated method stub
-
-	}*/
+	
 
 	/** 查询充值记录
 	 * @param userid : 用户ID 

@@ -55,14 +55,8 @@ public class HouseAddOrUpdateMessage implements MessageListener{
 				// 这里做积分加处理
 				inteService.managebranch(11L, userid, houseid);
 			} else {
-				//同步缓存
-				try {
-					HouseCustomer cache = houseCustomerMapper.findHouseDetails(houseid);
-					jedisClient.set(RedisUtil.HOUSE_FIRST_KEY+ houseid, JsonUtils.objectToJson(cache));
-					jedisClient.expire(RedisUtil.HOUSE_FIRST_KEY+ houseid, RedisUtil.HOUSE_OUT_TIME);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				// 清空缓存数据 编辑时候
+				jedisClient.del(RedisUtil.HOUSE_FIRST_KEY+ houseid);
 			}
 			
 			

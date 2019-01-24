@@ -1,18 +1,14 @@
 package cn.com.qcc.service.impl;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
-import cn.com.qcc.common.SendMessage;
 import cn.com.qcc.common.SimpleUpload;
 import cn.com.qcc.common.WaterMarkUtils;
 import cn.com.qcc.detailcommon.AccountMgr;

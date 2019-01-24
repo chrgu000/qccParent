@@ -2,6 +2,8 @@ package cn.com.qcc.pojo;
 
 import java.util.Date;
 
+import cn.com.qcc.common.CheckDataUtil;
+
 public class House {
     /** 房屋id*/
     private Long houseid;
@@ -166,7 +168,19 @@ public class House {
     }
 
     public void setHousetag_id(String housetag_id) {
-        this.housetag_id = housetag_id == null ? null : housetag_id.trim();
+    	String append = "";
+    	if (CheckDataUtil.checkNotEmpty(housetag_id)) {
+    		String [] ids = housetag_id.split(",");
+    		for (int i = 0 ;i< ids.length;i++) {
+    			if (!append.contains(ids[i])) {
+    				append +=ids[i] +",";
+    			}
+    		}
+    	}
+    	if (CheckDataUtil.checkNotEmpty(append)) {
+    		housetag_id = append.substring(0, append.length()-1);
+    	}
+        this.housetag_id = housetag_id ;
     }
 
     public Integer getProperty_id() {

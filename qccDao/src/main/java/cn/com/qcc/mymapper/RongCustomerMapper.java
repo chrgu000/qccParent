@@ -9,7 +9,6 @@ import cn.com.qcc.pojo.Ronggroup;
 import cn.com.qcc.queryvo.ArticleDetailCustomer;
 import cn.com.qcc.queryvo.GroupVo;
 import cn.com.qcc.queryvo.RongCustomer;
-import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.queryvo.VillageeVo;
 
 public interface RongCustomerMapper {

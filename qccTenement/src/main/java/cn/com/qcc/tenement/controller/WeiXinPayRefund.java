@@ -25,9 +25,7 @@ public class WeiXinPayRefund {
 
 	/**
 	 * 预定房源退款操作
-	 * 
-	 * @param :
-	 *            houseorderid 预定订单Id
+	 * @param : houseorderid 预定订单Id
 	 **/
 	@RequestMapping(method = RequestMethod.POST, value = "/houseorderrefund")
 	@Transactional
@@ -82,68 +80,6 @@ public class WeiXinPayRefund {
 		}
 	}
 
-	public static void main(String[] args) {
-		try {
-
-			/*
-			 * String currTime = PayUtils.getCurrTime(); String strTime =
-			 * currTime.substring(8, currTime.length()); String strRandom =
-			 * PayUtils.buildRandom(4) + ""; String nonceStr = strTime +
-			 * strRandom; String outRefundNo = "wx@re@" +
-			 * PayUtils.getTimeStamp(); String outTradeNo =
-			 * "154234049950627cz100000018"; //String unionId = openid; String
-			 * appid = Constant.APP_ID; String mchid = Constant.MCH_ID; String
-			 * key = Constant.APP_KEY;// mch_key // String key =
-			 * ResourceUtil.getConfigByName("wx.application.mch_key"); if
-			 * (!StringUtils.isEmpty(houseorderid)) { Houseorder houseorder =
-			 * houseService.gethouseorderbyid(houseorderid); int total_fee =
-			 * (int) (houseorder.getPrices() * 100); // 商户侧传给微信的订单号32位
-			 * outTradeNo = houseorder.getWeixinorder(); DecimalFormat df = new
-			 * DecimalFormat("0.00"); // String fee =
-			 * String.valueOf(df.format((float)total_fee/100)); String fee =
-			 * String.valueOf(total_fee); SortedMap<String, String>
-			 * packageParams = new TreeMap<String, String>();
-			 * packageParams.put("appid", appid); packageParams.put("mch_id",
-			 * mchid);// 微信支付分配的商户号 packageParams.put("nonce_str", nonceStr);//
-			 * 随机字符串，不长于32位 packageParams.put("op_user_id", mchid);// 操作员帐号,
-			 * 默认为商户号 // out_refund_no只能含有数字、字母和字符_-|*@
-			 * packageParams.put("out_refund_no", outRefundNo);//
-			 * 商户系统内部的退款单号，商户系统内部唯一，同一退款单号多次请求只退一笔
-			 * packageParams.put("out_trade_no", outTradeNo);// 商户侧传给微信的订单号32位
-			 * packageParams.put("refund_fee", fee);
-			 * packageParams.put("total_fee", fee);
-			 * //packageParams.put("transaction_id", transactionId);//
-			 * 微信生成的订单号，在支付通知中有返回 String sign =
-			 * PayUtils.createSign(packageParams, key);
-			 * 
-			 * String refundUrl =
-			 * "https://api.mch.weixin.qq.com/secapi/pay/refund"; String
-			 * xmlParam = "<xml>" + "<appid>" + appid + "</appid>" + "<mch_id>"
-			 * + mchid + "</mch_id>" + "<nonce_str>" + nonceStr + "</nonce_str>"
-			 * + "<op_user_id>" + mchid + "</op_user_id>" + "<out_refund_no>" +
-			 * outRefundNo + "</out_refund_no>" + "<out_trade_no>" + outTradeNo
-			 * + "</out_trade_no>" + "<refund_fee>" + fee + "</refund_fee>" +
-			 * "<total_fee>" + fee + "</total_fee>" + "<sign>" + sign +
-			 * xmlParam); String resultStr = PayUtils.post(refundUrl, xmlParam);
-			 * // 解析结果 try { Map map = PayUtils.doXMLParse(resultStr);
-			 * map.get("return_code").toString(); if
-			 * (returnCode.equals("SUCCESS")) { String resultCode =
-			 * map.get("result_code").toString(); if
-			 * (resultCode.equals("SUCCESS")) { // 退款成功。设置订单状态为 6 。表示全额退款
-			 * .同时设置房子为可以租的状态
-			 * houseService.updatehouseorder(houseorder.getUserid(),
-			 * houseorder.getHouseid(), 6); return ResultMap.build(200, "退款成功");
-			 * } else { return ResultMap.build(400, "退款失败"); } } else { return
-			 * ResultMap.build(400, "退款失败"); } } catch (Exception e) {
-			 * e.printStackTrace(); return ResultMap.build(400, "退款失败"); } }
-			 * return ResultMap.build(200, "退款成功");
-			 */
-
-			// new WeiXinPayRefund().refund("1", request);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
 
 }
