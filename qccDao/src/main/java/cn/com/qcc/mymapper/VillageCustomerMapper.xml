@@ -879,4 +879,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		LEFT JOIN `profile` on `profile`.user_id = building.userid
 		where building.buildingid =#{buildingid}
 	</select>
+	
+	
+	
+	<!-- 楼栋导出EXCLE -->
+	<select id="buildingUpload"  resultType="cn.com.qcc.queryvo.BuildingCustomer">
+		SELECT
+		building.buildingid,
+		building.building ,
+		village.villagename , 
+	  detaileaddress.detailes ,
+	  area.`name` district,
+	  building.bnumber ,
+	  building.landphone
+	FROM
+		building
+	LEFT JOIN village on village.villageid = building.villageid
+	LEFT JOIN detaileaddress ON building.detailid = detaileaddress.detailid
+	LEFT JOIN area on area.`code` = village.`code`
+	where area.`code` like CONCAT('%',#{code},'%')
+	<if test="searchwhere !=null and searchwhere !=''">
+	  and  building.landphone is not null  and building.landphone != ''
+	</if>
+	
+	</select>
 </mapper>

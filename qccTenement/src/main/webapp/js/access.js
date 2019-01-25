@@ -717,6 +717,7 @@ function getexcle () {
 	
 	$('#sure_excle_export').modal('show');
 	$('.default_exportname').val('');
+	setCommonDiv();
 	$('.excle_usre_click').click(function (){
 		$('#sure_excle_export').modal('hide');
 		var descname = $('.default_exportname').val();

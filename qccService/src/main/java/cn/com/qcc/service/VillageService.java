@@ -232,6 +232,9 @@ public interface VillageService {
 	/**统计小区发布**/
 	List<UserCustomer> censusvillage(String code);
 
+	/**查询楼栋导出EXCLE**/
+	List<BuildingCustomer> buildingUpload(Long code, String searchwhere);
+
 	
 	
 	

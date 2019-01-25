@@ -72,6 +72,7 @@ $(function () {
 		$('#sure_excle_export').modal('show');
 		// 确定导出EXCLE
 		$('.default_exportname').val('');
+		setCommonDiv() ;
 		$('.excle_usre_click').click(function () {
 			var descname = $('.default_exportname').val();
 			$('#sure_excle_export').modal('hide');

@@ -46,6 +46,9 @@
 #percent {
 	display: none;
 }
+#exportbuildingandvillage{
+	display: none;
+}
 #editaddress2 {
 	display: none;
 }

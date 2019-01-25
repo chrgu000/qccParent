@@ -1097,6 +1097,12 @@ public class VillageServiceImpl implements VillageService {
 		return villageCustomerMapper.censusvillage(code);
 	}
 
+	@Override
+	public List<BuildingCustomer> buildingUpload(Long code, String searchwhere) {
+		// TODO Auto-generated method stub
+		return villageCustomerMapper.buildingUpload(code , searchwhere);
+	}
+
 	
 
 	

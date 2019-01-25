@@ -5,7 +5,6 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import cn.com.qcc.common.CheckDataUtil;
-import cn.com.qcc.common.JsonUtils;
 import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mymapper.HouseCustomerMapper;

@@ -138,6 +138,9 @@
 	<li style="display:none;"  class="list-group-item " id="isshow13">
 		<button type="button" class="btn btn-primary  village">小区楼栋管理</button>
 	</li>
+	<li class="list-group-item">
+		<button type="button" class="btn btn-primary exportbuildingandvillage ">导出小区楼栋</button>
+	</li>
 	<li  class="list-group-item" >
 		<button type="button" class="btn btn-primary  building">楼栋发布统计</button>
 	</li>

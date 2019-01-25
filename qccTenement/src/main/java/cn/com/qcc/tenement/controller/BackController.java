@@ -33,6 +33,7 @@ import cn.com.qcc.pojo.Percenttype;
 import cn.com.qcc.pojo.Role;
 import cn.com.qcc.pojo.User;
 import cn.com.qcc.pojo.UserRole;
+import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.LandlordCustomer;
 import cn.com.qcc.queryvo.UserCustomer;
@@ -379,10 +380,65 @@ public class BackController{
 		map.put("huiyuan", users);
 		return ResultMap.IS_200(map);
 	}
+	
+	
+	/**根据条件导出楼栋EXCLE文件
+	 * @throws Exception **/
+	@RequestMapping("/back/buildingupload")
+	@ResponseBody
+	public ResultMap buildingUpload (Long code , Integer type) throws Exception {
+		String searchwhere = "";
+		if (type == 1) {searchwhere = "landphone";}
+		List<BuildingCustomer> builList = villageService.buildingUpload (code , searchwhere);
+		// 设置文件导出的路径
+		String filePath = request.getSession().getServletContext().getRealPath("/")+"upload/hisexcle/";
+		filePath = filePath.replace("/Tenement", "");
+		// 导出文件的前缀
+		String filePrefix = "building";
+		// -1表示关闭自动刷新，手动控制写磁盘的时机，其它数据表示多少数据在内存保存，超过的则写入磁盘
+		int flushRows = 100;
+		List<String> fieldNames = getbuildingNamesbyType();
+		List<String> fieldCodes = getbuildingCodesbyType();
+		
+		// 开始导出，执行一些workbook及sheet等对象的初始创建
+		ExcelExportSXXSSF excelExportSXXSSF = ExcelExportSXXSSF.start(filePath, "/", filePrefix, fieldNames,
+				fieldCodes, flushRows);
+		//FormmartDate(users);
+		// 执行导出
+		excelExportSXXSSF.writeDatasByObject(builList);
+		// 输出文件，返回下载文件的http地址
+		String webpath = excelExportSXXSSF.exportFile();
+		String returnpath = "https://www.zzw777.com/upload/hisexcle"+webpath;
+		return ResultMap.IS_200(returnpath);
+	}
+	private List<String> getbuildingCodesbyType() {
+		// 指导导出数据的title
+		List<String> codedNames = new ArrayList<String>();
+		codedNames.add("buildingid");
+		codedNames.add("district");
+		codedNames.add("villagename");
+		codedNames.add("building");
+		codedNames.add("landphone");
+		codedNames.add("bnumber");
+		codedNames.add("detailes");
+		return codedNames;
+	}
+
+	private List<String> getbuildingNamesbyType() {
+		// 指导导出数据的title
+		List<String> fieldNames = new ArrayList<String>();
+		fieldNames.add("楼栋主键");
+		fieldNames.add("区域名称");
+		fieldNames.add("小区名称");
+		fieldNames.add("楼栋名称");
+		fieldNames.add("房东电话");
+		fieldNames.add("门牌号");
+		fieldNames.add("详情地址");
+		return fieldNames;
+	}
 
 	/**
 	 * 根据参数导出 EXCLE 文件
-	 * 
 	 * **/
 	@RequestMapping(value = "/upload")
 	@ResponseBody

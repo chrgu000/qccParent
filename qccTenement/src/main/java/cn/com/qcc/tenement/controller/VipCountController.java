@@ -90,41 +90,7 @@ public class VipCountController {
 		
 	}
 
-	/** 对支付宝反馈的结果进行验约如果充值成功后需要对数据库进行修改
-	@RequestMapping(value = "/vip/recharge11")
-	public void recharge(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
-		Map requestParams = request.getParameterMap();
-		for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
-			String name = (String) iter.next();
-			String[] values = (String[]) requestParams.get(name);
-			String valueStr = "";
-			for (int i = 0; i < values.length; i++) {
-				valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
-			}
-			// 乱码解决，这段代码在出现乱码时使用。如果mysign和sign不相等也可以使用这段代码转化
-			// valueStr = new String(valueStr.getBytes("ISO-8859-1"), "gbk");
-			params.put(name, valueStr);
-		}
-
-		boolean signVerified = false;
-		String key = PayCommonConfig.qcc_zfb_publicKey;
-		signVerified = AlipaySignature.rsaCheckV1(params, key, "utf-8", "RSA");
-
-		if (signVerified) {
-			// 订单ID 也就是用户ID
-			String out_trade_no = new String(request.getParameter("out_trade_no").getBytes("ISO-8859-1"), "UTF-8");
-			String trade_status = new String(request.getParameter("trade_status").getBytes("ISO-8859-1"), "UTF-8");
-			String total_amount = new String(request.getParameter("total_amount").getBytes("ISO-8859-1"), "UTF-8");
-			if (trade_status.equals("TRADE_SUCCESS")) {
-				this.updateVipStatus(out_trade_no, total_amount, request);
-				response.getWriter().println("success");
-			}
-		} else {
-			response.getWriter().println("failure");
-		}
-	}
-  **/
+	
 	// 充值VIP时候更新VIP的状态
 	public void updateVipStatus(String out_trade_no, String total_amount, HttpServletRequest request) {
 		Vipcount vipcount = vipCountService.getVipByUserID(Long.valueOf(out_trade_no));

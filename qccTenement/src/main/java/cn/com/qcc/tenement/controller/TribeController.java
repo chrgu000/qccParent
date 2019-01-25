@@ -169,37 +169,7 @@ public class TribeController {
 		return resultMap;
 	}
 
-	// 根据条件查询部落发布物品详情后面type 1-房源，6-物品 ，7-找人。 8-问答 负数查所有
-	/*@ResponseBody
-	@RequestMapping("/tribe/findtribedetailbycondition/{type}")
-	public ResultMap findtribedetailbycondition(TribeVo tribeVo, @RequestParam(defaultValue = "0") String currentpage,
-			@RequestParam(defaultValue = "7") int pagesize, @PathVariable Integer type) {
-		List<TribeCustomer> tribedetails = null;
-		tribeVo = tribeVo != null ? tribeVo : new TribeVo();
-		ArticleTypeCustomer articleTypeCustomer = tribeVo.getArticleTypeCustomer() != null
-				? tribeVo.getArticleTypeCustomer() : new ArticleTypeCustomer();
-		if (type > 0) {
-			//articleTypeCustomer.setType(type);
-		}
-		tribeVo.setArticleTypeCustomer(articleTypeCustomer);
-		int infocount = tribeService.findtribedetailCount(tribeVo);
-		PageQuery pagequery = new PageQuery();
-		pagequery.setPageParams(infocount, pagesize, Integer.parseInt(currentpage));
-		tribeVo.setPagequery(pagequery);
-		if (type == 1) {
-			tribedetails = tribeService.findtribedetailbyHouse(tribeVo);
-			// 处理房源的描述字符的拼接
-			splitDetails(tribedetails);
-		} else {
-			tribedetails = tribeService.findtribedetailbycondition(tribeVo);
-		}
-
-		Map<String, Object> map = new HashMap<>();
-		map.put("tribedetails", tribedetails);
-		map.put("pagequery", pagequery);
-		return ResultMap.IS_200(map);
-	}
-*/
+	
 	// 查询城市的部落
 	@RequestMapping(value = "/cities/findCities")
 	@ResponseBody
@@ -316,20 +286,6 @@ public class TribeController {
 		return ResultMap.IS_200(map);
 	}
 
-/*	private void splitDetails(List<TribeCustomer> tribedetails) {
-		for (TribeCustomer tribe : tribedetails) {
-			String str = "";
-			str = (tribe.getHousetitle() == null ? "" : tribe.getHousetitle()) + "  "
-					+ (tribe.getApartmentname() == null ? "" : tribe.getApartmentname()) + "  "
-					+ (tribe.getPrices() == null || "-1".equals(tribe.getPrices()) ? "" : tribe.getPrices())
-					+ (tribe.getPricestype() == null || "-1".equals(tribe.getPrices()) ? "" : tribe.getPricestype())
-					+ "  " + (tribe.getVillagename() == null ? "" : tribe.getVillagename()) + "  "
-					+ (tribe.getTrading() == null ? "" : tribe.getTrading()) + "  房号"
-					+ (tribe.getHouse_number() == null ? "" : tribe.getHouse_number()) + "  "
-					+ (tribe.getDescription() == null ? "" : tribe.getDescription());
-			tribe.setDescription(str);
-		}
-	}*/
 
 	// 找人，找物品，问答详情页
 	@RequestMapping("/tribe/thingdetail")

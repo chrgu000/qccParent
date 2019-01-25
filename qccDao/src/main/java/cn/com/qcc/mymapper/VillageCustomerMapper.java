@@ -104,6 +104,9 @@ public interface VillageCustomerMapper {
 	List<BuildingCustomer> addbuildngtosolr(@Param("buildingid")Long buildingid ,@Param("pagequery") PageQuery pagequery);
 	/**查询一条楼栋导入索引库**/
 	BuildingCustomer oneBuildToSolr(Long buildingid);
+	
+	/**楼栋导出EXCLE**/
+	List<BuildingCustomer> buildingUpload(@Param("code")Long code,@Param("searchwhere") String searchwhere);
 
 	
 

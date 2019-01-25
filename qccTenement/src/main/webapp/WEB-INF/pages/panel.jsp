@@ -79,6 +79,17 @@
 		</div>
 	</div>
 	
+	
+	<!-- 导出小区楼栋 -->
+	<div id=exportbuildingandvillage>
+		<div class="panel panel-default">
+			<div class="panel-heading">导出小区楼栋的EXCLE表格</div>
+			<div class="panel-body">
+				<jsp:include page="exportbuildingandvillage.jsp"/>
+			</div>
+		</div>
+	</div>
+	
 	<!-- 统计发布的数量 -->
 	<div id="building">
 		<div class="panel panel-default">

@@ -39,6 +39,14 @@ function setTime(now) {
 }
 
 
+function setCommonDiv() {
+	var div = $('.excle_export_comm_div').empty();
+	alert(11);
+	var span = '<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>' +
+               '<button type="button" class="btn btn-primary excle_usre_click">确定</button>' ;
+	div.append(span);
+}
+
 
 //根据点击的按钮判断是select是哪个
 function getprovince (attr) {
@@ -49,6 +57,7 @@ function getprovince (attr) {
 	if (attr == 'village') {select = $('#v_1').empty();}			//这里是小区楼栋管理的四级联动
 	if (attr == 'building') {select = $('#b_1').empty();}			//这里是楼栋发布统计四级联动
 	if (attr == 'metro') {select = $('#metro_1').empty();}			//这里是地铁四级联动
+	if (attr == 'export') {select = $('#export_1').empty();}
 	//这里吧select传入调出省一级的地址
 	getprovinceajax(select);
 }

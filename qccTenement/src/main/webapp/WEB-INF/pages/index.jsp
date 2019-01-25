@@ -199,9 +199,8 @@
             <div style="text-align: center;" class="modal-body ">
             	<input style="width: 400px;" type="text" class="form-control default_exportname  " placeholder="请给EXCLE取一个别名">
             </div>
-            <div class="modal-footer">
-               	 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary excle_usre_click">确定</button>
+            <div class="modal-footer excle_export_comm_div " >
+              
             </div>
         </div>
     </div>
