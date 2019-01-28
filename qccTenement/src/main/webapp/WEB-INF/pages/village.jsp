@@ -17,15 +17,6 @@ function getvl(){
 </script>
 
 <body>	
-
-	<input name="" type="button" value="获取" onClick="getvl()">
-	<span id="text"></span>
-	<form name="Form2" id="tf" method="post" action="/Tenement/videoUpload" enctype="multipart/form-data">
-		<input   type="file" multiple name="file"   id="file" width="50px">
-		<!--< img  style="position: absolute;" src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2375920824,1229333302&fm=27&gp=0.jpg" alt="" />-->
-		<button type="submit">提交视频</button>
-	</form>
-	
 	<div id ="village_css">
 				省 ：
 				<select style="width: 110px; margin-top: 15px;"onchange="getnextaddress(v_1)" id="v_1">

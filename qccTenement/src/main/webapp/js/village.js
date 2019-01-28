@@ -571,20 +571,6 @@ function clearbuilding(buildingid,villageid ,building) {
 	//执行删除的URL链接
 	var deleteurl = '/Tenement/village/deletebuidilding';
 	commondelete(param,  buildingid ,deleteurl , villageid);
-	
-	
-	//if (confirm('你确定删除该楼栋吗，删除后对应的详情地址将删除 ?')) { 
-	//	$.ajax({
-	//		data : {
-	//			'buildingid' : buildingid
-	//		},
-	//		type : 'POST',
-	//		url : '/Tenement/village/deletebuidilding',
-	//		success :function (data) {
-	//			getbuildinglist (villageid);
-	//		}
-	//	});
-	//}
 }
 
 function getbuildingdetail (buildingid,code) {

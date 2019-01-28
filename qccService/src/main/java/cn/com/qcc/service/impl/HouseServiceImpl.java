@@ -1048,7 +1048,7 @@ public class HouseServiceImpl implements HouseService {
 				|| CheckDataUtil.checkisEmpty(houseid)) 
 				{return null;}
 		
-		HouseCustomer houseCustomer  ;
+		HouseCustomer houseCustomer =null  ;
 		// 先去缓存中取出对应信息
 		try {
 			String jsonData = jedisClient.get(RedisUtil.HOUSE_FIRST_KEY+houseid);
