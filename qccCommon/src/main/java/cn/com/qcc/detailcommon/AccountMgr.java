@@ -8,4 +8,6 @@ public class AccountMgr {
 	public static final String qcc_bucketName = "zhaofang";
 	
 	public static final String return_path = "http://www.hadoop.zzw777.com/";
+
+	public static final String VIDEO = "video";
 }

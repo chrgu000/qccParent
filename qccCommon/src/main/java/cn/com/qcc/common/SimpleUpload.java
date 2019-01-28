@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.UUID;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.qiniu.common.QiniuException;
 import com.qiniu.common.Zone;
 import com.qiniu.http.Response;
@@ -31,6 +33,22 @@ public class SimpleUpload {
 	static UploadManager uploadManager = new UploadManager(cfg);
 	static String downloadpath = "d://qiniubeifen//" ;
 	static String URL = "http://";
+	
+	
+	/**视频上传*/
+	@SuppressWarnings("unused")
+	public static String vedioUpload (MultipartFile file , String key) {
+		try {
+			Response res  = uploadManager.put(file.getBytes(), key, getUpToken(AccountMgr.VIDEO,key));
+		} catch (QiniuException e) {
+			Response r = e.response;
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
+	}
 
 	/**
 	 * 获取凭证
@@ -53,7 +71,6 @@ public class SimpleUpload {
 	 * @param key  : 上传到七牛云后的名称
 	 * @param bucketName ： 上传空间
 	 */
-	@SuppressWarnings("unused")
 	public static void upload(String filePath, String key) {
 		try {
 			// 调用put方法上传

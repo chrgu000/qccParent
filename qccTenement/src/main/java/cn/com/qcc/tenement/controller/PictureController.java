@@ -25,8 +25,8 @@ public class PictureController {
 	@Resource  Destination deletepicture;
 	@Autowired JmsTemplate jmsTemplate;
 	
-	//private final static String uplodpath = "d://";
 	private final static String qnweb_path = "http://www.hadoop.zzw777.com/";
+	private final static String qview_path = "http://www.video.zzw777.com/";
 
 	@RequestMapping(value = "/uploadPicture-1")
 	@ResponseBody
@@ -42,6 +42,27 @@ public class PictureController {
 		//byte [] bype = WaterMarkUtils.addWaterMark(image,uplodpath,  waterMarkContent, markContentColor, font);
                 
 		return ResultMap.build(200, null, null);
+	}
+	
+	@RequestMapping("/videoUpload")
+	@ResponseBody
+	public ResultMap videoUpload(MultipartFile content) {
+		if (content.isEmpty()) 
+			return ResultMap.build(400, "选择文件");
+		// 获取文件的全部名称
+		String originName  = content.getOriginalFilename();
+		// 获取文件后缀
+		String lastName = originName.substring(originName.lastIndexOf("."), originName.length());
+		// 判断文件的后缀如果不是视频类型的直接返回
+		if (CheckDataUtil.checkNotVideo(lastName)) 
+			return ResultMap.build(400, "非视频类型");
+		// 设置上传的key
+		String key = IDUtils.genItemId() + lastName;
+		// 上传到远程服务器
+		SimpleUpload.vedioUpload(content, key);
+		// 设置返回的路径
+		String returPath  = qview_path + key ;
+		return ResultMap.IS_200(returPath);
 	}
 	
 	@ResponseBody

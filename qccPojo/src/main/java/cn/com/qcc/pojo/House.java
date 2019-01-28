@@ -2,8 +2,6 @@ package cn.com.qcc.pojo;
 
 import java.util.Date;
 
-import cn.com.qcc.common.CheckDataUtil;
-
 public class House {
     /** 房屋id*/
     private Long houseid;
@@ -89,11 +87,8 @@ public class House {
     /** 房间号码*/
     private String house_number;
 
-    /** 租客付佣金*/
-    private Double centpercentnum;
-
-    /** 房东付佣金*/
-    private Double landpercentnum;
+    /** 视频地址*/
+    private String videourl;
 
     /**  1-可以预定  2-不可以预定*/
     private Integer schedule;
@@ -168,19 +163,7 @@ public class House {
     }
 
     public void setHousetag_id(String housetag_id) {
-    	String append = "";
-    	if (CheckDataUtil.checkNotEmpty(housetag_id)) {
-    		String [] ids = housetag_id.split(",");
-    		for (int i = 0 ;i< ids.length;i++) {
-    			if (!append.contains(ids[i])) {
-    				append +=ids[i] +",";
-    			}
-    		}
-    	}
-    	if (CheckDataUtil.checkNotEmpty(append)) {
-    		housetag_id = append.substring(0, append.length()-1);
-    	}
-        this.housetag_id = housetag_id ;
+        this.housetag_id = housetag_id == null ? null : housetag_id.trim();
     }
 
     public Integer getProperty_id() {
@@ -343,20 +326,12 @@ public class House {
         this.house_number = house_number == null ? null : house_number.trim();
     }
 
-    public Double getCentpercentnum() {
-        return centpercentnum;
+    public String getVideourl() {
+        return videourl;
     }
 
-    public void setCentpercentnum(Double centpercentnum) {
-        this.centpercentnum = centpercentnum;
-    }
-
-    public Double getLandpercentnum() {
-        return landpercentnum;
-    }
-
-    public void setLandpercentnum(Double landpercentnum) {
-        this.landpercentnum = landpercentnum;
+    public void setVideourl(String videourl) {
+        this.videourl = videourl == null ? null : videourl.trim();
     }
 
     public Integer getSchedule() {

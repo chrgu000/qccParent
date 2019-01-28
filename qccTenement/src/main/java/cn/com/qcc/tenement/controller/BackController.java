@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import WangYiUtil.WangYiUtil;
@@ -58,6 +59,25 @@ public class BackController{
 	@Autowired VillageService villageService;
 	@Autowired LandLordService landLordService;
 	@Autowired HouseSolrDao houseSolrDao;
+	
+	//测试上传
+	@RequestMapping("/file/test")
+	@ResponseBody
+	public ResultMap test (MultipartFile file) {
+		
+		if (file.isEmpty()) {
+			System.out.println("FALSE=========");
+			return ResultMap.build(400, "文件不存在");
+			
+		}else {
+			//WangYiUtil.upload(file);
+			String key = IDUtils.genItemId();
+			System.out.println(file.getName());
+			System.out.println(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."),file.getOriginalFilename().length() ));
+			//SimpleUpload.vedioUpload(file, key);
+			return ResultMap.build(200, "文件存在");
+		}
+	}
 	
 	@RequestMapping("/deleteSolr")
 	public ResultMap del (HouseCustomer houseCustomer) {

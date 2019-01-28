@@ -15,6 +15,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import cn.com.qcc.common.Base64;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.CheckSumBuilder;
 import cn.com.qcc.common.JsonUtils;
@@ -37,6 +40,21 @@ public class WangYiUtil {
 		httpPost.addHeader("CurTime", curTime);
 		httpPost.addHeader("CheckSum", checkSum);
 		httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+		return httpPost;
+	};
+	
+	
+	/** 设置网易云请求的请求头部 **/
+	public static  HttpPost SetSendHeadFile(String url) {
+		HttpPost httpPost = new HttpPost(url);
+		String curTime = String.valueOf((new Date()).getTime() / 1000L);
+		String checkSum = CheckSumBuilder.getCheckSum(APPSECRET, NONCE, curTime);// 参考
+		// 设置请求的header
+		httpPost.addHeader("AppKey", APPKEY);
+		httpPost.addHeader("Nonce", NONCE);
+		httpPost.addHeader("CurTime", curTime);
+		httpPost.addHeader("CheckSum", checkSum);
+		httpPost.addHeader("Content-Type", "multipart/form-data");
 		return httpPost;
 	};
 
@@ -410,7 +428,7 @@ public class WangYiUtil {
 	
 	
 	/**发送通知短信**/
-	private static Map<String, Object> CodeCheckMess(String TEMPLATEID, String PHONE) {
+	public static Map<String, Object> CodeCheckMess(String TEMPLATEID, String PHONE) {
 		Map<String, Object> returnmap = null;
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = SetSendHead(WangYiCommon.SENDTEMPLATE);
@@ -424,6 +442,44 @@ public class WangYiUtil {
 			HttpResponse response = httpClient.execute(httpPost);
 			String str = EntityUtils.toString(response.getEntity(), "utf-8");
 			net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
+			returnmap = (Map<String, Object>) jsonobj;
+			return returnmap;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return returnmap;
+		}
+		
+		
+	}
+	
+	
+	
+	/**发送通知短信**/
+	public static Map<String, Object> upload(MultipartFile content) {
+		Map<String, Object> returnmap = null;
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpPost httpPost = SetSendHead(WangYiCommon.FILE_UPLOAD);
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		try {
+			nvps.add(new BasicNameValuePair("content", Base64.encode(content.getBytes())));
+			/**
+			 * 0 表示文本消息,
+				1 表示图片，
+				2 表示语音，
+				3 表示视频，
+				4 表示地理位置信息，
+				6 表示文件，
+				100 自定义消息类型（特别注意，对于未对接易盾反垃圾功能的应用，该类型的消息不会提交反垃圾系统检测）
+			 * 
+			 * */
+			
+			nvps.add(new BasicNameValuePair("type", "3"));
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
+			// 执行请求
+			HttpResponse response = httpClient.execute(httpPost);
+			String str = EntityUtils.toString(response.getEntity(), "utf-8");
+			net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
+			System.out.println(jsonobj);               
 			returnmap = (Map<String, Object>) jsonobj;
 			return returnmap;
 		} catch (Exception e) {

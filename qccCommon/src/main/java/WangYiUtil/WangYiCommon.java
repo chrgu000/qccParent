@@ -42,6 +42,9 @@ public class WangYiCommon {
 	/**发送通知类短信**/
 	public static final String SENDTEMPLATE = "https://api.netease.im/sms/sendtemplate.action";
 	
+	/**文件上传**/
+	public static final String FILE_UPLOAD = "https://api.netease.im/nimserver/msg/upload.action";
+	
 	/***修改手机号码发送验证码 的模板ID*/
 	public static final String CODE_PHONE_UPDATE = "9744091";
 	

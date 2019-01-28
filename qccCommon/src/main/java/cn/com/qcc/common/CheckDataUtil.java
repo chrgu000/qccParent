@@ -227,5 +227,32 @@ public static String DeleteExist(String append) {
 
 
 
+	/**校验文件不是视频类型的
+	 * 如果校验通过返回true
+	 * 如果校验不通过返回false
+	 * AVI、WMV、RM、RMVB、MPEG1、MPEG2、MPEG4(MP4)、3GP、
+	 * ASF、SWF、VOB、DAT、MOV、M4V、FLV、F4V、MKV、MTS、TS。
+	 * 其他什么IMV、AMV、XV、QSV
+	 * 
+	 * **/
+	public static boolean checkNotVideo(String lastName) {
+		
+		// 获取所有的视频格式
+		String viewType= ".avi-.wmv-.rm-.rmvb-.mpeg1-.mpeg2-.mpeg4-.mp4-.3gp-.asf-.swf-.vob-.dat-.m4v-.flv-.f4v-.mkv"
+				+"-.mts-.ts-.imv-.amv-.xv";
+		
+		//如果是空直接返回true表示非视频类型
+		if (CheckDataUtil.checkisEmpty(lastName)) 
+			return true ;
+		//如果是MP4结尾的说明是视频文件 校验通过
+		
+		//lastName 在viewtype里面说明是视频文件校验 失败
+		if (viewType.contains(lastName)) 
+			return false;
+		return true;
+	}
+
+
+
 
 }
