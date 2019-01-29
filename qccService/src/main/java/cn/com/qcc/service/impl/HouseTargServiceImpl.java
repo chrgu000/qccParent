@@ -14,6 +14,7 @@ import cn.com.qcc.pojo.Housetag;
 import cn.com.qcc.pojo.HousetagExample;
 import cn.com.qcc.pojo.Pararule;
 import cn.com.qcc.queryvo.HouseCustomer;
+import cn.com.qcc.queryvo.PreparatoryCustomer;
 import cn.com.qcc.service.HousertargService;
 
 @Service
@@ -86,7 +87,7 @@ public class HouseTargServiceImpl implements HousertargService {
 
 	/**根据类型查询traname
 	 * **/
-	public String getTraName(long houseid) {
+	public PreparatoryCustomer getTraName(long houseid) {
 		return houseCustomerMapper.getTraName(houseid);
 	}
 

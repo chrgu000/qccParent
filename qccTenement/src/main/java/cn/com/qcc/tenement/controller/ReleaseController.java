@@ -370,9 +370,7 @@ public class ReleaseController {
 	@RequestMapping("/mess/checkSendFlag")
 	@ResponseBody
 	private ResultMap checkIsSend (Transmitsend send) {
-		
 		ResultMap resultMap = releaseService.checkIsSend(send);
-		
 		return resultMap;
 	}
 }

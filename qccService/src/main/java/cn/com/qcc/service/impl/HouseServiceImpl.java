@@ -1281,7 +1281,7 @@ public class HouseServiceImpl implements HouseService {
 		query.setQuery("*:*");
 		SolrPageUtil.juliquery(query, "", addressCustomer);
 		query.add("fq", "articletypeid:(1 or 11)");
-		query.add("fq", "housestatus:(NOT 3)");
+		query.add("fq", "housestatus:(1 OR 2)");
 		SolrPageUtil.houseQuery(houseCustomer, query);
 		SolrPageUtil.setStartAndEnd(pagequery, query);
 		if (CheckDataUtil.checkNotEmpty(orderTime)) {

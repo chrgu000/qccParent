@@ -1272,8 +1272,6 @@
 		house.housetag_id,
 		house.picture,
 		houseid,
-		IFNULL(house.centpercentnum, 0 ) centpercentnum  ,
-		IFNULL(house.landpercentnum,0) landpercentnum ,
 	  price.prices ,
 	  price.pricetype ,
 	  apartmentname ,
@@ -1293,10 +1291,11 @@
  		
  		
  	<!-- 根据类型和TARGID 查询标签 -->
- 	<select id="getTraName" resultType="string">
- 		SELECT housetag.type from housetag 
+ 	<select id="getTraName" resultType="cn.com.qcc.queryvo.PreparatoryCustomer">
+ 		SELECT housetag.type , ifnull(preparatory.centpercentnum,0)centpercentnum ,
+ 		ifnull(preparatory.landpercentnum , 0)landpercentnum  from housetag 
  		LEFT JOIN preparatory on preparatory.housetagid =housetag.housetagid
-	     where preparatory.houseid =#{houseid} 
+	     where preparatory.houseid =#{houseid}
 	    and (preparatory.centpercentnum > 0 or preparatory.landpercentnum > 0 )
 	     ORDER BY preparatory.daycount asc LIMIT 0 ,1 
  	</select>

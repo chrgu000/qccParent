@@ -17,6 +17,11 @@ function getvl(){
 </script>
 
 <body>	
+			<form name="Form2" id="tf" method="post" action="/Tenement/videoUpload" enctype="multipart/form-data">
+				<input  type="file" multiple name="content" :value="path"  id="imgs" width="50px">
+				<button type="submit">提交视频</button>
+			</form>
+
 	<div id ="village_css">
 				省 ：
 				<select style="width: 110px; margin-top: 15px;"onchange="getnextaddress(v_1)" id="v_1">

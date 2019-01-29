@@ -18,8 +18,10 @@ public class Preparatory {
 
     /** 一起的天数*/
     private Integer daycount;
+    
+   
 
-    public Long getPreparatoryid() {
+	public Long getPreparatoryid() {
         return preparatoryid;
     }
 

@@ -41,7 +41,6 @@ function setTime(now) {
 
 function setCommonDiv() {
 	var div = $('.excle_export_comm_div').empty();
-	alert(11);
 	var span = '<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>' +
                '<button type="button" class="btn btn-primary excle_usre_click">确定</button>' ;
 	div.append(span);

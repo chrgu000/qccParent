@@ -10,6 +10,7 @@ import cn.com.qcc.pojo.Furniture;
 import cn.com.qcc.pojo.Houseorder;
 import cn.com.qcc.pojo.Housetag;
 import cn.com.qcc.pojo.Paymodal;
+import cn.com.qcc.pojo.Preparatory;
 import cn.com.qcc.queryvo.BrandCustomer;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.FurnitureCustomer;
@@ -186,7 +187,7 @@ public interface HouseCustomerMapper {
 	HouseCustomer getHouseYudingMess(@Param("houseid")Long houseid);
 	
 	//根据类型和 id查询镖旗
-	String getTraName(@Param("houseid")long houseid);
+	PreparatoryCustomer getTraName(@Param("houseid")long houseid);
 	
 	//查询最新预定
 	String gethouseorderstatue(Houseorder houseorder);

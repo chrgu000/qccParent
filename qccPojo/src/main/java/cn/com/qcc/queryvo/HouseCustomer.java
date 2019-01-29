@@ -27,7 +27,11 @@ public class HouseCustomer extends House {
 	private String cycleName;
 	
 	private Integer villagetypeid;
-	
+	  /** 租客付佣金*/
+    private Double centpercentnum;
+
+    /** 房东付佣金*/
+    private Double landpercentnum;
 	
 	private String prices ; //房间对外标价
 	
@@ -131,9 +135,22 @@ public class HouseCustomer extends House {
 	private List<PreparatoryCustomer> preList ;
 	
 	
-	
-	
-	
+	public Double getCentpercentnum() {
+		return centpercentnum;
+	}
+
+	public void setCentpercentnum(Double centpercentnum) {
+		this.centpercentnum = centpercentnum;
+	}
+
+	public Double getLandpercentnum() {
+		return landpercentnum;
+	}
+
+	public void setLandpercentnum(Double landpercentnum) {
+		this.landpercentnum = landpercentnum;
+	}
+
 	public String getTribename() {
 		return tribename;
 	}

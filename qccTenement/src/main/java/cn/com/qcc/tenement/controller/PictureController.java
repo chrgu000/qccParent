@@ -27,6 +27,8 @@ public class PictureController {
 	
 	private final static String qnweb_path = "http://www.hadoop.zzw777.com/";
 	private final static String qview_path = "http://www.video.zzw777.com/";
+	//视频的最大大小20M
+	private final static int VIDEO_MAX_SIZE =  1024 * 1000 * 20 ;
 
 	@RequestMapping(value = "/uploadPicture-1")
 	@ResponseBody
@@ -49,6 +51,11 @@ public class PictureController {
 	public ResultMap videoUpload(MultipartFile content) {
 		if (content.isEmpty()) 
 			return ResultMap.build(400, "选择文件");
+		//获取文件大小
+		long size = content.getSize();
+		// 最大20M
+		if (size > VIDEO_MAX_SIZE) 
+			return ResultMap.build(400, "视频最大为20M");
 		// 获取文件的全部名称
 		String originName  = content.getOriginalFilename();
 		// 获取文件后缀

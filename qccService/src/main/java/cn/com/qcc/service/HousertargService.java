@@ -4,7 +4,9 @@ import java.util.List;
 
 import cn.com.qcc.pojo.Housetag;
 import cn.com.qcc.pojo.Pararule;
+import cn.com.qcc.pojo.Preparatory;
 import cn.com.qcc.queryvo.HouseCustomer;
+import cn.com.qcc.queryvo.PreparatoryCustomer;
 
 
 public interface HousertargService {
@@ -44,7 +46,7 @@ public interface HousertargService {
 	
 	/**根据类型查询traname
 	 * **/
-	String getTraName(long houseid);
+	PreparatoryCustomer getTraName(long houseid);
 
 	/**根据ID 查询租客规则
 	 * @param pararuleid

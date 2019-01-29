@@ -26,6 +26,7 @@ import cn.com.qcc.pojo.House;
 import cn.com.qcc.pojo.Houseorder;
 import cn.com.qcc.pojo.Housetag;
 import cn.com.qcc.pojo.Pararule;
+import cn.com.qcc.pojo.Preparatory;
 import cn.com.qcc.pojo.Price;
 import cn.com.qcc.pojo.User;
 import cn.com.qcc.pojo.Village;
@@ -865,7 +866,16 @@ public class HouseController {
 			return ResultMap.build(400, "房源ID不为空");
 		}
 		HouseCustomer houseCustomer = houseService.getHouseYudingMess(houseid);
-		String cycleName = housertargService.getTraName(houseid);
+		String cycleName =null;
+		PreparatoryCustomer preparatory = housertargService.getTraName(houseid);
+		if (CheckDataUtil.checkNotEmpty(preparatory)) {
+			cycleName = preparatory.getType();
+			houseCustomer.setCentpercentnum(preparatory.getCentpercentnum());
+			houseCustomer.setLandpercentnum(preparatory.getLandpercentnum());
+		}else {
+			houseCustomer.setCentpercentnum(0.0);
+			houseCustomer.setLandpercentnum(0.0);
+		}
 		cycleName = cycleName == null ? "不限" : cycleName;
 		houseCustomer.setCycleName(cycleName);
 		return ResultMap.IS_200(houseCustomer);
@@ -984,7 +994,10 @@ public class HouseController {
 		}
 		boolean flag = IDUtils.threedaysafter(houseCustomer.getOrdertime());
 		houseCustomer.setFlag(flag);
-		String cycleName = housertargService.getTraName(houseCustomer.getHouseid());
+		String cycleName =null;
+		PreparatoryCustomer preparatory = housertargService.getTraName(houseCustomer.getHouseid());
+		if (CheckDataUtil.checkNotEmpty(preparatory)) 
+			cycleName = preparatory.getType();
 		cycleName = cycleName == null ? "不限" : cycleName;
 		houseCustomer.setCycleName(cycleName);
 		return ResultMap.IS_200(houseCustomer);
