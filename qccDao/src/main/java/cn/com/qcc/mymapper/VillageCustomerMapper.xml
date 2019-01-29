@@ -901,6 +901,54 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<if test="searchwhere !=null and searchwhere !=''">
 	  and  building.landphone is not null  and building.landphone != ''
 	</if>
+	</select>
 	
+	
+	<!-- 查询所有的小区导入索引库 -->
+	<select id="addvillagetosolr" resultType="cn.com.qcc.queryvo.VillageCustomer" parameterType="long">
+		SELECT       IFNULL(centhouse.centprices,100)centprices ,
+					 IFNULL(buyhouse.buyprices,100)buyprices , 
+					 village.villageid  , 
+		             village.villagename  ,
+		             area.`name` trading ,
+		             '' metroname ,
+		             '' finalstop,
+		             '' metroids,
+		             village.update_time ,
+		             village.picture onepicture ,
+		             village.villagetypeid ,
+					 IFNULL(village.keyword ,'')keyword ,
+					 detaileaddress.* ,
+					 village.`code` likecode ,
+					 '' citycode
+		from village 
+			LEFT JOIN detaileaddress on village.detailid = detaileaddress.detailid
+		  LEFT JOIN area ON  area.`code`=village.`code`
+			LEFT JOIN (SELECT * from area) fcode on area.parentId = fcode.code
+			LEFT JOIN (
+				SELECT  avg(prices)centprices   , building.villageid  from  house 
+				LEFT JOIN price on house.price_id = price.priceid
+				LEFT JOIN building on building.buildingid = house.buildingid
+				where house.houstatus = '1' and building.villageid is not null 
+				GROUP BY  building.villageid
+		  ) centhouse on centhouse.villageid = village.villageid
+			LEFT JOIN (
+				SELECT  IFNULL(SUM(prices)/SUM(area),100)  buyprices   , building.villageid  from  house 
+					LEFT JOIN price on house.price_id = price.priceid
+					LEFT JOIN building on building.buildingid = house.buildingid
+				where house.houstatus = '1' and building.villageid is not null 
+				GROUP BY  building.villageid
+		  ) buyhouse on buyhouse.villageid = village.villageid 
+		<if test="pagequery !=null ">
+			where village.villageid > #{pagequery.pagestart} and 
+			<![CDATA[village.villageid<=#{pagequery.pageend}]]>
+		</if>
+	</select>
+	
+	<!-- 查询导入的地铁信息 -->
+	<select id="addvillagetosolrMetro" resultType="cn.com.qcc.queryvo.MetroCustomer">
+		SELECT DISTINCT village.villageid , metro.*  from village 
+		LEFT JOIN building on building.villageid = village.villageid
+		INNER  JOIN metro on metro.metroid = building.metroid
 	</select>
 </mapper>

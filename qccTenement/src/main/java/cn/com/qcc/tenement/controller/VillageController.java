@@ -130,13 +130,10 @@ public class VillageController {
 	}
 
 	// 小区的列表
-	@RequestMapping("/comm/commlist")
+	/*@RequestMapping("/comm/commlist")
 	@ResponseBody
 	public ResultMap searchVillageList(String city, VillageeVo villageeVo, Long userid,
 			@RequestParam(defaultValue = "0") String currentpage, @RequestParam(defaultValue = "7") int pagesize) {
-		// TDDTO   city = "深圳";
-		
-		// 通过城市获取到code
 		Long citycode = villageService.getcodebycity(city);
 		Long likecode = null;
 		villageeVo = villageeVo != null ? villageeVo : new VillageeVo();
@@ -151,15 +148,12 @@ public class VillageController {
 		if (likecode == null) {
 			likecode = citycode;
 		}
-
 		villageeVo.setVillageCustomer(villageCutomer);
 		int infocount = villageService.searchCommlistCount(villageeVo);
 		PageQuery pagequery = new PageQuery();
 		villageeVo.setPagequery(pagequery);
 		pagequery.setPageParams(infocount, pagesize, Integer.parseInt(currentpage));
 		List<VillageCustomer> commlist = villageService.searchCommlist(villageeVo);
-
-		// 拼接地址
 		splitcommon(commlist);
 		Map<String, Object> map = new HashMap<>();
 		map.put("commlist", commlist);
@@ -178,7 +172,37 @@ public class VillageController {
 			comm.setDistrict(str);
 		}
 	}
-
+*/
+	
+	// 小区的列表
+	@RequestMapping("/comm/commlist")
+	@ResponseBody
+	public ResultMap searchVillageList(String city, VillageeVo villageeVo, Long userid,
+			@RequestParam(defaultValue = "0") int currentpage, @RequestParam(defaultValue = "7") int pagesize) {
+		Long likecode = villageService.getcodebycity(city);
+		Map<String, Object> map = new HashMap<>();
+		map.put("citycode", likecode);
+		VillageCustomer villageCustomer = villageeVo.getVillageCustomer();
+		if (CheckDataUtil.checkNotEmpty(villageCustomer.getLikecode())) {
+			likecode = villageCustomer.getLikecode();
+		}
+		PageQuery pagequery = new PageQuery();
+		pagequery.setCurrentpage(currentpage);
+		pagequery.setPagesize(pagesize);
+		villageeVo.setPagequery(pagequery);
+		SearchResult searchResult = villageService.searchCommlist(villageeVo.getVillageCustomer() ,
+				villageeVo.getMetro() ,likecode ,pagequery);
+		List<VillageCustomer> commlist = searchResult.getVillagelist();
+		int infocount = searchResult.getRecordCount();
+		pagequery.setPageParams(infocount, pagesize, currentpage);
+		map.put("commlist", commlist);
+		map.put("likecode", likecode);
+		map.put("pagequery", pagequery);
+		return ResultMap.IS_200(map);
+	}
+		
+		
+		
 	// 小区详情
 	@RequestMapping("/comm/villagedetail/{type}")
 	@ResponseBody
@@ -679,6 +703,21 @@ public class VillageController {
 		query.setPageend(end);
 		return villageService.addbuildngtosolr(null , query);
 	}
+	
+	
+	/**
+	 * 小区一键导入索引库
+	 **/
+	@RequestMapping("/addvillagetosolr")
+	@ResponseBody
+	public ResultMap addvillagetosolr(int start ,int end) {
+		PageQuery pagequery = new PageQuery();
+		pagequery.setPagestart(start);
+		pagequery.setPageend(end);
+		ResultMap resultMap = villageService.addvillagetosolr(pagequery);
+		return resultMap;
+	}
+
 	
 	
 	

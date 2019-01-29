@@ -22,7 +22,7 @@ public class VillageeVo {
 	private String juli;
 	private Long buildingid;
 	private String orderjuli;
-	private Metro metro;
+	private Metro metro = new Metro();
 	private String orderprice;
 	private String pictureshanxuann;
 	private String messageshanxuan;

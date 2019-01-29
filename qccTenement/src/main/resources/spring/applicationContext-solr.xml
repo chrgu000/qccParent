@@ -16,9 +16,13 @@
 	<bean id="builSolrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
 		<constructor-arg index="0" value="http://120.24.43.56:8010/solr/building"/>
 	</bean> 
-	
 	<!-- 单机版solrJ  -->
 	<bean id="houseSolrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
 		<constructor-arg index="0" value="http://120.24.43.56:8010/solr/house"/>
+	</bean> 
+	
+	<!-- 单机版solrJ  -->
+	<bean id="villageSolrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
+		<constructor-arg index="0" value="http://120.24.43.56:8010/solr/village"/>
 	</bean> 
 </beans>

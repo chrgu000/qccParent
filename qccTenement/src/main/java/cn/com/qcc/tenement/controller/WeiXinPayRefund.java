@@ -35,7 +35,6 @@ public class WeiXinPayRefund {
 			return ResultMap.build(400, "检查订单/参数");
 		}
 
-		// Houseorder houseorder = houseService.gethouseorderbyid(houseorderid);
 		HouseOrderCustomer houseorder = houseService.searchorderpay(Long.valueOf(houseorderid));
 		if (houseorder == null) {
 			return ResultMap.build(400, "检查订单");

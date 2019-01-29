@@ -10,6 +10,7 @@ import cn.com.qcc.pojo.Village;
 import cn.com.qcc.queryvo.AddressCustomer;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
+import cn.com.qcc.queryvo.MetroCustomer;
 import cn.com.qcc.queryvo.SearchModal;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.queryvo.VillageCustomer;
@@ -107,6 +108,11 @@ public interface VillageCustomerMapper {
 	
 	/**楼栋导出EXCLE**/
 	List<BuildingCustomer> buildingUpload(@Param("code")Long code,@Param("searchwhere") String searchwhere);
+	
+	/**查询求租导入索引库**/
+	List<VillageCustomer> addvillagetosolr(@Param("pagequery")PageQuery pagequery);
+
+	List<MetroCustomer> addvillagetosolrMetro();
 
 	
 

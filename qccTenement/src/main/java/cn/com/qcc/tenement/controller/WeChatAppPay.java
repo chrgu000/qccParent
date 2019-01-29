@@ -42,9 +42,7 @@ public class WeChatAppPay {
         //第一次签名
         Map<String, String> paraMap = new HashMap<>();
         
-        if ("10001765".equals(userid)) {
-        	total_free = "1";
-        }
+       // if ("10001765".equals(userid)) {total_free = "1"; }
         
         //订单总金额，单位为分
         paraMap.put("total_fee", total_free);

@@ -56,6 +56,7 @@ import cn.com.qcc.queryvo.ApartmentCustomer;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.HousetagCustomer;
+import cn.com.qcc.queryvo.MetroCustomer;
 import cn.com.qcc.queryvo.SearchModal;
 import cn.com.qcc.queryvo.SearchResult;
 import cn.com.qcc.queryvo.UserCustomer;
@@ -64,6 +65,7 @@ import cn.com.qcc.queryvo.VillageeVo;
 import cn.com.qcc.service.HousertargService;
 import cn.com.qcc.service.VillageService;
 import cn.com.qcc.service.solrdao.BuilSolrDao;
+import cn.com.qcc.service.solrdao.VillageSolrDao;
 import weixin.util.XiaoChengXuCodeUtil;
 
 @Service
@@ -84,6 +86,7 @@ public class VillageServiceImpl implements VillageService {
 	@Autowired BrokerMapper brokerMapper;
 	@Autowired HousertargService housertargService;
 	@Autowired BuilSolrDao builSolrDao;
+	@Autowired VillageSolrDao villageSolrDao;
 	@Resource  Destination builAdd;
 	@Resource  Destination builUpdate;
 	@Resource  Destination builSearch;
@@ -1101,6 +1104,64 @@ public class VillageServiceImpl implements VillageService {
 	public List<BuildingCustomer> buildingUpload(Long code, String searchwhere) {
 		// TODO Auto-generated method stub
 		return villageCustomerMapper.buildingUpload(code , searchwhere);
+	}
+
+	@Override
+	public ResultMap addvillagetosolr(PageQuery pagequery) {
+		//根据条件查询导入的小区
+		List<VillageCustomer> villageList = villageCustomerMapper.addvillagetosolr(pagequery);
+		if (CheckDataUtil.checkisEmpty(villageList)) 
+			return ResultMap.build(400, "没有数据");
+		// 查询地铁信息
+		List<MetroCustomer> metroList = villageCustomerMapper.addvillagetosolrMetro();
+		for (VillageCustomer village : villageList) {
+			for (MetroCustomer metro : metroList) {
+				if (village.getVillageid() - metro.getVillageid() == 0 ) {
+					// 判断是否包含了地铁名称
+					if (!village.getMetroname().contains(metro.getName())) {
+						village.setMetroname(village.getMetroname() +"-" + metro.getName());
+					}
+					// 判断是否包含了站点名称
+					if (!village.getFinalstop().contains(metro.getFinalstop())) {
+						village.setFinalstop(village.getFinalstop() +"-" + metro.getFinalstop());
+					}
+					if (!village.getMetroids().contains(metro.getMetroid()+"")) {
+						village.setMetroids(village.getMetroids() +"-" +metro.getMetroid());
+					}
+					village.setCitycode(metro.getCode()+"");
+				}
+			}
+		}
+		System.out.println("================================================");
+		villageSolrDao.addvillagetosolr(villageList);
+		return ResultMap.IS_200(villageList);
+	}
+
+	@Override
+	public SearchResult searchCommlist(VillageCustomer villageCustomer, Metro metro, Long likecode,
+			PageQuery pagequery) {
+		String searchWord = villageCustomer.getHoustatus() ;
+		SolrQuery query=new SolrQuery();
+		query.setQuery("*:*");
+		if (CheckDataUtil.checkNotEmpty(metro.getMetroid())) {
+			String metroids = "-"+metro.getMetroid() ;
+			villageCustomer.setMetroids(metroids);
+			metro.setMetroid(null);
+		}
+		//设置距离的查询半径
+		//SolrPageUtil.juliquery(query,juli, addressCustomer);
+		//设置区域的likecode
+		SolrPageUtil.likecodequery(likecode, query);
+		// 设置小区的查询
+		SolrPageUtil.villageQuery_all(villageCustomer,query);
+		//设置地铁的查询
+		SolrPageUtil.metroquery(metro, query);
+		
+		//设置分页参数
+		SolrPageUtil.setStartAndEnd(pagequery, query);
+		query.addSort("update_time",ORDER.desc);//按照从近到远排序
+		System.out.println(query);
+		return villageSolrDao.searchVillageList(query ,searchWord);
 	}
 
 	

@@ -49,6 +49,8 @@ public class WeiXinPhoneController {
 			
 			if ("qcc".equals(descname)) {
 				session_key = get_qcc_weixinuseridbyxiaochengxu(code);
+			} else if ("gzf".equals(descname)) {
+				return ResultMap.build(400, "参数错误");
 			} else {
 				return ResultMap.build(400, "参数错误");
 			}

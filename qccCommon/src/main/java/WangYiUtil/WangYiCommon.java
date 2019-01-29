@@ -56,6 +56,8 @@ public class WangYiCommon {
 	
 	/**注册验证码 的模板ID*/
 	public static final String CODE_PHONE_REGISTER = "9764124";
+
+	public static final String SHOU_YI_TEMPID ="";
 	
 	
 	

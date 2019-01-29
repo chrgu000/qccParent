@@ -448,8 +448,30 @@ public class WangYiUtil {
 			e.printStackTrace();
 			return returnmap;
 		}
-		
-		
+	}
+	
+	/**发送用户收益通知**/
+	public static Map<String, Object> ShouYiMess(String content, String PHONE) {
+		Map<String, Object> returnmap = null;
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpPost httpPost = SetSendHead(WangYiCommon.SENDTEMPLATE);
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		String TEMPLATEID = WangYiCommon.SHOU_YI_TEMPID;
+		nvps.add(new BasicNameValuePair("templateid", TEMPLATEID));
+		nvps.add(new BasicNameValuePair("mobiles", "["+PHONE+"]"));
+		nvps.add(new BasicNameValuePair("params", "["+content+"]"));
+		try {
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
+			// 执行请求
+			HttpResponse response = httpClient.execute(httpPost);
+			String str = EntityUtils.toString(response.getEntity(), "utf-8");
+			net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
+			returnmap = (Map<String, Object>) jsonobj;
+			return returnmap;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return returnmap;
+		}
 	}
 	
 	

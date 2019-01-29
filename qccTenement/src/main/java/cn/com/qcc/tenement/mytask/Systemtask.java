@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import WangYiUtil.WangYiUtil;
 import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.PayCommonConfig;
 import cn.com.qcc.common.RedisUtil;
@@ -156,12 +157,9 @@ public class Systemtask {
 				vipcountMapper.updateByPrimaryKey(updateuser);
 				
 				// 发送短信提醒用户收益到账
-				Long telephone = Long.valueOf(lurce.getDescname());
-				String content = "尊敬的用户您好,您有新增收益:"  +
-				updateaccount +"元,目前总收益余额为:"+totalaccount;
-		       
-					//SendMessage.lurceAddSuccess(telephone , content );
-			
+				String telephone = lurce.getDescname();
+				String content =updateaccount +","+totalaccount;
+		      	WangYiUtil.ShouYiMess(content, telephone);
 			}
 		}
 		

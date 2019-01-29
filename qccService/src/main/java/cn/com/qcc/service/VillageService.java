@@ -15,6 +15,7 @@ import cn.com.qcc.queryvo.ApartmentCustomer;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.HousetagCustomer;
+import cn.com.qcc.queryvo.MetroCustomer;
 import cn.com.qcc.queryvo.SearchModal;
 import cn.com.qcc.queryvo.SearchResult;
 import cn.com.qcc.queryvo.UserCustomer;
@@ -58,7 +59,9 @@ public interface VillageService {
 
 	/**找小区
 	 * **/ 
-	List<VillageCustomer> searchCommlist(VillageeVo villageeVo);
+	//List<VillageCustomer> searchCommlist(VillageeVo villageeVo);
+	SearchResult searchCommlist(VillageCustomer villageCustomer, Metro metro , 
+			Long likecode,PageQuery pagequery);
 
 	/**
 	 * 小区详情
@@ -234,6 +237,9 @@ public interface VillageService {
 
 	/**查询楼栋导出EXCLE**/
 	List<BuildingCustomer> buildingUpload(Long code, String searchwhere);
+	
+	/**小区一键导入索引库**/
+	ResultMap addvillagetosolr(PageQuery pagequery);
 
 	
 	

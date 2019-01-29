@@ -181,10 +181,10 @@ public class SolrPageUtil {
 				query.add("fq", "metroid:"+metro.getMetroid()+"");
 			}
 			if (CheckDataUtil.checkNotEmpty(metro.getFinalstop())) {
-				query.add("fq", "finalstop:"+metro.getFinalstop()+"");
+				query.add("fq", "finalstop:*"+metro.getFinalstop()+"*");
 			}
 			if (CheckDataUtil.checkNotEmpty(metro.getName())) {
-				query.add("fq", "metroname:"+metro.getName()+"");
+				query.add("fq", "metroname:*"+metro.getName()+"*");
 			}
 			if (CheckDataUtil.checkNotEmpty(metro.getFinalstop())) {
 				query.add("fq", "citycode:*"+metro.getCode()+"*");
@@ -283,6 +283,59 @@ public class SolrPageUtil {
 			if (CheckDataUtil.checkNotEmpty(buildingCustomer.getBrandid())) {
 				query.add("fq","brandid:"+buildingCustomer.getBrandid()+"");
 			}
+		}
+		
+	}
+
+	public static void villageQuery_all(VillageCustomer villageCustomer, SolrQuery query) {
+		
+		if (CheckDataUtil.checkNotEmpty(villageCustomer)) {
+			// 这里封装的是租的 centprices
+			if (CheckDataUtil.checkNotEmpty(villageCustomer.getHoustatus())) {
+				// 楼栋价格的排序
+				if (CheckDataUtil.checkNotEmpty(villageCustomer.getDesc())) {
+					query.addSort("centprices",ORDER.desc);
+				}
+				
+				if (CheckDataUtil.checkNotEmpty(villageCustomer.getAsc())) {
+					query.addSort("centprices",ORDER.asc);
+				}
+				if (CheckDataUtil.checkNotEmpty(villageCustomer.getSmallprices() )
+						&& CheckDataUtil.checkNotEmpty(villageCustomer.getBigprices())) {
+					query.add("fq", "centprices:["+villageCustomer.getSmallprices()+" TO "+villageCustomer.getBigprices()+"]");
+				}
+			}
+			//这里封装的是卖的 buyprices
+			if (CheckDataUtil.checkNotEmpty(villageCustomer.getHoustatus2())) {
+				// 楼栋价格的排序
+				if (CheckDataUtil.checkNotEmpty(villageCustomer.getDesc())) {
+					query.addSort("buyprices",ORDER.desc);
+				}
+				
+				if (CheckDataUtil.checkNotEmpty(villageCustomer.getAsc())) {
+					query.addSort("buyprices",ORDER.asc);
+				}
+				if (CheckDataUtil.checkNotEmpty(villageCustomer.getSmallprices() )
+						&& CheckDataUtil.checkNotEmpty(villageCustomer.getBigprices())) {
+					query.add("fq", "buyprices:["+villageCustomer.getSmallprices()+" TO "+villageCustomer.getBigprices()+"]");
+				}
+			}
+			
+			if (CheckDataUtil.checkNotEmpty(villageCustomer.getLikecode())) {
+				query.add("fq", "likecode:"+villageCustomer.getLikecode()+"*");
+			}
+			if (CheckDataUtil.checkNotEmpty(villageCustomer.getKeyword())) {
+				query.add("fq", "keyword:*"+villageCustomer.getKeyword()+"*");
+			}
+			if (CheckDataUtil.checkNotEmpty(villageCustomer.getVillagename())) {
+				query.add("fq", "villagename:*"+villageCustomer.getVillagename()+"*");
+			}
+			if (CheckDataUtil.checkNotEmpty(villageCustomer.getVillagetypeid())) {
+				query.add("fq", "villagetypeid:"+villageCustomer.getVillagetypeid()+"");
+			}
+			
+			
+			
 		}
 		
 	}

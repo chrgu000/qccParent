@@ -88,14 +88,6 @@ public class SendMessageController {
 	
 	public static void main (String [] args) {
 		
-		try {
-			Long telephone = 18316999864L;
-			String TEMPLATEID = WangYiCommon.CODE_PHONE_LOGIN;
-			Map<String, Object> map = SendMessage.doCodeSendMess(TEMPLATEID, telephone);
-			System.out.println(map);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		
 	}
 	

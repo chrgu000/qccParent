@@ -691,9 +691,7 @@ public class WxPayController {
 			KeyStoreException, NoSuchAlgorithmException, IOException {
 		OrderInfo order = new OrderInfo();
 		String conId = IDUtils.genItemId();
-		 if ("10001765".equals(userid)) {
-				total_free = 1;
-			}
+		//if ("10001765".equals(userid)) {total_free = 1;}
 		String out_trade_no = conId + "cz" + userid;
 		if ("gzfzz".equals(type)) {
 			order.setAppid(PayCommonConfig.gzfzz_xiaochengxuappid);

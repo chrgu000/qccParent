@@ -127,15 +127,6 @@ public class RongYunController {
 	}
 	
 	
-	// 通过查询条件查询群组
-	@RequestMapping("/group/searchbycondition")
-	@ResponseBody
-	public ResultMap searchgroupbycondition (@RequestParam(defaultValue="1") Integer currentpage ,
-			@RequestParam(defaultValue="8")Integer pagesize , GroupVo groupVo) {
-		
-		
-		return ResultMap.IS_200();
-	}
 	
 	
 	// 根据兴趣群的一级分类id查询二级分类

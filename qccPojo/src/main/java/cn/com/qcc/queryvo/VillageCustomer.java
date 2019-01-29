@@ -42,7 +42,46 @@ public class VillageCustomer extends Village {
     private String metroname;
     private String finalstop;
     private String onepicture;
-    public String getOnepicture() {
+    private String metroids;
+    private Double centprices;
+    private String citycode ;
+    
+    public String getCitycode() {
+		return citycode;
+	}
+
+	public void setCitycode(String citycode) {
+		this.citycode = citycode;
+	}
+
+	public String getMetroids() {
+		return metroids;
+	}
+
+	public void setMetroids(String metroids) {
+		this.metroids = metroids;
+	}
+
+	private Double buyprices;
+   
+
+	public Double getCentprices() {
+		return centprices;
+	}
+
+	public void setCentprices(Double centprices) {
+		this.centprices = centprices;
+	}
+
+	public Double getBuyprices() {
+		return buyprices;
+	}
+
+	public void setBuyprices(Double buyprices) {
+		this.buyprices = buyprices;
+	}
+
+	public String getOnepicture() {
 		if (onepicture !=null && !"".equals(onepicture)) {
 			onepicture = onepicture.split(",")[0];
 		}

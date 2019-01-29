@@ -113,17 +113,6 @@ public class TestToken {
 		}
 		
 			
-		
-		/*Map<String, TemplateData> param = new HashMap<>();
-		param.put("first", new TemplateData("尊敬的用户你预定的房号1074房东已经确认,请合理的安排入住时间。", "#696969"));
-		param.put("keyword1", new TemplateData("1074A", "#696969"));
-		param.put("keyword2", new TemplateData("2017年05月06日", "#696969"));
-		param.put("remark", new TemplateData("祝投生活愉快！", "#696969"));
-		// 注册的微信-模板Id
-		String openId = "o3AMB0c5QVaqTKVp6XOHMC9BYcUE";
-		String regTempId = "F63LKrBZJaOtsasW9WQNlNKe_MY3IJdapUudCa0Fma";
-		// 调用发送微信消息给用户的接口
-		WX_TemplateMsgUtil.sendWechatMsgToUser(openId, regTempId, "", "#000000", packJsonmsg(param));*/
 	}
 
 }

@@ -10,7 +10,14 @@ public class SearchResult  {
 	private List<QiuzuCustomer> qiuzulist;
 	private List<HouseCustomer> houselist;
 	private List<ArticleDetailCustomer> detaillist;
+	private List<VillageCustomer> villagelist;
 	
+	public List<VillageCustomer> getVillagelist() {
+		return villagelist;
+	}
+	public void setVillagelist(List<VillageCustomer> villagelist) {
+		this.villagelist = villagelist;
+	}
 	public List<ArticleDetailCustomer> getDetaillist() {
 		return detaillist;
 	}
