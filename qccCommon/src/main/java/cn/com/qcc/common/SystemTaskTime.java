@@ -42,5 +42,6 @@ public class SystemTaskTime {
 	 * 如果房源长时间没有更新自动下架 [每个周六凌晨3点10分]
 	 * **/
 	public static final String house_undercarriage = "0 10 3 ? * SAT";	
+	
 
 }

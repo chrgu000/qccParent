@@ -71,6 +71,7 @@ public class SimpleUpload {
 	 * @param key  : 上传到七牛云后的名称
 	 * @param bucketName ： 上传空间
 	 */
+	@SuppressWarnings("unused")
 	public static void upload(String filePath, String key) {
 		try {
 			// 调用put方法上传

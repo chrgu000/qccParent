@@ -4,7 +4,6 @@ import java.util.List;
 
 import cn.com.qcc.pojo.Housetag;
 import cn.com.qcc.pojo.Pararule;
-import cn.com.qcc.pojo.Preparatory;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.PreparatoryCustomer;
 

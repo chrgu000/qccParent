@@ -1,13 +1,17 @@
 package cn.com.qcc.tenement.mytask;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.PayCommonConfig;
 import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.common.SendMessage;
 import cn.com.qcc.common.SystemTaskTime;
+import cn.com.qcc.detailcommon.ExcelExportSXXSSF;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mapper.BuildingMapper;
 import cn.com.qcc.mapper.HouseMapper;
@@ -15,6 +19,7 @@ import cn.com.qcc.mapper.VillageMapper;
 import cn.com.qcc.mapper.VipcountMapper;
 import cn.com.qcc.pojo.Building;
 import cn.com.qcc.pojo.BuildingExample;
+import cn.com.qcc.pojo.Historyexcle;
 import cn.com.qcc.pojo.House;
 import cn.com.qcc.pojo.HouseExample;
 import cn.com.qcc.pojo.Lucre;
@@ -22,6 +27,7 @@ import cn.com.qcc.pojo.Village;
 import cn.com.qcc.pojo.VillageExample;
 import cn.com.qcc.pojo.Vipcount;
 import cn.com.qcc.queryvo.UserCustomer;
+import cn.com.qcc.service.AccessService;
 import cn.com.qcc.service.HouseService;
 import cn.com.qcc.service.InteService;
 import cn.com.qcc.service.UserService;
@@ -41,6 +47,7 @@ public class Systemtask {
 	@Autowired InteService inteService;
 	@Autowired VipcountMapper vipcountMapper;
 	@Autowired JedisClient jedisClient;
+	@Autowired AccessService accessService;
 	
 	
 	/*
@@ -167,9 +174,84 @@ public class Systemtask {
 	// 每天11点执行一次
 	@Scheduled(cron=SystemTaskTime.every_day_11) 
 	public void every_day_11 () {
-		
 		System.out.println("进入定时任务three");
-		
 	}
+	
+	
+	/**
+	 * 每个月底执行一次楼栋统计数据
+	 * @throws Exception 
+	 * ***/ 
+	public void tongjiloudong () throws Exception {
+		String filePath = request.getSession().getServletContext().getRealPath("/")+"upload/hisexcle/";
+		filePath = filePath.replace("/Tenement", "");
+		String filePrefix = DateUtil.DateToStr("yyyy-MM-dd", new Date());
+		filePrefix = filePrefix + "统计发布楼栋";
+		int flushRows = 100;
+		List<UserCustomer> buildingCustomers = villageService.censusbuilding("");
+		for (UserCustomer user : buildingCustomers) {
+			user.setNowlinknout(user.getBcount() - user.getNowlinkcount());
+			user.setNowlandnout(user.getBcount() - user.getNowlandcount());
+			user.setLinknout(user.getTcount() - user.getLinkcount());
+			user.setLandnout(user.getTcount() - user.getLandcount());
+		}
+		List<String> fieldCodes = getbuildinguser_fieldCodes();
+		List<String> fieldNames = getbuildinguser_fieldNames();
+		ExcelExportSXXSSF excelExportSXXSSF = ExcelExportSXXSSF.start(filePath, "/", filePrefix, fieldNames,
+				fieldCodes, flushRows);
+		excelExportSXXSSF.writeDatasByObject(buildingCustomers);
+		String webpath = excelExportSXXSSF.exportFile();
+		String returnpath = "https://www.zzw777.com/upload/hisexcle"+webpath;
+		
+		Historyexcle historyexcle = new Historyexcle();
+		historyexcle.setUserid(10000003L);
+		historyexcle.setDescname(filePrefix);
+		historyexcle.setHistoryexcleurl(returnpath);
+		historyexcle.setUpdate_time(new Date());
+		accessService.excleurladd(historyexcle);
+	}
+	
+	
+	
+	
+	
+	private List<String> getbuildinguser_fieldCodes() {
+		List<String> filedCodes = new ArrayList<String>();
+		filedCodes.add("userid");
+		filedCodes.add("user_name");
+		filedCodes.add("telephone");
+		filedCodes.add("bcount");
+		filedCodes.add("nowlinkcount");
+		filedCodes.add("nowlinknout");
+		filedCodes.add("nowlandcount");
+		filedCodes.add("nowlandnout");
+		filedCodes.add("tcount");
+		filedCodes.add("linkcount");
+		filedCodes.add("linknout");
+		filedCodes.add("landcount");
+		filedCodes.add("landnout");
+		return filedCodes;
+	}
+
+	private List<String> getbuildinguser_fieldNames() {
+		List<String> fieldNames = new ArrayList<String>();
+		fieldNames.add("用户ID");
+		fieldNames.add("用户昵称");
+		fieldNames.add("电话号码");
+		fieldNames.add("本月总数");
+		fieldNames.add("本月有联系电话");
+		fieldNames.add("本月无联系电话");
+		fieldNames.add("本月有房东电话");
+		fieldNames.add("本月无房东电话");
+		fieldNames.add("总计");
+		fieldNames.add("总计有联系电话");
+		fieldNames.add("总计无联系电话");
+		fieldNames.add("总计有房东电话");
+		fieldNames.add("总计无房东电话");
+		return fieldNames;
+	}
+	
+	
+	
 
 }

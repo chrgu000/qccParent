@@ -52,10 +52,10 @@ public class WangYiCommon {
 	public static final String CODE_PHONE_LOGIN = "9414704";
 	
 	/**修改登录密码 的模板ID*/
-	public static final String CODE_PHONE_PASSWORDCHANGE = "9414704";
+	public static final String CODE_PHONE_PASSWORDCHANGE = "9604116";
 	
 	/**注册验证码 的模板ID*/
-	public static final String CODE_PHONE_REGISTER = "9414704";
+	public static final String CODE_PHONE_REGISTER = "9764124";
 	
 	
 	

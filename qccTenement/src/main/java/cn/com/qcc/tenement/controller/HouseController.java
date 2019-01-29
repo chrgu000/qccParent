@@ -26,7 +26,6 @@ import cn.com.qcc.pojo.House;
 import cn.com.qcc.pojo.Houseorder;
 import cn.com.qcc.pojo.Housetag;
 import cn.com.qcc.pojo.Pararule;
-import cn.com.qcc.pojo.Preparatory;
 import cn.com.qcc.pojo.Price;
 import cn.com.qcc.pojo.User;
 import cn.com.qcc.pojo.Village;
