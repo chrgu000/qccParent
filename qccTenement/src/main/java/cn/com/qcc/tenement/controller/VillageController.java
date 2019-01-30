@@ -129,50 +129,7 @@ public class VillageController {
 		return result;
 	}
 
-	// 小区的列表
-	/*@RequestMapping("/comm/commlist")
-	@ResponseBody
-	public ResultMap searchVillageList(String city, VillageeVo villageeVo, Long userid,
-			@RequestParam(defaultValue = "0") String currentpage, @RequestParam(defaultValue = "7") int pagesize) {
-		Long citycode = villageService.getcodebycity(city);
-		Long likecode = null;
-		villageeVo = villageeVo != null ? villageeVo : new VillageeVo();
-		VillageCustomer villageCutomer = villageeVo.getVillageCustomer() != null ? villageeVo.getVillageCustomer()
-				: new VillageCustomer();
-		villageCutomer.setState(1);
-		if (villageCutomer.getLikecode() == null || "".equals(villageCutomer.getLikecode())) {
-			villageCutomer.setLikecode(citycode);
-		} else {
-			likecode = villageCutomer.getLikecode();
-		}
-		if (likecode == null) {
-			likecode = citycode;
-		}
-		villageeVo.setVillageCustomer(villageCutomer);
-		int infocount = villageService.searchCommlistCount(villageeVo);
-		PageQuery pagequery = new PageQuery();
-		villageeVo.setPagequery(pagequery);
-		pagequery.setPageParams(infocount, pagesize, Integer.parseInt(currentpage));
-		List<VillageCustomer> commlist = villageService.searchCommlist(villageeVo);
-		splitcommon(commlist);
-		Map<String, Object> map = new HashMap<>();
-		map.put("commlist", commlist);
-		map.put("citycode", citycode);
-		map.put("likecode", likecode);
-		map.put("pagequery", pagequery);
-		return ResultMap.IS_200(map);
-	}
-
 	
-	private void splitcommon(List<VillageCustomer> commlist) {
-		String str = "";
-		for (VillageCustomer comm : commlist) {
-			str = (comm.getDistrict() == null ? "" : comm.getDistrict())
-					+ (comm.getTrading() == null ? "" : comm.getTrading());
-			comm.setDistrict(str);
-		}
-	}
-*/
 	
 	// 小区的列表
 	@RequestMapping("/comm/commlist")
@@ -283,18 +240,6 @@ public class VillageController {
     	map.put("community", villageDetail);
 		return ResultMap.IS_200(map);
 	}
-
-	/*private List<HouseCustomer> findHouseByNearVillage(VillageCustomer community, String currentpage, int pagesize) {
-		VillageeVo villageVo = new VillageeVo();
-		community.setLikecode(null);
-		community.setCode(null);
-		community.setUserid(null);
-		villageVo.setVillageCustomer(community);
-		List<HouseCustomer> findHousetarding = villageService.searchhouseList(villageVo);
-		// 截取地址
-		suplitDetails(findHousetarding);
-		return findHousetarding;
-	}*/
 
 	private void hebingjinweidu(List<BuildingCustomer> buildingList) {
 		for (BuildingCustomer building : buildingList) {

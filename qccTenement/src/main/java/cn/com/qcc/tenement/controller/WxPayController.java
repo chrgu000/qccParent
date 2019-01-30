@@ -656,7 +656,7 @@ public class WxPayController {
 		List<Object> list = null;
 		try {
 			
-			if ("gzfzz".equals(type)) {
+			if ("gzfzz".equals(type) || "gzf".equals(type)) {
 				list = this.get_gzfzz_weixinuseridbyxiaochengxu(opencode);
 			} else if ("fdzz".equals(type)) {
 				list = this.get_fdzz_weixinuseridbyxiaochengxu(opencode);

@@ -28,8 +28,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.com.qcc.common.PayCommonConfig;
 import cn.com.qcc.common.ResultMap;
-
-@SuppressWarnings("deprecation")
+@SuppressWarnings({ "resource", "unchecked", "deprecation" })
 @Controller
 public class WeiXinPhoneController {
 	
@@ -49,8 +48,10 @@ public class WeiXinPhoneController {
 			
 			if ("qcc".equals(descname)) {
 				session_key = get_qcc_weixinuseridbyxiaochengxu(code);
-			} else if ("gzf".equals(descname)) {
-				return ResultMap.build(400, "参数错误");
+			} else if ("gzfzz".equals(descname) || "gzf".equals(descname)) {
+				session_key = get_gzf_weixinuseridbyxiaochengxu(code);
+			} else if ("fdzz".equals(descname)) {
+				session_key = get_fdzz_weixinuseridbyxiaochengxu(code);
 			} else {
 				return ResultMap.build(400, "参数错误");
 			}
@@ -99,11 +100,54 @@ public class WeiXinPhoneController {
 	}
 	
 	
-	@SuppressWarnings({ "resource", "unchecked" })
 	public String get_qcc_weixinuseridbyxiaochengxu(String code) throws IOException {
 		String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + 
 				PayCommonConfig.qcc_xiaochengxuappid + "&secret=" + 
 				PayCommonConfig.qcc_xiaochengxuSecret + "&js_code="
+				+ code + "&grant_type=authorization_code";
+		HttpClient client = new DefaultHttpClient();
+		HttpPost post = new HttpPost(url);
+		HttpResponse res = client.execute(post);
+		String sss = "";
+		if (res.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+			HttpEntity entity = res.getEntity();
+			String str = EntityUtils.toString(entity, "utf-8");
+			ObjectMapper mapper = new ObjectMapper();
+			Map<String, Object> jsonOb = mapper.readValue(str, Map.class);
+			 sss = jsonOb.get("session_key").toString();
+			
+		}
+		return sss;
+	}
+	
+	
+	
+	public String get_gzf_weixinuseridbyxiaochengxu(String code) throws IOException {
+		String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + 
+				PayCommonConfig.gzfzz_xiaochengxuappid + "&secret=" + 
+				PayCommonConfig.gzfzz_xiaochengxuSecret + "&js_code="
+				+ code + "&grant_type=authorization_code";
+		HttpClient client = new DefaultHttpClient();
+		HttpPost post = new HttpPost(url);
+		HttpResponse res = client.execute(post);
+		String sss = "";
+		if (res.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+			HttpEntity entity = res.getEntity();
+			String str = EntityUtils.toString(entity, "utf-8");
+			ObjectMapper mapper = new ObjectMapper();
+			Map<String, Object> jsonOb = mapper.readValue(str, Map.class);
+			 sss = jsonOb.get("session_key").toString();
+			
+		}
+		return sss;
+	}
+	
+	
+	
+	public String get_fdzz_weixinuseridbyxiaochengxu(String code) throws IOException {
+		String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + 
+				PayCommonConfig.fdzz_xiaochengxuappid + "&secret=" + 
+				PayCommonConfig.fdzz_xiaochengxuSecret + "&js_code="
 				+ code + "&grant_type=authorization_code";
 		HttpClient client = new DefaultHttpClient();
 		HttpPost post = new HttpPost(url);
