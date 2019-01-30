@@ -14,7 +14,7 @@ public class VillageCustomer extends Village {
     private String building;
     
     private Long likecode ;
-    private Double juli;
+    private Integer juli;
     
     private String desc;
     
@@ -45,8 +45,15 @@ public class VillageCustomer extends Village {
     private String metroids;
     private Double centprices;
     private String citycode ;
-    
-    public String getCitycode() {
+    public Integer getJuli() {
+		return juli;
+	}
+
+	public void setJuli(Integer juli) {
+		this.juli = juli;
+	}
+
+	public String getCitycode() {
 		return citycode;
 	}
 
@@ -150,14 +157,7 @@ public class VillageCustomer extends Village {
 		this.orderjuli = orderjuli;
 	}
 
-	public Double getJuli() {
-		return juli;
-	}
-
-	public void setJuli(Double juli) {
-		this.juli = juli;
-	}
-
+	
 	public Double getAvgprices() {
 		return avgprices;
 	}

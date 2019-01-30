@@ -112,7 +112,10 @@ public interface VillageCustomerMapper {
 	/**查询求租导入索引库**/
 	List<VillageCustomer> addvillagetosolr(@Param("pagequery")PageQuery pagequery);
 
-	List<MetroCustomer> addvillagetosolrMetro();
+	List<MetroCustomer> addvillagetosolrMetro(@Param("villageid") Long villageid);
+	
+	/**一个房子导入索引库**/
+	VillageCustomer onevillagetosolr(long villageid);
 
 	
 

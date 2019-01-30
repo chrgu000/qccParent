@@ -1156,6 +1156,21 @@
 	where invite.`level` = 1 and invite.userid = #{userid}
 	</select>
 	
+	<select id="allteamson" resultType="cn.com.qcc.queryvo.UserCustomer" >
+		SELECT invite.account inmonetary , `profile`.user_name ,`profile`.avatar from invite 
+		LEFT JOIN `profile` on invite.followuserid = `profile`.user_id
+	where invite.userid = #{userid}
+	and invite.followuserid in ( SELECT followuserid from invite where invite.userid in 
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+	
+	)
+	and invite.`level` = 2
+	</select>
+	
+	
 	
 	<select id="myteamson" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="cn.com.qcc.queryvo.UserCustomer">
 		SELECT invite.account inmonetary , `profile`.user_name ,`profile`.avatar from invite 

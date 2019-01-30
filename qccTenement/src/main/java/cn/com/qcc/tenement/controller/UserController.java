@@ -920,8 +920,8 @@ public class UserController {
 	@RequestMapping("/user/myteam")
 	@ResponseBody
 	public ResultMap myteam(Long userid) {
-		List<UserCustomer> USERS = userService.myteam(userid);
-		return ResultMap.IS_200(USERS);
+		Map<String, Object> map  = userService.myteam(userid);
+		return ResultMap.IS_200(map);
 	}
 
 	// 查询我的团队

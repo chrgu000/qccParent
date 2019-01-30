@@ -143,6 +143,7 @@ public class HouseSolrDao {
 				item.setHouseid((Long) solrDocument.get("houseid"));
 				// 距离
 				item.setJuli(IDUtils.doubletoint((double) solrDocument.get("juli"), 1000));
+				
 				// 一张图片
 				item.setOnepicture((String) solrDocument.get("onepicture"));
 				// 地铁路线

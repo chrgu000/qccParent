@@ -252,6 +252,9 @@ public interface UserCustomerMapper {
 	/**解绑微信账号**/
 	public void deleteunionid(Long userid);
 	public void delteopenid(Long userid);
+
+	/**查询所有的二级团队**/
+	public List<UserCustomer> allteamson(@Param("userid")Long userid,@Param("idsList") List<Integer> sons);
 	
 
 	

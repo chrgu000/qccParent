@@ -333,6 +333,12 @@ public class SolrPageUtil {
 			if (CheckDataUtil.checkNotEmpty(villageCustomer.getVillagetypeid())) {
 				query.add("fq", "villagetypeid:"+villageCustomer.getVillagetypeid()+"");
 			}
+			if (CheckDataUtil.checkNotEmpty(villageCustomer.getJulidesc())) {
+				query.addSort("geodist()",ORDER.desc);
+			}
+			if (CheckDataUtil.checkNotEmpty(villageCustomer.getJuliasc())) {
+				query.addSort("geodist()",ORDER.asc);
+			}
 			
 			
 			

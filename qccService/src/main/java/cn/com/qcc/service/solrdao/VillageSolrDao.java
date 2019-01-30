@@ -35,6 +35,7 @@ public class VillageSolrDao {
 			//主键
 			document.addField("villageid", village.getVillageid());
 			document.addField("finalstop", village.getFinalstop());
+			document.addField("villagetypeid", village.getVillagetypeid());
 			document.addField("metroname", village.getMetroname());
 			document.addField("metroids", village.getMetroids());
 			document.addField("keyword", village.getKeyword());
@@ -57,8 +58,42 @@ public class VillageSolrDao {
 			e.printStackTrace();
 		}
 	}
-
 	
+	
+	
+	/**小区导入索引库**/
+	public void onevillagetosolr(VillageCustomer village) {
+		try {
+		
+			SolrInputDocument document = new SolrInputDocument();
+			//主键
+			document.addField("villageid", village.getVillageid());
+			document.addField("villagetypeid", village.getVillagetypeid());
+			document.addField("finalstop", village.getFinalstop());
+			document.addField("metroname", village.getMetroname());
+			document.addField("metroids", village.getMetroids());
+			document.addField("keyword", village.getKeyword());
+			document.addField("centprices", village.getCentprices());
+			document.addField("buyprices", village.getBuyprices());
+			document.addField("onepicture", village.getOnepicture());
+			document.addField("villagename", village.getVillagename());
+			document.addField("trading", village.getTrading());
+			document.addField("likecode", village.getLikecode());
+			document.addField("citycode", village.getCitycode());
+			document.addField("update_time", village.getUpdate_time());
+			String latlng = (village.getLatitude() == null ? "12" : village.getLatitude()) + ","
+					+ (village.getLongitude() == null ? "114" : village.getLongitude());
+			document.addField("latlng", latlng);
+			villageSolrServer.add(document);
+		
+		villageSolrServer.commit();
+		} catch (Exception e) {
+		
+			e.printStackTrace();
+		}
+	}
+
+	/**从索引库查询小区列表**/
 	public SearchResult searchVillageList(SolrQuery query ,String searchWord ) {
 		try {
 			// 根据query查询索引库
@@ -80,10 +115,15 @@ public class VillageSolrDao {
 				}
 				item.setAvgprices(IDUtils.doubletoint(avgprices, 1)*1.0);
 				item.setVillageid(Long.valueOf((String) solrDocument.get("villageid")));
+				String latlng = (String) solrDocument.get("latlng");
+				item.setLatitude(latlng.split(",")[0]);
+				item.setLongitude(latlng.split(",")[1] );
 				item.setTrading((String) solrDocument.get("trading"));
 				item.setMetroname((String) solrDocument.get("metroname"));
 				item.setFinalstop((String) solrDocument.get("finalstop"));
 				item.setOnepicture((String) solrDocument.get("onepicture"));
+				// 距离
+				item.setJuli(IDUtils.doubletoint((double) solrDocument.get("juli"), 1000));
 				item.setVillagename((String) solrDocument.get("villagename"));
 				item.setUpdate_time((Date) solrDocument.get("update_time"));
 				itemList.add(item);
@@ -95,4 +135,6 @@ public class VillageSolrDao {
 			return null;
 		}
 	}
+
+
 }

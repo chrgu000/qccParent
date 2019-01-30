@@ -191,7 +191,7 @@ public class VillageController {
 		pagequery.setPagesize(pagesize);
 		villageeVo.setPagequery(pagequery);
 		SearchResult searchResult = villageService.searchCommlist(villageeVo.getVillageCustomer() ,
-				villageeVo.getMetro() ,likecode ,pagequery);
+				villageeVo.getMetro() ,likecode ,pagequery , villageeVo.getAddressCustomer());
 		List<VillageCustomer> commlist = searchResult.getVillagelist();
 		int infocount = searchResult.getRecordCount();
 		pagequery.setPageParams(infocount, pagesize, currentpage);

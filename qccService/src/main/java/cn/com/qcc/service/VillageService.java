@@ -61,7 +61,7 @@ public interface VillageService {
 	 * **/ 
 	//List<VillageCustomer> searchCommlist(VillageeVo villageeVo);
 	SearchResult searchCommlist(VillageCustomer villageCustomer, Metro metro , 
-			Long likecode,PageQuery pagequery);
+			Long likecode,PageQuery pagequery , AddressCustomer addressCustomer);
 
 	/**
 	 * 小区详情
@@ -240,7 +240,11 @@ public interface VillageService {
 	
 	/**小区一键导入索引库**/
 	ResultMap addvillagetosolr(PageQuery pagequery);
-
+	
+	/**一条小区记录导入索引库**/
+	ResultMap onevillagetosolr(long villageid);
+	
+	
 	
 	
 	

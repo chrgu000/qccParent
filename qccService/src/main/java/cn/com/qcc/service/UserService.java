@@ -341,7 +341,7 @@ public interface UserService {
 	public Invite getinvitefather(Long userid);
 
 	// 查询我的团队
-	public List<UserCustomer> myteam(Long userid);
+	public Map<String, Object> myteam(Long userid);
 
 	// 查询我的团队二级
 	public List<UserCustomer> myteamson(UserCustomer userCustomer);

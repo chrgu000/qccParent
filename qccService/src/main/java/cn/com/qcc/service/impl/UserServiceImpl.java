@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -1755,8 +1756,22 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<UserCustomer> myteam(Long userid) {
-		return userCustomerMapper.myteam(userid);
+	public Map<String, Object> myteam(Long userid) {
+		Map<String, Object> map = new HashMap<>();
+		List<UserCustomer> userCustomers =  userCustomerMapper.myteam(userid);
+		List<Integer> sons = new ArrayList<>();
+		List<UserCustomer> teamSons = new ArrayList<>();
+		if (CheckDataUtil.checkNotEmpty(userCustomers)) {
+			for (UserCustomer user : userCustomers) {
+				sons.add(user.getFollowUserId());
+			}
+		}
+		if (CheckDataUtil.checkNotEmpty(sons)) {
+			teamSons = userCustomerMapper.allteamson(userid , sons );
+		}
+		map.put("firstTeam", userCustomers);
+		map.put("secondTeam", teamSons);
+		return map;
 	}
 
 	@Override

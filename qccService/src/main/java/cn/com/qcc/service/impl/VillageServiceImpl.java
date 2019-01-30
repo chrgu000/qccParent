@@ -1113,7 +1113,7 @@ public class VillageServiceImpl implements VillageService {
 		if (CheckDataUtil.checkisEmpty(villageList)) 
 			return ResultMap.build(400, "没有数据");
 		// 查询地铁信息
-		List<MetroCustomer> metroList = villageCustomerMapper.addvillagetosolrMetro();
+		List<MetroCustomer> metroList = villageCustomerMapper.addvillagetosolrMetro(null);
 		for (VillageCustomer village : villageList) {
 			for (MetroCustomer metro : metroList) {
 				if (village.getVillageid() - metro.getVillageid() == 0 ) {
@@ -1139,7 +1139,7 @@ public class VillageServiceImpl implements VillageService {
 
 	@Override
 	public SearchResult searchCommlist(VillageCustomer villageCustomer, Metro metro, Long likecode,
-			PageQuery pagequery) {
+			PageQuery pagequery,AddressCustomer addressCustomer) {
 		String searchWord = villageCustomer.getHoustatus() ;
 		SolrQuery query=new SolrQuery();
 		query.setQuery("*:*");
@@ -1149,19 +1149,46 @@ public class VillageServiceImpl implements VillageService {
 			metro.setMetroid(null);
 		}
 		//设置距离的查询半径
-		//SolrPageUtil.juliquery(query,juli, addressCustomer);
+		SolrPageUtil.juliquery(query,"", addressCustomer);
 		//设置区域的likecode
 		SolrPageUtil.likecodequery(likecode, query);
 		// 设置小区的查询
 		SolrPageUtil.villageQuery_all(villageCustomer,query);
 		//设置地铁的查询
 		SolrPageUtil.metroquery(metro, query);
-		
 		//设置分页参数
 		SolrPageUtil.setStartAndEnd(pagequery, query);
 		query.addSort("update_time",ORDER.desc);//按照从近到远排序
 		System.out.println(query);
 		return villageSolrDao.searchVillageList(query ,searchWord);
+	}
+
+	/**一个房子导入索引库**/
+	public ResultMap onevillagetosolr(long villageid) {
+		// TODO Auto-generated method stub
+		VillageCustomer village = villageCustomerMapper.onevillagetosolr(villageid);
+		// 查询地铁信息
+		List<MetroCustomer> metroList = villageCustomerMapper.addvillagetosolrMetro(villageid);
+		if (CheckDataUtil.checkNotEmpty(metroList)) {
+			for (MetroCustomer metro : metroList) {
+				if (village.getVillageid() - metro.getVillageid() == 0 ) {
+					// 判断是否包含了地铁名称
+					if (!village.getMetroname().contains(metro.getName())) {
+						village.setMetroname(village.getMetroname() +"-" + metro.getName());
+					}
+					// 判断是否包含了站点名称
+					if (!village.getFinalstop().contains(metro.getFinalstop())) {
+						village.setFinalstop(village.getFinalstop() +"-" + metro.getFinalstop());
+					}
+					if (!village.getMetroids().contains(metro.getMetroid()+"")) {
+						village.setMetroids(village.getMetroids() +"-" +metro.getMetroid());
+					}
+					village.setCitycode(metro.getCode()+"");
+				}
+			}
+		}
+		villageSolrDao.onevillagetosolr(village);
+		return ResultMap.IS_200();
 	}
 
 	
