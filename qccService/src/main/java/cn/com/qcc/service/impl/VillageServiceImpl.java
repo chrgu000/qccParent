@@ -89,6 +89,7 @@ public class VillageServiceImpl implements VillageService {
 	@Autowired VillageSolrDao villageSolrDao;
 	@Resource  Destination builAdd;
 	@Resource  Destination builUpdate;
+	@Resource  Destination villageAdd;
 	@Resource  Destination builSearch;
 	@Autowired JmsTemplate jmsTemplate;
 	@Autowired JedisClient jedisClient;
@@ -154,6 +155,11 @@ public class VillageServiceImpl implements VillageService {
 		village.setUpdate_time(new Date());
 		village.setXcxpicture("");
 		villageMapper.insertSelective(village);
+		
+		String sendData = village.getVillageid()+"";
+		SendMessUtil.sendData(jmsTemplate, villageAdd, sendData);
+		
+		// 发布成功后发送消息
 		return ResultMap.build(200, "更新成功");
 	}
 

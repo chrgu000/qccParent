@@ -271,4 +271,16 @@
 		<property name="destination" ref="groupLaren" />
 		<property name="messageListener" ref="groupLarenMess" />
 	</bean> 
+	
+	
+	<!-- 发布一条小区导入索引库 -->
+	<bean id="villageAdd" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="villageAdd" />
+	</bean>  
+	<bean id="villageAddMess" class="cn.com.qcc.tenement.mqmess.VillageAddMess"/>
+	<bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="villageAdd" />
+		<property name="messageListener" ref="villageAddMess" />
+	</bean> 
 </beans>

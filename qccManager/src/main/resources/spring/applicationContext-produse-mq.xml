@@ -136,4 +136,9 @@
 	<bean id="groupLaren" class="org.apache.activemq.command.ActiveMQQueue">
 		<constructor-arg value="groupLaren" />
 	</bean>  
+	
+		<!-- 发布一条小区导入索引库 -->
+	<bean id="villageAdd" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="villageAdd" />
+	</bean>  
 </beans>
