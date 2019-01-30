@@ -12,6 +12,7 @@ import cn.com.qcc.mymapper.VillageCustomerMapper;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.service.InteService;
+import cn.com.qcc.service.VillageService;
 import cn.com.qcc.service.solrdao.BuilSolrDao;
 import cn.com.qcc.service.solrdao.HouseSolrDao;
 
@@ -37,6 +38,8 @@ public class HouseAddOrUpdateMessage implements MessageListener{
 	private VillageCustomerMapper villageCustomerMapper;
 	@Autowired
 	private BuilSolrDao builSolrDao;
+	@Autowired
+	private VillageService villageService;
 	
 	public void onMessage(Message message) {
 		try {
@@ -79,6 +82,8 @@ public class HouseAddOrUpdateMessage implements MessageListener{
 				builSolrDao.AllBuildingToSolr(buils);
 			}
 			
+			// 同步小区索引库
+			villageService.onevillagetosolr(houseCustomer.getVillageid());
 		} catch (Exception e) {
 			// 这里是发生未知异常
 			e.printStackTrace();

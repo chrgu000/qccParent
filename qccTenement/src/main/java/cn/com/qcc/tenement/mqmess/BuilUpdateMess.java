@@ -11,6 +11,7 @@ import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mymapper.VillageCustomerMapper;
 import cn.com.qcc.queryvo.BuildingCustomer;
+import cn.com.qcc.service.VillageService;
 import cn.com.qcc.service.solrdao.BuilSolrDao;
 
 /**
@@ -24,6 +25,8 @@ public class BuilUpdateMess implements MessageListener {
 	VillageCustomerMapper villageCustomerMapper;
 	@Autowired
 	JedisClient jedisClient;
+	@Autowired
+	VillageService villageService;
 
 	@Override
 	public void onMessage(Message message) {
@@ -37,6 +40,9 @@ public class BuilUpdateMess implements MessageListener {
 			System.out.println("收到楼栋编辑发布的消息" + buildingid);
 			// 清空楼栋缓存
 			jedisClient.del(RedisUtil.BUIL_FIRST_KEY + buildingid);
+			
+			//同步小区小区索引库
+			villageService.onevillagetosolr(buildingCustomer.getVillageid());
 		} catch (JMSException e) {
 			e.printStackTrace();
 		}

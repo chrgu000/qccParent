@@ -544,6 +544,11 @@ public class VillageServiceImpl implements VillageService {
 		}
 		village.setUpdate_time(new Date());
 		villageMapper.updateByPrimaryKeySelective(village);
+		
+		
+		// 小区编辑发送模板消息
+		String sendData = village.getVillageid()+"";
+		SendMessUtil.sendData(jmsTemplate, villageAdd, sendData);
 		return ResultMap.build(200, "更新成功");
 	}
 
@@ -1165,7 +1170,6 @@ public class VillageServiceImpl implements VillageService {
 		//设置分页参数
 		SolrPageUtil.setStartAndEnd(pagequery, query);
 		query.addSort("update_time",ORDER.desc);//按照从近到远排序
-		System.out.println(query);
 		return villageSolrDao.searchVillageList(query ,searchWord);
 	}
 
