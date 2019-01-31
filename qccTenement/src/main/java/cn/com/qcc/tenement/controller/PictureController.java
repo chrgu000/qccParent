@@ -30,7 +30,7 @@ public class PictureController {
 	//视频的最大大小20M
 	private final static int VIDEO_MAX_SIZE =  1024 * 1000 * 20 ;
 
-	@RequestMapping(value = "/uploadPicture-1")
+	@RequestMapping(value = "/uploadPicture")
 	@ResponseBody
 	public ResultMap uploadPicture() throws IllegalStateException, IOException {
 		String bucketName = "zhaofang";
