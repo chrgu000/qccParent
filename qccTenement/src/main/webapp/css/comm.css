@@ -34,6 +34,10 @@
 #commoninte {
 	display: none;
 }
+
+#livingset {
+	display: none;
+}
 #update_picture_domain , #landlord_examine , #parerrule{
 	display: none;
 }

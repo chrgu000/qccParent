@@ -43,5 +43,7 @@ public class SystemTaskTime {
 	 * **/
 	public static final String house_undercarriage = "0 10 3 ? * SAT";	
 	
+	public static final String MONTH_END_22 = "0 0 22 LAST * ?";
+	
 
 }

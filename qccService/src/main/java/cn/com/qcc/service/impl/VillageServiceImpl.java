@@ -1122,7 +1122,7 @@ public class VillageServiceImpl implements VillageService {
 		//根据条件查询导入的小区
 		List<VillageCustomer> villageList = villageCustomerMapper.addvillagetosolr(pagequery);
 		if (CheckDataUtil.checkisEmpty(villageList)) 
-			return ResultMap.build(400, "没有数据");
+			return ResultMap.build(400, "没有更多数据了...");
 		// 查询地铁信息
 		List<MetroCustomer> metroList = villageCustomerMapper.addvillagetosolrMetro(null);
 		for (VillageCustomer village : villageList) {
@@ -1145,7 +1145,7 @@ public class VillageServiceImpl implements VillageService {
 		}
 		System.out.println("================================================");
 		villageSolrDao.addvillagetosolr(villageList);
-		return ResultMap.IS_200(villageList);
+		return ResultMap.build(200,"同步成功 !!!");
 	}
 
 	@Override

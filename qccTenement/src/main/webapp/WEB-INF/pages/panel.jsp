@@ -30,6 +30,16 @@
 	</div>
 	
 	<!-- 部落找人发布维护 -->
+	<div id="livingset" >
+		<div class="panel panel-default">
+			<div class="panel-heading">系统部分活动规则设置</div>
+			<div class="panel-body">
+				<jsp:include page="livingset.jsp"/>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 部落找人发布维护 -->
 	<div id="tribet" >
 		<div class="panel panel-default">
 			<div class="panel-heading">部落物品分类发布维护</div>

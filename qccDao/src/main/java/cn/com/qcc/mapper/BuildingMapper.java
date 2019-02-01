@@ -19,7 +19,7 @@ public interface BuildingMapper {
     List<Building> selectByExample(BuildingExample example);
 
     Building selectByPrimaryKey(Long buildingid);
-    
+
     int updateByExampleSelective(@Param("record") Building record, @Param("example") BuildingExample example);
 
     int updateByExample(@Param("record") Building record, @Param("example") BuildingExample example);
@@ -27,7 +27,4 @@ public interface BuildingMapper {
     int updateByPrimaryKeySelective(Building record);
 
     int updateByPrimaryKey(Building record);
-    
-    //更新楼栋时候也要更新品牌
-    int updateByPrimaryKeyandbrandid(Building record);
 }

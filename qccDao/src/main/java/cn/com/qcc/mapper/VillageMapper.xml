@@ -8,6 +8,7 @@
     <result column="code" property="code" jdbcType="BIGINT" />
     <result column="userid" property="userid" jdbcType="BIGINT" />
     <result column="picture" property="picture" jdbcType="VARCHAR" />
+    <result column="videourl" property="videourl" jdbcType="VARCHAR" />
     <result column="housecount" property="housecount" jdbcType="VARCHAR" />
     <result column="comyear" property="comyear" jdbcType="VARCHAR" />
     <result column="company" property="company" jdbcType="VARCHAR" />
@@ -85,9 +86,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    villageid, villagetypeid, villagename, code, userid, picture, housecount, comyear, 
-    company, carfree, comfree, comphone, carcount, comcount, devephone, developer, villagephone, 
-    keyword, detailid, state, describes, xcxpicture, update_time
+    villageid, villagetypeid, villagename, code, userid, picture, videourl, housecount, 
+    comyear, company, carfree, comfree, comphone, carcount, comcount, devephone, developer, 
+    villagephone, keyword, detailid, state, describes, xcxpicture, update_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.VillageExample" >
     select
@@ -120,28 +121,30 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Village" >
-     <selectKey  resultType="long"  order="AFTER"  keyProperty="villageid" >
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="villageid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into village (villageid, villagetypeid, villagename, 
       code, userid, picture, 
-      housecount, comyear, company, 
-      carfree, comfree, comphone, 
-      carcount, comcount, devephone, 
-      developer, villagephone, keyword, 
-      detailid, state, describes, 
-      xcxpicture, update_time)
+      videourl, housecount, comyear, 
+      company, carfree, comfree, 
+      comphone, carcount, comcount, 
+      devephone, developer, villagephone, 
+      keyword, detailid, state, 
+      describes, xcxpicture, update_time
+      )
     values (#{villageid,jdbcType=BIGINT}, #{villagetypeid,jdbcType=INTEGER}, #{villagename,jdbcType=VARCHAR}, 
       #{code,jdbcType=BIGINT}, #{userid,jdbcType=BIGINT}, #{picture,jdbcType=VARCHAR}, 
-      #{housecount,jdbcType=VARCHAR}, #{comyear,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR}, 
-      #{carfree,jdbcType=VARCHAR}, #{comfree,jdbcType=VARCHAR}, #{comphone,jdbcType=VARCHAR}, 
-      #{carcount,jdbcType=VARCHAR}, #{comcount,jdbcType=VARCHAR}, #{devephone,jdbcType=VARCHAR}, 
-      #{developer,jdbcType=VARCHAR}, #{villagephone,jdbcType=VARCHAR}, #{keyword,jdbcType=VARCHAR}, 
-      #{detailid,jdbcType=BIGINT}, #{state,jdbcType=INTEGER}, #{describes,jdbcType=VARCHAR}, 
-      #{xcxpicture,jdbcType=VARCHAR}, #{update_time,jdbcType=TIMESTAMP})
+      #{videourl,jdbcType=VARCHAR}, #{housecount,jdbcType=VARCHAR}, #{comyear,jdbcType=VARCHAR}, 
+      #{company,jdbcType=VARCHAR}, #{carfree,jdbcType=VARCHAR}, #{comfree,jdbcType=VARCHAR}, 
+      #{comphone,jdbcType=VARCHAR}, #{carcount,jdbcType=VARCHAR}, #{comcount,jdbcType=VARCHAR}, 
+      #{devephone,jdbcType=VARCHAR}, #{developer,jdbcType=VARCHAR}, #{villagephone,jdbcType=VARCHAR}, 
+      #{keyword,jdbcType=VARCHAR}, #{detailid,jdbcType=BIGINT}, #{state,jdbcType=INTEGER}, 
+      #{describes,jdbcType=VARCHAR}, #{xcxpicture,jdbcType=VARCHAR}, #{update_time,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Village" >
-     <selectKey  resultType="long"  order="AFTER"  keyProperty="villageid" >
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="villageid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into village
@@ -163,6 +166,9 @@
       </if>
       <if test="picture != null" >
         picture,
+      </if>
+      <if test="videourl != null" >
+        videourl,
       </if>
       <if test="housecount != null" >
         housecount,
@@ -234,6 +240,9 @@
       </if>
       <if test="picture != null" >
         #{picture,jdbcType=VARCHAR},
+      </if>
+      <if test="videourl != null" >
+        #{videourl,jdbcType=VARCHAR},
       </if>
       <if test="housecount != null" >
         #{housecount,jdbcType=VARCHAR},
@@ -315,6 +324,9 @@
       <if test="record.picture != null" >
         picture = #{record.picture,jdbcType=VARCHAR},
       </if>
+      <if test="record.videourl != null" >
+        videourl = #{record.videourl,jdbcType=VARCHAR},
+      </if>
       <if test="record.housecount != null" >
         housecount = #{record.housecount,jdbcType=VARCHAR},
       </if>
@@ -379,6 +391,7 @@
       code = #{record.code,jdbcType=BIGINT},
       userid = #{record.userid,jdbcType=BIGINT},
       picture = #{record.picture,jdbcType=VARCHAR},
+      videourl = #{record.videourl,jdbcType=VARCHAR},
       housecount = #{record.housecount,jdbcType=VARCHAR},
       comyear = #{record.comyear,jdbcType=VARCHAR},
       company = #{record.company,jdbcType=VARCHAR},
@@ -417,6 +430,9 @@
       </if>
       <if test="picture != null" >
         picture = #{picture,jdbcType=VARCHAR},
+      </if>
+      <if test="videourl != null" >
+        videourl = #{videourl,jdbcType=VARCHAR},
       </if>
       <if test="housecount != null" >
         housecount = #{housecount,jdbcType=VARCHAR},
@@ -479,6 +495,7 @@
       code = #{code,jdbcType=BIGINT},
       userid = #{userid,jdbcType=BIGINT},
       picture = #{picture,jdbcType=VARCHAR},
+      videourl = #{videourl,jdbcType=VARCHAR},
       housecount = #{housecount,jdbcType=VARCHAR},
       comyear = #{comyear,jdbcType=VARCHAR},
       company = #{company,jdbcType=VARCHAR},

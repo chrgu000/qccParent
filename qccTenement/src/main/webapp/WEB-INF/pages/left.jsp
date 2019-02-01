@@ -16,7 +16,7 @@
 <c:if test="${li.accessid==1 }">
 <div class="panel panel-default">
 <div class="panel-heading"> <h4 class="panel-title"> <a href="#collapseOne" data-toggle="collapse" data-parent="#accordion">
-		      基本管理 </a> </h4> </div>
+		      系统管理 </a> </h4> </div>
 <div id="collapseOne" class="panel-collapse collapse in">
 <ul class="list-group">
 	<li style="display:none;"  class="list-group-item systemdefaultstate" id="isshow15">
@@ -40,12 +40,10 @@
 	<li style="display:none;"  class="list-group-item" id="isshow28">
 		<button type="button" class="btn btn-primary  systemdata" >系统数据维护</button>
 	</li>
-	<li style="display:none;" class="list-group-item " id = "isshow32">
-		<button type="button" class="btn btn-primary  editaddress2">四级地址编辑</button>
+	<li   class="list-group-item" >
+		<button type="button" class="btn btn-primary  livingset" >活动规则设置</button>
 	</li>
-	<li style="display:none;" class="list-group-item" id = "isshow9">
-		<button type="button" class="btn btn-primary  metro">热门城市地铁</button>
-	</li>
+	
 </ul>
 </div>
 </div>
@@ -131,7 +129,7 @@
 <c:if test="${li.accessid==4}">
 <div class="panel panel-default">
 <div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"> 
-			小区楼栋 </a></h4></div>
+			区域管理</a></h4></div>
 <div id="collapseThree" class="panel-collapse collapse">
 <ul class="list-group">
 
@@ -147,7 +145,12 @@
 	<li style="display:none;"  class="list-group-item" id="isshow21">
 		<button type="button" class="btn btn-primary  buildingsmap">楼栋地图分布</button>
 	</li>
-	<li class="list-group-item">Vestibulum at eros</li>
+	<li style="display:none;" class="list-group-item " id = "isshow32">
+		<button type="button" class="btn btn-primary  editaddress2">四级地址编辑</button>
+	</li>
+	<li style="display:none;" class="list-group-item" id = "isshow9">
+		<button type="button" class="btn btn-primary  metro">热门城市地铁</button>
+	</li>
 </ul>
 </div>
 </div>

@@ -514,6 +514,9 @@ function refurbishdate(param ,currentpage){
 	if (param === 'buildingid') {
 		getbuildinglist (currentpage);
 	}
+	if (param === 'livingid') {
+		searchLivingByTypeId(currentpage);
+	}
 	
 }
 

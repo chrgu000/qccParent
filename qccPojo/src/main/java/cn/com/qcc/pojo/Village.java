@@ -6,7 +6,7 @@ public class Village {
     /** 小区ID*/
     private Long villageid;
 
-    /** */
+    /** 1-普通小区  2-公租房*/
     private Integer villagetypeid;
 
     /** 小区名称*/
@@ -20,6 +20,9 @@ public class Village {
 
     /** 小区图片*/
     private String picture;
+
+    /** 视频图片*/
+    private String videourl;
 
     /** 房屋总数*/
     private String housecount;
@@ -118,6 +121,14 @@ public class Village {
 
     public void setPicture(String picture) {
         this.picture = picture == null ? null : picture.trim();
+    }
+
+    public String getVideourl() {
+        return videourl;
+    }
+
+    public void setVideourl(String videourl) {
+        this.videourl = videourl == null ? null : videourl.trim();
     }
 
     public String getHousecount() {

@@ -37,11 +37,37 @@ $(function () {
 		var tipDiv =$('.tipDiv').empty();
 		$('.solrTiph4').text('你确定要维护 [房源] : '+start+"万 到  " +end +'万 ?');
 		tipDiv.append('<button type="button" class="btn btn-primary" onclick=houseToSolr()>确定维护</button>');
-		
+	});
+	$('.village_onekey_tosolr').click(function () {
+		var start = $('.buil_solr_next_start').val();
+		var end = $('.buil_solr_next_end').val();
+		var tipDiv =$('.tipDiv').empty();
+		$('.solrTiph4').text('你确定要维护 [小区] : '+start+"万 到  " +end +'万 ?');
+		tipDiv.append('<button type="button" class="btn btn-primary" onclick=villageToSolr()>确定维护</button>');
 	});
 	
 	
 });
+
+function villageToSolr() {
+	var start = $('.buil_solr_next_start').val() * 10000;
+	var end = $('.buil_solr_next_end').val() * 10000;
+	var tipDiv =$('.tipDiv').empty();
+	tipDiv.append('<h3>数据同步中... , 请耐心等待 !!!</h3>');
+	$.ajax ({
+		data:{
+			start:start,
+			end:end
+		},
+		type : 'POST',
+		url : '/Tenement/addvillagetosolr',
+		success : function (data) {
+			tipDiv.empty().append('<h3>'+data.msg+'</h3>');
+			setTimeout(function(){$('#solrTip').modal('hide')},3000);
+		}
+	});
+	
+}
 
 function houseToSolr() {
 	var start = $('.buil_solr_next_start').val() * 10000;

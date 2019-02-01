@@ -8,9 +8,6 @@
 <title></title>
 </head>
 <body>
-	    <button  style="margin-top: 50px; type="button" class="btn btn-primary layout_sure">
-			索引库地址
-		</button>
 		<button style="margin-top: 50px; type="button" class="btn btn-primary resetstart">
 			重置开始
 		</button>
@@ -24,28 +21,28 @@
 		  开始位置:<input class="buil_solr_next_start" type="text" value="0" readonly="readonly" style="width: 100px;"/>  
 		结束结束:<input class="buil_solr_next_end" type="text" value="2" readonly="readonly"style="width: 100px;"/>
 	<div style="margin-top: 10px;margin-left: 10px;">
-		 
-		
 		<button style="margin-top: 10px; type="button" class="btn btn-primary buil_onekey_tosolr"
 		data-toggle="modal" data-target="#solrTip">
 		 楼栋索引库一键重构</button>
-		 
-	
 	</div>
 	
 	<div style="margin-top: 10px;margin-left: 10px;">
-		
 		<button style="margin-top: 10px; type="button" class="btn btn-primary house_onekey_tosolr"
 		data-toggle="modal" data-target="#solrTip">
 		房源索引库一键重构</button>
-	
 	</div>
 	
 	<div style="margin-top: 10px;margin-left: 10px;">
-	
 		<button style="margin-top: 10px; type="button" class="btn btn-primary qiuzu_onekey_tosolr"
 		data-toggle="modal" data-target="#solrTip">
 			求租索引库一键重构
+		</button>
+	</div>
+	
+	<div style="margin-top: 10px;margin-left: 10px;">
+		<button style="margin-top: 10px; type="button" class="btn btn-primary village_onekey_tosolr"
+		data-toggle="modal" data-target="#solrTip">
+			小区索引库一键重构
 		</button>
 	</div>
 	

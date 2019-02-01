@@ -27,6 +27,9 @@ public class Building {
     /** 图片*/
     private String picture;
 
+    /** 视频图片*/
+    private String videourl;
+
     /** 楼栋编号*/
     private String buildingcode;
 
@@ -122,6 +125,14 @@ public class Building {
 
     public void setPicture(String picture) {
         this.picture = picture == null ? null : picture.trim();
+    }
+
+    public String getVideourl() {
+        return videourl;
+    }
+
+    public void setVideourl(String videourl) {
+        this.videourl = videourl == null ? null : videourl.trim();
     }
 
     public String getBuildingcode() {
