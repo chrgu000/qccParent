@@ -66,68 +66,7 @@ public class RongServiceImpl implements RongService {
 	@Resource  Destination groupLaren;
 	@Autowired JmsTemplate jmsTemplate;
 
-	@Override
-	public void insert(Long userid, Long followUserId) {
-		Rong rong_u = this.exist(userid, followUserId);
-		if (rong_u != null) {
-			rong_u.setUpdate_time(new Date());
-			rong_u.setStatue(1);
-			rongMapper.updateByPrimaryKeySelective(rong_u);
-		} else {
-			Rong rong = new Rong();
-			rong.setUserid(userid);
-			rong.setFollowUserId(followUserId);
-			rong.setCreate_time(new Date());
-			rong.setUpdate_time(new Date());
-			rong.setFollowstatue(1);
-			rong.setStatue(1);
-			rongMapper.insert(rong);
-		}
 
-		Rong rong_f = this.existfollow(userid, followUserId);
-		if (rong_f != null) {
-			rong_f.setUpdate_time(new Date());
-			rong_f.setStatue(1);
-			rongMapper.updateByPrimaryKeySelective(rong_f);
-		} else {
-			Rong rong = new Rong();
-			rong.setUserid(followUserId);
-			rong.setFollowUserId(userid);
-			rong.setCreate_time(new Date());
-			rong.setUpdate_time(new Date());
-			rong.setFollowstatue(1);
-			rong.setStatue(1);
-			rongMapper.insert(rong);
-		}
-	}
-
-	// 判断当前的会话是否存在
-	public Rong exist(Long userid, Long followUserId) {
-		RongExample example = new RongExample();
-		RongExample.Criteria criteria = example.createCriteria();
-		criteria.andUseridEqualTo(userid);
-		criteria.andFollowUserIdEqualTo(followUserId);
-		List<Rong> rongList = rongMapper.selectByExample(example);
-		if (rongList.size() > 0 && !rongList.isEmpty()) {
-			return rongList.get(0);
-		} else {
-			return null;
-		}
-	}
-
-	// 判断被当前的会话是否存在
-	public Rong existfollow(Long userid, Long followUserId) {
-		RongExample example = new RongExample();
-		RongExample.Criteria criteria = example.createCriteria();
-		criteria.andUseridEqualTo(followUserId);
-		criteria.andFollowUserIdEqualTo(userid);
-		List<Rong> rongList = rongMapper.selectByExample(example);
-		if (rongList.size() > 0 && !rongList.isEmpty()) {
-			return rongList.get(0);
-		} else {
-			return null;
-		}
-	}
 
 	// 查询我联系了谁的列表
 	public List<Rong> rongList(Long userid) {
@@ -135,16 +74,7 @@ public class RongServiceImpl implements RongService {
 		return rongList;
 	}
 
-	// 查询谁联系了我的列表
-	public List<Rong> selectbetouch(Long userid) {
-		return rongMapper.selectbetouch(userid);
-	}
 
-	// 移除聊天记录
-	public void romovebetouch(Rong rong) {
-		rong.setStatue(0);
-		rongMapper.updateByPrimaryKeySelective(rong);
-	}
 
 	// 创建群组
 	public ResultMap creategroup(Ronggroup rongroup, Groupaddress detaileaddress, Tribetype tribetype , 
@@ -241,6 +171,7 @@ public class RongServiceImpl implements RongService {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		
 		
 		// 如果返回的code不是200 说明拉入失败
 		if (CheckDataUtil.checkNotEqual(code, 200)) 
@@ -389,11 +320,11 @@ public class RongServiceImpl implements RongService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// 更新两个表的状态 1-控制表
-		Rongconn conn = getUserConnGroupState(userid, groupid);
-		// 聊天表
-		conn.setState(2);
-		rongconnMapper.updateByPrimaryKeySelective(conn);
+		RongconnExample example = new RongconnExample();
+		RongconnExample.Criteria criteria = example.createCriteria();
+		criteria.andUseridEqualTo(userid);
+		criteria.andGroupidEqualTo(groupid);
+		rongconnMapper.deleteByExample(example );
 		return ResultMap.build(200, "退出成功！");
 	}
 

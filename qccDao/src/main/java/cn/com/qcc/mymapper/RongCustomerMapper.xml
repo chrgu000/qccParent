@@ -244,7 +244,7 @@
 	
 	
 	<select id="searchgroupdetail" resultType="cn.com.qcc.queryvo.RongCustomer" parameterType="cn.com.qcc.queryvo.GroupVo">
-			SELECT
+			SELECT DISTINCT
 			  ronggroup.picture ,
 			  IFNULL(ronggroup.description,'')description ,
 			  ronggroup.`name` groupname ,

@@ -17,21 +17,6 @@ import cn.com.qcc.queryvo.VillageeVo;
 
 public interface RongService {
 
-	// 首次登陆
-	void insert(Long userid, Long followUserId);
-
-	// 查看当前的记录是否已经存在
-	Rong exist(Long userid, Long followUserId);
-
-	// 查询我联系谁的列表
-	public List<Rong> rongList(Long userid);
-
-	// 查询谁联系我的列表
-	List<Rong> selectbetouch(Long userid);
-
-	// 移除谁和我的聊天记录
-	void romovebetouch(Rong rong);
-	
 	/**创建群组
 	 * @param Ronggroup : 群组相关信息
 	 * @param detailaddress : 详情地址

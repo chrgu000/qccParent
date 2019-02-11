@@ -226,7 +226,7 @@ public class SolrPageUtil {
 	//四级联动地址的code
 	public static void likecodequery(Long likecode ,SolrQuery query) {
 		if (CheckDataUtil.checkNotEmpty(likecode)) {
-			query.add("fq", "likecode:*"+likecode+"*");
+			query.add("fq", "likecode:"+likecode+"*");
 		}
 		
 	}
