@@ -54,6 +54,7 @@ import cn.com.qcc.mapper.RentmodalMapper;
 import cn.com.qcc.mapper.RongconnMapper;
 import cn.com.qcc.mapper.SystemstateMapper;
 import cn.com.qcc.mapper.UserMapper;
+import cn.com.qcc.mapper.UserRoleMapper;
 import cn.com.qcc.mapper.UsercentMapper;
 import cn.com.qcc.mapper.UserconnMapper;
 import cn.com.qcc.mapper.VipcountMapper;
@@ -115,6 +116,7 @@ import cn.com.qcc.queryvo.UserVo;
 public class UserServiceImpl implements UserService {
 	@Autowired RongconnMapper rongconnMapper;
 	@Autowired UserconnMapper userconnMapper;
+	@Autowired UserRoleMapper userRoleMapper;
 	@Autowired VipcountMapper vipcountMapper;
 	@Autowired ProfileMapper profileMapper;
 	@Autowired PaymodalMapper paymodalMapper;

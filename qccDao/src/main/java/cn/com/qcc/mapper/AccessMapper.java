@@ -1,8 +1,10 @@
 package cn.com.qcc.mapper;
 
+import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.pojo.Access;
 import cn.com.qcc.pojo.AccessExample;
 import cn.com.qcc.pojo.Role;
+import cn.com.qcc.queryvo.UserCustomer;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
@@ -37,4 +39,9 @@ public interface AccessMapper {
 	List<Access> isnotrole(@Param("idsList")String[] str);
 	
 	void deletebyroleid(Role role);
+	
+	/**查询需要添加的系统账号**/
+	int searchAddRoleCount(@Param("searchWhere") String searchWhere);
+	List<UserCustomer> searchAddRole(@Param("searchWhere")String searchWhere,
+			@Param("pagequery")PageQuery pagequery);
 }

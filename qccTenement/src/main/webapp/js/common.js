@@ -300,6 +300,7 @@ function dopage(type,searchpage) {
 	if ('huiyuan_user_nav' === type) { getmanagervipmonery(searchpage)}
 	if ('fangyuan_user_nav' === type) { gethousefabu (searchpage)}
 	if ('qiuzu_user_nav' === type) {  gethouseqizu(searchpage)}
+	if ('search_adduserrole_nav_area' === type) {  searchAddRole(searchpage)}
 	if ('page_nav_area' === type) { getalluseraccount(searchpage) }
 	if ('user_role_nav_area' === type) {getalluser_role(searchpage)}
 	if ('access_url_nav_area' === type) {getallaccess(searchpage)}
@@ -517,7 +518,10 @@ function refurbishdate(param ,currentpage){
 	if (param === 'livingid') {
 		searchLivingByTypeId(currentpage);
 	}
-	
+	// 删除角色的回显
+	if (param === 'userroleid') {
+		getalluser_role(currentpage);
+	}
 }
 
 

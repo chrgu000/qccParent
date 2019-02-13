@@ -493,45 +493,69 @@ public class IDUtils {
 		return flag;
 
 	}
-	
-	
-	public static String replacePhoneKongGe(String current){
-		
-		if (CheckDataUtil.checkisEmpty(current)) 
-			return current ;
+
+	public static String replacePhoneKongGe(String current) {
+
+		if (CheckDataUtil.checkisEmpty(current))
+			return current;
 		current = current.replace(" ", "");
-		if (current.length() !=11) {
-			return "" ;
+		if (current.length() != 11) {
+			return "";
 		}
 		System.out.println(current);
 		return current;
 	}
-	
-	/**把米转为千米**/
-	public static String mPRETokm (String current) {
-		
-		if (CheckDataUtil.checkisEmpty(current)) 
-			{ return current;}
+
+	/** 把米转为千米 **/
+	public static String mPRETokm(String current) {
+
+		if (CheckDataUtil.checkisEmpty(current)) {
+			return current;
+		}
 		try {
 			int i = Integer.parseInt(current);
 			if (i >= 1000) {
-				current = (i/1000.0)+"000";
-				current = current.substring(0,current.lastIndexOf(".")+3) +"km";
+				current = (i / 1000.0) + "000";
+				current = current.substring(0, current.lastIndexOf(".") + 3) + "km";
 			} else {
 				current = current + "m";
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return current;
 	}
-	
-	public static void main (String [] args) {
-		 String sss= "        100            10  1";
-		sss= sss.replace(" ", "");
-		 System.out.println(sss);
-		
+
+	public static double doBargin(double total) {
+
+		int max = 25;
+		int min = 10;
+		Random random = new Random();
+		double s = random.nextInt(max) % (max - min + 1) + min;
+		if (total < s)
+			s = total;
+		total = total - s;
+		return total;
+
+	}
+
+	public static void main(String[] args) {
+
+		int total = 100;
+		int max = 25;
+		int min = 10;
+		Random random = new Random();
+
+		while (total > 0) {
+			int s = random.nextInt(max) % (max - min + 1) + min;
+			if (total < s)
+				s = total;
+			total = total - s;
+			System.out.println("砍掉的金额 ：" + s);
+			System.out.println("剩余金额 : " + total);
+		}
+
 	}
 
 }

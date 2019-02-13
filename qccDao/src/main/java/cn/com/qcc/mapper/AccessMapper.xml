@@ -210,4 +210,43 @@
   <select id="deletebyroleid"  parameterType="cn.com.qcc.pojo.Role">
   		DELETE from role_access where role_access.roleid = #{roleid}
   </select>
+  
+  
+   <!-- 查询需要添加的系统账号-->
+  <select id="searchAddRole"  resultType="cn.com.qcc.queryvo.UserCustomer">
+  		SELECT `user`.userid ,`profile`.user_name ,
+  		IFNULL(`profile`.real_name , '未知')realname ,
+		 `user`.telephone
+		 from `user` 
+			LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+		where `user`.userid not in (
+			SELECT userid from user_role
+			)
+		<if test="searchWhere !=null and searchWhere !=''">
+			 and (
+			`user`.telephone    LIKE CONCAT('',#{searchWhere},'%')
+			or `profile`.real_name   LIKE CONCAT('',#{searchWhere},'%')
+				)
+		</if>
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if> 
+  </select>
+  
+  
+  <!-- 查询需要添加的系统账号-->
+  <select id="searchAddRoleCount"  resultType="integer">
+  		SELECT count(1)
+		 from `user` 
+			LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+		where `user`.userid not in (
+		SELECT userid from user_role
+			)
+		<if test="searchWhere !=null and searchWhere !=''">
+			 and (
+			`user`.telephone    LIKE CONCAT('',#{searchWhere},'%')
+			or `profile`.real_name   LIKE CONCAT('',#{searchWhere},'%')
+				)
+		</if>
+  </select>
 </mapper>

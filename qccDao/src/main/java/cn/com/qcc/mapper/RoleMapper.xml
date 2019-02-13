@@ -167,6 +167,6 @@
   </select>
   
     <select id="updateuserrolebyuserid" parameterType="cn.com.qcc.pojo.Role">
-  			UPDATE user_role set roleid =#{roleid} where userid = #{userid}
+  			UPDATE user_role set roleid =#{roleid} ,state = #{state} where userid = #{userid}
   </select>
 </mapper>

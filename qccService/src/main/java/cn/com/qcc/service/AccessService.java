@@ -259,6 +259,19 @@ public interface AccessService {
 	// [内部方法]
 	ResultMap buildpicpath();
 
+
+	ResultMap deleterole(Long userid);
+
+	
+	/**查询需要添加的系统账号**/
+	int searchAddRoleCount(String searchWhere);
+	List<UserCustomer> searchAddRole(String searchWhere, PageQuery pagequery);
+
+	/**
+	 * 添加用户角色
+	 * */
+	ResultMap userRoleAdd(String userids, Long roleid);
+
 	
 	
 

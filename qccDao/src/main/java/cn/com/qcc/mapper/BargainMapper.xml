@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="cn.com.qcc.mapper.UserRoleMapper" >
-  <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.UserRole" >
+<mapper namespace="cn.com.qcc.mapper.BargainMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Bargain" >
     <result column="userid" property="userid" jdbcType="BIGINT" />
-    <result column="roleid" property="roleid" jdbcType="BIGINT" />
-    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="openid" property="openid" jdbcType="VARCHAR" />
+    <result column="otherid" property="otherid" jdbcType="BIGINT" />
+    <result column="monery" property="monery" jdbcType="DOUBLE" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="update_time" property="update_time" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -65,15 +68,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    userid, roleid, state
+    userid, openid, otherid, monery, type, update_time
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.UserRoleExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.BargainExample" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from user_role
+    from bargain
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -81,60 +84,89 @@
       order by ${orderByClause}
     </if>
   </select>
-  <delete id="deleteByExample" parameterType="cn.com.qcc.pojo.UserRoleExample" >
-    delete from user_role
+  <delete id="deleteByExample" parameterType="cn.com.qcc.pojo.BargainExample" >
+    delete from bargain
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="cn.com.qcc.pojo.UserRole" >
-    insert into user_role (userid, roleid, state
+  <insert id="insert" parameterType="cn.com.qcc.pojo.Bargain" >
+    insert into bargain (userid, openid, otherid, 
+      monery, type, update_time
       )
-    values (#{userid,jdbcType=BIGINT}, #{roleid,jdbcType=BIGINT}, #{state,jdbcType=INTEGER}
+    values (#{userid,jdbcType=BIGINT}, #{openid,jdbcType=VARCHAR}, #{otherid,jdbcType=BIGINT}, 
+      #{monery,jdbcType=DOUBLE}, #{type,jdbcType=INTEGER}, #{update_time,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="cn.com.qcc.pojo.UserRole" >
-    insert into user_role
+  <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Bargain" >
+    insert into bargain
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="userid != null" >
         userid,
       </if>
-      <if test="roleid != null" >
-        roleid,
+      <if test="openid != null" >
+        openid,
       </if>
-      <if test="state != null" >
-        state,
+      <if test="otherid != null" >
+        otherid,
+      </if>
+      <if test="monery != null" >
+        monery,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="update_time != null" >
+        update_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="userid != null" >
         #{userid,jdbcType=BIGINT},
       </if>
-      <if test="roleid != null" >
-        #{roleid,jdbcType=BIGINT},
+      <if test="openid != null" >
+        #{openid,jdbcType=VARCHAR},
       </if>
-      <if test="state != null" >
-        #{state,jdbcType=INTEGER},
+      <if test="otherid != null" >
+        #{otherid,jdbcType=BIGINT},
+      </if>
+      <if test="monery != null" >
+        #{monery,jdbcType=DOUBLE},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="update_time != null" >
+        #{update_time,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="cn.com.qcc.pojo.UserRoleExample" resultType="java.lang.Integer" >
-    select count(*) from user_role
+  <select id="countByExample" parameterType="cn.com.qcc.pojo.BargainExample" resultType="java.lang.Integer" >
+    select count(*) from bargain
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update user_role
+    update bargain
     <set >
       <if test="record.userid != null" >
         userid = #{record.userid,jdbcType=BIGINT},
       </if>
-      <if test="record.roleid != null" >
-        roleid = #{record.roleid,jdbcType=BIGINT},
+      <if test="record.openid != null" >
+        openid = #{record.openid,jdbcType=VARCHAR},
       </if>
-      <if test="record.state != null" >
-        state = #{record.state,jdbcType=INTEGER},
+      <if test="record.otherid != null" >
+        otherid = #{record.otherid,jdbcType=BIGINT},
+      </if>
+      <if test="record.monery != null" >
+        monery = #{record.monery,jdbcType=DOUBLE},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.update_time != null" >
+        update_time = #{record.update_time,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -142,22 +174,15 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update user_role
+    update bargain
     set userid = #{record.userid,jdbcType=BIGINT},
-      roleid = #{record.roleid,jdbcType=BIGINT},
-      state = #{record.state,jdbcType=INTEGER}
+      openid = #{record.openid,jdbcType=VARCHAR},
+      otherid = #{record.otherid,jdbcType=BIGINT},
+      monery = #{record.monery,jdbcType=DOUBLE},
+      type = #{record.type,jdbcType=INTEGER},
+      update_time = #{record.update_time,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  
-  
-  
-  <select id="rolenotinuser" resultType="cn.com.qcc.pojo.Role" parameterType="cn.com.qcc.pojo.Role">
-  			SELECT * from role 
-  </select>
-  
-    <select id="updateuserrolebyuserid" parameterType="cn.com.qcc.pojo.Role">
-  			UPDATE user_role set roleid =#{roleid} where userid = #{userid}
-  </select>
 </mapper>

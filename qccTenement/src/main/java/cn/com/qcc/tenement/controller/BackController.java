@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import WangYiUtil.WangYiUtil;
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
@@ -59,6 +60,34 @@ public class BackController{
 	@Autowired HouseSolrDao houseSolrDao;
 	
 	
+	@RequestMapping("/back//userRoleAdd")
+	@ResponseBody
+	public ResultMap userRoleAdd(String userids ,Long roleid){
+		
+		if (CheckDataUtil.checkisEmpty(userids) || CheckDataUtil.checkisEmpty(roleid)) 
+			return ResultMap.build(400, "少参数");
+		return accessService.userRoleAdd(userids,roleid);
+	}
+	
+	/**
+	 * 查询需要添加的系统账号
+	 * **/
+	@RequestMapping("/back/searchAddRole")
+	@ResponseBody
+	public ResultMap searchAddRole(String searchWhere,
+			@RequestParam(defaultValue="8")int pagesize ,
+			@RequestParam(defaultValue="1")int currentpage) {
+		int infocount = accessService.searchAddRoleCount(searchWhere);
+		PageQuery pagequery = new PageQuery();
+		pagequery.setPageParams(infocount, pagesize, currentpage);
+		List<UserCustomer> userList = accessService.searchAddRole(searchWhere ,pagequery);
+		Map<String, Object> map = new HashMap<>();
+		map.put("pagequery", pagequery);
+		map.put("userList", userList);
+		return ResultMap.IS_200(map);
+	}
+	
+	
 	@RequestMapping("/deleteSolr")
 	public ResultMap del (HouseCustomer houseCustomer) {
 		houseSolrDao.oneHouseDeleteFromSolr(houseCustomer);
@@ -83,12 +112,21 @@ public class BackController{
 		user.setTelephone(telephone);
 		User user1 = userService.loginByPwd(user);
 		if (user1 != null) {
+			if (!user1.getPassword().equals(str1)) {
+				request.getSession().setAttribute("error", "用户名名和密码不一致");
+				return "redirect:/login";
+			}
 			if (user1.getPassword().equals(str1)) {
 				UserCustomer rolen_user = getRoleName(user1);
 				if (rolen_user == null) {
 					request.getSession().setAttribute("error", "你没有登录后台的权限");
 					return "redirect:/login";
 				} else {
+					if (!"1".equals(rolen_user.getState().toString())) {
+						request.getSession().setAttribute("error", "你的账号已经被冻结");
+						return "redirect:/login";
+					}
+					
 					UserCustomer user_search = userService.getUserAndProfile(user1.getUserid());
 					// 通过用户ID查询权限集合
 					List<Access> list = getaccessbyuserid(user_search);
@@ -99,10 +137,7 @@ public class BackController{
 					return "redirect:/index";
 				}
 			}
-			if (!user1.getPassword().equals(str1)) {
-				request.getSession().setAttribute("error", "用户名名和密码不一致");
-				return "redirect:/login";
-			}
+			
 
 		}
 		request.getSession().setAttribute("error", "登录过期或账户不存在");
@@ -1129,7 +1164,14 @@ public class BackController{
 		return retuslt; 
 	}
 	
-
+	
+	
+	/**删除角色**/
+	@RequestMapping("/back/deleterole")
+	@ResponseBody
+	public ResultMap deleterole (Long userroleid) {
+		return accessService.deleterole(userroleid);
+	}
 	
     
 }

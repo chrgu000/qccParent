@@ -677,10 +677,10 @@ public class HouseController {
 			if (!"".equals(ids) && ids != null) {
 				String[] str = ids.split(",");
 				for (int i = 0; i < str.length; i++) {
-					if ("9".equals(str[i])) {
+					if ("90".equals(str[i])) {
 						house.setSexName("男");
 					}
-					if ("10".equals(str[i])) {
+					if ("91".equals(str[i])) {
 						house.setSexName("女");
 					}
 					if ("11".equals(str[i])) {
@@ -698,6 +698,9 @@ public class HouseController {
 				}
 			}
 			house.setPreList(preList);
+			String housetag= house.getHousetag_id().replace("90", "").replace("91", "").replace("11", "")
+					.replace("12", "").replace("13", "").replace("14", "");
+			house.setHousetag_id(housetag);
 			return ResultMap.IS_200(house);
 		}
 		if (type == 2) {

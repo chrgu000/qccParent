@@ -663,13 +663,13 @@
 	<!-- 根据电话号码查询用户角色关系 -->
 	<select id="getalluser_role" resultType="cn.com.qcc.queryvo.UserCustomer"
 		parameterType="cn.com.qcc.queryvo.UserVo">
-		SELECT * FROM (
-		SELECT user.userid, `user`.telephone ,	IFNULL(`profile`.user_name,'')user_name
-		,IFNULL(user_role.roleid,1000)
-		roleid,IFNULL(role.rolename,'XXXXXX')rolename from `user`
-		LEFT JOIN `profile` on `user`.userid = `profile`.user_id
-		LEFT JOIN user_role on `user`.userid = user_role.userid
-		LEFT JOIN role on user_role.roleid = role.roleid
+			SELECT user.userid, `user`.telephone ,	IFNULL(`profile`.user_name,'')user_name
+				,IFNULL(user_role.roleid,1000) ,user_role.state ,
+				user_role.roleid,IFNULL(role.rolename,'XXXXXX')rolename from user_role
+		    INNER JOIN `user` on `user`.userid = user_role.userid
+				INNER JOIN `profile` on `user`.userid = `profile`.user_id
+				INNER JOIN role on user_role.roleid = role.roleid
+		
 		where 1=1
 		<if test="telephone !=null  ">
 			and `user`.telephone like
@@ -678,16 +678,18 @@
 		<if test="rolename !=null and rolename !=''  ">
 			and role.rolename like
 			concat('%',#{rolename},'%')
-		</if>  ) user
-		ORDER BY `user`.roleid ASC 
+		</if>  
+		ORDER BY user_role.roleid asc 
 		<if test="pagequery !=null "> limit #{pagequery.pagestart} , #{pagequery.pagesize} </if>
 	</select>
-		<select id="getalluser_roleCount" resultType="integer"
+	
+	
+	<select id="getalluser_roleCount" resultType="integer"
 		parameterType="cn.com.qcc.queryvo.UserVo">
-		SELECT count(1) from `user`
-		LEFT JOIN `profile` on `user`.userid = `profile`.user_id
-		LEFT JOIN user_role on `user`.userid = user_role.userid
-		LEFT JOIN role on user_role.roleid = role.roleid
+		SELECT COUNT(1) from user_role
+		    INNER JOIN `user` on `user`.userid = user_role.userid
+				INNER JOIN `profile` on `user`.userid = `profile`.user_id
+				INNER JOIN role on user_role.roleid = role.roleid
 		where 1=1
 		<if test="telephone !=null  ">
 			and `user`.telephone like
@@ -696,7 +698,7 @@
 		<if test="rolename !=null and rolename !=''  ">
 			and role.rolename like
 			concat('%',#{rolename},'%')
-		</if>
+		</if>  
 	</select>
 
 	<!-- 根据电话号码查询用户角色关系 -->
@@ -750,7 +752,7 @@
 
 	<!--  根据用户的ID,查询用户的角色ID 和角色名称 -->
 	<select id="getRoleName" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="cn.com.qcc.pojo.User">
-		SELECT rolename ,user_role.roleid  from role LEFT JOIN user_role on role.roleid =
+		SELECT rolename ,user_role.roleid ,user_role.state  from role LEFT JOIN user_role on role.roleid =
 		user_role.roleid
 		where user_role.userid = #{userid}
 	</select>

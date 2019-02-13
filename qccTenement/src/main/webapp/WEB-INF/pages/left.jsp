@@ -188,7 +188,7 @@
 			<button type="button" class="btn btn-primary  role_to_access" >角色对应权限</button>
 		</li>
 		<li style="display:none;"  class="list-group-item" id="isshow26">
-			<button type="button" class="btn btn-primary  user_to_role" >管理对应角色</button>
+			<button type="button" class="btn btn-primary  user_to_role" >系统账号管理</button>
 		</li>
 		<li style="display:none;"   class="list-group-item" id="isshow27">
 			<button type="button" class="btn btn-primary  manager_to_user" >管理对应用户</button>

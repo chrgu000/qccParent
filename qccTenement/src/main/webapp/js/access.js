@@ -26,6 +26,58 @@ $(function() {
 		}
 	});
 	
+	$('.role_search_btn').click(function (){
+		searchAddRole(1);
+	});
+	
+	$('.role_model_alert').click(function () {
+		//加载第一页数据
+		searchAddRole(1);
+		// 加载角色列表
+		var select = $('#select_role').empty();
+		$.ajax({
+			method : 'post',
+			url : '/Tenement/back/rolenotinuser',
+			success : function(data) {
+				select.append('<option value="">请选择</option>');
+				$.each(data.obj,function(index, value) {
+					var option = '<option value="'+value.roleid+'">'+value.rolename+'</option>';
+					select.append(option);
+				})
+			}
+		});
+			
+	});
+	
+	$('.user_role_save').click(function () {
+		var roleid = $('#select_role').val();
+		obj = document.getElementsByName("role_checkd");
+		var userids = '';
+		for (k in obj) {
+			if (obj[k].checked)
+				userids += obj[k].value + ",";
+		}
+		if (userids == '') {alert('选择用户');return ;}
+		if (roleid == '') {alert('请选择角色');return ;}
+		$.ajax({
+			data : {
+				roleid : roleid,
+				userids : userids
+			},
+			method : 'post',
+			url : '/Tenement/back/userRoleAdd',
+			success : function(data) {
+				if (data.code == 200) {
+					searchmanager_in_user(1);
+					$('#user_role_add').modal('hide');
+				}
+			}
+		});
+		
+		
+		
+	});
+	
 	$('.mymanager_persion').click(function (){
 		var userid = $('.sessionuserid').val();
 		$('.setsearchuserid').val(userid);
@@ -43,6 +95,8 @@ $(function() {
 			editaddress.hide();
 		}
 	});
+	
+	
 	
 	$('.manager_user_leijichongzhi').click(function () {
 		common_orderbywords('manager_user_leijichongzhi' ,'累计充值','inm.inmonetary')
@@ -149,11 +203,12 @@ $(function() {
 	$('.changge_user_role').click(function() {
 		var userid = $('.user_role_id').text();
 		var roleid = $("input[name='userradio']:checked").val();
+		var state = $('#role_state_selected').val();
 		var currentpage = $('.changeuser_role_page').val();
 		if (roleid === undefined) {
 			$('.user_role_error').text('请先选择一个角色');
 		} else {
-		$.ajax({data : {userid : userid,roleid : roleid},
+		$.ajax({data : {userid : userid,roleid : roleid,state:state},
 				url : '/Tenement/back/changgeuserrole',
 				method : 'POST',
 				success : function(data) {
@@ -395,11 +450,12 @@ function getalluser_role(currentpage) {
 function build_getalluser_role(data,currentpage) {
 	var form = $('#user_allrole').empty();
 	var user = data.obj.user;
+	var stateString = ['' , '正常' ,'冻结'];
 	$.each(user, function(index, value) {
 	var td = '<tr><td>' + value.userid + '</td><td>' + value.telephone + '</td><td>' + value.user_name
-			+ '</td><td>' + value.roleid + '</td><td>' + value.rolename + '</td>'
-			+ '<td><a id="'+value.roleid+'_'+value.userid+'_'+value.rolename+'_user_role" class="btn btn-xs setsearchword"' +
-			'data-toggle="modal" data-target="#user_role_target">维护 </a></td></tr>'
+			+ '</td><td>' + stateString[value.state] + '</td><td>' + value.rolename + '</td>'
+			+ '<td><a id="'+value.roleid+'_'+value.userid+'_'+value.rolename+'_'+stateString[value.state]+'_user_role" class="btn btn-xs setsearchword"' +
+			'data-toggle="modal" data-target="#user_role_target">维护 </a><a id="'+value.roleid+'_'+value.userid+'_'+value.rolename+'_'+stateString[value.state]+'_delete_role" class="role_delete btn btn-xs">删除</a></td></tr>'
 	form.append(td);
 	})
 	
@@ -412,16 +468,36 @@ function build_getalluser_role(data,currentpage) {
 		var roleid = roleid_userid_rolename.split('_')[0];
 		var userid = roleid_userid_rolename.split('_')[1];
 		var rolename = roleid_userid_rolename.split('_')[2];
+		var stateString = roleid_userid_rolename.split('_')[3];
 		$('.setsearchuserid').val(userid);
 		$('.setsearchroleid').val(roleid);
 		$('.setsearchrolename').val(rolename);
-		changeuser_role_search(currentpage);
+		changeuser_role_search(currentpage ,stateString);
+	});
+	
+	$('.role_delete').click(function () {
+		var roleid_userid_rolename = $(this).attr('id');
+		var roleid = roleid_userid_rolename.split('_')[0];
+		var userid = roleid_userid_rolename.split('_')[1];
+		var rolename = roleid_userid_rolename.split('_')[2];
+		var stateString = roleid_userid_rolename.split('_')[3];
+		// 封装提示的主干
+		var tip = '[ '+ userid+']';
+		$('.delete_tip').text(tip);
+		//设置参数名称
+		var param = 'userroleid';
+		//执行删除的URL链接
+		var deleteurl = '/Tenement/back/deleterole';
+		commondelete(param,userid,deleteurl,currentpage) ;
 	});
 	
 }
 
 
-function changeuser_role_search(currentpage) {
+function changeuser_role_search(currentpage,stateString) {
+	var select = $('#role_state_selected').empty();
+	select.append('<option value="1">正常</option><option value="2">冻结</option>');
+	select.find("option:contains('"+stateString+"')").attr("selected",true);
 	var userid = $('.setsearchuserid').val();
 	var roleid = $('.setsearchroleid').val();
 	var rolename = $('.setsearchrolename').val();
@@ -1047,8 +1123,39 @@ function buil_manager_user_list (data) {
 	
 }
 
+//查询想要添加的数据
+function searchAddRole(currentpage) {
+	var searchWhere = $('.role_searchWhere').val();
+	$ .ajax({ 
+		data : {currentpage:currentpage,searchWhere:searchWhere},
+		url : '/Tenement/back/searchAddRole',
+		method : 'POST',
+		success : function(data) {
+			if(data.code == 200){
+				// 创建分页条
+				build_common_nav('search_adduserrole_nav_area',data);
+				//显示分页数据
+				build_common_page('search_adduserrole_info_area',data);
+				// 加载数据
+				buil_searchAddRole_list(data);
+				
+				
+				
+			}
+		}
+	});
+}
 
-
+function buil_searchAddRole_list(data) {
+	var form = $('#search_add_body').empty();
+	var objuser = data.obj.userList;
+	$.each( objuser, function(index, value) {
+	var str = '<tr><td>'+ value.userid+ '</td><td>'+ value.user_name+ '</td><td>'
+				+ value.telephone+ '</td><td>'+ value.realname+ '</td><td> <input name=role_checkd value='
+				+ value.userid+ ' type="checkbox"/></td></tr>';
+	form.append(str);
+	});
+}
 
 
 

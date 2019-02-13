@@ -297,16 +297,9 @@ public class AccessServiceImpl implements AccessService {
 		if (userRole.getRoleid() == null ) {
 			return null;
 		}
-		UserRole check = CheckUserRole(userRole);
-		if (check == null) {
-			userRoleMapper.insertSelective(userRole);
-			return ResultMap.IS_200();
-		}
-		else {
-			check.setRoleid(userRole.getRoleid());
-			roleMapper.updateuserrolebyuserid(userRole);
-			return ResultMap.IS_200();
-		}
+		roleMapper.updateuserrolebyuserid(userRole);
+		return ResultMap.IS_200();
+		
 	}
 	
 	// 判断用户是否有这个角色
@@ -722,6 +715,39 @@ public class AccessServiceImpl implements AccessService {
 			
 		}
 		return ResultMap.IS_200(details);
+	}
+
+	@Override
+	public ResultMap deleterole(Long userid) {
+		UserRoleExample example = new UserRoleExample();
+		UserRoleExample.Criteria criteria = example.createCriteria();
+		criteria.andUseridEqualTo(userid);
+		userRoleMapper.deleteByExample(example);
+		return ResultMap.IS_200();
+	}
+
+	@Override
+	public int searchAddRoleCount(String searchWhere) {
+		return accessMapper.searchAddRoleCount(searchWhere);
+	}
+
+	@Override
+	public List<UserCustomer> searchAddRole(String searchWhere, PageQuery pagequery) {
+		return accessMapper.searchAddRole(searchWhere,pagequery);
+	}
+
+	@Override
+	public ResultMap userRoleAdd(String userids, Long roleid) {
+		userids = userids.substring(0,userids.length()-1);
+		String [] ids = userids.split(",");
+		for (int i=0;i<ids.length;i++) {
+			UserRole in = new UserRole();
+			in.setState(1);
+			in.setRoleid(roleid);
+			in.setUserid(Long.valueOf(ids[i]));
+			userRoleMapper.insertSelective(in);
+		}
+		return ResultMap.IS_200();
 	}
 
 

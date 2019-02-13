@@ -6,6 +6,10 @@ public class UserRole {
 
     /** */
     private Long roleid;
+
+    /** 角色状态 1-正常 2-停用*/
+    private Integer state;
+    
     
     private String outtype;
     
@@ -33,5 +37,13 @@ public class UserRole {
 
     public void setRoleid(Long roleid) {
         this.roleid = roleid;
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
     }
 }
