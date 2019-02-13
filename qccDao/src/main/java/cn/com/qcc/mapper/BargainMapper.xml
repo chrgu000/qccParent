@@ -2,12 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.com.qcc.mapper.BargainMapper" >
   <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Bargain" >
+    <id column="barginid" property="barginid" jdbcType="BIGINT" />
     <result column="userid" property="userid" jdbcType="BIGINT" />
-    <result column="openid" property="openid" jdbcType="VARCHAR" />
     <result column="otherid" property="otherid" jdbcType="BIGINT" />
-    <result column="monery" property="monery" jdbcType="DOUBLE" />
+    <result column="lessbalance" property="lessbalance" jdbcType="DOUBLE" />
+    <result column="totalbanalce" property="totalbanalce" jdbcType="DOUBLE" />
     <result column="type" property="type" jdbcType="INTEGER" />
-    <result column="update_time" property="update_time" jdbcType="TIMESTAMP" />
+    <result column="starttime" property="starttime" jdbcType="TIMESTAMP" />
+    <result column="endtime" property="endtime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -68,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    userid, openid, otherid, monery, type, update_time
+    barginid, userid, otherid, lessbalance, totalbanalce, type, starttime, endtime
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.BargainExample" >
     select
@@ -84,6 +86,16 @@
       order by ${orderByClause}
     </if>
   </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from bargain
+    where barginid = #{barginid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from bargain
+    where barginid = #{barginid,jdbcType=BIGINT}
+  </delete>
   <delete id="deleteByExample" parameterType="cn.com.qcc.pojo.BargainExample" >
     delete from bargain
     <if test="_parameter != null" >
@@ -91,53 +103,71 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Bargain" >
-    insert into bargain (userid, openid, otherid, 
-      monery, type, update_time
-      )
-    values (#{userid,jdbcType=BIGINT}, #{openid,jdbcType=VARCHAR}, #{otherid,jdbcType=BIGINT}, 
-      #{monery,jdbcType=DOUBLE}, #{type,jdbcType=INTEGER}, #{update_time,jdbcType=TIMESTAMP}
-      )
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="barginid" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into bargain (barginid, userid, otherid, 
+      lessbalance, totalbanalce, type, 
+      starttime, endtime)
+    values (#{barginid,jdbcType=BIGINT}, #{userid,jdbcType=BIGINT}, #{otherid,jdbcType=BIGINT}, 
+      #{lessbalance,jdbcType=DOUBLE}, #{totalbanalce,jdbcType=DOUBLE}, #{type,jdbcType=INTEGER}, 
+      #{starttime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Bargain" >
+    <selectKey  resultType="long"  order="AFTER"  keyProperty="barginid" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
     insert into bargain
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="barginid != null" >
+        barginid,
+      </if>
       <if test="userid != null" >
         userid,
-      </if>
-      <if test="openid != null" >
-        openid,
       </if>
       <if test="otherid != null" >
         otherid,
       </if>
-      <if test="monery != null" >
-        monery,
+      <if test="lessbalance != null" >
+        lessbalance,
+      </if>
+      <if test="totalbanalce != null" >
+        totalbanalce,
       </if>
       <if test="type != null" >
         type,
       </if>
-      <if test="update_time != null" >
-        update_time,
+      <if test="starttime != null" >
+        starttime,
+      </if>
+      <if test="endtime != null" >
+        endtime,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="barginid != null" >
+        #{barginid,jdbcType=BIGINT},
+      </if>
       <if test="userid != null" >
         #{userid,jdbcType=BIGINT},
-      </if>
-      <if test="openid != null" >
-        #{openid,jdbcType=VARCHAR},
       </if>
       <if test="otherid != null" >
         #{otherid,jdbcType=BIGINT},
       </if>
-      <if test="monery != null" >
-        #{monery,jdbcType=DOUBLE},
+      <if test="lessbalance != null" >
+        #{lessbalance,jdbcType=DOUBLE},
+      </if>
+      <if test="totalbanalce != null" >
+        #{totalbanalce,jdbcType=DOUBLE},
       </if>
       <if test="type != null" >
         #{type,jdbcType=INTEGER},
       </if>
-      <if test="update_time != null" >
-        #{update_time,jdbcType=TIMESTAMP},
+      <if test="starttime != null" >
+        #{starttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endtime != null" >
+        #{endtime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -150,23 +180,29 @@
   <update id="updateByExampleSelective" parameterType="map" >
     update bargain
     <set >
+      <if test="record.barginid != null" >
+        barginid = #{record.barginid,jdbcType=BIGINT},
+      </if>
       <if test="record.userid != null" >
         userid = #{record.userid,jdbcType=BIGINT},
-      </if>
-      <if test="record.openid != null" >
-        openid = #{record.openid,jdbcType=VARCHAR},
       </if>
       <if test="record.otherid != null" >
         otherid = #{record.otherid,jdbcType=BIGINT},
       </if>
-      <if test="record.monery != null" >
-        monery = #{record.monery,jdbcType=DOUBLE},
+      <if test="record.lessbalance != null" >
+        lessbalance = #{record.lessbalance,jdbcType=DOUBLE},
+      </if>
+      <if test="record.totalbanalce != null" >
+        totalbanalce = #{record.totalbanalce,jdbcType=DOUBLE},
       </if>
       <if test="record.type != null" >
         type = #{record.type,jdbcType=INTEGER},
       </if>
-      <if test="record.update_time != null" >
-        update_time = #{record.update_time,jdbcType=TIMESTAMP},
+      <if test="record.starttime != null" >
+        starttime = #{record.starttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.endtime != null" >
+        endtime = #{record.endtime,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -175,14 +211,54 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update bargain
-    set userid = #{record.userid,jdbcType=BIGINT},
-      openid = #{record.openid,jdbcType=VARCHAR},
+    set barginid = #{record.barginid,jdbcType=BIGINT},
+      userid = #{record.userid,jdbcType=BIGINT},
       otherid = #{record.otherid,jdbcType=BIGINT},
-      monery = #{record.monery,jdbcType=DOUBLE},
+      lessbalance = #{record.lessbalance,jdbcType=DOUBLE},
+      totalbanalce = #{record.totalbanalce,jdbcType=DOUBLE},
       type = #{record.type,jdbcType=INTEGER},
-      update_time = #{record.update_time,jdbcType=TIMESTAMP}
+      starttime = #{record.starttime,jdbcType=TIMESTAMP},
+      endtime = #{record.endtime,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.Bargain" >
+    update bargain
+    <set >
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="otherid != null" >
+        otherid = #{otherid,jdbcType=BIGINT},
+      </if>
+      <if test="lessbalance != null" >
+        lessbalance = #{lessbalance,jdbcType=DOUBLE},
+      </if>
+      <if test="totalbanalce != null" >
+        totalbanalce = #{totalbanalce,jdbcType=DOUBLE},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="starttime != null" >
+        starttime = #{starttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endtime != null" >
+        endtime = #{endtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where barginid = #{barginid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Bargain" >
+    update bargain
+    set userid = #{userid,jdbcType=BIGINT},
+      otherid = #{otherid,jdbcType=BIGINT},
+      lessbalance = #{lessbalance,jdbcType=DOUBLE},
+      totalbanalce = #{totalbanalce,jdbcType=DOUBLE},
+      type = #{type,jdbcType=INTEGER},
+      starttime = #{starttime,jdbcType=TIMESTAMP},
+      endtime = #{endtime,jdbcType=TIMESTAMP}
+    where barginid = #{barginid,jdbcType=BIGINT}
   </update>
 </mapper>

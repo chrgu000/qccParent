@@ -3,12 +3,13 @@
 <mapper namespace="cn.com.qcc.mapper.HouseorderMapper" >
   <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Houseorder" >
     <id column="houseorderid" property="houseorderid" jdbcType="BIGINT" />
+    <result column="barginid" property="barginid" jdbcType="BIGINT" />
     <result column="userid" property="userid" jdbcType="BIGINT" />
     <result column="houseid" property="houseid" jdbcType="BIGINT" />
     <result column="reservations" property="reservations" jdbcType="VARCHAR" />
     <result column="reservationstel" property="reservationstel" jdbcType="VARCHAR" />
     <result column="mesage" property="mesage" jdbcType="VARCHAR" />
-    <result column="prices" property="prices" jdbcType="BIGINT" />
+    <result column="prices" property="prices" jdbcType="DOUBLE" />
     <result column="paystate" property="paystate" jdbcType="INTEGER" />
     <result column="refundmess" property="refundmess" jdbcType="VARCHAR" />
     <result column="weixinorder" property="weixinorder" jdbcType="VARCHAR" />
@@ -77,8 +78,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    houseorderid, userid, houseid, reservations, reservationstel, mesage, prices, paystate, 
-    refundmess, weixinorder, buystate, sallstate, daycount, ordertime, endtime
+    houseorderid, barginid, userid, houseid, reservations, reservationstel, mesage, prices, 
+    paystate, refundmess, weixinorder, buystate, sallstate, daycount, ordertime, endtime
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.HouseorderExample" >
     select
@@ -111,30 +112,35 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Houseorder" >
-  <selectKey  resultType="long"  order="AFTER"  keyProperty="houseorderid" >
+  
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="houseorderid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
-    insert into houseorder (houseorderid, userid, houseid, 
-      reservations, reservationstel, mesage, 
-      prices, paystate, refundmess, 
-      weixinorder, buystate, sallstate, 
-      daycount, ordertime, endtime
-      )
-    values (#{houseorderid,jdbcType=BIGINT}, #{userid,jdbcType=BIGINT}, #{houseid,jdbcType=BIGINT}, 
-      #{reservations,jdbcType=VARCHAR}, #{reservationstel,jdbcType=VARCHAR}, #{mesage,jdbcType=VARCHAR}, 
-      #{prices,jdbcType=BIGINT}, #{paystate,jdbcType=INTEGER}, #{refundmess,jdbcType=VARCHAR}, 
-      #{weixinorder,jdbcType=VARCHAR}, #{buystate,jdbcType=INTEGER}, #{sallstate,jdbcType=INTEGER}, 
-      #{daycount,jdbcType=INTEGER}, #{ordertime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP}
-      )
+    insert into houseorder (houseorderid, barginid, userid, 
+      houseid, reservations, reservationstel, 
+      mesage, prices, paystate, 
+      refundmess, weixinorder, buystate, 
+      sallstate, daycount, ordertime, 
+      endtime)
+    values (#{houseorderid,jdbcType=BIGINT}, #{barginid,jdbcType=BIGINT}, #{userid,jdbcType=BIGINT}, 
+      #{houseid,jdbcType=BIGINT}, #{reservations,jdbcType=VARCHAR}, #{reservationstel,jdbcType=VARCHAR}, 
+      #{mesage,jdbcType=VARCHAR}, #{prices,jdbcType=DOUBLE}, #{paystate,jdbcType=INTEGER}, 
+      #{refundmess,jdbcType=VARCHAR}, #{weixinorder,jdbcType=VARCHAR}, #{buystate,jdbcType=INTEGER}, 
+      #{sallstate,jdbcType=INTEGER}, #{daycount,jdbcType=INTEGER}, #{ordertime,jdbcType=TIMESTAMP}, 
+      #{endtime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Houseorder" >
-  <selectKey  resultType="long"  order="AFTER"  keyProperty="houseorderid" >
+  
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="houseorderid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into houseorder
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="houseorderid != null" >
         houseorderid,
+      </if>
+      <if test="barginid != null" >
+        barginid,
       </if>
       <if test="userid != null" >
         userid,
@@ -183,6 +189,9 @@
       <if test="houseorderid != null" >
         #{houseorderid,jdbcType=BIGINT},
       </if>
+      <if test="barginid != null" >
+        #{barginid,jdbcType=BIGINT},
+      </if>
       <if test="userid != null" >
         #{userid,jdbcType=BIGINT},
       </if>
@@ -199,7 +208,7 @@
         #{mesage,jdbcType=VARCHAR},
       </if>
       <if test="prices != null" >
-        #{prices,jdbcType=BIGINT},
+        #{prices,jdbcType=DOUBLE},
       </if>
       <if test="paystate != null" >
         #{paystate,jdbcType=INTEGER},
@@ -239,6 +248,9 @@
       <if test="record.houseorderid != null" >
         houseorderid = #{record.houseorderid,jdbcType=BIGINT},
       </if>
+      <if test="record.barginid != null" >
+        barginid = #{record.barginid,jdbcType=BIGINT},
+      </if>
       <if test="record.userid != null" >
         userid = #{record.userid,jdbcType=BIGINT},
       </if>
@@ -255,7 +267,7 @@
         mesage = #{record.mesage,jdbcType=VARCHAR},
       </if>
       <if test="record.prices != null" >
-        prices = #{record.prices,jdbcType=BIGINT},
+        prices = #{record.prices,jdbcType=DOUBLE},
       </if>
       <if test="record.paystate != null" >
         paystate = #{record.paystate,jdbcType=INTEGER},
@@ -289,12 +301,13 @@
   <update id="updateByExample" parameterType="map" >
     update houseorder
     set houseorderid = #{record.houseorderid,jdbcType=BIGINT},
+      barginid = #{record.barginid,jdbcType=BIGINT},
       userid = #{record.userid,jdbcType=BIGINT},
       houseid = #{record.houseid,jdbcType=BIGINT},
       reservations = #{record.reservations,jdbcType=VARCHAR},
       reservationstel = #{record.reservationstel,jdbcType=VARCHAR},
       mesage = #{record.mesage,jdbcType=VARCHAR},
-      prices = #{record.prices,jdbcType=BIGINT},
+      prices = #{record.prices,jdbcType=DOUBLE},
       paystate = #{record.paystate,jdbcType=INTEGER},
       refundmess = #{record.refundmess,jdbcType=VARCHAR},
       weixinorder = #{record.weixinorder,jdbcType=VARCHAR},
@@ -310,6 +323,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.Houseorder" >
     update houseorder
     <set >
+      <if test="barginid != null" >
+        barginid = #{barginid,jdbcType=BIGINT},
+      </if>
       <if test="userid != null" >
         userid = #{userid,jdbcType=BIGINT},
       </if>
@@ -326,7 +342,7 @@
         mesage = #{mesage,jdbcType=VARCHAR},
       </if>
       <if test="prices != null" >
-        prices = #{prices,jdbcType=BIGINT},
+        prices = #{prices,jdbcType=DOUBLE},
       </if>
       <if test="paystate != null" >
         paystate = #{paystate,jdbcType=INTEGER},
@@ -357,12 +373,13 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Houseorder" >
     update houseorder
-    set userid = #{userid,jdbcType=BIGINT},
+    set barginid = #{barginid,jdbcType=BIGINT},
+      userid = #{userid,jdbcType=BIGINT},
       houseid = #{houseid,jdbcType=BIGINT},
       reservations = #{reservations,jdbcType=VARCHAR},
       reservationstel = #{reservationstel,jdbcType=VARCHAR},
       mesage = #{mesage,jdbcType=VARCHAR},
-      prices = #{prices,jdbcType=BIGINT},
+      prices = #{prices,jdbcType=DOUBLE},
       paystate = #{paystate,jdbcType=INTEGER},
       refundmess = #{refundmess,jdbcType=VARCHAR},
       weixinorder = #{weixinorder,jdbcType=VARCHAR},

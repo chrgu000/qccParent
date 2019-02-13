@@ -10,13 +10,21 @@ public interface BargainMapper {
 
     int deleteByExample(BargainExample example);
 
+    int deleteByPrimaryKey(Long barginid);
+
     int insert(Bargain record);
 
     int insertSelective(Bargain record);
 
     List<Bargain> selectByExample(BargainExample example);
 
+    Bargain selectByPrimaryKey(Long barginid);
+
     int updateByExampleSelective(@Param("record") Bargain record, @Param("example") BargainExample example);
 
     int updateByExample(@Param("record") Bargain record, @Param("example") BargainExample example);
+
+    int updateByPrimaryKeySelective(Bargain record);
+
+    int updateByPrimaryKey(Bargain record);
 }

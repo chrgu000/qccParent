@@ -720,7 +720,7 @@ public class WxPayController {
 		if ("房源预订".equals(descname)) {
 			//total_free = 1;
 			// 先需要往数据库插入一条记录或者是更新一条记录
-			houseorder.setPrices(Long.valueOf(total_free ) / 100);
+			houseorder.setPrices(Double.valueOf(total_free ) / 100);
 			if (houseorder.getDaycount() == 0) {houseorder.setDaycount(1800);}
 			ResultMap resultMap = houseService.gethouseorderid(houseorder);
 			if (resultMap.getCode() !=200) {return resultMap;}

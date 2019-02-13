@@ -878,6 +878,10 @@ public class HouseController {
 			houseCustomer.setCentpercentnum(0.0);
 			houseCustomer.setLandpercentnum(0.0);
 		}
+		
+		// 查询规则的数组
+		List<PreparatoryCustomer> preList = houseService.preparList(houseid);
+		houseCustomer.setPreList(preList);
 		cycleName = cycleName == null ? "不限" : cycleName;
 		houseCustomer.setCycleName(cycleName);
 		return ResultMap.IS_200(houseCustomer);

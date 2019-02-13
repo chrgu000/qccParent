@@ -11,7 +11,7 @@ public interface BargainService {
 	 * @param type : 操作的type类型
 	 * @param otherid : 被砍物品
 	 * **/
-	ResultMap doBargin(String openid, Long userid, Integer type , Long oterhid);
+	ResultMap doBargin(Long preparatoryid, Long userid, Integer type , Long oterhid);
 	
 	/**
 	 * 查询砍价列表

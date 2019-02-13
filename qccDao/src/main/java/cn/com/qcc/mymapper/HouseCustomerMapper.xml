@@ -1378,8 +1378,10 @@
  			SELECT preparatory.* ,housetag.type  from preparatory LEFT JOIN housetag
 				 on preparatory.housetagid = housetag.housetagid
 				where preparatory.houseid =#{houseid}
-				and (preparatory.centpercentnum > 0 or preparatory.landpercentnum > 0 )
+				ORDER BY preparatory.daycount asc 
  	</select>
+ 	
+ 	
  	<select id="preparListbyhouseids" resultType="cn.com.qcc.queryvo.PreparatoryCustomer" parameterType="list">
  			SELECT preparatory.centpercentnum ,preparatory.landpercentnum ,preparatory.houseid ,
  			      housetag.type  from preparatory LEFT JOIN housetag
@@ -1699,5 +1701,31 @@
 			) house LEFT JOIN brand on house.brandid = brand.brandid
 			WHERE house.housestatus !='3'
 			AND house.buildingid = #{buildingid}
-	</select>										
+	</select>			
+	
+	
+	
+	
+	<!-- 查询房源的最新预定信息 -->
+	<select id="getHouseNotPayOrder" resultType="cn.com.qcc.pojo.Houseorder">
+		SELECT
+			*
+		FROM
+			houseorder
+		
+		WHERE
+			houseorder.houseid = #{houseid}
+		ORDER BY
+			houseorder.ordertime DESC
+		LIMIT 0,1
+	</select>	
+	
+	
+	
+	<!-- 查询房源的最新预定信息 -->
+	<select id="getNewBargin" resultType="cn.com.qcc.pojo.Bargain">
+		SELECT * from bargain where bargain.otherid =#{otherid}
+		 and type = #{type} ORDER BY bargain.starttime desc
+		LIMIT 0 , 1
+	</select>											
 </mapper>

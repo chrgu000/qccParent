@@ -21,6 +21,7 @@ import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SendMessage;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mapper.ApartmentMapper;
+import cn.com.qcc.mapper.BargainMapper;
 import cn.com.qcc.mapper.BrandMapper;
 import cn.com.qcc.mapper.BuildingMapper;
 import cn.com.qcc.mapper.HouseMapper;
@@ -39,6 +40,7 @@ import cn.com.qcc.mymapper.HouseCustomerMapper;
 import cn.com.qcc.mymapper.TribeCustomerMapper;
 import cn.com.qcc.pojo.Apartment;
 import cn.com.qcc.pojo.ApartmentExample;
+import cn.com.qcc.pojo.Bargain;
 import cn.com.qcc.pojo.Brand;
 import cn.com.qcc.pojo.Building;
 import cn.com.qcc.pojo.BuildingExample;
@@ -107,8 +109,8 @@ public class HouseServiceImpl implements HouseService {
 	@Autowired private JedisClient jedisClient;
 	@Autowired TribeSolrDao tribeSolrDao;
 	@Autowired TribeCustomerMapper tribeCustomerMapper;
-	@Autowired
-	TribeMapper tribeMapper;
+	@Autowired TribeMapper tribeMapper;
+	@Autowired BargainMapper bargainMapper;
 
 	/**
 	 * 查询房态图
@@ -1407,29 +1409,34 @@ public class HouseServiceImpl implements HouseService {
 	 * 根据预订信息 下预订单
 	 * **/ 
 	public ResultMap gethouseorderid(Houseorder houseorder) {
-		// 先判断该房源在十五分之内是否有交易记录
-		String housesatues = houseCustomerMapper.gethouseorderstatue(houseorder);
-		if ("1".equals(housesatues)) {
-			return ResultMap.build(400, "预订中...");
+		// 第一步先查询房源的状态 [必须是可租的房子]
+		House house = houseMapper.selectByPrimaryKey(houseorder.getHouseid());
+		if (CheckDataUtil.checkisEmpty(house)
+				&& !"1".equals(house.getHousestatus())) {
+			return ResultMap.build(400, "该房源已经出租或者下架");
 		}
-		if ("2".equals(housesatues)) {
-			return ResultMap.build(400, "已租");
+		
+		// 第二步判断房子是否正常砍价中 [没有在或者砍价活动结束]
+		Bargain bargain = houseCustomerMapper.getNewBargin(houseorder.getHouseid() , 1);
+		if (CheckDataUtil.checkNotEmpty(bargain)) {
+			// 判断当前时间和截止时间的差距
+			Long current = new Date().getTime()-1000*60*10;
+			Long end = bargain.getEndtime().getTime();
+			if (bargain.getUserid().longValue() !=houseorder.getUserid()) {
+				// 如果当前时间小于砍价时间说明在砍价中
+				if (current.longValue() < end.longValue()) {
+					return ResultMap.build(400, "该房源正在砍价中");
+				}
+			}
 		}
-		if ("3".equals(housesatues)) {
-			return ResultMap.build(400, "该房源已经下架");
-		}
-		if ("4".equals(housesatues)) {
-			return ResultMap.build(400, "装修中...");
-		}
-		if ("6".equals(housesatues)) {
-			return ResultMap.build(400, "已预定...");
-		}
-		// 这里判断用户是不是点击的未支付的信息
+		
+		// 第三步 这里判断用户是不是点击的未支付的信息
 		HouseorderExample example = new HouseorderExample();
 		HouseorderExample.Criteria criteria = example.createCriteria();
 		criteria.andHouseidEqualTo(houseorder.getHouseid());
 		criteria.andUseridEqualTo(houseorder.getUserid());
 		criteria.andPaystateEqualTo(2);
+		criteria.andBarginidIsNull();
 		List<Houseorder> orders = houseorderMapper.selectByExample(example);
 		if (!orders.isEmpty() && orders.size() > 0) {
 			// 这里表示用户点击的还是同一个房源需要做修改操作
@@ -1469,7 +1476,7 @@ public class HouseServiceImpl implements HouseService {
 		// 设置为支付成功
 		search.setPaystate(1);
 		// 设置成交金额
-		search.setPrices(Long.valueOf(total_amount) / 100);
+		search.setPrices(Double.valueOf(total_amount) / 100);
 		// 追踪订单时候
 		search.setOrdertime(new Date());
 		// 设置商户订单号。退款时候需要用到
@@ -1702,8 +1709,15 @@ public class HouseServiceImpl implements HouseService {
 	// 设置房源佣金规则
 	public void preparatoryhouse(String preparatory ,long houseid ) {
 		 try {
+			 
+			// 先删除佣金规格
+			PreparatoryExample exampledelete = new PreparatoryExample();
+			PreparatoryExample.Criteria criteriadelete = exampledelete.createCriteria();
+			criteriadelete.andHouseidEqualTo(houseid);
+			preparatoryMapper.deleteByExample(exampledelete);
+			 
 			// 先把所有的房子佣金置空
-			houseCustomerMapper.deletepreparhouse(houseid);
+			//houseCustomerMapper.deletepreparhouse(houseid);
 			String [] split = preparatory.split(",");
 			for (int i =0;i<split.length;i++) {
 				Long housetargid = Long.valueOf(split[i].split("-")[0]);
@@ -1715,33 +1729,15 @@ public class HouseServiceImpl implements HouseService {
 				if (housetargid == 70) {daycount = 180;}
 				if (housetargid == 73) {daycount = 360;}
 				if (housetargid == 74) {daycount = 270;}
-				if (centpercentnum  > 0 || landpercentnum > 0) {
-					// 先判断这个规则是否存在
-					PreparatoryExample example = new PreparatoryExample();
-					PreparatoryExample.Criteria criteria = example.createCriteria();
-					criteria.andHouseidEqualTo(houseid);
-					criteria.andHousetagidEqualTo(housetargid);
-					List<Preparatory> searchList = preparatoryMapper.selectByExample(example);
-					// 没有之前没有此佣金规则。创建佣金规则
-					if (searchList.isEmpty() || searchList.size() == 0) {
-						Preparatory insert = new Preparatory();
-						insert.setCentpercentnum(centpercentnum);
-						insert.setDaycount(daycount);
-						insert.setLandpercentnum(landpercentnum);
-						insert.setHouseid(houseid);
-						insert.setHousetagid(housetargid);
-						preparatoryMapper.insertSelective(insert);
-					} else {
-						// 如果有房子佣金规则则更新
-						Preparatory search = searchList.get(0);
-						search.setCentpercentnum(centpercentnum);
-						search.setDaycount(daycount);
-						search.setLandpercentnum(landpercentnum);
-					    preparatoryMapper.updateByPrimaryKeySelective(search);
-					}
-					
-					
-				}
+				//if (centpercentnum  > 0 || landpercentnum > 0) {
+				Preparatory insert = new Preparatory();
+				insert.setCentpercentnum(centpercentnum);
+				insert.setDaycount(daycount);
+				insert.setLandpercentnum(landpercentnum);
+				insert.setHouseid(houseid);
+				insert.setHousetagid(housetargid);
+				preparatoryMapper.insertSelective(insert);
+				//}
 			}
 		} catch (Exception e) {
 			System.out.println("佣金格式设计错误：" + preparatory);

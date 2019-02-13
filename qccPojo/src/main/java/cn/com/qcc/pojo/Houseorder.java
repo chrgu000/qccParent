@@ -6,6 +6,9 @@ public class Houseorder {
     /** */
     private Long houseorderid;
 
+    /** 砍价的ID*/
+    private Long barginid;
+
     /** 用户ID*/
     private Long userid;
 
@@ -22,7 +25,7 @@ public class Houseorder {
     private String mesage;
 
     /** 预定的价格*/
-    private Long prices;
+    private Double prices;
 
     /** 1-已经支付，2-没有支付,3-移除，4-等待房东确认,5-已经入住,6-全额退款*/
     private Integer paystate;
@@ -54,6 +57,14 @@ public class Houseorder {
 
     public void setHouseorderid(Long houseorderid) {
         this.houseorderid = houseorderid;
+    }
+
+    public Long getBarginid() {
+        return barginid;
+    }
+
+    public void setBarginid(Long barginid) {
+        this.barginid = barginid;
     }
 
     public Long getUserid() {
@@ -96,11 +107,11 @@ public class Houseorder {
         this.mesage = mesage == null ? null : mesage.trim();
     }
 
-    public Long getPrices() {
+    public Double getPrices() {
         return prices;
     }
 
-    public void setPrices(Long prices) {
+    public void setPrices(Double prices) {
         this.prices = prices;
     }
 

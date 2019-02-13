@@ -3,23 +3,37 @@ package cn.com.qcc.pojo;
 import java.util.Date;
 
 public class Bargain {
+    /** */
+    private Long barginid;
+
     /** 发起砍价人*/
     private Long userid;
-
-    /** 砍价人的openid*/
-    private String openid;
 
     /** 砍价的类型的主键*/
     private Long otherid;
 
     /** 砍价的金额*/
-    private Double monery;
+    private Double lessbalance;
+
+    /** */
+    private Double totalbanalce;
 
     /** 砍价的类型*/
     private Integer type;
 
     /** 砍价时间*/
-    private Date update_time;
+    private Date starttime;
+
+    /** */
+    private Date endtime;
+
+    public Long getBarginid() {
+        return barginid;
+    }
+
+    public void setBarginid(Long barginid) {
+        this.barginid = barginid;
+    }
 
     public Long getUserid() {
         return userid;
@@ -27,14 +41,6 @@ public class Bargain {
 
     public void setUserid(Long userid) {
         this.userid = userid;
-    }
-
-    public String getOpenid() {
-        return openid;
-    }
-
-    public void setOpenid(String openid) {
-        this.openid = openid == null ? null : openid.trim();
     }
 
     public Long getOtherid() {
@@ -45,12 +51,20 @@ public class Bargain {
         this.otherid = otherid;
     }
 
-    public Double getMonery() {
-        return monery;
+    public Double getLessbalance() {
+        return lessbalance;
     }
 
-    public void setMonery(Double monery) {
-        this.monery = monery;
+    public void setLessbalance(Double lessbalance) {
+        this.lessbalance = lessbalance;
+    }
+
+    public Double getTotalbanalce() {
+        return totalbanalce;
+    }
+
+    public void setTotalbanalce(Double totalbanalce) {
+        this.totalbanalce = totalbanalce;
     }
 
     public Integer getType() {
@@ -61,11 +75,19 @@ public class Bargain {
         this.type = type;
     }
 
-    public Date getUpdate_time() {
-        return update_time;
+    public Date getStarttime() {
+        return starttime;
     }
 
-    public void setUpdate_time(Date update_time) {
-        this.update_time = update_time;
+    public void setStarttime(Date starttime) {
+        this.starttime = starttime;
+    }
+
+    public Date getEndtime() {
+        return endtime;
+    }
+
+    public void setEndtime(Date endtime) {
+        this.endtime = endtime;
     }
 }

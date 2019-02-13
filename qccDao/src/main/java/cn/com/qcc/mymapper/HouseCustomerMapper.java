@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import cn.com.qcc.common.PageQuery;
+import cn.com.qcc.pojo.Bargain;
 import cn.com.qcc.pojo.Furniture;
 import cn.com.qcc.pojo.Houseorder;
 import cn.com.qcc.pojo.Housetag;
@@ -233,6 +234,10 @@ public interface HouseCustomerMapper {
 	
 	/**根据楼栋的id查询同步索引库的数据**/
 	List<HouseCustomer> searchHouseToSolrByBuildingid(Long buildingid);
+
+	Houseorder getHouseNotPayOrder(Long otherid);
+	
+	Bargain getNewBargin(@Param("otherid")Long otherid, @Param("type")Integer type);
 	
 	
 

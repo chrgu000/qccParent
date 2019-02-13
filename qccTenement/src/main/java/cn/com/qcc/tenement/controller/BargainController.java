@@ -1,9 +1,9 @@
 package cn.com.qcc.tenement.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.service.BargainService;
@@ -12,7 +12,7 @@ import cn.com.qcc.service.BargainService;
 /**
  * 全部砍价类型的控制类
  * ***/
-@Controller
+@RestController
 public class BargainController {
 	
 	@Autowired
@@ -22,8 +22,9 @@ public class BargainController {
 	 * 做砍价处理
 	 * **/
 	@RequestMapping("/bargin/dobargin/{type}")
-	public ResultMap doBargin(String openid ,Long userid , @PathVariable Integer  type , Long otherid) {
-		return bargainService.doBargin(openid , userid , type , otherid);
+	public ResultMap doBargin(Long preparatoryid ,Long userid ,
+			@PathVariable Integer  type , Long otherid) {
+		return bargainService.doBargin(preparatoryid , userid , type , otherid);
 	}
 	
 	

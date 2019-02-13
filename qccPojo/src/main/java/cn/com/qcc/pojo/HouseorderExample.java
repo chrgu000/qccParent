@@ -165,6 +165,66 @@ public class HouseorderExample {
             return (Criteria) this;
         }
 
+        public Criteria andBarginidIsNull() {
+            addCriterion("barginid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarginidIsNotNull() {
+            addCriterion("barginid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarginidEqualTo(Long value) {
+            addCriterion("barginid =", value, "barginid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarginidNotEqualTo(Long value) {
+            addCriterion("barginid <>", value, "barginid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarginidGreaterThan(Long value) {
+            addCriterion("barginid >", value, "barginid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarginidGreaterThanOrEqualTo(Long value) {
+            addCriterion("barginid >=", value, "barginid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarginidLessThan(Long value) {
+            addCriterion("barginid <", value, "barginid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarginidLessThanOrEqualTo(Long value) {
+            addCriterion("barginid <=", value, "barginid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarginidIn(List<Long> values) {
+            addCriterion("barginid in", values, "barginid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarginidNotIn(List<Long> values) {
+            addCriterion("barginid not in", values, "barginid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarginidBetween(Long value1, Long value2) {
+            addCriterion("barginid between", value1, value2, "barginid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarginidNotBetween(Long value1, Long value2) {
+            addCriterion("barginid not between", value1, value2, "barginid");
+            return (Criteria) this;
+        }
+
         public Criteria andUseridIsNull() {
             addCriterion("userid is null");
             return (Criteria) this;
@@ -505,52 +565,52 @@ public class HouseorderExample {
             return (Criteria) this;
         }
 
-        public Criteria andPricesEqualTo(Long value) {
+        public Criteria andPricesEqualTo(Double value) {
             addCriterion("prices =", value, "prices");
             return (Criteria) this;
         }
 
-        public Criteria andPricesNotEqualTo(Long value) {
+        public Criteria andPricesNotEqualTo(Double value) {
             addCriterion("prices <>", value, "prices");
             return (Criteria) this;
         }
 
-        public Criteria andPricesGreaterThan(Long value) {
+        public Criteria andPricesGreaterThan(Double value) {
             addCriterion("prices >", value, "prices");
             return (Criteria) this;
         }
 
-        public Criteria andPricesGreaterThanOrEqualTo(Long value) {
+        public Criteria andPricesGreaterThanOrEqualTo(Double value) {
             addCriterion("prices >=", value, "prices");
             return (Criteria) this;
         }
 
-        public Criteria andPricesLessThan(Long value) {
+        public Criteria andPricesLessThan(Double value) {
             addCriterion("prices <", value, "prices");
             return (Criteria) this;
         }
 
-        public Criteria andPricesLessThanOrEqualTo(Long value) {
+        public Criteria andPricesLessThanOrEqualTo(Double value) {
             addCriterion("prices <=", value, "prices");
             return (Criteria) this;
         }
 
-        public Criteria andPricesIn(List<Long> values) {
+        public Criteria andPricesIn(List<Double> values) {
             addCriterion("prices in", values, "prices");
             return (Criteria) this;
         }
 
-        public Criteria andPricesNotIn(List<Long> values) {
+        public Criteria andPricesNotIn(List<Double> values) {
             addCriterion("prices not in", values, "prices");
             return (Criteria) this;
         }
 
-        public Criteria andPricesBetween(Long value1, Long value2) {
+        public Criteria andPricesBetween(Double value1, Double value2) {
             addCriterion("prices between", value1, value2, "prices");
             return (Criteria) this;
         }
 
-        public Criteria andPricesNotBetween(Long value1, Long value2) {
+        public Criteria andPricesNotBetween(Double value1, Double value2) {
             addCriterion("prices not between", value1, value2, "prices");
             return (Criteria) this;
         }
