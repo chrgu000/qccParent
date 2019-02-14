@@ -927,11 +927,11 @@ public class HouseController {
 	/** 查询 **/
 	@RequestMapping("/houseorderdetail")
 	@ResponseBody
-	public ResultMap houseorderdetail(Long userid, Long houseid) {
+	public ResultMap houseorderdetail(Long userid, Long houseid , Long houseorderid) {
 		if (userid == null || houseid == null) {
 			return ResultMap.build(400, "参数");
 		}
-		Houseorder houseorder = houseService.houseorderdetail(userid, houseid);
+		Houseorder houseorder = houseService.houseorderdetail(userid, houseid , houseorderid);
 		return ResultMap.IS_200(houseorder);
 	}
 

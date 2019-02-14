@@ -15,6 +15,9 @@ public class Bargain {
     /** 砍价的金额*/
     private Double lessbalance;
 
+    /** 规则的id*/
+    private Long preparatoryid;
+
     /** */
     private Double totalbanalce;
 
@@ -57,6 +60,14 @@ public class Bargain {
 
     public void setLessbalance(Double lessbalance) {
         this.lessbalance = lessbalance;
+    }
+
+    public Long getPreparatoryid() {
+        return preparatoryid;
+    }
+
+    public void setPreparatoryid(Long preparatoryid) {
+        this.preparatoryid = preparatoryid;
     }
 
     public Double getTotalbanalce() {

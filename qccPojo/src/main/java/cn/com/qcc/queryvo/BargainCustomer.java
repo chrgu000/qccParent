@@ -12,8 +12,18 @@ public class BargainCustomer extends Bargain{
 	
 	private String apartmentName;
 	
+	private double account = 0D;
+	
 	List<Bargaindetail> details = new ArrayList<>();
 	
+	
+	public double getAccount() {
+		return account;
+	}
+
+	public void setAccount(double account) {
+		this.account = account;
+	}
 
 	public List<Bargaindetail> getDetails() {
 		return details;

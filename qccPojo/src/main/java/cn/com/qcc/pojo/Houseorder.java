@@ -3,6 +3,9 @@ package cn.com.qcc.pojo;
 import java.util.Date;
 
 public class Houseorder {
+	
+	private Long preparatoryid;
+	
     /** */
     private Long houseorderid;
 
@@ -50,8 +53,17 @@ public class Houseorder {
 
     /** 截止时间*/
     private Date endtime;
+    
+    
+    public Long getPreparatoryid() {
+		return preparatoryid;
+	}
 
-    public Long getHouseorderid() {
+	public void setPreparatoryid(Long preparatoryid) {
+		this.preparatoryid = preparatoryid;
+	}
+
+	public Long getHouseorderid() {
         return houseorderid;
     }
 
@@ -178,4 +190,5 @@ public class Houseorder {
     public void setEndtime(Date endtime) {
         this.endtime = endtime;
     }
+
 }

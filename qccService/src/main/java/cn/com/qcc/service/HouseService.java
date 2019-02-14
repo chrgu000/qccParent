@@ -359,7 +359,7 @@ public interface HouseService {
 	List<HouseOrderCustomer> searchhouselist(Long userid, PageQuery pagequery);
 	
 	//重新发订单
-	Houseorder houseorderdetail(Long userid, Long houseid);
+	Houseorder houseorderdetail(Long userid, Long houseid,Long houseorderid);
 	
 	/**更新房源预定订单
 	 * @param userid : 用户id

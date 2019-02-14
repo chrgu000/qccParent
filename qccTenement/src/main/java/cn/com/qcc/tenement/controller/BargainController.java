@@ -34,8 +34,8 @@ public class BargainController {
 	 * 查询砍价列表
 	 * ***/
 	@RequestMapping("/bargin/searchList")
-	public ResultMap searchList (Long barginid) {
-		return bargainService.searchList(barginid);
+	public ResultMap searchList (Long barginid,String unionid) {
+		return bargainService.searchList(barginid, unionid);
 	}
 	
 	/**砍价**/

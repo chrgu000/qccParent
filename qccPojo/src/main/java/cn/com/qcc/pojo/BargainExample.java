@@ -345,6 +345,66 @@ public class BargainExample {
             return (Criteria) this;
         }
 
+        public Criteria andPreparatoryidIsNull() {
+            addCriterion("preparatoryid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPreparatoryidIsNotNull() {
+            addCriterion("preparatoryid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPreparatoryidEqualTo(Long value) {
+            addCriterion("preparatoryid =", value, "preparatoryid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPreparatoryidNotEqualTo(Long value) {
+            addCriterion("preparatoryid <>", value, "preparatoryid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPreparatoryidGreaterThan(Long value) {
+            addCriterion("preparatoryid >", value, "preparatoryid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPreparatoryidGreaterThanOrEqualTo(Long value) {
+            addCriterion("preparatoryid >=", value, "preparatoryid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPreparatoryidLessThan(Long value) {
+            addCriterion("preparatoryid <", value, "preparatoryid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPreparatoryidLessThanOrEqualTo(Long value) {
+            addCriterion("preparatoryid <=", value, "preparatoryid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPreparatoryidIn(List<Long> values) {
+            addCriterion("preparatoryid in", values, "preparatoryid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPreparatoryidNotIn(List<Long> values) {
+            addCriterion("preparatoryid not in", values, "preparatoryid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPreparatoryidBetween(Long value1, Long value2) {
+            addCriterion("preparatoryid between", value1, value2, "preparatoryid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPreparatoryidNotBetween(Long value1, Long value2) {
+            addCriterion("preparatoryid not between", value1, value2, "preparatoryid");
+            return (Criteria) this;
+        }
+
         public Criteria andTotalbanalceIsNull() {
             addCriterion("totalbanalce is null");
             return (Criteria) this;

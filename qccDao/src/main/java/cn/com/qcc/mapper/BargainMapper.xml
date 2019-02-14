@@ -6,6 +6,7 @@
     <result column="userid" property="userid" jdbcType="BIGINT" />
     <result column="otherid" property="otherid" jdbcType="BIGINT" />
     <result column="lessbalance" property="lessbalance" jdbcType="DOUBLE" />
+    <result column="preparatoryid" property="preparatoryid" jdbcType="BIGINT" />
     <result column="totalbanalce" property="totalbanalce" jdbcType="DOUBLE" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="starttime" property="starttime" jdbcType="TIMESTAMP" />
@@ -70,7 +71,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    barginid, userid, otherid, lessbalance, totalbanalce, type, starttime, endtime
+    barginid, userid, otherid, lessbalance, preparatoryid, totalbanalce, type, starttime, 
+    endtime
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.BargainExample" >
     select
@@ -103,18 +105,21 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Bargain" >
+  
    <selectKey  resultType="long"  order="AFTER"  keyProperty="barginid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into bargain (barginid, userid, otherid, 
-      lessbalance, totalbanalce, type, 
-      starttime, endtime)
+      lessbalance, preparatoryid, totalbanalce, 
+      type, starttime, endtime
+      )
     values (#{barginid,jdbcType=BIGINT}, #{userid,jdbcType=BIGINT}, #{otherid,jdbcType=BIGINT}, 
-      #{lessbalance,jdbcType=DOUBLE}, #{totalbanalce,jdbcType=DOUBLE}, #{type,jdbcType=INTEGER}, 
-      #{starttime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP})
+      #{lessbalance,jdbcType=DOUBLE}, #{preparatoryid,jdbcType=BIGINT}, #{totalbanalce,jdbcType=DOUBLE}, 
+      #{type,jdbcType=INTEGER}, #{starttime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Bargain" >
-    <selectKey  resultType="long"  order="AFTER"  keyProperty="barginid" >
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="barginid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into bargain
@@ -130,6 +135,9 @@
       </if>
       <if test="lessbalance != null" >
         lessbalance,
+      </if>
+      <if test="preparatoryid != null" >
+        preparatoryid,
       </if>
       <if test="totalbanalce != null" >
         totalbanalce,
@@ -156,6 +164,9 @@
       </if>
       <if test="lessbalance != null" >
         #{lessbalance,jdbcType=DOUBLE},
+      </if>
+      <if test="preparatoryid != null" >
+        #{preparatoryid,jdbcType=BIGINT},
       </if>
       <if test="totalbanalce != null" >
         #{totalbanalce,jdbcType=DOUBLE},
@@ -192,6 +203,9 @@
       <if test="record.lessbalance != null" >
         lessbalance = #{record.lessbalance,jdbcType=DOUBLE},
       </if>
+      <if test="record.preparatoryid != null" >
+        preparatoryid = #{record.preparatoryid,jdbcType=BIGINT},
+      </if>
       <if test="record.totalbanalce != null" >
         totalbanalce = #{record.totalbanalce,jdbcType=DOUBLE},
       </if>
@@ -215,6 +229,7 @@
       userid = #{record.userid,jdbcType=BIGINT},
       otherid = #{record.otherid,jdbcType=BIGINT},
       lessbalance = #{record.lessbalance,jdbcType=DOUBLE},
+      preparatoryid = #{record.preparatoryid,jdbcType=BIGINT},
       totalbanalce = #{record.totalbanalce,jdbcType=DOUBLE},
       type = #{record.type,jdbcType=INTEGER},
       starttime = #{record.starttime,jdbcType=TIMESTAMP},
@@ -234,6 +249,9 @@
       </if>
       <if test="lessbalance != null" >
         lessbalance = #{lessbalance,jdbcType=DOUBLE},
+      </if>
+      <if test="preparatoryid != null" >
+        preparatoryid = #{preparatoryid,jdbcType=BIGINT},
       </if>
       <if test="totalbanalce != null" >
         totalbanalce = #{totalbanalce,jdbcType=DOUBLE},
@@ -255,6 +273,7 @@
     set userid = #{userid,jdbcType=BIGINT},
       otherid = #{otherid,jdbcType=BIGINT},
       lessbalance = #{lessbalance,jdbcType=DOUBLE},
+      preparatoryid = #{preparatoryid,jdbcType=BIGINT},
       totalbanalce = #{totalbanalce,jdbcType=DOUBLE},
       type = #{type,jdbcType=INTEGER},
       starttime = #{starttime,jdbcType=TIMESTAMP},

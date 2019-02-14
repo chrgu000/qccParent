@@ -1315,7 +1315,7 @@
 		where houseorder.userid = #{userid}  AND  houseorder.buystate !=2
  	</select>
  	<select id="searchhouselist" resultType="cn.com.qcc.queryvo.HouseOrderCustomer" >
- 		SELECT houseorder.houseorderid ,house.houseid ,
+ 		SELECT houseorder.houseorderid ,house.houseid ,houseorder.barginid,
 			  house.house_number ,houseorder.paystate ,
 			  house.housetitle ,houseorder.ordertime ,houseorder.prices
 			 from houseorder LEFT JOIN house on house.houseid = houseorder.houseid

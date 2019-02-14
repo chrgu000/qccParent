@@ -1416,6 +1416,8 @@ public class HouseServiceImpl implements HouseService {
 			return ResultMap.build(400, "该房源已经出租或者下架");
 		}
 		
+		
+		
 		// 第二步判断房子是否正常砍价中 [没有在或者砍价活动结束]
 		Bargain bargain = houseCustomerMapper.getNewBargin(houseorder.getHouseid() , 1);
 		if (CheckDataUtil.checkNotEmpty(bargain)) {
@@ -1429,6 +1431,14 @@ public class HouseServiceImpl implements HouseService {
 				}
 			}
 		}
+		
+		// 如果有订单ID
+		if (CheckDataUtil.checkNotEmpty(houseorder.getHouseorderid())) {
+			houseorderMapper.updateByPrimaryKeySelective(houseorder);
+			return ResultMap.IS_200(houseorder.getHouseorderid());
+		}
+		
+		
 		
 		// 第三步 这里判断用户是不是点击的未支付的信息
 		HouseorderExample example = new HouseorderExample();
@@ -1508,14 +1518,28 @@ public class HouseServiceImpl implements HouseService {
 		return houseCustomerMapper.searchhouselistCount(userid);
 	}
 
-	public Houseorder houseorderdetail(Long userid, Long houseid) {
+	public Houseorder houseorderdetail(Long userid, Long houseid,Long houseorderid) {
+		
+		if (CheckDataUtil.checkisEmpty(houseorderid)) {
+			return null;
+		}
+		
 		HouseorderExample example = new HouseorderExample();
 		HouseorderExample.Criteria criteria = example.createCriteria();
-		criteria.andUseridEqualTo(userid);
-		criteria.andHouseidEqualTo(houseid);
+		//criteria.andUseridEqualTo(userid);
+		//criteria.andHouseidEqualTo(houseid);
+		criteria.andHouseorderidEqualTo(houseorderid);
 		List<Houseorder> ordes = houseorderMapper.selectByExample(example);
 		if (!ordes.isEmpty() && ordes.size() > 0) {
-			return ordes.get(0);
+			Houseorder houseorder =  ordes.get(0);
+			if (CheckDataUtil.checkNotEmpty(houseorder.getBarginid())) {
+				Bargain search = bargainMapper.selectByPrimaryKey(houseorder.getBarginid());
+				if (CheckDataUtil.checkNotEmpty(search)
+						&& CheckDataUtil.checkNotEmpty(search.getPreparatoryid())) {
+					houseorder.setPreparatoryid(search.getPreparatoryid());
+				}
+			}
+			return houseorder;
 		}
 		return null;
 	}
