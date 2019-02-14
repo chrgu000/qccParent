@@ -12,6 +12,7 @@ import cn.com.qcc.pojo.Houseorder;
 import cn.com.qcc.pojo.Housetag;
 import cn.com.qcc.pojo.Paymodal;
 import cn.com.qcc.pojo.Preparatory;
+import cn.com.qcc.queryvo.BargainCustomer;
 import cn.com.qcc.queryvo.BrandCustomer;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.FurnitureCustomer;
@@ -238,6 +239,9 @@ public interface HouseCustomerMapper {
 	Houseorder getHouseNotPayOrder(Long otherid);
 	
 	Bargain getNewBargin(@Param("otherid")Long otherid, @Param("type")Integer type);
+	
+	/**查询砍价相关**/
+	BargainCustomer bargainDetailList(Long barginid);
 	
 	
 

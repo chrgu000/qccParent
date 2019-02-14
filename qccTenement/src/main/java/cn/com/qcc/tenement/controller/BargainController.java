@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import cn.com.qcc.common.ResultMap;
+import cn.com.qcc.pojo.Bargaindetail;
 import cn.com.qcc.service.BargainService;
 
 
@@ -22,19 +23,25 @@ public class BargainController {
 	 * 做砍价处理
 	 * **/
 	@RequestMapping("/bargin/dobargin/{type}")
-	public ResultMap doBargin(Long preparatoryid ,Long userid ,
+	public ResultMap doBargin(Long preparatoryid ,Long userid ,String reservationstel ,
+			String reservations,
 			@PathVariable Integer  type , Long otherid) {
-		return bargainService.doBargin(preparatoryid , userid , type , otherid);
+		return bargainService.doBargin(preparatoryid , userid , type , otherid ,reservationstel , reservations);
 	}
 	
 	
 	/**
 	 * 查询砍价列表
-	 * 
 	 * ***/
-	@RequestMapping("/bargin/searchList/{type}")
-	public ResultMap searchList (Long userid , @PathVariable Integer  type , Long otherid) {
-		return bargainService.searchList(userid,type,otherid);
+	@RequestMapping("/bargin/searchList")
+	public ResultMap searchList (Long barginid) {
+		return bargainService.searchList(barginid);
+	}
+	
+	/**砍价**/
+	@RequestMapping("/bargin/doBargainDetail")
+	public ResultMap doBargainDetail (Bargaindetail bargaindetail) {
+		return bargainService.doBargainDetail(bargaindetail);
 	}
 
 }

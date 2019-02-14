@@ -1727,5 +1727,17 @@
 		SELECT * from bargain where bargain.otherid =#{otherid}
 		 and type = #{type} ORDER BY bargain.starttime desc
 		LIMIT 0 , 1
-	</select>											
+	</select>	
+	
+	
+	<!-- 查询砍价相关信息 -->
+	<select id="bargainDetailList" resultType="cn.com.qcc.queryvo.BargainCustomer">
+		SELECT bargain.* ,
+		       house.house_number houseNumber ,
+					 apartment.apartmentname apartmentName
+			from bargain 
+			INNER JOIN house on house.houseid = bargain.otherid
+			LEFT JOIN apartment on apartment.apartmentid = house.apartment_id
+		where bargain.barginid =#{barginid}
+	</select>													
 </mapper>

@@ -1,6 +1,7 @@
 package cn.com.qcc.service;
 
 import cn.com.qcc.common.ResultMap;
+import cn.com.qcc.pojo.Bargaindetail;
 
 public interface BargainService {
 
@@ -11,11 +12,17 @@ public interface BargainService {
 	 * @param type : 操作的type类型
 	 * @param otherid : 被砍物品
 	 * **/
-	ResultMap doBargin(Long preparatoryid, Long userid, Integer type , Long oterhid);
+	ResultMap doBargin(Long preparatoryid, Long userid, Integer type, Long otherid, String reservationstel,
+			String reservations);
+
 	
 	/**
 	 * 查询砍价列表
 	 * **/
-	ResultMap searchList(Long userid, Integer type, Long otherid);
+	ResultMap searchList(Long barginid);
+
+
+	ResultMap doBargainDetail(Bargaindetail bargaindetail);
+
 
 }
