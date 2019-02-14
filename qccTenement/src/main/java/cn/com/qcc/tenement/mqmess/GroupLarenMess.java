@@ -13,7 +13,6 @@ import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.mapper.RongconnMapper;
 import cn.com.qcc.mymapper.UserCustomerMapper;
 import cn.com.qcc.pojo.Rongconn;
-import cn.com.qcc.pojo.RongconnExample;
 import cn.com.qcc.pojo.Userconn;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.service.UserService;
