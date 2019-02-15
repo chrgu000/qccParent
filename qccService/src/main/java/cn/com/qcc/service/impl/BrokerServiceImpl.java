@@ -292,7 +292,6 @@ public class BrokerServiceImpl implements BrokerService{
 	 * @param userid : 当前用户的userid 经纪人的 userid
 	 * @param searchuserid : 更新的房东的userid
 	 * @param state : 更新的状态码
-	 * 
 	 * ***/
 	public ResultMap brokerapproveland(Long userid, Long searchuserid, Long state) {
 		// TODO Auto-generated method stub [ 经济人处理房东申请 ]

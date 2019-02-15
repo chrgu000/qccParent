@@ -18,7 +18,6 @@ import cn.com.qcc.mapper.PriceMapper;
 import cn.com.qcc.mymapper.HouseCustomerMapper;
 import cn.com.qcc.mymapper.UserCustomerMapper;
 import cn.com.qcc.pojo.Bargain;
-import cn.com.qcc.pojo.BargainExample;
 import cn.com.qcc.pojo.Bargaindetail;
 import cn.com.qcc.pojo.BargaindetailExample;
 import cn.com.qcc.pojo.House;
@@ -202,7 +201,7 @@ public class BargainServiceImpl implements BargainService{
 				|| CheckDataUtil.checkisEmpty(bargaindetail.getAvatar())
 				|| CheckDataUtil.checkisEmpty(bargaindetail.getUsername()))
 				{
-			return ResultMap.build(400,"缺少数据");
+			return ResultMap.build(400,"未知的授权用户!!");
 				}
 		
 		Bargain bargin = bargainMapper.selectByPrimaryKey(bargaindetail.getBarginid());

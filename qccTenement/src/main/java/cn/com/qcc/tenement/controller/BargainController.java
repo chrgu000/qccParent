@@ -41,6 +41,11 @@ public class BargainController {
 	/**砍价**/
 	@RequestMapping("/bargin/doBargainDetail")
 	public ResultMap doBargainDetail (Bargaindetail bargaindetail) {
+		
+		System.out.println( "===== " + bargaindetail.getBarginid());
+		System.out.println( "===== " + bargaindetail.getUnionid());
+		System.out.println( "===== " + bargaindetail.getUsername());
+		System.out.println( "===== " + bargaindetail.getAvatar());
 		return bargainService.doBargainDetail(bargaindetail);
 	}
 
