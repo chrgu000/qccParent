@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.mymapper.UserCustomerMapper;
@@ -38,7 +37,8 @@ public class BrokerController {
 	//租客登记时候校验实名认证
 	@RequestMapping("/checkusersign")
 	@ResponseBody
-	public ResultMap checkusersign (Long telephone ,String realname ,String identity ) {
+	public ResultMap checkusersign (Long telephone ,String realname ,String identity
+			,String orcPath ) {
 		if (telephone == null || "".equals(realname) || "".equals(identity) ||
 				realname == null || identity == null || (telephone+"").length() !=11) {
 			return ResultMap.build(300,"数据不全");
@@ -50,7 +50,7 @@ public class BrokerController {
 		profile.setReal_name(realname);
 		profile.setIdentity(identity);
 		profile.setUser_id(userCustomer.getUserid());
-		ResultMap resultMap = brokerService.brokeruser(profile );
+		ResultMap resultMap = brokerService.brokeruser(profile ,orcPath);
 		//说明实名成功
 		if (resultMap.getCode() == 200) {
 			// 这里同步信息
@@ -68,28 +68,16 @@ public class BrokerController {
 	//经纪人入驻
 	@ResponseBody
 	@RequestMapping("/bebroker")
-	public ResultMap bebroker (Broker broker ) {
+	public ResultMap bebroker (Broker broker ,String orcPath ) {
 		// 先校验数据
 		if (broker.getUserid() == null) {return ResultMap.build(300, "未知登录");}
-		if (broker.getRealname() == null || "".equals(broker.getRealname())) {
-			return ResultMap.build(300, "真实姓名不能空！");
-		}
-		if (broker.getIdentity() == null || "".equals(broker.getIdentity())) {
-			return ResultMap.build(300, "证件号码空！");
-		}
 		if (broker.getCodes() == null || "".equals(broker.getCodes())) {
 			return ResultMap.build(300, "请选择区域");
 		}
-		if (broker.getIdpictures() == null ) {
-			broker.setIdpictures("");
-		}
 		Profile profile = new Profile();
 		profile.setUser_id(broker.getUserid());
-		profile.setReal_name(broker.getRealname());
-		profile.setIdentity(broker.getIdentity());
-		profile.setIdpictures(broker.getIdpictures());
 		//先校验实名认证
-		ResultMap resultMap = brokerService.brokeruser(profile);
+		ResultMap resultMap = brokerService.brokeruser(profile ,orcPath);
 		//说明实名成功
 		if (resultMap.getCode() == 200) {
 			ResultMap result = brokerService.bebroker(broker);
@@ -101,8 +89,27 @@ public class BrokerController {
 	//实名认证
 	@ResponseBody
 	@RequestMapping("/brokeruser")
-	public ResultMap brokeruser (Profile profile) {
-		ResultMap resultMap = brokerService.brokeruser(profile);
+	public ResultMap brokeruser (Profile profile,String orcPath) {
+		
+		
+		ResultMap resultMap = brokerService.brokeruser(profile ,orcPath);
+		//说明通过实名认证过
+		if (resultMap.getCode() == 200) {
+			boolean flag = inteService.isgetjinbibyevent( 17L , profile.getUser_id());
+			//如果没有获得
+			if (flag == false) {
+				inteService.managebranch(17L, profile.getUser_id() , profile.getUser_id());
+			}
+		}
+		return resultMap;
+	}
+	
+	
+	//实名认证
+	@ResponseBody
+	@RequestMapping("/brokeruser1")
+	public ResultMap brokeruser1 (Profile profile , String orcPath) {
+		ResultMap resultMap = brokerService.brokeruser(profile , orcPath);
 		//说明通过实名认证过
 		if (resultMap.getCode() == 200) {
 			boolean flag = inteService.isgetjinbibyevent( 17L , profile.getUser_id());

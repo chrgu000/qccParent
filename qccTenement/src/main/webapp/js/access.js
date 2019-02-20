@@ -31,6 +31,7 @@ $(function() {
 	});
 	
 	$('.role_model_alert').click(function () {
+		$('.role_searchWhere').val('');
 		//加载第一页数据
 		searchAddRole(1);
 		// 加载角色列表

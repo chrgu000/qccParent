@@ -11,6 +11,7 @@
     <result column="real_name" property="real_name" jdbcType="VARCHAR" />
     <result column="identity" property="identity" jdbcType="VARCHAR" />
     <result column="idpictures" property="idpictures" jdbcType="VARCHAR" />
+    <result column="homeaddress" property="homeaddress" jdbcType="VARCHAR" />
     <result column="mysign" property="mysign" jdbcType="VARCHAR" />
     <result column="sex" property="sex" jdbcType="VARCHAR" />
     <result column="mail" property="mail" jdbcType="VARCHAR" />
@@ -80,7 +81,8 @@
   </sql>
   <sql id="Base_Column_List" >
     profileid, user_id, unionid, address_id, avatar, user_name, real_name, identity, 
-    idpictures, mysign, sex, mail, code, signstate, create_time, birthday, sign_time
+    idpictures, homeaddress, mysign, sex, mail, code, signstate, create_time, birthday, 
+    sign_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.ProfileExample" >
     select
@@ -113,23 +115,27 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Profile" >
+  
    <selectKey  resultType="long"  order="AFTER"  keyProperty="profileid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into profile (profileid, user_id, unionid, 
       address_id, avatar, user_name, 
       real_name, identity, idpictures, 
-      mysign, sex, mail, 
-      code, signstate, create_time, 
-      birthday, sign_time)
+      homeaddress, mysign, sex, 
+      mail, code, signstate, 
+      create_time, birthday, sign_time
+      )
     values (#{profileid,jdbcType=BIGINT}, #{user_id,jdbcType=BIGINT}, #{unionid,jdbcType=VARCHAR}, 
       #{address_id,jdbcType=BIGINT}, #{avatar,jdbcType=VARCHAR}, #{user_name,jdbcType=VARCHAR}, 
       #{real_name,jdbcType=VARCHAR}, #{identity,jdbcType=VARCHAR}, #{idpictures,jdbcType=VARCHAR}, 
-      #{mysign,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, #{mail,jdbcType=VARCHAR}, 
-      #{code,jdbcType=BIGINT}, #{signstate,jdbcType=INTEGER}, #{create_time,jdbcType=TIMESTAMP}, 
-      #{birthday,jdbcType=TIMESTAMP}, #{sign_time,jdbcType=TIMESTAMP})
+      #{homeaddress,jdbcType=VARCHAR}, #{mysign,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
+      #{mail,jdbcType=VARCHAR}, #{code,jdbcType=BIGINT}, #{signstate,jdbcType=INTEGER}, 
+      #{create_time,jdbcType=TIMESTAMP}, #{birthday,jdbcType=TIMESTAMP}, #{sign_time,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Profile" >
+  
    <selectKey  resultType="long"  order="AFTER"  keyProperty="profileid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
@@ -161,6 +167,9 @@
       </if>
       <if test="idpictures != null" >
         idpictures,
+      </if>
+      <if test="homeaddress != null" >
+        homeaddress,
       </if>
       <if test="mysign != null" >
         mysign,
@@ -214,6 +223,9 @@
       </if>
       <if test="idpictures != null" >
         #{idpictures,jdbcType=VARCHAR},
+      </if>
+      <if test="homeaddress != null" >
+        #{homeaddress,jdbcType=VARCHAR},
       </if>
       <if test="mysign != null" >
         #{mysign,jdbcType=VARCHAR},
@@ -277,6 +289,9 @@
       <if test="record.idpictures != null" >
         idpictures = #{record.idpictures,jdbcType=VARCHAR},
       </if>
+      <if test="record.homeaddress != null" >
+        homeaddress = #{record.homeaddress,jdbcType=VARCHAR},
+      </if>
       <if test="record.mysign != null" >
         mysign = #{record.mysign,jdbcType=VARCHAR},
       </if>
@@ -317,6 +332,7 @@
       real_name = #{record.real_name,jdbcType=VARCHAR},
       identity = #{record.identity,jdbcType=VARCHAR},
       idpictures = #{record.idpictures,jdbcType=VARCHAR},
+      homeaddress = #{record.homeaddress,jdbcType=VARCHAR},
       mysign = #{record.mysign,jdbcType=VARCHAR},
       sex = #{record.sex,jdbcType=VARCHAR},
       mail = #{record.mail,jdbcType=VARCHAR},
@@ -356,6 +372,9 @@
       <if test="idpictures != null" >
         idpictures = #{idpictures,jdbcType=VARCHAR},
       </if>
+      <if test="homeaddress != null" >
+        homeaddress = #{homeaddress,jdbcType=VARCHAR},
+      </if>
       <if test="mysign != null" >
         mysign = #{mysign,jdbcType=VARCHAR},
       </if>
@@ -393,6 +412,7 @@
       real_name = #{real_name,jdbcType=VARCHAR},
       identity = #{identity,jdbcType=VARCHAR},
       idpictures = #{idpictures,jdbcType=VARCHAR},
+      homeaddress = #{homeaddress,jdbcType=VARCHAR},
       mysign = #{mysign,jdbcType=VARCHAR},
       sex = #{sex,jdbcType=VARCHAR},
       mail = #{mail,jdbcType=VARCHAR},

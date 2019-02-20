@@ -13,17 +13,23 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import javax.net.ssl.SSLContext;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import com.jpay.ext.kit.IpKit;
@@ -527,33 +533,81 @@ public class IDUtils {
 		return current;
 	}
 
-	public static double doBargin(double total) {
-
-		int max = 25;
-		int min = 10;
-		Random random = new Random();
-		double s = random.nextInt(max) % (max - min + 1) + min;
-		if (total < s)
+	
+	
+	
+	public static double doBargin(double total , int m ) {
+		double s = 0;
+		String max_str = "" ;
+		if (m > 1) {
+			double max =  ( (total / m )* (1+0.5) ) ;
+			double min = ( (total / m )* (1-0.5) ) ;
+			s = min + new Random().nextFloat() * (max - min);
+		}else {
 			s = total;
-		total = total - s;
+		}
+		if (total < s){
+			s = total;
+		}
+		max_str = String.format("%.1f", s);
+		s = Double.valueOf(max_str)*1.0;
+		int totalInt = doubletoint( total,  100);
+		int sInt =  doubletoint( s,  100);
+		total = (totalInt - sInt )/100;
+		
 		return total;
 
 	}
 
 	public static void main(String[] args) {
 
-		int total = 100;
-		int max = 25;
-		int min = 10;
-		Random random = new Random();
-
-		while (total > 0) {
-			int s = random.nextInt(max) % (max - min + 1) + min;
-			if (total < s)
-				s = total;
-			total = total - s;
-			System.out.println("砍掉的金额 ：" + s);
-			System.out.println("剩余金额 : " + total);
+		try {
+			String filepath = "C:\\5.jpg";//图片路径
+			String POST_URL ="https://file.chinadatapay.com/img/upload?appkey=ecc71e33d7d3fd770e3c29dfeaada770"; 
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpPost post = new HttpPost(POST_URL);
+			FileBody fileBody = new FileBody(new File(filepath)); 
+			MultipartEntity entity = new MultipartEntity(); 
+			entity.addPart("data", fileBody); 
+			post.setEntity(entity);
+			HttpResponse response = httpclient.execute(post); 
+			HttpEntity r_entity = response.getEntity();
+			String result = EntityUtils.toString(r_entity);
+			System.out.println("返回结果：" + result);
+			//你需要根据出错的原因判断错误信息，并修改
+			httpclient.getConnectionManager().shutdown();
+			net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(result);
+			Map<String, Object> map = (Map<String, Object>)jsonobj;
+			String code = (String)map.get("code");
+			String data = (String)map.get("data");
+			// 图片上传成功
+			if ("10000".equals(code) ) {
+				//接口地址
+		    	 String url = "http://api.chinadatapay.com/trade/user/1985";
+		    	 //请求参数
+		    	 Map<String, Object> params = new HashMap<>();
+		    	 //输入数据宝提供的 key
+		    	 params.put("key", "ecc71e33d7d3fd770e3c29dfeaada770");
+		    	 //输入局被查询手机号码
+		    	 params.put("imageId", data);
+		    	 String s = null;
+		    	 try {
+		    	 s = HttpSign.post(url, params);
+		    	 } catch (Exception e) {
+		    	 e.printStackTrace();
+		    	 }
+		    	 jsonobj = new net.sf.json.JSONObject().fromObject(s);
+				map = (Map<String, Object>)jsonobj;
+				code = (String)map.get("code");
+				if ("10000".equals(code)) {
+					 map = (Map<String, Object>)jsonobj.get("data");
+					System.out.println("result:\n" + map);
+				}
+				
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
 		}
 
 	}

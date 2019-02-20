@@ -3,7 +3,6 @@ import java.io.IOException;
 
 import javax.annotation.Resource;
 import javax.jms.Destination;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Controller;
@@ -27,6 +26,7 @@ public class PictureController {
 	
 	private final static String qnweb_path = "http://www.hadoop.zzw777.com/";
 	private final static String qview_path = "http://www.video.zzw777.com/";
+	
 	//视频的最大大小20M
 	private final static int VIDEO_MAX_SIZE =  1024 * 1000 * 20 ;
 
@@ -111,26 +111,33 @@ public class PictureController {
 	@ResponseBody
     @RequestMapping(value="/onepictureupload", method=RequestMethod.POST)
     public ResultMap onepictureupload(@RequestParam MultipartFile images) {
-		String  returnpath = "" ;
-		 //获取原始图片
-	    if (images.isEmpty()) {
-	        return ResultMap.build(400, "选择文件");
-	    }
-	    // 1, 建立一个新的文件名
-	    String key = IDUtils.genItemId()+ ".png";
-	    // 2,这里不添加水印
-	    String filePath = WaterMarkUtils.addWaterMarkNot(images, key);
-	    // 3 , 上传到七牛云服务器
-	    SimpleUpload.upload(filePath, key);
-	    //发放删除本地图片的消息
-		if (CheckDataUtil.checkNotEmpty(filePath)) {
-			SendMessUtil.sendData(jmsTemplate, deletepicture, filePath);
+		if (images.isEmpty()) 
+			return ResultMap.build(400, "选择文件");
+		String returnPath = "";
+		String originName  = images.getOriginalFilename();
+		if (originName.contains(".jpg")
+				|| originName.contains(".png")) {
+			// 获取文件后缀
+			String lastName = originName.substring(originName.lastIndexOf("."), originName.length());
+			// 设置上传的key
+			String key = IDUtils.genItemId() + lastName;
+			// 上传到远程服务器
+			SimpleUpload.doUpload(images ,key);
+			// 设置返回的路径
+			returnPath  += qnweb_path + key  ;
 		}
-		String imagepath =  qnweb_path + key;
-		returnpath += imagepath + ",";
-		returnpath = returnpath.substring(0, returnpath.length()-1);
-		return ResultMap.IS_200(returnpath);
+		return ResultMap.IS_200(returnPath);
     }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 

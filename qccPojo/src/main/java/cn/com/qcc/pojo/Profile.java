@@ -2,12 +2,15 @@ package cn.com.qcc.pojo;
 
 import java.util.Date;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class Profile {
     /** */
     private Long profileid;
 
     /** 对应用户表中的id字段*/
     private Long user_id;
+    
 
     /** 微信提现账号的唯一标识*/
     private String unionid;
@@ -27,8 +30,11 @@ public class Profile {
     /** 身份证号*/
     private String identity;
 
-    /** */
+    /** 证件照片 第一正面。第二个反面 */
     private String idpictures;
+
+    /** 家庭住址*/
+    private String homeaddress;
 
     /** 用户签名*/
     private String mysign;
@@ -53,8 +59,11 @@ public class Profile {
 
     /** 最后一次实名时间*/
     private Date sign_time;
+    
+    
 
-    public Long getProfileid() {
+   
+	public Long getProfileid() {
         return profileid;
     }
 
@@ -124,6 +133,14 @@ public class Profile {
 
     public void setIdpictures(String idpictures) {
         this.idpictures = idpictures == null ? null : idpictures.trim();
+    }
+
+    public String getHomeaddress() {
+        return homeaddress;
+    }
+
+    public void setHomeaddress(String homeaddress) {
+        this.homeaddress = homeaddress == null ? null : homeaddress.trim();
     }
 
     public String getMysign() {

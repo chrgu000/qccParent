@@ -588,6 +588,7 @@ public class WxPayController {
 		HttpClient client = new DefaultHttpClient();
 		HttpPost post = new HttpPost(url);
 		HttpResponse res = client.execute(post);
+		
 		if (res.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 			HttpEntity entity = res.getEntity();
 			String str = EntityUtils.toString(entity, "utf-8");

@@ -52,6 +52,7 @@
 		<property name="maxUploadSize" value="20000000000" />
 	</bean>
 	
+	
 	<bean  class="cn.com.qcc.tenement.interceptor.AccessTokenInterceptor"  /> 
 	<bean class="cn.com.qcc.tenement.interceptor.LoginInterceptor" />
 	<mvc:interceptors>

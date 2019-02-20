@@ -1,9 +1,13 @@
 package cn.com.qcc.service.impl;
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import cn.com.qcc.common.CheckDataUtil;
+import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.HttpSign;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.mapper.BrokerMapper;
@@ -18,6 +22,7 @@ import cn.com.qcc.pojo.Broker;
 import cn.com.qcc.pojo.LandloadBroker;
 import cn.com.qcc.pojo.LandloadBrokerExample;
 import cn.com.qcc.pojo.Profile;
+import cn.com.qcc.pojo.ProfileExample;
 import cn.com.qcc.queryvo.UserCentVo;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.queryvo.UserVo;
@@ -56,27 +61,69 @@ public class BrokerServiceImpl implements BrokerService{
 	/**
 	 * 实名认证
 	 * **/
-	public ResultMap brokeruser(Profile profile) {
+	public ResultMap brokeruser(Profile profile,String orcPath) {
 		//校验用户是否实名过
 		UserCustomer userCustomer = userCustomerMapper.getcommonusermess(profile.getUser_id());
 		if (userCustomer == null) {return ResultMap.build(900, "用户不存在!");}
 		if (userCustomer.getSignstate() == 2) {return ResultMap.build(200,"已实名");}
-		boolean flag  =  HttpSign.checkuserrealmessage(profile.getReal_name(), profile.getIdentity());
+		ResultMap ocRsign = HttpSign.OCRsign(orcPath);
 		Integer signstate = 1; //默认是实名未通过
 		String message = "实名失败!";
 		Integer code = 300;
-		if (flag == true) {
+		if (ocRsign.getCode() ==200) {
 			signstate =2;
 			code = 200;
 			message = "实名成功!";
 		}
+		// 这里说明第一步身份证信息正确。
 		if (signstate == 2) {
+			//保存数据
+			java.util.Map<String, Object> map = (java.util.Map<String, Object>)ocRsign.getObj();
+			System.out.println(" 返回值" + map.get("birthday") + "-" + map.get("sex") + "-" + map.get("address")
+			+"-" +map.get("name") + "-" + map.get("idcard") );
 			profile.setSignstate(signstate);
+			//真实姓名
+			profile.setReal_name((String)map.get("name"));
+			//生日
+			profile.setBirthday(DateUtil.strToDate((String)map.get("birthday")));
+			// 证件号码
+			profile.setIdentity((String)map.get("idcard"));
+			
+			// 这里判断同一张身份证不能实名两次
+			boolean flag = checkIdCard((String)map.get("idcard"));
+			if (flag) 
+				return ResultMap.build(400,"该证件已经实名,请申诉冻结或者。联系管理员");
+			
+			
+			// 性别
+			profile.setSex( (String)map.get("sex"));
+			//家庭住址
+			profile.setHomeaddress((String)map.get("address"));
+			// 更新的用户
 			profile.setProfileid(userCustomer.getProfileid());
 			profileMapper.updateByPrimaryKeySelective(profile);
 		}
-		return ResultMap.build(code, message,userCustomer.getUserid());
+		return ResultMap.build(code, message , profile.getUser_id());
 	}
+	
+	
+	private boolean checkIdCard(String identity) {
+		
+		if (identity == null || "".equals(identity)) {
+			return false;
+		}
+		
+		ProfileExample example = new ProfileExample();
+		ProfileExample.Criteria criteria = example.createCriteria();
+		criteria.andIdentityEqualTo(identity);
+		List<Profile> list = profileMapper.selectByExample(example);
+		if (CheckDataUtil.checkNotEmpty(list)) 
+			return  true ;
+		return false;
+	}
+
+
+	// 校验系统中是否
 
 
 	/**

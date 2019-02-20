@@ -175,4 +175,17 @@ public class SimpleUpload {
 	public static String getuploadpictoken(String bucketName) {
 		return auth.uploadToken(bucketName);
 	}
+
+	public static void doUpload(MultipartFile file, String key) {
+		try {
+			Response res  = uploadManager.put(file.getBytes(), key, getUpToken(AccountMgr.qcc_bucketName,key));
+		} catch (QiniuException e) {
+			Response r = e.response;
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 }

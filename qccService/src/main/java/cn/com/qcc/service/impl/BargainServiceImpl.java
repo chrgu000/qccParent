@@ -1,5 +1,6 @@
 package cn.com.qcc.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -99,7 +100,7 @@ public class BargainServiceImpl implements BargainService{
 			Price price = priceMapper.selectByPrimaryKey( house.getPrice_id());
 			double cent = 0;
 			double totalprice = 0;
-			int daycount = 30;
+			int daycount = 0;
 			double orderprice = 0;
 			if (CheckDataUtil.checkNotEmpty(prepartory)) {
 				cent = prepartory.getLandpercentnum();
@@ -114,8 +115,8 @@ public class BargainServiceImpl implements BargainService{
 			}
 			
 			// 没有设置佣金的情况下
-			if (cent < 0) {
-				totalprice = price.getPrices() * 0.5 * 0.2;
+			if (cent <= 0) {
+				totalprice = price.getPrices() * 0.05 * 0.2;
 			}else {
 				totalprice = price.getPrices() * cent * 0.4;
 			}
@@ -156,7 +157,7 @@ public class BargainServiceImpl implements BargainService{
 			orderIn.setReservationstel(tel);
 			orderIn.setReservations(name);
 			orderIn.setPrices(orderprice);
-			orderIn.setDaycount(prepartory.getDaycount());
+			orderIn.setDaycount(daycount);
 			orderIn.setBarginid(inserBargin.getBarginid());
 			houseorderMapper.insertSelective(orderIn);
 			return ResultMap.build(200, "发起成功" ,inserBargin.getBarginid());
@@ -181,13 +182,6 @@ public class BargainServiceImpl implements BargainService{
 		List<Bargaindetail> details = bargaindetailMapper.selectByExample(example);
 		bargainCustomer.setDetails(details);
 		
-		if (CheckDataUtil.checkNotEmpty(unionid)) {
-			Bargaindetail checkDetail = checkDetail(barginid,unionid);
-			if (CheckDataUtil.checkNotEmpty(checkDetail)) {
-				bargainCustomer.setAccount(checkDetail.getAccount());
-			}
-		}
-		
 		
 		return ResultMap.IS_200(bargainCustomer);
 	}
@@ -211,12 +205,20 @@ public class BargainServiceImpl implements BargainService{
 		}
 		
 		// 判断用户是否砍过
-		Bargaindetail detail = checkDetail (bargaindetail.getBarginid(),bargaindetail.getUnionid());
-		if (CheckDataUtil.checkNotEmpty(detail)) 
-			return ResultMap.build(200, "你已经砍了一刀，机会留给别人吧" , detail.getAccount());
+		List<Bargaindetail> detailList = checkDetail (bargaindetail.getBarginid(),bargaindetail.getUnionid());
+		
+		for (Bargaindetail detail : detailList) {
+			if (CheckDataUtil.checkNotEmpty(detail)) {
+				if (detail.getUnionid().equals(bargaindetail.getUnionid())) {
+					return ResultMap.build(200, "你已经砍了一刀，机会留给别人吧" );
+				}
+			}
+		}
+		
+	
 		
 		// 这里做砍刀处理返回剩余的金额
-		double doBargin = IDUtils.doBargin(bargin.getLessbalance());
+		double doBargin = IDUtils.doBargin(bargin.getLessbalance() ,5 -detailList.size() );
 		
 		// 更新砍刀表
 		bargaindetail.setAccount(bargin.getLessbalance() -  doBargin);
@@ -231,16 +233,15 @@ public class BargainServiceImpl implements BargainService{
 
 
 
-	private Bargaindetail checkDetail(Long barginid, String unionid) {
+	private List<Bargaindetail> checkDetail(Long barginid, String unionid) {
 		BargaindetailExample example = new BargaindetailExample();
 		BargaindetailExample.Criteria criteria = example.createCriteria();
-		criteria.andUnionidEqualTo(unionid);
 		criteria.andBarginidEqualTo(barginid);
 		List<Bargaindetail> list = bargaindetailMapper.selectByExample(example);
 		if (CheckDataUtil.checkNotEmpty(list)) {
-			return list.get(0);
+			return list;
 		}
-		return null ;
+		return new ArrayList<>() ;
 	}
 
 }

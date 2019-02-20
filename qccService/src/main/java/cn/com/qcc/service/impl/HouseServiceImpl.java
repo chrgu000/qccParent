@@ -1774,7 +1774,16 @@ public class HouseServiceImpl implements HouseService {
 	 * **/
 	public List<PreparatoryCustomer> preparList(Long houseid) {
 		List<PreparatoryCustomer> preList =  houseCustomerMapper.preparList(houseid);
-		if (preList.isEmpty() || preList.size() == 0) {preList = new ArrayList<>();}
+		if (preList.isEmpty() || preList.size() == 0) {
+			PreparatoryCustomer pre = new PreparatoryCustomer();
+			pre.setType("不限");
+			pre.setDaycount(0);
+			pre.setLandpercentnum(0.0);
+			pre.setCentpercentnum(0.0);
+			pre.setPreparatoryid(-1L);
+			preList = new ArrayList<>();
+			preList.add(pre);
+		}
 		return preList;
 	}
 	@Override

@@ -60,7 +60,7 @@ public class BackController{
 	@Autowired HouseSolrDao houseSolrDao;
 	
 	
-	@RequestMapping("/back//userRoleAdd")
+	@RequestMapping("/back/userRoleAdd")
 	@ResponseBody
 	public ResultMap userRoleAdd(String userids ,Long roleid){
 		

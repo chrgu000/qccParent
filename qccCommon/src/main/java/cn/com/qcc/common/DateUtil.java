@@ -117,6 +117,21 @@ public class DateUtil {
 
 		return date;
 	}
+	
+	public static Date strToDate( String dateStr) {
+
+		Date date = null;
+		String format = "yyyy年MM月dd" ;
+		try {
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+			date = simpleDateFormat.parse(dateStr);
+			System.out.println("格式后时间" + date);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return date;
+	}
 
 	/**
 	 * 将Date时间转成字符串

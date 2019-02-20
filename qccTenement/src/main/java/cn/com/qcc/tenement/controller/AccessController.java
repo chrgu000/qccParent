@@ -14,6 +14,8 @@ import cn.com.qcc.pojo.Access;
 import cn.com.qcc.pojo.Systemstate;
 import cn.com.qcc.queryvo.UserVo;
 import cn.com.qcc.service.AccessService;
+import cn.com.qcc.service.BrokerService;
+import cn.com.qcc.service.InteService;
 
 
 /**
@@ -24,6 +26,24 @@ public class AccessController {
 
 	@Autowired AccessService accessService;
 	@Autowired HttpServletRequest request;
+	@Autowired BrokerService brokerService;
+	@Autowired InteService inteService;
+	
+	//实名认证
+	/*@ResponseBody
+	@RequestMapping("/brokeruser")
+	public ResultMap brokeruser (Profile profile,MultipartFile ocrPictureFirst , MultipartFile ocrPictureSecond) {
+		ResultMap resultMap = brokerService.brokeruser(profile , ocrPictureFirst,ocrPictureSecond);
+		//说明通过实名认证过
+		if (resultMap.getCode() == 200) {
+			boolean flag = inteService.isgetjinbibyevent( 17L , profile.getUser_id());
+			//如果没有获得
+			if (flag == false) {
+				inteService.managebranch(17L, profile.getUser_id() , profile.getUser_id());
+			}
+		}
+		return resultMap;
+	}*/
 	
 	@RequestMapping("/hello")
 	public String he() {

@@ -16,7 +16,7 @@ public class PictureDeleteMess implements MessageListener {
 			
 			Thread.sleep(4000);
 			String  filePath =   (String)textMessage.getText() ;
-			//System.out.println("发送图片后收到的消息：" + filePath );
+			System.out.println("==========删除本地图片收到消息======：" + filePath );
 			String[] splitPath = filePath.split("-");
 			for (int i=0;i<splitPath.length;i++) {
 				File file = new File(splitPath[i]);

@@ -20,7 +20,7 @@ public interface BrokerService {
 	/**
 	 * 实名认证
 	 * **/
-	ResultMap brokeruser(Profile profile);
+	ResultMap brokeruser(Profile profile ,String orcPath);
 	
 	/**
 	 * 找经纪人
