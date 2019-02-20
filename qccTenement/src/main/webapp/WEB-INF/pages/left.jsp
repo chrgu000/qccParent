@@ -32,7 +32,7 @@
 	</li> -->
 	
 	<li style="display:none;"  class="list-group-item" id="isshow30">
-		<button type="button" class="btn btn-primary  commoninte">金币参数配置</button>
+		<button type="button" class="btn btn-primary  commoninte">基本参数配置</button>
 	</li>
 	<li style="display:none;"  class="list-group-item" id="isshow31">
 		<button type="button" class="btn btn-primary  percent">百分比数配置</button>

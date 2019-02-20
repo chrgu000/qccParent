@@ -42,6 +42,7 @@ $(function () {
 
 
 function searchcommoninte () {
+	var typeArr = ['金币配置' , '砍刀配置']
 	$.ajax({
 		method : 'post',
 		url : '/Tenement/back/searchcommoninte',
@@ -51,7 +52,7 @@ function searchcommoninte () {
 				var commoninte = data.obj;
 				var form = $('#commoninte_body').empty();
 				$.each(commoninte,function(index, value) {
-					var body_in ='<tr><td >'+value.commonid+'</td><td>'+value.typename+'</td>'+
+					var body_in ='<tr><td >'+typeArr[value.type]+'</td><td>'+value.typename+'</td>'+
 					'<td>'+value.typecount+'</td><td>'+value.frequency+'</td><td>'+value.typeword+ value.typecount+'</td>' 
 					+'<td> <button onclick=searchbycommonid('+ value.commonid+')  class="btn btn-xm btn-primary " data-toggle="modal" data-target="#commoninte_detail"> 编辑 </button> </td></tr>';
 					form.append(body_in);

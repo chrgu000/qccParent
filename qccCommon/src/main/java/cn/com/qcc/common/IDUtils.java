@@ -11,9 +11,11 @@ import java.net.URL;
 import java.security.KeyStore;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import javax.net.ssl.SSLContext;
@@ -34,6 +36,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import com.jpay.ext.kit.IpKit;
 import com.jpay.ext.kit.StrKit;
+import com.mysql.fabric.xmlrpc.base.Array;
 
 import cn.com.qcc.detailcommon.CommonUtil;
 import cn.com.qcc.detailcommon.Sha1;
@@ -50,7 +53,31 @@ public class IDUtils {
 	static char[] numArray = { '零', '一', '二', '三', '四', '五', '六', '七', '八', '九' };
 	static char[] numArraybig = { '零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖' };
 	static String[] unitsbig = { "", "拾", "佰", "仟", "萬", "拾萬", "佰萬", "仟萬", "亿", "拾亿", "佰亿", "仟亿", "萬亿" };
-
+	static String[] strArr = { "零", "一", "二","三","四","五","六","七","八","九","十"};
+	
+	public static void main(String[] args) {
+		String s = "押九付十";
+		List<Integer> houseModel = houseModel(s);
+		System.out.println(houseModel.get(0));
+	}
+	
+	public static List<Integer> houseModel(String s) {
+		
+		List<Integer> returnList = new ArrayList<>();
+		String[] split = s.split("");
+		for (int i=0;i<split.length;i++) {
+			for (int m=0;m<strArr.length;m++) {
+				if (split[i].equals(strArr[m])) {
+					returnList.add(m);
+				}
+			};
+		}
+		return returnList;
+	}
+	
+	
+	
+	
 	/** 吧double乘以n转为int **/
 	public static Integer doubletoint(double d, int n) {
 
@@ -536,7 +563,7 @@ public class IDUtils {
 	
 	
 	
-	public static double doBargin(double total , int m ) {
+	public static double doBargin(double total , long m ) {
 		double s = 0;
 		String max_str = "" ;
 		if (m > 1) {
@@ -559,58 +586,6 @@ public class IDUtils {
 
 	}
 
-	public static void main(String[] args) {
-
-		try {
-			String filepath = "C:\\5.jpg";//图片路径
-			String POST_URL ="https://file.chinadatapay.com/img/upload?appkey=ecc71e33d7d3fd770e3c29dfeaada770"; 
-			HttpClient httpclient = new DefaultHttpClient();
-			HttpPost post = new HttpPost(POST_URL);
-			FileBody fileBody = new FileBody(new File(filepath)); 
-			MultipartEntity entity = new MultipartEntity(); 
-			entity.addPart("data", fileBody); 
-			post.setEntity(entity);
-			HttpResponse response = httpclient.execute(post); 
-			HttpEntity r_entity = response.getEntity();
-			String result = EntityUtils.toString(r_entity);
-			System.out.println("返回结果：" + result);
-			//你需要根据出错的原因判断错误信息，并修改
-			httpclient.getConnectionManager().shutdown();
-			net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(result);
-			Map<String, Object> map = (Map<String, Object>)jsonobj;
-			String code = (String)map.get("code");
-			String data = (String)map.get("data");
-			// 图片上传成功
-			if ("10000".equals(code) ) {
-				//接口地址
-		    	 String url = "http://api.chinadatapay.com/trade/user/1985";
-		    	 //请求参数
-		    	 Map<String, Object> params = new HashMap<>();
-		    	 //输入数据宝提供的 key
-		    	 params.put("key", "ecc71e33d7d3fd770e3c29dfeaada770");
-		    	 //输入局被查询手机号码
-		    	 params.put("imageId", data);
-		    	 String s = null;
-		    	 try {
-		    	 s = HttpSign.post(url, params);
-		    	 } catch (Exception e) {
-		    	 e.printStackTrace();
-		    	 }
-		    	 jsonobj = new net.sf.json.JSONObject().fromObject(s);
-				map = (Map<String, Object>)jsonobj;
-				code = (String)map.get("code");
-				if ("10000".equals(code)) {
-					 map = (Map<String, Object>)jsonobj.get("data");
-					System.out.println("result:\n" + map);
-				}
-				
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-
-	}
 	
 	
 	public static Date getNextDay(Date date) {

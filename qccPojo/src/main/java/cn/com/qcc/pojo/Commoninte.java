@@ -16,6 +16,9 @@ public class Commoninte {
     /** 系统描述*/
     private String typeword;
 
+    /** 0-金币 1-砍刀*/
+    private Integer type;
+
     public Long getCommonid() {
         return commonid;
     }
@@ -54,5 +57,13 @@ public class Commoninte {
 
     public void setTypeword(String typeword) {
         this.typeword = typeword == null ? null : typeword.trim();
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

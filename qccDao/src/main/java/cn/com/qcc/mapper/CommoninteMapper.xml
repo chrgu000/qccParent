@@ -7,6 +7,7 @@
     <result column="frequency" property="frequency" jdbcType="INTEGER" />
     <result column="typecount" property="typecount" jdbcType="BIGINT" />
     <result column="typeword" property="typeword" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -67,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    commonid, typename, frequency, typecount, typeword
+    commonid, typename, frequency, typecount, typeword, type
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.CommoninteExample" >
     select
@@ -101,9 +102,11 @@
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Commoninte" >
     insert into commoninte (commonid, typename, frequency, 
-      typecount, typeword)
+      typecount, typeword, type
+      )
     values (#{commonid,jdbcType=BIGINT}, #{typename,jdbcType=VARCHAR}, #{frequency,jdbcType=INTEGER}, 
-      #{typecount,jdbcType=BIGINT}, #{typeword,jdbcType=VARCHAR})
+      #{typecount,jdbcType=BIGINT}, #{typeword,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Commoninte" >
     insert into commoninte
@@ -123,6 +126,9 @@
       <if test="typeword != null" >
         typeword,
       </if>
+      <if test="type != null" >
+        type,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="commonid != null" >
@@ -139,6 +145,9 @@
       </if>
       <if test="typeword != null" >
         #{typeword,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -166,6 +175,9 @@
       <if test="record.typeword != null" >
         typeword = #{record.typeword,jdbcType=VARCHAR},
       </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -177,7 +189,8 @@
       typename = #{record.typename,jdbcType=VARCHAR},
       frequency = #{record.frequency,jdbcType=INTEGER},
       typecount = #{record.typecount,jdbcType=BIGINT},
-      typeword = #{record.typeword,jdbcType=VARCHAR}
+      typeword = #{record.typeword,jdbcType=VARCHAR},
+      type = #{record.type,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -197,6 +210,9 @@
       <if test="typeword != null" >
         typeword = #{typeword,jdbcType=VARCHAR},
       </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
     </set>
     where commonid = #{commonid,jdbcType=BIGINT}
   </update>
@@ -205,7 +221,8 @@
     set typename = #{typename,jdbcType=VARCHAR},
       frequency = #{frequency,jdbcType=INTEGER},
       typecount = #{typecount,jdbcType=BIGINT},
-      typeword = #{typeword,jdbcType=VARCHAR}
+      typeword = #{typeword,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER}
     where commonid = #{commonid,jdbcType=BIGINT}
   </update>
 </mapper>

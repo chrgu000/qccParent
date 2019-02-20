@@ -265,7 +265,7 @@
 		<!--金币基本配置-->
 	<div id="commoninte">
 		<div class="panel panel-default">
-			<div class="panel-heading">金币参数配置</div>
+			<div class="panel-heading">基本参数设置   [ 金币 \ 砍刀   ]  </div>
 			<div class="panel-body">
 				<jsp:include page="commoninte.jsp"/>
 			</div>

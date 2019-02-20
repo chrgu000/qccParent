@@ -12,11 +12,11 @@
 		
           <table id="commoninte_table" class = "table	table-hover	 ">
 			<tr>
-				<td class ='visible-lg'  >金币主键</td>
+				<td class ='visible-lg'  >类型名称</td>
 				<td class ='visible-lg'  >事件名称</td>
-				<td class ='visible-lg' >金币数量</td>
-				<td class ='visible-lg' >每天频率</td>
-				<td class ='visible-lg' >金币描述</td>
+				<td class ='visible-lg' >数量</td>
+				<td class ='visible-lg' >频率</td>
+				<td class ='visible-lg' >描述</td>
 				<td >编辑</td>
 			</tr>
 			<tbody id="commoninte_body" >
@@ -32,11 +32,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel">修改金币设置</h4>
+                <h4 class="modal-title" id="myModalLabel">修改参数配置</h4>
             </div>
             <div class="modal-body">
 			   				<input type="hidden" class="metro_metroid"/>
-			 金币主键：	<input type="text" class="comm_commonid"  readonly="readonly"
+			 类型主键：	<input type="text" class="comm_commonid"  readonly="readonly"
 			  > </br>
             	系统描述：	<input type="text" class="comm_typeword" readonly="readonly"
 			  > </br>
@@ -44,9 +44,9 @@
           	 事件名称：	<input type="text" class="comm_typename"  
 			  > </br>
           
-            	金币数目：	<input type="number" class="comm_typecount" 
+            	类型数目：	<input type="number" class="comm_typecount" 
 			  > </br>
-			  每天频率：	<input type="number" class="comm_frequency" 
+			  类型频率：	<input type="number" class="comm_frequency" 
 			  > </br>
 			
            

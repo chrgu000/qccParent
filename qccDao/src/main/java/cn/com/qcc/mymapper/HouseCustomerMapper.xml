@@ -1277,6 +1277,7 @@
 	  apartmentname ,
 	  detaileaddress.detailes ,
 	  house.floor ,
+	  house.paystyle , 
 	  house.house_number,
 	  house.houseid
 	FROM

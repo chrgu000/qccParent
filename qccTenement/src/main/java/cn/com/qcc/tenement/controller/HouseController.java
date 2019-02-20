@@ -868,22 +868,50 @@ public class HouseController {
 			return ResultMap.build(400, "房源ID不为空");
 		}
 		HouseCustomer houseCustomer = houseService.getHouseYudingMess(houseid);
-		String cycleName =null;
-		PreparatoryCustomer preparatory = housertargService.getTraName(houseid);
-		if (CheckDataUtil.checkNotEmpty(preparatory)) {
-			cycleName = preparatory.getType();
-			houseCustomer.setCentpercentnum(preparatory.getCentpercentnum());
-			houseCustomer.setLandpercentnum(preparatory.getLandpercentnum());
-		}else {
-			houseCustomer.setCentpercentnum(0.0);
-			houseCustomer.setLandpercentnum(0.0);
-		}
 		
+		// 把押几付几先查来 0-押的倍数 1-支付的倍数
+		List<Integer> houseModel = IDUtils.houseModel(houseCustomer.getPaystyle());
 		// 查询规则的数组
 		List<PreparatoryCustomer> preList = houseService.preparList(houseid);
 		houseCustomer.setPreList(preList);
-		cycleName = cycleName == null ? "不限" : cycleName;
-		houseCustomer.setCycleName(cycleName);
+		// 这里需要计算的有 房东付佣金 租客付佣金  押金 租金 定金
+		for (PreparatoryCustomer preModel : preList) {
+			// 房东付佣金
+			double landPrice = preModel.getLandpercentnum() * Double.valueOf(houseCustomer.getPrices()) ;
+			// 租客付佣金
+			double centPrice = preModel.getCentpercentnum() * Double.valueOf(houseCustomer.getPrices()) ;
+			// 押金
+			double yanPrice = Double.valueOf(houseCustomer.getPrices()) * houseModel.get(0);
+			// 定金
+			double orderPirce = landPrice + centPrice;
+			if (orderPirce ==0) {
+				orderPirce = Double.valueOf(houseCustomer.getPrices()) * 0.5 ;
+			}
+			// 第一次需要付的钱
+			double firstCentPrice = Double.valueOf(houseCustomer.getPrices()) * houseModel.get(1);
+			
+			preModel.setLandPrice(landPrice);
+			preModel.setCentPrice(centPrice);
+			preModel.setYanPrice(yanPrice);
+			preModel.setOrderPirce(orderPirce);
+			preModel.setFirstCentPrice(firstCentPrice);
+			
+		}
+		
+		
+		
+		//String cycleName =null;
+		//PreparatoryCustomer preparatory = housertargService.getTraName(houseid);
+		//if (CheckDataUtil.checkNotEmpty(preparatory)) {
+		//	cycleName = preparatory.getType();
+		//	houseCustomer.setCentpercentnum(preparatory.getCentpercentnum());
+		//	houseCustomer.setLandpercentnum(preparatory.getLandpercentnum());
+		//}else {
+		//	houseCustomer.setCentpercentnum(0.0);
+		//	houseCustomer.setLandpercentnum(0.0);
+		//}
+		//cycleName = cycleName == null ? "不限" : cycleName;
+		//	houseCustomer.setCycleName(cycleName);
 		return ResultMap.IS_200(houseCustomer);
 	}
 

@@ -12,6 +12,7 @@ import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.mapper.BargainMapper;
 import cn.com.qcc.mapper.BargaindetailMapper;
+import cn.com.qcc.mapper.CommoninteMapper;
 import cn.com.qcc.mapper.HouseMapper;
 import cn.com.qcc.mapper.HouseorderMapper;
 import cn.com.qcc.mapper.PreparatoryMapper;
@@ -21,6 +22,7 @@ import cn.com.qcc.mymapper.UserCustomerMapper;
 import cn.com.qcc.pojo.Bargain;
 import cn.com.qcc.pojo.Bargaindetail;
 import cn.com.qcc.pojo.BargaindetailExample;
+import cn.com.qcc.pojo.Commoninte;
 import cn.com.qcc.pojo.House;
 import cn.com.qcc.pojo.Houseorder;
 import cn.com.qcc.pojo.Preparatory;
@@ -48,6 +50,8 @@ public class BargainServiceImpl implements BargainService{
 	UserCustomerMapper userCustomerMapper;
 	@Autowired
 	BargaindetailMapper bargaindetailMapper;
+	@Autowired
+	CommoninteMapper commoninteMapper;
 	@Override
 	public ResultMap doBargin(Long preparatoryid, Long userid,
 			Integer type , Long otherid,String tel , String name) {
@@ -216,9 +220,11 @@ public class BargainServiceImpl implements BargainService{
 		}
 		
 	
-		
+		Commoninte selectByPrimaryKey = commoninteMapper.selectByPrimaryKey(20L);
+		// 拿出系统配置好的房源初始需要砍的刀数
+		long totalSize = selectByPrimaryKey.getTypecount();
 		// 这里做砍刀处理返回剩余的金额
-		double doBargin = IDUtils.doBargin(bargin.getLessbalance() ,5 -detailList.size() );
+		double doBargin = IDUtils.doBargin(bargin.getLessbalance() ,totalSize -detailList.size() );
 		
 		// 更新砍刀表
 		bargaindetail.setAccount(bargin.getLessbalance() -  doBargin);

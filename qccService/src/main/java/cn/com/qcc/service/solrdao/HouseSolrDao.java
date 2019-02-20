@@ -155,6 +155,8 @@ public class HouseSolrDao {
 				item.setPricetype((String) solrDocument.get("pricetype"));
 				// 价格单位
 				item.setAvatar((String) solrDocument.get("avatar"));
+				// 是否可以预定...
+				item.setSchedule(Integer.parseInt((String) solrDocument.get("schedule")));
 				// 品牌名称
 				item.setBrand((String) solrDocument.get("brand"));
 				// 品牌名称
@@ -443,6 +445,8 @@ public class HouseSolrDao {
 				item.setAvatar((String) solrDocument.get("avatar"));
 				// 品牌名称
 				item.setBrand((String) solrDocument.get("brand"));
+				// 是否可以预定...
+				item.setSchedule(Integer.parseInt((String) solrDocument.get("schedule")));
 				// 品牌名称
 				item.setUpdate_time((Date) solrDocument.get("update_time"));
 				// 用户id
@@ -496,6 +500,8 @@ public class HouseSolrDao {
 				item.setPricetype((String) solrDocument.get("pricetype"));
 				// 价格单位
 				item.setAvatar((String) solrDocument.get("avatar"));
+				// 是否可以预定...
+				item.setSchedule(Integer.parseInt((String) solrDocument.get("schedule")));
 				// 品牌名称
 				item.setBrand((String) solrDocument.get("brand"));
 				// 品牌名称
