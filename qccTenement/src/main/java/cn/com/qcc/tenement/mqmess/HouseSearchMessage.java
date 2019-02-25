@@ -34,7 +34,7 @@ public class HouseSearchMessage implements MessageListener{
 			// houseid +"-"+userid + "-" +type ;
 			TextMessage textMessage = (TextMessage)message;
 			String text = (String)textMessage.getText();
-			// 拿到TEXT 需要休眠一会儿。等待数据库提交事务
+			// 由于
 			Thread.sleep(500);
 			System.out.println("查询房源收到消息：" + text);
 			Long houseid =  Long.valueOf(text.split("-")[0] );

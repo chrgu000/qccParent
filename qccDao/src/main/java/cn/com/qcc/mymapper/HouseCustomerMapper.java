@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.pojo.Bargain;
 import cn.com.qcc.pojo.Furniture;
+import cn.com.qcc.pojo.Housemodel;
 import cn.com.qcc.pojo.Houseorder;
 import cn.com.qcc.pojo.Housetag;
 import cn.com.qcc.pojo.Paymodal;
@@ -242,6 +243,9 @@ public interface HouseCustomerMapper {
 	
 	/**查询砍价相关**/
 	BargainCustomer bargainDetailList(Long barginid);
+	
+	/**查询导入房源库的信息**/
+	Housemodel searchAddToHouseModel(Long houseid);
 	
 	
 

@@ -240,7 +240,8 @@ public class QiuzuServiceImpl implements QiuzuService {
 		//电话号码必须填写
 		if (CheckDataUtil.checkisEmpty(qiuzu.getPhone())) 
 				{ return ResultMap.build(400, "请输入电话号码！"); }
-		
+		// 去掉空格
+		qiuzu.setPhone( qiuzu.getPhone().replace(" ", "")  );
 		//经纬度必须有
 		if (CheckDataUtil.checkisEmpty(detaileaddress.getLatitude()))
 				{

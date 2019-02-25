@@ -56,12 +56,10 @@ public class HouseAddOrUpdateMessage implements MessageListener{
 			if (CheckDataUtil.checkisEqual(typestate, "insert")) {
 				// 这里做积分加处理
 				inteService.managebranch(11L, userid, houseid);
-			} else {
-				// 清空缓存数据 编辑时候
-				jedisClient.del(RedisUtil.HOUSE_FIRST_KEY+ houseid);
-			}
+			} 
 			
-			
+			// 清空缓存数据 编辑时候
+			jedisClient.expire(RedisUtil.HOUSE_FIRST_KEY+ houseid,0);
 			//如果有部落id不管是更新或者是编辑都需要同步部落
 			if (CheckDataUtil.checkNotEmpty(tribeid)) {
 				//tribeService.addarticle(Long.valueOf(tribeid), houseid, 1, houseid);

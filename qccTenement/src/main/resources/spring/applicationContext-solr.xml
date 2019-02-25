@@ -25,4 +25,9 @@
 	<bean id="villageSolrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
 		<constructor-arg index="0" value="http://120.24.43.56:8010/solr/village"/>
 	</bean> 
+	
+	<!-- 房源库  -->
+	<bean id="contentSolrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
+		<constructor-arg index="0" value="http://120.24.43.56:8010/solr/content"/>
+	</bean> 
 </beans>

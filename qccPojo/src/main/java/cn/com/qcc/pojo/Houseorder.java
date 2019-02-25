@@ -4,6 +4,8 @@ import java.util.Date;
 
 public class Houseorder {
 	
+	private double freemonery;
+	
 	private Long preparatoryid;
 	
     /** */
@@ -54,8 +56,16 @@ public class Houseorder {
     /** 截止时间*/
     private Date endtime;
     
-    
-    public Long getPreparatoryid() {
+
+	public double getFreemonery() {
+		return freemonery;
+	}
+
+	public void setFreemonery(double freemonery) {
+		this.freemonery = freemonery;
+	}
+
+	public Long getPreparatoryid() {
 		return preparatoryid;
 	}
 

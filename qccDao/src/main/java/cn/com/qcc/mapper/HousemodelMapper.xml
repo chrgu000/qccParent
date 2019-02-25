@@ -1,0 +1,581 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mapper.HousemodelMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Housemodel" >
+    <id column="houseModelId" property="houseModelId" jdbcType="BIGINT" />
+    <result column="houseid" property="houseid" jdbcType="BIGINT" />
+    <result column="userid" property="userid" jdbcType="BIGINT" />
+    <result column="houseTitle" property="houseTitle" jdbcType="VARCHAR" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="picture" property="picture" jdbcType="VARCHAR" />
+    <result column="prices" property="prices" jdbcType="DOUBLE" />
+    <result column="apartmentName" property="apartmentName" jdbcType="VARCHAR" />
+    <result column="redecorat" property="redecorat" jdbcType="VARCHAR" />
+    <result column="citycode" property="citycode" jdbcType="VARCHAR" />
+    <result column="housetagid" property="housetagid" jdbcType="VARCHAR" />
+    <result column="villageName" property="villageName" jdbcType="VARCHAR" />
+    <result column="building" property="building" jdbcType="VARCHAR" />
+    <result column="descname" property="descname" jdbcType="VARCHAR" />
+    <result column="houseNumber" property="houseNumber" jdbcType="VARCHAR" />
+    <result column="paystyle" property="paystyle" jdbcType="VARCHAR" />
+    <result column="landPhone" property="landPhone" jdbcType="VARCHAR" />
+    <result column="landName" property="landName" jdbcType="VARCHAR" />
+    <result column="district" property="district" jdbcType="VARCHAR" />
+    <result column="trading" property="trading" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="DOUBLE" />
+    <result column="detailes" property="detailes" jdbcType="VARCHAR" />
+    <result column="latlng" property="latlng" jdbcType="VARCHAR" />
+    <result column="centType" property="centType" jdbcType="VARCHAR" />
+    <result column="centState" property="centState" jdbcType="VARCHAR" />
+    <result column="centTime" property="centTime" jdbcType="TIMESTAMP" />
+    <result column="floor" property="floor" jdbcType="VARCHAR" />
+    <result column="agencyNumber" property="agencyNumber" jdbcType="DOUBLE" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    houseModelId, houseid, userid, houseTitle, updateTime, picture, prices, apartmentName, 
+    redecorat, citycode, housetagid, villageName, building, descname, houseNumber, paystyle, 
+    landPhone, landName, district, trading, area, detailes, latlng, centType, centState, 
+    centTime, floor, agencyNumber
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.HousemodelExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from houseModel
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from houseModel
+    where houseModelId = #{houseModelId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from houseModel
+    where houseModelId = #{houseModelId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.com.qcc.pojo.HousemodelExample" >
+    delete from houseModel
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.com.qcc.pojo.Housemodel" >
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="houseModelId" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into houseModel (houseModelId, houseid, userid, 
+      houseTitle, updateTime, picture, 
+      prices, apartmentName, redecorat, 
+      citycode, housetagid, villageName, 
+      building, descname, houseNumber, 
+      paystyle, landPhone, landName, 
+      district, trading, area, 
+      detailes, latlng, centType, 
+      centState, centTime, floor, 
+      agencyNumber)
+    values (#{houseModelId,jdbcType=BIGINT}, #{houseid,jdbcType=BIGINT}, #{userid,jdbcType=BIGINT}, 
+      #{houseTitle,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{picture,jdbcType=VARCHAR}, 
+      #{prices,jdbcType=DOUBLE}, #{apartmentName,jdbcType=VARCHAR}, #{redecorat,jdbcType=VARCHAR}, 
+      #{citycode,jdbcType=VARCHAR}, #{housetagid,jdbcType=VARCHAR}, #{villageName,jdbcType=VARCHAR}, 
+      #{building,jdbcType=VARCHAR}, #{descname,jdbcType=VARCHAR}, #{houseNumber,jdbcType=VARCHAR}, 
+      #{paystyle,jdbcType=VARCHAR}, #{landPhone,jdbcType=VARCHAR}, #{landName,jdbcType=VARCHAR}, 
+      #{district,jdbcType=VARCHAR}, #{trading,jdbcType=VARCHAR}, #{area,jdbcType=DOUBLE}, 
+      #{detailes,jdbcType=VARCHAR}, #{latlng,jdbcType=VARCHAR}, #{centType,jdbcType=VARCHAR}, 
+      #{centState,jdbcType=VARCHAR}, #{centTime,jdbcType=TIMESTAMP}, #{floor,jdbcType=VARCHAR}, 
+      #{agencyNumber,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Housemodel" >
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="houseModelId" >
+            SELECT LAST_INSERT_ID() 
+    </selectKey>
+    insert into houseModel
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="houseModelId != null" >
+        houseModelId,
+      </if>
+      <if test="houseid != null" >
+        houseid,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="houseTitle != null" >
+        houseTitle,
+      </if>
+      <if test="updateTime != null" >
+        updateTime,
+      </if>
+      <if test="picture != null" >
+        picture,
+      </if>
+      <if test="prices != null" >
+        prices,
+      </if>
+      <if test="apartmentName != null" >
+        apartmentName,
+      </if>
+      <if test="redecorat != null" >
+        redecorat,
+      </if>
+      <if test="citycode != null" >
+        citycode,
+      </if>
+      <if test="housetagid != null" >
+        housetagid,
+      </if>
+      <if test="villageName != null" >
+        villageName,
+      </if>
+      <if test="building != null" >
+        building,
+      </if>
+      <if test="descname != null" >
+        descname,
+      </if>
+      <if test="houseNumber != null" >
+        houseNumber,
+      </if>
+      <if test="paystyle != null" >
+        paystyle,
+      </if>
+      <if test="landPhone != null" >
+        landPhone,
+      </if>
+      <if test="landName != null" >
+        landName,
+      </if>
+      <if test="district != null" >
+        district,
+      </if>
+      <if test="trading != null" >
+        trading,
+      </if>
+      <if test="area != null" >
+        area,
+      </if>
+      <if test="detailes != null" >
+        detailes,
+      </if>
+      <if test="latlng != null" >
+        latlng,
+      </if>
+      <if test="centType != null" >
+        centType,
+      </if>
+      <if test="centState != null" >
+        centState,
+      </if>
+      <if test="centTime != null" >
+        centTime,
+      </if>
+      <if test="floor != null" >
+        floor,
+      </if>
+      <if test="agencyNumber != null" >
+        agencyNumber,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="houseModelId != null" >
+        #{houseModelId,jdbcType=BIGINT},
+      </if>
+      <if test="houseid != null" >
+        #{houseid,jdbcType=BIGINT},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="houseTitle != null" >
+        #{houseTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="picture != null" >
+        #{picture,jdbcType=VARCHAR},
+      </if>
+      <if test="prices != null" >
+        #{prices,jdbcType=DOUBLE},
+      </if>
+      <if test="apartmentName != null" >
+        #{apartmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="redecorat != null" >
+        #{redecorat,jdbcType=VARCHAR},
+      </if>
+      <if test="citycode != null" >
+        #{citycode,jdbcType=VARCHAR},
+      </if>
+      <if test="housetagid != null" >
+        #{housetagid,jdbcType=VARCHAR},
+      </if>
+      <if test="villageName != null" >
+        #{villageName,jdbcType=VARCHAR},
+      </if>
+      <if test="building != null" >
+        #{building,jdbcType=VARCHAR},
+      </if>
+      <if test="descname != null" >
+        #{descname,jdbcType=VARCHAR},
+      </if>
+      <if test="houseNumber != null" >
+        #{houseNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="paystyle != null" >
+        #{paystyle,jdbcType=VARCHAR},
+      </if>
+      <if test="landPhone != null" >
+        #{landPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="landName != null" >
+        #{landName,jdbcType=VARCHAR},
+      </if>
+      <if test="district != null" >
+        #{district,jdbcType=VARCHAR},
+      </if>
+      <if test="trading != null" >
+        #{trading,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=DOUBLE},
+      </if>
+      <if test="detailes != null" >
+        #{detailes,jdbcType=VARCHAR},
+      </if>
+      <if test="latlng != null" >
+        #{latlng,jdbcType=VARCHAR},
+      </if>
+      <if test="centType != null" >
+        #{centType,jdbcType=VARCHAR},
+      </if>
+      <if test="centState != null" >
+        #{centState,jdbcType=VARCHAR},
+      </if>
+      <if test="centTime != null" >
+        #{centTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="floor != null" >
+        #{floor,jdbcType=VARCHAR},
+      </if>
+      <if test="agencyNumber != null" >
+        #{agencyNumber,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.com.qcc.pojo.HousemodelExample" resultType="java.lang.Integer" >
+    select count(*) from houseModel
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update houseModel
+    <set >
+      <if test="record.houseModelId != null" >
+        houseModelId = #{record.houseModelId,jdbcType=BIGINT},
+      </if>
+      <if test="record.houseid != null" >
+        houseid = #{record.houseid,jdbcType=BIGINT},
+      </if>
+      <if test="record.userid != null" >
+        userid = #{record.userid,jdbcType=BIGINT},
+      </if>
+      <if test="record.houseTitle != null" >
+        houseTitle = #{record.houseTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null" >
+        updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.picture != null" >
+        picture = #{record.picture,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prices != null" >
+        prices = #{record.prices,jdbcType=DOUBLE},
+      </if>
+      <if test="record.apartmentName != null" >
+        apartmentName = #{record.apartmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.redecorat != null" >
+        redecorat = #{record.redecorat,jdbcType=VARCHAR},
+      </if>
+      <if test="record.citycode != null" >
+        citycode = #{record.citycode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.housetagid != null" >
+        housetagid = #{record.housetagid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.villageName != null" >
+        villageName = #{record.villageName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.building != null" >
+        building = #{record.building,jdbcType=VARCHAR},
+      </if>
+      <if test="record.descname != null" >
+        descname = #{record.descname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.houseNumber != null" >
+        houseNumber = #{record.houseNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.paystyle != null" >
+        paystyle = #{record.paystyle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.landPhone != null" >
+        landPhone = #{record.landPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.landName != null" >
+        landName = #{record.landName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.district != null" >
+        district = #{record.district,jdbcType=VARCHAR},
+      </if>
+      <if test="record.trading != null" >
+        trading = #{record.trading,jdbcType=VARCHAR},
+      </if>
+      <if test="record.area != null" >
+        area = #{record.area,jdbcType=DOUBLE},
+      </if>
+      <if test="record.detailes != null" >
+        detailes = #{record.detailes,jdbcType=VARCHAR},
+      </if>
+      <if test="record.latlng != null" >
+        latlng = #{record.latlng,jdbcType=VARCHAR},
+      </if>
+      <if test="record.centType != null" >
+        centType = #{record.centType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.centState != null" >
+        centState = #{record.centState,jdbcType=VARCHAR},
+      </if>
+      <if test="record.centTime != null" >
+        centTime = #{record.centTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.floor != null" >
+        floor = #{record.floor,jdbcType=VARCHAR},
+      </if>
+      <if test="record.agencyNumber != null" >
+        agencyNumber = #{record.agencyNumber,jdbcType=DOUBLE},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update houseModel
+    set houseModelId = #{record.houseModelId,jdbcType=BIGINT},
+      houseid = #{record.houseid,jdbcType=BIGINT},
+      userid = #{record.userid,jdbcType=BIGINT},
+      houseTitle = #{record.houseTitle,jdbcType=VARCHAR},
+      updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
+      picture = #{record.picture,jdbcType=VARCHAR},
+      prices = #{record.prices,jdbcType=DOUBLE},
+      apartmentName = #{record.apartmentName,jdbcType=VARCHAR},
+      redecorat = #{record.redecorat,jdbcType=VARCHAR},
+      citycode = #{record.citycode,jdbcType=VARCHAR},
+      housetagid = #{record.housetagid,jdbcType=VARCHAR},
+      villageName = #{record.villageName,jdbcType=VARCHAR},
+      building = #{record.building,jdbcType=VARCHAR},
+      descname = #{record.descname,jdbcType=VARCHAR},
+      houseNumber = #{record.houseNumber,jdbcType=VARCHAR},
+      paystyle = #{record.paystyle,jdbcType=VARCHAR},
+      landPhone = #{record.landPhone,jdbcType=VARCHAR},
+      landName = #{record.landName,jdbcType=VARCHAR},
+      district = #{record.district,jdbcType=VARCHAR},
+      trading = #{record.trading,jdbcType=VARCHAR},
+      area = #{record.area,jdbcType=DOUBLE},
+      detailes = #{record.detailes,jdbcType=VARCHAR},
+      latlng = #{record.latlng,jdbcType=VARCHAR},
+      centType = #{record.centType,jdbcType=VARCHAR},
+      centState = #{record.centState,jdbcType=VARCHAR},
+      centTime = #{record.centTime,jdbcType=TIMESTAMP},
+      floor = #{record.floor,jdbcType=VARCHAR},
+      agencyNumber = #{record.agencyNumber,jdbcType=DOUBLE}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.Housemodel" >
+    update houseModel
+    <set >
+      <if test="houseid != null" >
+        houseid = #{houseid,jdbcType=BIGINT},
+      </if>
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="houseTitle != null" >
+        houseTitle = #{houseTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="picture != null" >
+        picture = #{picture,jdbcType=VARCHAR},
+      </if>
+      <if test="prices != null" >
+        prices = #{prices,jdbcType=DOUBLE},
+      </if>
+      <if test="apartmentName != null" >
+        apartmentName = #{apartmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="redecorat != null" >
+        redecorat = #{redecorat,jdbcType=VARCHAR},
+      </if>
+      <if test="citycode != null" >
+        citycode = #{citycode,jdbcType=VARCHAR},
+      </if>
+      <if test="housetagid != null" >
+        housetagid = #{housetagid,jdbcType=VARCHAR},
+      </if>
+      <if test="villageName != null" >
+        villageName = #{villageName,jdbcType=VARCHAR},
+      </if>
+      <if test="building != null" >
+        building = #{building,jdbcType=VARCHAR},
+      </if>
+      <if test="descname != null" >
+        descname = #{descname,jdbcType=VARCHAR},
+      </if>
+      <if test="houseNumber != null" >
+        houseNumber = #{houseNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="paystyle != null" >
+        paystyle = #{paystyle,jdbcType=VARCHAR},
+      </if>
+      <if test="landPhone != null" >
+        landPhone = #{landPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="landName != null" >
+        landName = #{landName,jdbcType=VARCHAR},
+      </if>
+      <if test="district != null" >
+        district = #{district,jdbcType=VARCHAR},
+      </if>
+      <if test="trading != null" >
+        trading = #{trading,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        area = #{area,jdbcType=DOUBLE},
+      </if>
+      <if test="detailes != null" >
+        detailes = #{detailes,jdbcType=VARCHAR},
+      </if>
+      <if test="latlng != null" >
+        latlng = #{latlng,jdbcType=VARCHAR},
+      </if>
+      <if test="centType != null" >
+        centType = #{centType,jdbcType=VARCHAR},
+      </if>
+      <if test="centState != null" >
+        centState = #{centState,jdbcType=VARCHAR},
+      </if>
+      <if test="centTime != null" >
+        centTime = #{centTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="floor != null" >
+        floor = #{floor,jdbcType=VARCHAR},
+      </if>
+      <if test="agencyNumber != null" >
+        agencyNumber = #{agencyNumber,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where houseModelId = #{houseModelId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Housemodel" >
+    update houseModel
+    set houseid = #{houseid,jdbcType=BIGINT},
+      userid = #{userid,jdbcType=BIGINT},
+      houseTitle = #{houseTitle,jdbcType=VARCHAR},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      picture = #{picture,jdbcType=VARCHAR},
+      prices = #{prices,jdbcType=DOUBLE},
+      apartmentName = #{apartmentName,jdbcType=VARCHAR},
+      redecorat = #{redecorat,jdbcType=VARCHAR},
+      citycode = #{citycode,jdbcType=VARCHAR},
+      housetagid = #{housetagid,jdbcType=VARCHAR},
+      villageName = #{villageName,jdbcType=VARCHAR},
+      building = #{building,jdbcType=VARCHAR},
+      descname = #{descname,jdbcType=VARCHAR},
+      houseNumber = #{houseNumber,jdbcType=VARCHAR},
+      paystyle = #{paystyle,jdbcType=VARCHAR},
+      landPhone = #{landPhone,jdbcType=VARCHAR},
+      landName = #{landName,jdbcType=VARCHAR},
+      district = #{district,jdbcType=VARCHAR},
+      trading = #{trading,jdbcType=VARCHAR},
+      area = #{area,jdbcType=DOUBLE},
+      detailes = #{detailes,jdbcType=VARCHAR},
+      latlng = #{latlng,jdbcType=VARCHAR},
+      centType = #{centType,jdbcType=VARCHAR},
+      centState = #{centState,jdbcType=VARCHAR},
+      centTime = #{centTime,jdbcType=TIMESTAMP},
+      floor = #{floor,jdbcType=VARCHAR},
+      agencyNumber = #{agencyNumber,jdbcType=DOUBLE}
+    where houseModelId = #{houseModelId,jdbcType=BIGINT}
+  </update>
+</mapper>

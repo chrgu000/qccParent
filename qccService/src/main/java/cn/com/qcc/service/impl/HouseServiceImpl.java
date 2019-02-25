@@ -1532,13 +1532,17 @@ public class HouseServiceImpl implements HouseService {
 		List<Houseorder> ordes = houseorderMapper.selectByExample(example);
 		if (!ordes.isEmpty() && ordes.size() > 0) {
 			Houseorder houseorder =  ordes.get(0);
+			double freemonery = 0 ;
 			if (CheckDataUtil.checkNotEmpty(houseorder.getBarginid())) {
 				Bargain search = bargainMapper.selectByPrimaryKey(houseorder.getBarginid());
 				if (CheckDataUtil.checkNotEmpty(search)
 						&& CheckDataUtil.checkNotEmpty(search.getPreparatoryid())) {
 					houseorder.setPreparatoryid(search.getPreparatoryid());
+					freemonery = search.getTotalbanalce() - search.getLessbalance();
+					
 				}
 			}
+			houseorder.setFreemonery(freemonery );
 			return houseorder;
 		}
 		return null;
@@ -1753,15 +1757,15 @@ public class HouseServiceImpl implements HouseService {
 				if (housetargid == 70) {daycount = 180;}
 				if (housetargid == 73) {daycount = 360;}
 				if (housetargid == 74) {daycount = 270;}
-				//if (centpercentnum  > 0 || landpercentnum > 0) {
-				Preparatory insert = new Preparatory();
-				insert.setCentpercentnum(centpercentnum);
-				insert.setDaycount(daycount);
-				insert.setLandpercentnum(landpercentnum);
-				insert.setHouseid(houseid);
-				insert.setHousetagid(housetargid);
-				preparatoryMapper.insertSelective(insert);
-				//}
+				if (centpercentnum  > 0 || landpercentnum > 0) {
+					Preparatory insert = new Preparatory();
+					insert.setCentpercentnum(centpercentnum);
+					insert.setDaycount(daycount);
+					insert.setLandpercentnum(landpercentnum);
+					insert.setHouseid(houseid);
+					insert.setHousetagid(housetargid);
+					preparatoryMapper.insertSelective(insert);
+				}
 			}
 		} catch (Exception e) {
 			System.out.println("佣金格式设计错误：" + preparatory);
@@ -1930,6 +1934,7 @@ public class HouseServiceImpl implements HouseService {
 		SolrPageUtil.setStartAndEnd(pagequery, query);
 		// 加入默认排序
 		query.addSort("update_time",ORDER.desc);
+		
 		return houseSolrDao.findoldhouse(query);
 	}
 	

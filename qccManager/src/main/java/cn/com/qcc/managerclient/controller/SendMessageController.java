@@ -16,6 +16,7 @@ import sun.misc.BASE64Decoder;
 
 @SuppressWarnings("restriction")
 @Controller
+@RequestMapping("/companion")
 public class SendMessageController {
 
 	@Autowired

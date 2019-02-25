@@ -14,29 +14,24 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import javax.net.ssl.SSLContext;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import com.jpay.ext.kit.IpKit;
 import com.jpay.ext.kit.StrKit;
-import com.mysql.fabric.xmlrpc.base.Array;
 
 import cn.com.qcc.detailcommon.CommonUtil;
 import cn.com.qcc.detailcommon.Sha1;
@@ -80,7 +75,7 @@ public class IDUtils {
 	
 	/** 吧double乘以n转为int **/
 	public static Integer doubletoint(double d, int n) {
-
+		
 		if (CheckDataUtil.checkNotEmpty(d)) {
 			String prease = d * n + "";
 			prease = prease.substring(0, prease.lastIndexOf("."));
@@ -580,6 +575,8 @@ public class IDUtils {
 		s = Double.valueOf(max_str)*1.0;
 		int totalInt = doubletoint( total,  100);
 		int sInt =  doubletoint( s,  100);
+		if (sInt == 0 ) 
+			sInt = 100;
 		total = (totalInt - sInt )/100;
 		
 		return total;

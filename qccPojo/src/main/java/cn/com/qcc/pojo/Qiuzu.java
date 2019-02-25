@@ -37,12 +37,12 @@ public class Qiuzu {
     private String linkman;
 
     /** 联系电话*/
-    private Long phone;
+    private String phone;
 
     /** 描述信息*/
     private String describes;
 
-    /** 状态 0冻结 1上架 2下架*/
+    /** 状态 0冻结 1上架 2下架 3待审核*/
     private String qiuzustatus;
 
     /** */
@@ -142,12 +142,12 @@ public class Qiuzu {
         this.linkman = linkman == null ? null : linkman.trim();
     }
 
-    public Long getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(Long phone) {
-        this.phone = phone;
+    public void setPhone(String phone) {
+        this.phone = phone == null ? null : phone.trim();
     }
 
     public String getDescribes() {

@@ -863,7 +863,7 @@ public class HouseController {
 	 **/
 	@RequestMapping("/searchhouseyudingmess")
 	@ResponseBody
-	public ResultMap getHouseYudingMess(Long houseid) {
+	public ResultMap getHouseYudingMess(Long houseid ) {
 		if (houseid == null) {
 			return ResultMap.build(400, "房源ID不为空");
 		}
@@ -895,23 +895,10 @@ public class HouseController {
 			preModel.setYanPrice(yanPrice);
 			preModel.setOrderPirce(orderPirce);
 			preModel.setFirstCentPrice(firstCentPrice);
-			
 		}
 		
 		
 		
-		//String cycleName =null;
-		//PreparatoryCustomer preparatory = housertargService.getTraName(houseid);
-		//if (CheckDataUtil.checkNotEmpty(preparatory)) {
-		//	cycleName = preparatory.getType();
-		//	houseCustomer.setCentpercentnum(preparatory.getCentpercentnum());
-		//	houseCustomer.setLandpercentnum(preparatory.getLandpercentnum());
-		//}else {
-		//	houseCustomer.setCentpercentnum(0.0);
-		//	houseCustomer.setLandpercentnum(0.0);
-		//}
-		//cycleName = cycleName == null ? "不限" : cycleName;
-		//	houseCustomer.setCycleName(cycleName);
 		return ResultMap.IS_200(houseCustomer);
 	}
 

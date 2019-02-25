@@ -5,6 +5,7 @@ import org.apache.solr.client.solrj.SolrQuery.ORDER;
 
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.PageQuery;
+import cn.com.qcc.pojo.Housemodel;
 import cn.com.qcc.pojo.Metro;
 import cn.com.qcc.queryvo.AddressCustomer;
 import cn.com.qcc.queryvo.ApartmentCustomer;
@@ -95,7 +96,15 @@ public class SolrPageUtil {
 			}
 			//过滤品牌的查询条件
 			if (CheckDataUtil.checkNotEmpty(houseCustomer.getBrandid())) {
-				
+				query.add("fq", "brandid:"+houseCustomer.getBrandid()+"");
+			}
+			
+			if (CheckDataUtil.checkNotEmpty(houseCustomer.getBuildingid())) {
+				query.add("fq", "buildingid:"+houseCustomer.getBuildingid()+"");
+			}
+			
+			if (CheckDataUtil.checkNotEmpty(houseCustomer.getVillageid())) {
+				query.add("fq", "villageid:"+houseCustomer.getVillageid()+"");
 			}
 			
 			
@@ -345,5 +354,65 @@ public class SolrPageUtil {
 		}
 		
 	}
+
+
+	public static void likeHouseModel(Housemodel model, SolrQuery query) {
+
+		if (CheckDataUtil.checkNotEmpty(model)) {
+			System.out.println(model.getVillageName());
+			query.add("fq", "prices:["+model.getSmallprices()+" TO "+model.getBigprices()+"]");			
+			if (CheckDataUtil.checkNotEmpty(model.getHouseid())) 
+				query.add("fq", "houseid:"+model.getHouseid()+"");
+			if (CheckDataUtil.checkNotEmpty(model.getUserid()))
+				query.add("fq", "userid:"+model.getUserid()+"");
+			if (CheckDataUtil.checkNotEmpty(model.getHouseModelId())) 
+				query.add("fq", "id:"+model.getHouseModelId()+"");
+			if (CheckDataUtil.checkNotEmpty(model.getDistrict()))
+				query.add("fq", "district:"+model.getDistrict()+"");
+			if (CheckDataUtil.checkNotEmpty(model.getCentState())) 
+				query.add("fq", "centState:"+model.getCentState()+"");
+			if (CheckDataUtil.checkNotEmpty(model.getVillageName())) 
+				query.add("fq", "villageName:"+model.getVillageName()+"");
+			if (CheckDataUtil.checkNotEmpty(model.getCentType())) 
+				query.add("fq", "centType:"+model.getCentType()+"");
+			// 电梯查询条件
+			if (CheckDataUtil.checkNotEmpty(model.getHousetagid())) {
+				if ("YES".equals(model.getHousetagid())) 
+					query.add("fq", "housetagid:*34*");
+				if ("NO".equals(model.getHousetagid())) 
+				    query.add("fq","housetagid:(* NOT *34*)" );
+			}
+			// 业主电话查询条件
+			if (CheckDataUtil.checkNotEmpty(model.getLandPhone())) {
+				
+				if ("NO".equals(model.getLandPhone())) 
+					query.add("fq", "landphone:''");
+				if ("YES".equals(model.getLandPhone())) 
+				    query.add("fq","landphone:( NOT '')" );
+			}
+			
+			
+			// 封装户型 1--- 4 
+			if (CheckDataUtil.checkNotEmpty(model.getApartmentName())) {
+				
+				if ("MORE".equals(model.getApartmentName())) {
+					query.add("fq", "(apartmentname:*五室* or apartmentname:*六室* or apartmentname:*七室* "
+							+ "or apartmentname:*八室*  or apartmentname:*九室* or apartmentname:*十室*)");
+				}else {
+					query.add("fq", "apartmentname:*"+model.getApartmentName()+"*");
+				}
+				
+			}
+			// 设置排序条件
+			String orderValue = model.getOrderValue();
+			if ("TIME_DESC".equals(orderValue))       query.addSort("updateTime",ORDER.desc);
+			if ("CENTMONGY_DESC".equals(orderValue))  query.addSort("prices",ORDER.desc);
+			if ("CENTMONGY_ASC".equals(orderValue))   query.addSort("prices",ORDER.asc);
+			
+			
+		}
+		
+	}
+
 
 }

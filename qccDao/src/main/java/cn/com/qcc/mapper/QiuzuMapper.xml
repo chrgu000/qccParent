@@ -13,7 +13,7 @@
     <result column="areas" property="areas" jdbcType="DOUBLE" />
     <result column="price" property="price" jdbcType="VARCHAR" />
     <result column="linkman" property="linkman" jdbcType="VARCHAR" />
-    <result column="phone" property="phone" jdbcType="BIGINT" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
     <result column="describes" property="describes" jdbcType="VARCHAR" />
     <result column="qiuzustatus" property="qiuzustatus" jdbcType="CHAR" />
     <result column="create_time" property="create_time" jdbcType="TIMESTAMP" />
@@ -113,7 +113,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Qiuzu" >
-   <selectKey  resultType="long"  order="AFTER"  keyProperty="qiuzuid" >
+    <selectKey  resultType="long"  order="AFTER"  keyProperty="qiuzuid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into qiuzu (qiuzuid, code, user_id, 
@@ -125,12 +125,12 @@
     values (#{qiuzuid,jdbcType=BIGINT}, #{code,jdbcType=VARCHAR}, #{user_id,jdbcType=BIGINT}, 
       #{caption,jdbcType=VARCHAR}, #{classification,jdbcType=VARCHAR}, #{housetype,jdbcType=VARCHAR}, 
       #{detailid,jdbcType=BIGINT}, #{metroid,jdbcType=BIGINT}, #{areas,jdbcType=DOUBLE}, 
-      #{price,jdbcType=VARCHAR}, #{linkman,jdbcType=VARCHAR}, #{phone,jdbcType=BIGINT}, 
+      #{price,jdbcType=VARCHAR}, #{linkman,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
       #{describes,jdbcType=VARCHAR}, #{qiuzustatus,jdbcType=CHAR}, #{create_time,jdbcType=TIMESTAMP}, 
       #{update_time,jdbcType=TIMESTAMP}, #{picture,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Qiuzu" >
-  <selectKey  resultType="long"  order="AFTER"  keyProperty="qiuzuid" >
+    <selectKey  resultType="long"  order="AFTER"  keyProperty="qiuzuid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into qiuzu
@@ -222,7 +222,7 @@
         #{linkman,jdbcType=VARCHAR},
       </if>
       <if test="phone != null" >
-        #{phone,jdbcType=BIGINT},
+        #{phone,jdbcType=VARCHAR},
       </if>
       <if test="describes != null" >
         #{describes,jdbcType=VARCHAR},
@@ -284,7 +284,7 @@
         linkman = #{record.linkman,jdbcType=VARCHAR},
       </if>
       <if test="record.phone != null" >
-        phone = #{record.phone,jdbcType=BIGINT},
+        phone = #{record.phone,jdbcType=VARCHAR},
       </if>
       <if test="record.describes != null" >
         describes = #{record.describes,jdbcType=VARCHAR},
@@ -319,7 +319,7 @@
       areas = #{record.areas,jdbcType=DOUBLE},
       price = #{record.price,jdbcType=VARCHAR},
       linkman = #{record.linkman,jdbcType=VARCHAR},
-      phone = #{record.phone,jdbcType=BIGINT},
+      phone = #{record.phone,jdbcType=VARCHAR},
       describes = #{record.describes,jdbcType=VARCHAR},
       qiuzustatus = #{record.qiuzustatus,jdbcType=CHAR},
       create_time = #{record.create_time,jdbcType=TIMESTAMP},
@@ -363,7 +363,7 @@
         linkman = #{linkman,jdbcType=VARCHAR},
       </if>
       <if test="phone != null" >
-        phone = #{phone,jdbcType=BIGINT},
+        phone = #{phone,jdbcType=VARCHAR},
       </if>
       <if test="describes != null" >
         describes = #{describes,jdbcType=VARCHAR},
@@ -395,7 +395,7 @@
       areas = #{areas,jdbcType=DOUBLE},
       price = #{price,jdbcType=VARCHAR},
       linkman = #{linkman,jdbcType=VARCHAR},
-      phone = #{phone,jdbcType=BIGINT},
+      phone = #{phone,jdbcType=VARCHAR},
       describes = #{describes,jdbcType=VARCHAR},
       qiuzustatus = #{qiuzustatus,jdbcType=CHAR},
       create_time = #{create_time,jdbcType=TIMESTAMP},

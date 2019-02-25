@@ -208,6 +208,12 @@ public class BargainServiceImpl implements BargainService{
 			return ResultMap.build(400, "当前没有可砍的余额");
 		}
 		
+		// 判断活动是否过期
+		long current = new Date().getTime();
+		long end = bargin.getEndtime().getTime();
+		if (current > end) 
+			return ResultMap.build(400, "过期了!!!!");
+		
 		// 判断用户是否砍过
 		List<Bargaindetail> detailList = checkDetail (bargaindetail.getBarginid(),bargaindetail.getUnionid());
 		
@@ -218,6 +224,8 @@ public class BargainServiceImpl implements BargainService{
 				}
 			}
 		}
+		
+		
 		
 	
 		Commoninte selectByPrimaryKey = commoninteMapper.selectByPrimaryKey(20L);

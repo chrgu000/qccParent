@@ -240,7 +240,9 @@ public class QiuZuController {
 		if (content != "" && !"".equals(content)) {
 			if (num > 0) {
 				for (int i = 0; i < qiuzulist.size() && i < num; i++) {
-					Map<String, String> result = SendMessage.qunfa(qiuzulist.get(i).getPhone(), content, request);
+					Map<String, String> result = SendMessage.qunfa(
+							 Long.valueOf( qiuzulist.get(i).getPhone() )
+							, content, request);
 					String returnstr = result.get("returnStr");
 					if (returnstr.indexOf("提交成功")!=-1) {
 						success++;

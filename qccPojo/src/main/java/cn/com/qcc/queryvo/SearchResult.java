@@ -2,6 +2,8 @@ package cn.com.qcc.queryvo;
 
 import java.util.List;
 
+import cn.com.qcc.pojo.Housemodel;
+
 public class SearchResult  {
 
 	private int recordCount; 
@@ -11,7 +13,16 @@ public class SearchResult  {
 	private List<HouseCustomer> houselist;
 	private List<ArticleDetailCustomer> detaillist;
 	private List<VillageCustomer> villagelist;
+	private List<Housemodel> modelList;
 	
+	
+	
+	public List<Housemodel> getModelList() {
+		return modelList;
+	}
+	public void setModelList(List<Housemodel> modelList) {
+		this.modelList = modelList;
+	}
 	public List<VillageCustomer> getVillagelist() {
 		return villagelist;
 	}

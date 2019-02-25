@@ -22,5 +22,13 @@ public class RedisUtil {
 	public static final String  ARTICLEDETAIL_FIRST_KEY="articledetail:";
 	public static final Integer ARTICLEDETAIL_OUT_TIME = 60*60*24*15;
 	
+	/**
+	 * 导入房源库id自增主键
+	 * 过期时间40天. 一般三十天够了 这里多设置一点。也是没得问题
+	 * **/
+	public static final String  HOUSE_MODEL_KEY = "houseModelId:";
+	/***过期时间2年***/
+	public static final Integer HOUSE_MODEL_OUT_TIME = 60*60*24*360*2;
+	
 
 }

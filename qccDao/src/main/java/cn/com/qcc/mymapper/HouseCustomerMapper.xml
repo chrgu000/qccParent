@@ -1740,5 +1740,42 @@
 			INNER JOIN house on house.houseid = bargain.otherid
 			LEFT JOIN apartment on apartment.apartmentid = house.apartment_id
 		where bargain.barginid =#{barginid}
-	</select>													
+	</select>
+	
+	
+	
+	<!-- 查询导入房源库的信息 -->
+	<select id="searchAddToHouseModel" resultType="cn.com.qcc.pojo.Housemodel">
+		SELECT 
+			house.houseid ,
+			house.houseTitle , 
+			house.picture ,
+		    price.prices ,
+	        apartment.apartmentName ,
+	        house.redecorat ,
+	        village.`code` citycode  ,
+			house.area ,
+	        house.housetag_id housetagid ,
+	        village.villagename ,
+			building.building ,
+	        house.house_number houseNumber ,
+			house.paystyle ,
+			`user`.telephone landPhone ,
+			IFNULL(`profile`.real_name,'') landName  ,
+	        area.`name`  trading,
+			father.`name` district ,
+	        house.floor  ,
+			detaileaddress.* 
+		from house 
+		LEFT JOIN `user` on house.user_id = `user`.userid
+		LEFT JOIN price on house.price_id = price.priceid
+		LEFT JOIN apartment on apartment.apartmentid = house.apartment_id
+		LEFT JOIN building on house.buildingid = building.buildingid
+		LEFT JOIN village on village.villageid = building.villageid 
+		LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+		LEFT JOIN area on area.`code` = village.`code`
+		LEFT JOIN (SELECT * from area)father on area.parentId = father.`code`
+		LEFT JOIN detaileaddress on detaileaddress.detailid = building.detailid
+		where house.houseid = #{houseid} 
+	</select>																		
 </mapper>
