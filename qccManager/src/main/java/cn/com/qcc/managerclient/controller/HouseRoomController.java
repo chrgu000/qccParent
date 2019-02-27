@@ -16,19 +16,43 @@ import cn.com.qcc.pojo.Paymodal;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.FurnitureCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
+import cn.com.qcc.queryvo.HouseRoomCustomer;
 import cn.com.qcc.queryvo.HouseVo;
 import cn.com.qcc.queryvo.RentmodalCustomer;
+import cn.com.qcc.service.HouseRoomService;
 import cn.com.qcc.service.HouseService;
 
 @Controller
 @RequestMapping("/companion")
-public class HouseController {
+public class HouseRoomController {
 
 	@Autowired
 	HouseService houseService;
-
+	
+	@Autowired
+	HouseRoomService houseRoomService;
+	
+	
 	// 根据查询条件查询房态图
 	@RequestMapping("/roompattern")
+	@ResponseBody
+	public ResultMap roompattern1(@RequestParam(defaultValue = "0") String currentpage,
+			@RequestParam(defaultValue = "12") int pagesize, HouseVo houseVo) {
+		Map<String, Object> map = new HashMap<>();
+		PageQuery pagequery = new PageQuery();
+		int infoCount = houseRoomService.roompatternCount(houseVo);
+		pagequery.setPageParams(infoCount, pagesize, Integer.parseInt(currentpage));
+		houseVo.setPagequery(pagequery);
+		List<HouseRoomCustomer> houselist = houseRoomService.roompattern(houseVo);
+		map.put("pagequery", pagequery);
+		map.put("houselist", houselist);
+		return ResultMap.IS_200(map);
+	}
+	
+	
+
+	// 根据查询条件查询房态图
+	@RequestMapping("/roompattern1")
 	@ResponseBody
 	public ResultMap roompattern(@RequestParam(defaultValue = "0") String currentpage,
 			@RequestParam(defaultValue = "8888") int pagesize, HouseVo houseVo) {

@@ -349,8 +349,8 @@ public class VillageController {
 	// 根据code查询小区基本信息
 	@ResponseBody
 	@RequestMapping("/tribe/getvillagebycode")
-	public ResultMap getvillagebycode(Long code) {
-		List<Village> villagelist = villageService.getvillagebycode(code);
+	public ResultMap getvillagebycode(Long code ,String searchWhere) {
+		List<Village> villagelist = villageService.getvillagebycode(code , searchWhere);
 		return ResultMap.IS_200(villagelist);
 	}
 
@@ -372,8 +372,8 @@ public class VillageController {
 	// 获取基本的buildinglist
 	@ResponseBody
 	@RequestMapping("/village/getbuildinglistbyvid")
-	public ResultMap getbuildinglistbyvid(Long villageid, Long userid) {
-		ResultMap resultMap = villageService.getbuildinglistbyvid(villageid, userid);
+	public ResultMap getbuildinglistbyvid(Long villageid, Long userid ,String searchWhere) {
+		ResultMap resultMap = villageService.getbuildinglistbyvid(villageid, userid , searchWhere);
 		return resultMap;
 	}
 

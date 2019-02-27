@@ -5,6 +5,7 @@ import cn.com.qcc.pojo.Access;
 import cn.com.qcc.pojo.AccessExample;
 import cn.com.qcc.pojo.Role;
 import cn.com.qcc.queryvo.UserCustomer;
+import cn.com.qcc.queryvo.VillageCustomer;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
@@ -44,4 +45,6 @@ public interface AccessMapper {
 	int searchAddRoleCount(@Param("searchWhere") String searchWhere);
 	List<UserCustomer> searchAddRole(@Param("searchWhere")String searchWhere,
 			@Param("pagequery")PageQuery pagequery);
+
+	List<VillageCustomer> getLikeVillage(String likename);
 }

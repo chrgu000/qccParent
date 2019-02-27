@@ -38,21 +38,16 @@ public class UpdateHouseStatusMess implements MessageListener{
 			String state = (String)text.split("-")[1];
 			// 同步索引库
 			HouseCustomer houseCustomer = houseCustomerMapper.searchoneHouseToSolr(houseid);
-			if (CheckDataUtil.checkNotEqual(state, 3)) 
-				{
+			if (CheckDataUtil.checkNotEqual(state, 3)) {
 					if (CheckDataUtil.checkNotEmpty(houseCustomer)) {
 						houseSolrDao.AddOneHouseToSolr(houseCustomer);
-						// 同步缓存
-						HouseCustomer cache = houseCustomerMapper.findHouseDetails(houseid);
-						jedisClient.set(RedisUtil.HOUSE_FIRST_KEY+ houseid, JsonUtils.objectToJson(cache));
-						jedisClient.expire(RedisUtil.HOUSE_FIRST_KEY+ houseid, RedisUtil.HOUSE_OUT_TIME);
 					}
 				} else {
 					System.out.println("走删除方法");
 					//删除索引库
 					houseSolrDao.oneHouseDeleteFromSolr(houseCustomer);
 				}
-			
+			jedisClient.expire(RedisUtil.HOUSE_FIRST_KEY+ houseid, 0);
 		} catch (Exception e) {
 			// 这里是发生未知异常
 			e.printStackTrace();

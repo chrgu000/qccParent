@@ -32,7 +32,7 @@
 
 <!-- 模态框（Modal） -->
 <div class="modal fade" id="access_add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div style="width: 90%; height: 90%;" class="modal-dialog ">
+    <div style="width: 40%; " class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

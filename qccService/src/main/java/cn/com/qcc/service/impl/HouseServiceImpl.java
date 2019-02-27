@@ -111,15 +111,38 @@ public class HouseServiceImpl implements HouseService {
 	@Autowired TribeCustomerMapper tribeCustomerMapper;
 	@Autowired TribeMapper tribeMapper;
 	@Autowired BargainMapper bargainMapper;
+	
+	
+	
+	/**查询房态图**/
+	public List<HouseCustomer> roompartternSearch (HouseVo houseVo) {
+		
+		// 第一步,查询出基本的房源信息列表
+		List<HouseCustomer> houseList = houseCustomerMapper.roompattern(houseVo);
+		
+		// 第二步, 查询相关费用 
+		
+		
+		return null;
+	}
+	
+	
+	
+	
 
 	/**
 	 * 查询房态图
 	 * **/
 	public List<HouseCustomer> roompattern(HouseVo houseVo) {
+		
+		/// 第一步,获取房源信息
 		List<HouseCustomer> houseList = houseCustomerMapper.roompattern(houseVo);
 		if (houseList.size() == 0) {
 			return houseList;
 		}
+		
+		
+		
 
 		for (int i = 0; i < houseList.size(); i++) {// 从第一个数开始，到最后一个数-1次循环
 			for (int j = houseList.size() - 1; j > i; j--) {// 从最后一个数开始到i+1

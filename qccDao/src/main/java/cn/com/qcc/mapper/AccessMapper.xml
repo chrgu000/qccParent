@@ -249,4 +249,16 @@
 				)
 		</if>
   </select>
+  
+  
+  <!-- 查询需要添加的系统账号-->
+  <select id="getLikeVillage"  resultType="cn.com.qcc.queryvo.VillageCustomer">
+				SELECT village.villageid ,
+					 village.villagename , 
+		       			area.`name` trading
+			from village 
+			LEFT JOIN  area on village.`code` = area.`code`
+			WHERE   village.villagename  LIKE CONCAT('',#{searchWhere},'%')
+			LIMIT 0 ,30 
+  </select>
 </mapper>

@@ -515,9 +515,12 @@ public class VillageServiceImpl implements VillageService {
 	/**根据code查询小区基本信息
 	 * @param code : 区域的code
 	 * **/
-	public List<Village> getvillagebycode(Long code) {
+	public List<Village> getvillagebycode(Long code , String searchWhere) {
 		VillageExample example = new VillageExample();
 		VillageExample.Criteria criteria = example.createCriteria();
+		if (CheckDataUtil.checkNotEmpty(searchWhere)) {
+			criteria.andVillagenameLike("%"+searchWhere+"%");
+		}
 		criteria.andCodeEqualTo(code);
 		return villageMapper.selectByExample(example);
 	}
@@ -556,14 +559,14 @@ public class VillageServiceImpl implements VillageService {
 	 * @param village: 小区id
 	 * @param userid : 用户ID
 	 * **/ 
-	public ResultMap getbuildinglistbyvid(Long villageid, Long userid) {
+	public ResultMap getbuildinglistbyvid(Long villageid, Long userid ,String searchWhere) {
 		User user = null;
 		if (userid != null) {
 			user = userMapper.selectByPrimaryKey(userid);
 			user.setPassword("");
 		}
 		Map<String, Object> map = new HashMap<>();
-		List<BuildingCustomer> buildings = villageCustomerMapper.getbuildinglistbyvid(villageid);
+		List<BuildingCustomer> buildings = villageCustomerMapper.getbuildinglistbyvid(villageid , searchWhere);
 		hebinglatandlot(buildings);
 		map.put("user", user);
 		map.put("buildings", buildings);

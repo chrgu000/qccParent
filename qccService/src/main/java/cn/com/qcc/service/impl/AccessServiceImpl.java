@@ -53,6 +53,7 @@ import cn.com.qcc.pojo.UserRoleExample;
 import cn.com.qcc.pojo.Village;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.queryvo.UserVo;
+import cn.com.qcc.queryvo.VillageCustomer;
 import cn.com.qcc.service.AccessService;
 @Service
 public class AccessServiceImpl implements AccessService {
@@ -748,6 +749,11 @@ public class AccessServiceImpl implements AccessService {
 			userRoleMapper.insertSelective(in);
 		}
 		return ResultMap.IS_200();
+	}
+
+	@Override
+	public List< VillageCustomer > getLikeVillage(String likename) {
+		return accessMapper.getLikeVillage(likename);
 	}
 
 

@@ -24,7 +24,7 @@ public class HouseModelController {
 	@Autowired
 	HouseModelService houseModelService;
 	
-	/****/
+	/** 添加房源库**/
 	@RequestMapping("/oneHouseAdd")
 	@ResponseBody
 	public ResultMap addToHouseModel(Long houseid ,Long userid){
@@ -42,6 +42,9 @@ public class HouseModelController {
 		return    resultMap;
 	}
 	
+	
+	
+	/**删除房源库**/
 	@RequestMapping("/oneHouseDelete")
 	@ResponseBody
 	public ResultMap oneHouseDelete(Long houseid  ,Long userid){
@@ -50,6 +53,9 @@ public class HouseModelController {
 		return resultMap;
 	}
 	
+	
+	
+	/**查询房源库中一个房子**/
 	@RequestMapping("/oneHouseSearch")
 	@ResponseBody
 	public ResultMap oneHouseSearch(Long houseModelId){
@@ -61,6 +67,8 @@ public class HouseModelController {
 	}
 	
 	
+	
+	/**查询房源列表 **/
 	@RequestMapping("/houseList")
 	@ResponseBody
 	public ResultMap houseList(Housemodel model ) {

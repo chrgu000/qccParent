@@ -7,31 +7,26 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Insert title here</title>
 </head>
-<script type="text/javascript">
-function getvl(){ 
-	var file = $('#file');
-	alert(file.val());
-} 
 
-
-</script>
 
 <body>	
-	<div id ="village_css">
-				省 ：
-				<select style="width: 110px; margin-top: 15px;"onchange="getnextaddress(v_1)" id="v_1">
-				</select>
-				 市 ：
-				<select style="width: 110px; margin-top: 15px;"onchange="getnextaddress(v_2)" id="v_2">
-				</select>
-				 区 ：
-				<select style="width: 110px; margin-top: 15px;"onchange="getnextaddress(v_3)" id="v_3">
-				</select>
-				 街 ：
-				<select class="village_v4" style="width: 110px; margin-top: 15px;"id="v_4">
-				</select>
-				
-			</div>	
+	<div id ="village_css" style="margin-top: -10px;">
+		省 ：
+		<select style="width: 110px; margin-top: 15px;"onchange="getnextaddress(v_1)" id="v_1">
+		</select>
+		 市 ：
+		<select style="width: 110px; margin-top: 15px;"onchange="getnextaddress(v_2)" id="v_2">
+		</select>
+		 区 ：
+		<select style="width: 110px; margin-top: 15px;"onchange="getnextaddress(v_3)" id="v_3">
+		</select>
+		 街 ：
+		<select class="village_v4" style="width: 110px; margin-top: 15px;"id="v_4"></select>
+		<input type="text" class="form-control villlage_building_searchword"   style="width: 150px; margin-left:620px;margin-top: -20px;"
+			   					placeholder="请输入查询关键字"> 
+		<input id="typeState" type="hidden" value="0" />
+		
+	</div>	
 			<table id="table " class = "table	table-hover	 ">
 			<tr>
 				<td class ='visible-lg'  >ID</td>
@@ -156,15 +151,21 @@ function getvl(){
 			      详情的地址：	<input type="text" class="form-control building_detailes" style="width:350px; display: inline-block;"
 			   > </br>
           <div >
-          	<div style="margin-top: 10px;"> 楼栋的品牌：</div>
-        
-		<div  style="position:relative;margin-left: 90px; margin-top: -10px;">  
+        <div style="margin-top: 10px;"> 楼栋的品牌：</div>
+		<div  style="position:relative;margin-left: 90px; margin-top: -22px;">  
               <select style="width:200px;  height: 30px;  "   class="brandselect"
                       onchange="setchangebrand()">  
               </select>  
               <input id="input" name="input" style="width: 180px;" value="无品牌" class="building_brand">  
         </div>  
-			  
+			<div style="margin-top: 10px;"> 楼栋的小区：</div>
+		<div  style="position:relative;margin-left: 90px; margin-top: -22px;">  
+              <select style="width:200px;  height: 30px;  "   class="villageselect"
+                      onchange="setchangevillage()">  
+              </select>  
+              <input id="input" name="input" style="width: 180px;" value="无品牌" class="building_villagename">  
+        </div>  
+          
 			  
 			  <div style="margin-top: 10px;" >
 			  	 附近地铁站：<select  id = "metro_byname_2"  onchange="metro_byname_2()" name="numUnit" class="form-control metro_byname" style="width:120px; display: inline-block;"></select>
@@ -261,7 +262,7 @@ function getvl(){
         <meta charset="UTF-8" />  
         <style type="text/css">  
         /*input css*/  
-        .building_brand{  
+        .building_brand ,.building_villagename{  
             position: absolute;  
             width: 99px;  
             height: 25px;  

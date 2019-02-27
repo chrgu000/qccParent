@@ -12,6 +12,7 @@ import cn.com.qcc.pojo.Systemstate;
 import cn.com.qcc.pojo.UserRole;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.queryvo.UserVo;
+import cn.com.qcc.queryvo.VillageCustomer;
 public interface AccessService {
 	
 	/**获取所有权限的集合
@@ -271,6 +272,9 @@ public interface AccessService {
 	 * 添加用户角色
 	 * */
 	ResultMap userRoleAdd(String userids, Long roleid);
+
+	
+	List<VillageCustomer> getLikeVillage(String likename);
 
 	
 	

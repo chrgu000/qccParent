@@ -93,7 +93,7 @@ public interface VillageService {
 	/**根据code查询小区基本信息
 	 * @param code : 区域的code
 	 * **/ 
-	List<Village> getvillagebycode(Long code);
+	List<Village> getvillagebycode(Long code ,String searchWhere);
 
 	/**
 	 * 基本的小区详情
@@ -111,7 +111,7 @@ public interface VillageService {
 	 * @param village: 小区id
 	 * @param userid : 用户ID
 	 * **/ 
-	ResultMap getbuildinglistbyvid(Long villageid, Long userid);
+	ResultMap getbuildinglistbyvid(Long villageid, Long userid ,String searchWhere);
 
 	/**
 	 * 根据楼栋ID 删除楼栋

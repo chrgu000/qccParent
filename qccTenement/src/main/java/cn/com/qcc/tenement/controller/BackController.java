@@ -38,6 +38,7 @@ import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.LandlordCustomer;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.queryvo.UserVo;
+import cn.com.qcc.queryvo.VillageCustomer;
 import cn.com.qcc.service.AccessService;
 import cn.com.qcc.service.InteService;
 import cn.com.qcc.service.LandLordService;
@@ -59,6 +60,13 @@ public class BackController{
 	@Autowired LandLordService landLordService;
 	@Autowired HouseSolrDao houseSolrDao;
 	
+	
+	@RequestMapping ("/back/getLikeVillage") 
+	@ResponseBody
+	public ResultMap getLikeVillage (String likename) {
+		List<VillageCustomer> villageCustomer = accessService.getLikeVillage(likename);
+		return ResultMap.IS_200(villageCustomer);
+	}
 	
 	@RequestMapping("/back/userRoleAdd")
 	@ResponseBody

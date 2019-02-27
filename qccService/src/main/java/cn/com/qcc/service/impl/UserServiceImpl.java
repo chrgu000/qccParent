@@ -1,5 +1,4 @@
 package cn.com.qcc.service.impl;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -94,6 +93,7 @@ import cn.com.qcc.pojo.Ronggroup;
 import cn.com.qcc.pojo.User;
 import cn.com.qcc.pojo.UserExample;
 import cn.com.qcc.pojo.Usercent;
+import cn.com.qcc.pojo.UsercentExample;
 import cn.com.qcc.pojo.Userconn;
 import cn.com.qcc.pojo.UserconnExample;
 import cn.com.qcc.pojo.Vipcount;
@@ -214,6 +214,10 @@ public class UserServiceImpl implements UserService {
 	public ResultMap usercent(Usercent usercent, Mycent mycent, HttpServletRequest request, String othermore,
 			String payid, String paycentid, String pricestype, String othermoreid1, String othermoreid2,
 			String islinecent) {
+		
+		// 先判断该房源是否可以租客 0-返回true 表示 没有签约的房子
+		boolean falg = checkUsercent(usercent);
+		if (falg == false ) return ResultMap.build(400, "该房源已经登记");
 		// 租客来源
 		if (usercent.getCentfromid() == null) {
 			usercent.setCentfromid(1L);
@@ -313,12 +317,27 @@ public class UserServiceImpl implements UserService {
 		}
 		map.put("usercentid", usercent.getUsercentid());
 
-		// 在返回之前设置房子状态为已经租的状态
+		/** 
+		 * 添加历史租客和设置房源为已租的状态。
+		 * 在返回之前设置房子状态为已经租的状态
+		 */
 		House house = new House();
 		house.setHouseid(usercent.getHouseid());
 		house.setHousestatus("2");
 		houseMapper.updateByPrimaryKeySelective(house);
 		return ResultMap.IS_200(map);
+	}
+
+	private boolean checkUsercent(Usercent usercent) {
+		UsercentExample example = new UsercentExample();
+		UsercentExample.Criteria criteria = example.createCriteria();
+		criteria.andHouseidEqualTo(usercent.getHouseid());
+		List<Integer> values = new ArrayList<>();
+		values.add(1);
+		values.add(2);
+		criteria.andCentstateIn(values);
+		List<Usercent> list = usercentMapper.selectByExample(example);
+		return list.size() == 0 ||  list.isEmpty();
 	}
 
 	private Profile checkprofile(Long userid) {

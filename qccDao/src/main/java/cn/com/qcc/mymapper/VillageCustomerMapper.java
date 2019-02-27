@@ -52,7 +52,7 @@ public interface VillageCustomerMapper {
 	// 楼栋下面的房源
 	List<HouseCustomer> searchhouseList(VillageeVo villageeVo);
 
-	List<BuildingCustomer> getbuildinglistbyvid(Long villageid);
+	List<BuildingCustomer> getbuildinglistbyvid(@Param("villageid")Long villageid ,@Param("searchWhere")String searchWhere);
 
 	List<UserCustomer> censusbuilding(@Param("code") String code);
 	List<UserCustomer> censusvillage(String code);

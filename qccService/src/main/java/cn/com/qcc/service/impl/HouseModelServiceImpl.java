@@ -44,7 +44,6 @@ public class HouseModelServiceImpl implements HouseModelService {
 	@Autowired
 	private HousetagMapper housetagMapper;
 	
-	@Override
 	public ResultMap selectAddToHouseModel(Long houseid , Long userid) {
 		
 		if (CheckDataUtil.checkisEmpty(houseid) || CheckDataUtil.checkisEmpty(userid)) 
@@ -62,6 +61,9 @@ public class HouseModelServiceImpl implements HouseModelService {
 		
 		// 第三步查询需要导入的数据
 		Housemodel houseModel = houseCustomerMapper.searchAddToHouseModel(houseid);
+		
+		if (CheckDataUtil.checkisEmpty(houseModel)) 
+			return ResultMap.build(400,"找不到该房源");
 		
 		// 设置默认值
 		houseModel.setUserid(userid);
@@ -121,7 +123,6 @@ public class HouseModelServiceImpl implements HouseModelService {
 		return false ;
 	}
 
-	@Override
 	public ResultMap oneHouseDelete(Long houseid, Long userid) {
 		HousemodelExample example = new HousemodelExample();
 		HousemodelExample.Criteria criteria = example.createCriteria();
@@ -131,7 +132,6 @@ public class HouseModelServiceImpl implements HouseModelService {
 		return houseModelSolrDao.deleteByQuery(houseid,userid);
 	}
 
-	@Override
 	public ResultMap oneHouseSearch(Long houseModelId) {
 		SolrQuery query=new SolrQuery();
 		query.setQuery("*:*");
@@ -143,7 +143,6 @@ public class HouseModelServiceImpl implements HouseModelService {
 		return ResultMap.IS_200(houseModel);
 	}
 
-	@Override
 	public SearchResult houseList(Housemodel model) {
 		SolrQuery query=new SolrQuery();
 		query.setQuery("*:*");
@@ -152,7 +151,6 @@ public class HouseModelServiceImpl implements HouseModelService {
 		return houseModelSolrDao.houseList(query);
 	}
 
-	@Override
 	public ResultMap updateHouseModel(Housemodel houseModel) {
 		if (CheckDataUtil.checkisEmpty(houseModel.getHouseid()) 
 				|| CheckDataUtil.checkisEmpty(houseModel.getHouseModelId())

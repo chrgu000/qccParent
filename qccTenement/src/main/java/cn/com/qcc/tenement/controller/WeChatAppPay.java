@@ -4,31 +4,37 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.jpay.ext.kit.IpKit;
+
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.PayCommonConfig;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.WeChatAppPayUtils;
+import cn.com.qcc.pojo.Houseorder;
+import cn.com.qcc.service.HouseService;
 import weixin.util.HttpUtil;
 import weixin.util.MD5;
 import weixin.util.MD5Util;
 @Controller
 public class WeChatAppPay {
 	
+	@Autowired
+	HttpServletRequest request;
+	@Autowired
+	HouseService houseService;
+	
     /***
      *发起支付
      * */
 	@RequestMapping("/apppay")
 	@ResponseBody
-    public ResultMap gateway( String monetary ,HttpServletRequest request,String userid ,String descname) {
-    	// 机器 的IP
-    	String spbill_create_ip = IpKit.getRealIp(request);
-		if (com.jpay.ext.kit.StrKit.isBlank(spbill_create_ip)) {
-			spbill_create_ip = "120.24.43.56";
-		}
+    public ResultMap gateway( String monetary ,String userid ,String descname) {
 		String conId = IDUtils.genItemId();
 		// 创建订单号
 		String out_trade_no = conId + "cz" + userid;
@@ -39,11 +45,52 @@ public class WeChatAppPay {
 		}
 		// 总金额
 		String total_free = MD5Util.getMoney(monetary);
-        //第一次签名
+		//获取签名的结果
+		Map<String, String > resultMap = getSignParam( total_free , out_trade_no , notify_url );
+		
+		if (resultMap == null) {
+			return ResultMap.build(400, "签名失败");
+		}
+
+        return ResultMap.IS_200(resultMap);
+    }
+	
+	
+	
+	/**
+	 * 创建房源订单
+	 * **/
+	@RequestMapping("/app/houseOrder")
+	@ResponseBody
+	public ResultMap dd (Houseorder houseorder ,  String total_free) {
+		String conId = IDUtils.genItemId();
+		//total_free = 1;
+		// 先需要往数据库插入一条记录或者是更新一条记录
+		houseorder.setPrices(Double.valueOf(total_free ) / 100);
+		if (houseorder.getDaycount() == 0) {houseorder.setDaycount(0);}
+		ResultMap resultMap = houseService.gethouseorderid(houseorder);
+		if (resultMap.getCode() !=200) {return resultMap;}
+		Long houseorderid =(Long) resultMap.getObj();
+		String out_trade_no = conId + "cz" + houseorderid;
+		String notify_url = PayCommonConfig.houseyudingreturn;
+		Map<String,String> map =getSignParam( total_free , out_trade_no , notify_url );
+		if (CheckDataUtil.checkisEmpty(map)) {
+			return ResultMap.build(400, "签名失败");
+		}
+		return ResultMap.IS_200(map);
+	}
+	
+	
+	
+	/**第一次签名生成的结果**/
+	public Map<String,String> getSignParam(String total_free ,String out_trade_no ,String notify_url ){
+		// 机器 的IP
+    	String spbill_create_ip = IpKit.getRealIp(request);
+    	if (com.jpay.ext.kit.StrKit.isBlank(spbill_create_ip)) {
+			spbill_create_ip = "120.24.43.56";
+		}
+		 //第一次签名
         Map<String, String> paraMap = new HashMap<>();
-        
-       // if ("10001765".equals(userid)) {total_free = "1"; }
-        
         //订单总金额，单位为分
         paraMap.put("total_fee", total_free);
         //微信开放平台审核通过的应用APPID
@@ -66,8 +113,8 @@ public class WeChatAppPay {
         paraMap.put("spbill_create_ip", spbill_create_ip);
         //交易类型，取值如下：JSAPI，NATIVE，APP
         paraMap.put("trade_type", "APP");
-
-        //将参数字典序列排序
+        
+      //将参数字典序列排序
         String stringSignTemp =  WeChatAppPayUtils.formatUrlMap(paraMap, false, false);
 
         stringSignTemp = stringSignTemp + "&key=" + WeChatAppPayUtils.MCH_ID_KEY;
@@ -86,14 +133,13 @@ public class WeChatAppPay {
         xml.append(sign);
         xml.append("</sign>");
         xml.append("</xml>");
+        
         //请求接口返回prepay_id等等数据
         String responseBosy = HttpUtil.sentPost(WeChatAppPayUtils.PAYURL, xml.toString(), "UTF-8");
-
-
         //将返回的xml转为map
         Map<String,String> resultMap = WeChatAppPayUtils.readStringXmlOut(responseBosy);
+        
         String prepay_id = resultMap.getOrDefault("prepay_id", "");
-
         String return_code = resultMap.getOrDefault("return_code", "");
         if(return_code != null && "SUCCESS".equals(return_code)  && prepay_id != null && !"".equals(prepay_id)){
             //要返回给app端的支付参数
@@ -114,11 +160,11 @@ public class WeChatAppPay {
             //得到app支付签名
             String signApp = MD5.MD5Encoding(stringSignTempApp).toUpperCase();
             paraMapApp.put("sign",signApp);
-            return ResultMap.IS_200(paraMapApp) ;
+            return paraMapApp ;
         }else {
+        	return null ;
         }
-
-        return null;
-    }
-
+	}
+	
+	
 }

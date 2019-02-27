@@ -13,6 +13,8 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.stereotype.Service;
+
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Housemodel;
 import cn.com.qcc.queryvo.SearchResult;
@@ -80,6 +82,10 @@ public class HouseModelSolrDao {
 			document.addField("latlng", houseModel.getLatlng());
 			contentSolrServer.add(document);
 			contentSolrServer.commit();
+			
+			if (CheckDataUtil.checkNotEmpty(houseModel.getHouseModelId())) 
+				return ResultMap.build(200, "编辑成功");
+			
 			return ResultMap.build(200, "导入成功");
 		} catch (Exception e) {
 			e.printStackTrace();

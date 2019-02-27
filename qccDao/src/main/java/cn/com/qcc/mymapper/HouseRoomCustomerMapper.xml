@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.HouseRoomCustomerMapper" >
+
+	<!-- 根据查询条件查询房态图 -->	
+ 	<select id="roompattern" resultType="cn.com.qcc.queryvo.HouseRoomCustomer" parameterType="cn.com.qcc.queryvo.HouseVo">
+ 			SELECT 
+				house.houseid ,
+				IFNULL(house.floor,1)floor ,
+				house.housestatus ,
+				house.buildingid ,
+				house.house_number ,
+				house.update_time ,
+				IFNULL(usercent.usercentnum,'')usercentnum ,
+				IFNULL(`user`.telephone,'')telephone ,
+				IFNULL(`profile`.real_name,house.house_number)realname ,
+				usercent.end_time cententtime ,
+				IFNULL(area.`name`,'') trading ,
+				IFNULL(village.villagename,'') villagename ,
+				IFNULL(building.building,'')building , 
+				ifnull(usercent.usercentid , -1) usercentid,
+		    	IFNULL(eventcount.totalcount,0)  housecount ,
+		    	housepay.needpaytime
+		 from house
+			LEFT JOIN usercent on house.houseid = usercent.houseid and usercent.centstate not in (3,4 )
+			LEFT JOIN `user` on `user`.userid = usercent.userid
+			LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+			LEFT JOIN building on house.buildingid = building.buildingid
+			LEFT JOIN village on building.villageid = village.villageid
+			LEFT JOIN area on area.`code` = village.`code`  
+			LEFT JOIN (
+				SELECT
+					COUNT(1) totalcount ,
+					buildingid 
+				FROM
+					house
+				WHERE
+					house.user_id = #{userid}
+				AND house.housestatus NOT IN (3)
+				GROUP BY house.buildingid
+		  )eventcount on eventcount.buildingid = building.buildingid
+		  LEFT JOIN (  	
+  				SELECT MIN(create_time) needpaytime   , usercentid   from housepay 
+				where housepay.paystate = 1  GROUP BY housepay.usercentid 
+		  )  housepay ON  housepay.usercentid = usercent.usercentid
+		  where house.user_id = #{userid} and house.housestatus !='3'
+		<!-- 这里封装房源的查询条件 --> 
+ 	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_roomparrent_where"></include>
+ 	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"></include>
+		ORDER BY house.buildingid ,house.floor
+		<!-- 分页的查询条件 -->
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+ 	</select>
+ 	
+ 	
+ 	<!-- 根据查询条件查询房态图 -->	
+ 	<select id="roompatternCount" resultType="integer" parameterType="cn.com.qcc.queryvo.HouseVo">
+ 			SELECT 
+				 count(1)
+		 from house
+			LEFT JOIN usercent on house.houseid = usercent.houseid and usercent.centstate not in (3,4 )
+			LEFT JOIN `user` on `user`.userid = usercent.userid
+			LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+			LEFT JOIN building on house.buildingid = building.buildingid
+			LEFT JOIN village on building.villageid = village.villageid
+			LEFT JOIN area on area.`code` = village.`code`  
+			LEFT JOIN (  	
+  				SELECT MIN(create_time) needpaytime   , usercentid   from housepay 
+				where housepay.paystate = 1  GROUP BY housepay.usercentid 
+		    )  housepay ON  housepay.usercentid = usercent.usercentid
+		  where house.user_id = #{userid} and house.housestatus !='3'
+		<!-- 这里封装房源的查询条件 --> 
+ 	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_roomparrent_where"></include>
+ 	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"></include>
+		ORDER BY house.buildingid ,house.floor
+		<!-- 分页的查询条件 -->
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+ 	</select>
+ 	
+ 	
+ 	
+ 	<select id="getPayModel" parameterType="java.util.List"
+		resultType="cn.com.qcc.pojo.Housepay">
+		SELECT * from housepay where housepay.usercentid in 
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+	</select>
+ 	
+ 	
+ 	
+ 	
+ 	
+
+
+  
+</mapper>

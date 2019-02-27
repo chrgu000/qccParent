@@ -1,8 +1,21 @@
 $(function () {
 	
-
+	$('#v_1').change(function () {
+		$('#typeState').val('0');
+		$('.villlage_building_searchword').val('');
+	});
+	$('#v_2').change(function () {
+		$('#typeState').val('0');
+		$('.villlage_building_searchword').val('');
+	});
+	$('#v_3').change(function () {
+		$('#typeState').val('0');
+		$('.villlage_building_searchword').val('');
+	});
 	$('.village_v4').change(function () {
+		$('.villlage_building_searchword').val('');
 		tradingtovillage();
+		$('#typeState').val('village');
 	});
 	$('.bildingcount').click(function () {
 		buildingcount();
@@ -11,9 +24,18 @@ $(function () {
 		villagecount();
 	});
 	
-	/*$('.building_building').focus(function () {
-		$('.building_building').val('');
-	});*/
+	$('.villlage_building_searchword').keyup(function () {
+		var typeState = $('#typeState').val();
+		var searchWord = $('.villlage_building_searchword').val();
+		var villageid=$('.village_villageid').val();
+		if (typeState === 'village') {
+			tradingtovillage();
+		}
+		if (typeState === 'building') {
+			getbuildinglist (villageid,searchWord);
+		}
+		
+	});
 	
 	$('.testhtml').click(function () {
 		$.ajax({
@@ -162,6 +184,8 @@ $(function () {
 		var land =$('.building_land').val();
 		var buildingid = $('.building_buildingid').val();
 		var villageid = $('.building_villageid').val();
+		if (villageid == '') { alert('选择小区');
+		return ;}
 		var buildingcode = $('.building_num').val();
 		$.ajax ( { 
 			data : {
@@ -180,12 +204,12 @@ $(function () {
 			type : 'POST',
 			url : '/Tenement/village/updatebuilding',
 			success : function (data) {
-				//var data = JSON.parse(res);
-				//alert(data.code);
 				data = checkaccessexist(data) ;
 				 if (data.code ==200 ||data.code == 900) {
 					 $('#building_edit').modal('hide');
-					 getbuildinglist (villageid);
+					 getbuildinglist (villageid,'');
+				 } else {
+					 alert(data.msg);
 				 }
 			}
 		});
@@ -213,6 +237,32 @@ $(function () {
 				if (data.obj) {
 					$.each(data.obj ,function (index,value) {
 						var option = '<option value = '+value.brandid+'>'+value.brand+'</option>';
+						select.append(option);
+					})
+				} 
+				
+			}
+		});
+	});
+	
+	
+	$('.building_villagename').keyup(function () {
+		var select = $('.villageselect');
+		select.empty();
+		select.append('<option value="" >请选择</option>');
+		var valuename = $('.building_villagename').val();
+		$.ajax({
+			data : {
+				'likename' : valuename ,
+			},
+			type : 'POST',
+			url : '/Tenement/back/getLikeVillage',
+			success : function (data) {
+				// 如果有数据在遍历集合
+				if (data.obj) {
+					$.each(data.obj ,function (index,value) {
+						var name = value.villagename +' ---- ' + value.trading ; 
+						var option = '<option value = '+value.villageid+'>'+name+'</option>';
 						select.append(option);
 					})
 				} 
@@ -301,8 +351,20 @@ function setchangebrand(){
 	var brandid = $('.brandselect').val();
 	$('.building_brandid').val(brandid);
 	$('.building_brand').val(brand);
+}
+
+function setchangevillage(){
+	var villagename =$(".villageselect option:selected").text(); 
+	if ('请选择' === villagename) {
+		$('.building_villageid').val('');
+	} else {
+		var villageid = $('.villageselect').val();
+		$('.building_villageid').val(villageid);
+	}
+	$('.building_villagename').val(villagename);
 	
 }
+
 
 function metro_byname_2() {
 	var code = $('#metro_byname_2').val();
@@ -457,21 +519,23 @@ function villagecount () {
 function tradingtovillage(){
 	var code = $('.village_v4').val();
 	var form = $('#village_list');
-	form.empty();
+	var searchWhere = $('.villlage_building_searchword').val();
 	$.ajax({
 		data : {
-			'code' : code
+			'code' : code ,
+			'searchWhere' : searchWhere
 		},
 		type : 'POST',
 		url : '/Tenement/tribe/getvillagebycode',
 		success : function (data) {
 			if (data.obj.length ==0) {
-				var td = '<tr><td>暂无小区数据！</td></tr>';
-				form.append(td);
+				
+			}else {
+				form.empty();
 			}
 			$.each(data.obj,function(index, value) {
 				var body_in ='<tr><td >'+value.villageid+'</td><td>'+value.code+'</td>'+
-				'<td>'+value.villagename+'</td><td><button class="btn btn-large btn-primary " onclick =getbuildinglist('+value.villageid+') >查询</button></td>'+ 
+				'<td>'+value.villagename+'</td><td><button class="clear btn btn-large btn-primary  " onclick =getbuildinglist('+value.villageid+'\,\'\') >查询</button></td>'+ 
 				'<td> <button onclick=getvillagedetail('+value.villageid+') class="btn btn-large btn-primary " data-toggle="modal" data-target="#village_edit">详情</button>  </td>'
 				+'<td> <button onclick=metro_village('+value.villageid+  '\,\''+ value.code+ '\',\''+ value.villagename+ '\') class="btn btn-large btn-primary" data-toggle="modal" data-target="#metro_village"> 重构 </button> </td></tr>';
 				
@@ -536,24 +600,31 @@ function metro_village_2 (villageid,code,villagename) {
 }
 
 
-function getbuildinglist (villageid) {
+function getbuildinglist (villageid,searchWhere) {
+	$('#typeState').val('building');
+	$('.village_villageid').val(villageid);
 	var form = $('#village_list');
-	form.empty();
 	$.ajax({
 		data : {
-			'villageid' : villageid
+			'villageid' : villageid ,
+			'searchWhere' : searchWhere
 		},
 		type : 'POST',
 		url : '/Tenement/village/getbuildinglistbyvid',
 		success : function (data) {
-			$.each(data.obj.buildings,function(index, value) {	//('+ value.metroid+ '\,\''+ value.code+ '\',\''+ value.finalstop+ '\')
-				var body_in ='<tr><td>'+value.buildingid+'</td><td>'+value.villagename+'</td> <td>'+
-				value.building+'</td> <td> <button onclick=clearbuilding('+value.buildingid+'\,\''+value.villageid+ '\',\''+ value.building+
-				'\') class="btn btn-large btn-primary " >删除</button></td> <td> <button onclick=getbuildingdetail('+value.buildingid+'\,\''+value.code+'\')  '
-				+' class="btn btn-large btn-primary " data-toggle="modal" data-target="#building_edit">详情</button>'
-				+'<td>'+value.name+value.finalstop+'</td></td></tr>';
-				form.append(body_in);
-			});
+			
+			if (data.obj.buildings ==0) {return ;} else {
+				form.empty();
+				$.each(data.obj.buildings,function(index, value) {	//('+ value.metroid+ '\,\''+ value.code+ '\',\''+ value.finalstop+ '\')
+					var body_in ='<tr><td>'+value.buildingid+'</td><td>'+value.villagename+'</td> <td>'+
+					value.building+'</td> <td> <button onclick=clearbuilding('+value.buildingid+'\,\''+value.villageid+ '\',\''+ value.building+
+					'\') class="btn btn-large btn-primary " >删除</button></td> <td> <button onclick=getbuildingdetail('+value.buildingid+'\,\''+value.code+'\')  '
+					+' class="btn btn-large btn-primary " data-toggle="modal" data-target="#building_edit">详情</button>'
+					+'<td>'+value.name+value.finalstop+'</td></td></tr>';
+					form.append(body_in);
+				});
+			}
+			
 		}
 	});
 }
@@ -574,6 +645,8 @@ function clearbuilding(buildingid,villageid ,building) {
 }
 
 function getbuildingdetail (buildingid,code) {
+	 $('.villageselect').empty();
+	 $('.brandselect').empty();
 	$.ajax ( {
 		data : {
 			'buildingid' : buildingid
@@ -583,6 +656,7 @@ function getbuildingdetail (buildingid,code) {
 		success : function (data) {
 			$('.building_code').val(data.obj.code);
 			$('.building_building').val(data.obj.building);
+			$('.building_villagename').val(data.obj.villagename);
 			$('.building_brand').val(data.obj.brand);
 			$('.building_linkphone').val(data.obj.linkphone);
 			$('.building_linkman').val(data.obj.linkman);

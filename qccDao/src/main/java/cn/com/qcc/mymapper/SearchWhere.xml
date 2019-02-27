@@ -71,32 +71,28 @@
 		<if test="houseCustomer != null">
 			<!-- 租客欠款 -->
 			<if test="houseCustomer.rentname !=null and 'qiankuan'==houseCustomer.rentname">
-				  and house.housestatus = '2' and (paycent.create_time <![CDATA[<=#{houseCustomer.currentday}]]>   
-		          and paycent.cenntstate = 1 ) or 
-		          ( payothernot.otherpricesnotpay > 0 and  payothernot.needpaytime  <![CDATA[<=#{houseCustomer.currentday}]]> )
+				AND housepay.needpaytime  <![CDATA[<=#{houseCustomer.currentday}]]> 
 			</if>
 			
-			<!-- 租客待登记 传2 -->
+			<!--  租客待登记 -->
 			<if test="houseCustomer.rentname !=null and 'dengji'==houseCustomer.rentname ">
-				and house.housestatus = '1'
+				AND house.housestatus != '2'
 			</if>
 			
 			<!-- 合同快到期当前时间 -10 租客待登记 两个条件同时成历 -->
 			<if test="houseCustomer.rentname !=null and houseCustomer.rentname == 'centkuai' ">
-				and house.housestatus = '2' and 
+				AND  
 				usercent.end_time > #{houseCustomer.currentday} and 
 				usercent.end_time <![CDATA[<=#{houseCustomer.end_time}]]>
 			</if>
 			
 			<!-- 3天待收款 -->
 			<if test="houseCustomer.rentname !=null and houseCustomer.rentname == 'daishoukuan' ">
-				  and house.housestatus = '2' and (
-				  paycent.create_time  >#{houseCustomer.currentday} and
-				  paycent.create_time <![CDATA[<=#{houseCustomer.end_time}]]>   
-		          and paycent.cenntstate = 1 ) or 
-		          ( payothernot.otherpricesnotpay > 0 and 
-		           payothernot.needpaytime   >#{houseCustomer.currentday} and 
-		           payothernot.needpaytime  <![CDATA[<=#{houseCustomer.end_time}]]> )
+		          AND usercent.usercentid in (
+						SELECT usercentid from housepay where paystate = 1 and 
+						housepay.create_time >#{houseCustomer.currentday} and
+						 housepay.create_time <![CDATA[<=#{houseCustomer.end_time}]]>   
+				   )
 			</if>
 			
 		</if>
