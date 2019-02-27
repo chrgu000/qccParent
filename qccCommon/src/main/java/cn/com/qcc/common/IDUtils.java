@@ -41,7 +41,7 @@ import sun.misc.BASE64Decoder;
 /**
  * 各种id生成策略
  */
-@SuppressWarnings("restriction")
+@SuppressWarnings({ "restriction", "unused", "deprecation" })
 public class IDUtils {
 
 	static String[] units = { "", "十", "百", "千", "万", "十万", "百万", "千万", "亿", "十亿", "百亿", "千亿", "万亿" };
@@ -50,11 +50,6 @@ public class IDUtils {
 	static String[] unitsbig = { "", "拾", "佰", "仟", "萬", "拾萬", "佰萬", "仟萬", "亿", "拾亿", "佰亿", "仟亿", "萬亿" };
 	static String[] strArr = { "零", "一", "二","三","四","五","六","七","八","九","十"};
 	
-	public static void main(String[] args) {
-		String s = "押九付十";
-		List<Integer> houseModel = houseModel(s);
-		System.out.println(houseModel.get(0));
-	}
 	
 	public static List<Integer> houseModel(String s) {
 		

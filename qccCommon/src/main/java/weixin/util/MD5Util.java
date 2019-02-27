@@ -66,8 +66,6 @@ public class MD5Util {
 		return s;
 	}
 
-	public static void main(String[] args) {
-	}
 
 	/**
 	 * URL编码（utf-8）

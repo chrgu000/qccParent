@@ -216,6 +216,7 @@ public class HttpSign {
 		return sb.toString();
 	}
 
+	@SuppressWarnings({ "static-access", "unchecked", "resource" })
 	public static ResultMap OCRsign(MultipartFile first, MultipartFile second) {
 
 		try {
@@ -309,6 +310,7 @@ public class HttpSign {
 
 	}
 
+	@SuppressWarnings({ "static-access", "unchecked" })
 	public static ResultMap OCRsign(String orcPath) {
 		
 		try {

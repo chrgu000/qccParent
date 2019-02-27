@@ -159,7 +159,6 @@ public class Systemtask {
 				// 发送短信提醒用户收益到账
 				String telephone = lurce.getDescname();
 				String content =updateaccount +","+totalaccount;
-		      	WangYiUtil.ShouYiMess(content, telephone);
 			}
 		}
 		

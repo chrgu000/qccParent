@@ -16,7 +16,6 @@ public class BargainCustomer extends Bargain{
 	
 	List<Bargaindetail> details = new ArrayList<>();
 	
-	
 	public double getAccount() {
 		return account;
 	}

@@ -305,5 +305,6 @@ public class CrazyServlet extends HttpServlet {
 		String xml = xstream.toXML(we);
 		return xml;
 	}
+	
 
 }

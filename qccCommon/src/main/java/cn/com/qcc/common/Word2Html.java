@@ -145,16 +145,16 @@ public class Word2Html {
 		}
 	}
 	
-	@SuppressWarnings("static-access")
-	public static void main(String[] args) {
-		try {
-			String sourceFileName   ="E://defaultcent.docx";
-			String targetFileName ="E://2.html";
-			new Word2Html().docxToHtml( sourceFileName,  targetFileName);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} ;
-	}
+//	@SuppressWarnings("static-access")
+//	public static void main(String[] args) {
+//		try {
+//			String sourceFileName   ="E://defaultcent.docx";
+//			String targetFileName ="E://2.html";
+//			new Word2Html().docxToHtml( sourceFileName,  targetFileName);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} ;
+//	}
 
 }

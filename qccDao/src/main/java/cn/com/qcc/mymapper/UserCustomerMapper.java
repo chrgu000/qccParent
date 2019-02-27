@@ -256,6 +256,9 @@ public interface UserCustomerMapper {
 	/**查询所有的二级团队**/
 	public List<UserCustomer> allteamson(@Param("userid")Long userid,@Param("idsList") List<Integer> sons);
 	
+	/**查询用户的实名信息**/
+	public UserCustomer searchUserSign(Long userid);
+	
 
 	
 

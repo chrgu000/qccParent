@@ -451,7 +451,63 @@ public class WangYiUtil {
 	}
 	
 	/**发送用户收益通知**/
-	public static Map<String, Object> ShouYiMess(String content, String PHONE) {
+	public static Map<String, Object> ShouYiMess(String content1, String content2,String PHONE) {
+		Map<String, Object> returnmap = null;
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpPost httpPost = SetSendHead(WangYiCommon.SENDTEMPLATE);
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		String TEMPLATEID = WangYiCommon.SHOU_YI_TEMPID;
+		nvps.add(new BasicNameValuePair("templateid", TEMPLATEID));
+		nvps.add(new BasicNameValuePair("mobiles", "["+PHONE+"]"));
+		String defaultString =  "['【','】']";
+		defaultString.replace("【", content1);
+		defaultString.replace("】", content2);
+		nvps.add(new BasicNameValuePair("params", defaultString));
+		try {
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
+			// 执行请求
+			HttpResponse response = httpClient.execute(httpPost);
+			String str = EntityUtils.toString(response.getEntity(), "utf-8");
+			net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
+			returnmap = (Map<String, Object>) jsonobj;
+			return returnmap;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return returnmap;
+		}
+	}
+	
+	
+	/**
+	 * 发送通知类型短信
+	 * 
+	 * **/
+	public static Map<String, Object> sendNoticMess(String contents, String phones,String modelId) {
+		Map<String, Object> returnmap = null;
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpPost httpPost = SetSendHead(WangYiCommon.SENDTEMPLATE);
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("templateid", modelId));
+		nvps.add(new BasicNameValuePair("mobiles", phones));
+		nvps.add(new BasicNameValuePair("params",contents));
+		try {
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
+			// 执行请求
+			HttpResponse response = httpClient.execute(httpPost);
+			String str = EntityUtils.toString(response.getEntity(), "utf-8");
+			net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
+			returnmap = (Map<String, Object>) jsonobj;
+			System.out.println(returnmap);
+			return returnmap;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return returnmap;
+		}
+	}
+	
+	
+	/**房东发起租约给租户发送短信**/
+	public static Map<String, Object> landCentPush(String content, String PHONE) {
 		Map<String, Object> returnmap = null;
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = SetSendHead(WangYiCommon.SENDTEMPLATE);
@@ -513,13 +569,7 @@ public class WangYiUtil {
 	}
 
 	public static void main(String[] args) {
-		//
-		try {
-			larenGroup(1572379244L, 10005740L, 1, "10000525");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 	}
 
 }

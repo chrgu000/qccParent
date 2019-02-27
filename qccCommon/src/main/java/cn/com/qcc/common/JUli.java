@@ -25,12 +25,5 @@ public class JUli {
 
 	}
 	
-	public static void main (String [] args) {
-		double  lat1Str = 22.72487;
-		double  lng1Str = 114.27415;
-		double  lat2Str = 22.725734;
-		double  lng2Str=114.278280;
-		double  sss =  getDistance( lat1Str,  lng1Str,  lat2Str,  lng2Str);
-	}
 
 }

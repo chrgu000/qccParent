@@ -1350,6 +1350,15 @@
 		UPDATE vipcount set weixinaccount = '' where vipcount.user_id = #{userid}
 	</update>
 	
+	<!-- 查询用户的实名信息 -->
+	<select id="searchUserSign" resultType="cn.com.qcc.queryvo.UserCustomer" parameterType="long">
+		SELECT  `user`.telephone ,
+				`profile`.signstate ,
+				`profile`.real_name  from 
+			`user` LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+		where `user`.userid = #{userid}
+	</select>
+	
 	
   
 </mapper>

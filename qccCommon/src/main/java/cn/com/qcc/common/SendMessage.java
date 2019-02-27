@@ -26,6 +26,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import WangYiUtil.WangYiCommon;
+import WangYiUtil.WangYiUtil;
 
 /*
 功能:		1xinxi.cn HTTP接口 发送短信
@@ -448,12 +449,47 @@ public class SendMessage {
 	public static void sendHouseOrder(String phone, HttpServletRequest request) {
 		String content = "您好，您预订的房源订金已支付成功等待房东确认。";
 	}
-
-
-
-	public static void main(String[] args) {
-
+	
+	
+	/**
+	 * 发送通知类短信*
+	 * 数据传输的分隔符为     ^   
+	 * 比如 :  100.0^300     18316999864^183411231
+	 * @param content : 消息内容
+	 * @param phone  : 发送的电话号码
+	 * @param modelId : 模板消息id
+	 * */
+	public static void sendNoticMess(String content ,String phone,String modelId) {
+		String [] contents = content.split("^");
+		String [] phones = phone.split("^");
+		content = prease(contents);
+		phone =   prease(phones);
+		WangYiUtil.sendNoticMess(content, phone, modelId);
 	}
+	
+	
+	private static String prease(String[] contents) {
+		String content="";
+		for (int i =0;i<contents.length;i++) {
+			if (i == contents.length-1 ) {
+				content +=  "'" + contents[i]  +"'";
+			}else {
+				content +=  "'" + contents[i]  +"'" +",";
+			}
+		}
+		content = "[" +content + "]" ;
+		return content;
+	}
+
+
+
+
+
+
+
+
+
+
 
 
 

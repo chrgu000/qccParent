@@ -77,6 +77,7 @@ public class TestToken {
 		return json;
 	}
 
+	/**
 	public static void main(String[] args) {
 
 		try {
@@ -97,7 +98,7 @@ public class TestToken {
 			MessageProducer producer = session.createProducer(queue);
 			//7、创建一个Message对象，可以使用TextMessage。
 			/*TextMessage textMessage = new ActiveMQTextMessage();
-			textMessage.setText("hello Activemq");*/
+			textMessage.setText("hello Activemq");
 			TextMessage textMessage = session.createTextMessage("hello activemq");
 			//8、发送消息
 			producer.send(textMessage);
@@ -108,11 +109,10 @@ public class TestToken {
 			
 			
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}
-		
+		**/
 			
-	}
+	
 
 }

@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +14,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
+import cn.com.qcc.pojo.Mycent;
 import cn.com.qcc.pojo.Paymodal;
+import cn.com.qcc.pojo.Usercent;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.FurnitureCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
@@ -36,7 +40,7 @@ public class HouseRoomController {
 	// 根据查询条件查询房态图
 	@RequestMapping("/roompattern")
 	@ResponseBody
-	public ResultMap roompattern1(@RequestParam(defaultValue = "0") String currentpage,
+	public ResultMap roompattern(@RequestParam(defaultValue = "0") String currentpage,
 			@RequestParam(defaultValue = "12") int pagesize, HouseVo houseVo) {
 		Map<String, Object> map = new HashMap<>();
 		PageQuery pagequery = new PageQuery();
@@ -50,22 +54,22 @@ public class HouseRoomController {
 	}
 	
 	
-
-	// 根据查询条件查询房态图
-	@RequestMapping("/roompattern1")
+	
+	/*
+	 * 房东发布租约
+	 */
+	@RequestMapping("/usercent")
 	@ResponseBody
-	public ResultMap roompattern(@RequestParam(defaultValue = "0") String currentpage,
-			@RequestParam(defaultValue = "8888") int pagesize, HouseVo houseVo) {
-		Map<String, Object> map = new HashMap<>();
-		PageQuery pagequery = new PageQuery();
-		int infoCount = houseService.roompatternCount(houseVo);
-		pagequery.setPageParams(infoCount, pagesize, Integer.parseInt(currentpage));
-		houseVo.setPagequery(pagequery);
-		List<HouseCustomer> houselist = houseService.roompattern(houseVo);
-		map.put("pagequery", pagequery);
-		map.put("houselist", houselist);
-		return ResultMap.IS_200(map);
+	public ResultMap usercent(Usercent usercent,Mycent mycent,HttpServletRequest request,
+			String othermore,String payid,String paycentid,String othermoreid1,String othermoreid2,
+		String pricestype,String islinecent) {
+		ResultMap resultMap = houseRoomService.usercent(usercent, mycent, request, othermore,  payid, paycentid, pricestype,othermoreid1,othermoreid2,islinecent);
+		return resultMap;
 	}
+	
+	
+
+	
 
 	// 获取支付方式类型计算租金押金倍数
 	@RequestMapping("/paymodals")

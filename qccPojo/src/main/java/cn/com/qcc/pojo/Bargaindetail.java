@@ -21,6 +21,9 @@ public class Bargaindetail {
     /** 头像*/
     private String avatar;
 
+    /** 登录的userid*/
+    private String userid;
+
     public Long getBarginid() {
         return barginid;
     }
@@ -67,5 +70,13 @@ public class Bargaindetail {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar == null ? null : avatar.trim();
+    }
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid == null ? null : userid.trim();
     }
 }

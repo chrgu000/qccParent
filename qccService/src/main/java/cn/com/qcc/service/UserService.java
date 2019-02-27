@@ -14,12 +14,10 @@ import cn.com.qcc.pojo.Invite;
 import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.pojo.Lucre;
 import cn.com.qcc.pojo.Maillist;
-import cn.com.qcc.pojo.Mycent;
 import cn.com.qcc.pojo.Profile;
 import cn.com.qcc.pojo.Rongconn;
 import cn.com.qcc.pojo.Ronggroup;
 import cn.com.qcc.pojo.User;
-import cn.com.qcc.pojo.Usercent;
 import cn.com.qcc.pojo.Userconn;
 import cn.com.qcc.pojo.Vipcount;
 import cn.com.qcc.queryvo.CentFromCustomer;
@@ -87,33 +85,7 @@ public interface UserService {
 	 **/
 	public UserCustomer getUserAccessToken(String token);
 
-	/**
-	 * 租客登记时候必须要填写的资料.
-	 * 
-	 * @param houseid
-	 *            : 登记的房子ID
-	 * @param landuserid
-	 *            :设置用户的ID，方便管家推送账号和管理
-	 * @param prices
-	 *            : 当前房间的押金
-	 * @param centfromid
-	 *            : 租客来源的ID
-	 * @param centid
-	 *            :租约ID
-	 * @param start_time
-	 *            :租约开始时间
-	 * @param end_time
-	 *            :租约结束时间
-	 * @param otherprices
-	 *            :首期一次费用
-	 * @param islinecent
-	 *            :yes 表示线上合同
-	 * @param othermore
-	 *            :更多合同补充
-	 **/
-	public ResultMap usercent(Usercent usercent, Mycent mycent, HttpServletRequest request, String othermore,
-			String payid, String paycentid, String pricestype, String othermoreid1, String othermoreid2,
-			String islinecent);
+	
 
 	/**
 	 * 申请成为的我们的房东

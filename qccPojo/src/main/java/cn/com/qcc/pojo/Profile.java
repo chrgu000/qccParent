@@ -2,7 +2,6 @@ package cn.com.qcc.pojo;
 
 import java.util.Date;
 
-import org.springframework.web.multipart.MultipartFile;
 
 public class Profile {
     /** */

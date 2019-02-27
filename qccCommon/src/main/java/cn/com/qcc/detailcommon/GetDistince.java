@@ -23,12 +23,4 @@ public class GetDistince {
 
 
 	
-	public static void main(String[] args) {
-		double latitude1 =22.6;
-		double longitude1 = 114.2;
-		double latitude2 =22.0;
-		double longitude2 = 114.0;
-		
-		Integer s = GetDistince.Distance(longitude1, latitude1, longitude2, latitude2);
-	}
 }

@@ -19,7 +19,7 @@ public interface BargainService {
 	/**
 	 * 查询砍价列表
 	 * **/
-	ResultMap searchList(Long barginid,String unionid);
+	ResultMap searchList(Long barginid,String unionid , String userid);
 
 
 	ResultMap doBargainDetail(Bargaindetail bargaindetail);

@@ -207,10 +207,7 @@ public class CheckDataUtil {
 	
 	
 	
-public static void main (String args []) {
-		
-	System.out.println(checkNotEmaile("1sfsd1@163.com"));
-}
+
 
 
 public static String DeleteExist(String append) {

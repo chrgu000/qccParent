@@ -18,8 +18,6 @@ import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.pojo.Maillist;
-import cn.com.qcc.pojo.Mycent;
-import cn.com.qcc.pojo.Usercent;
 import cn.com.qcc.queryvo.CentFromCustomer;
 import cn.com.qcc.queryvo.MailCustomer;
 import cn.com.qcc.queryvo.MailVo;
@@ -50,18 +48,7 @@ public class UserController {
 		return resultMap;
 	}
 
-	/*
-	 * 发布租约，和登录用户。
-	 * 
-	 */
-	@RequestMapping("/usercent")
-	@ResponseBody
-	public ResultMap usercent(Usercent usercent,Mycent mycent,HttpServletRequest request,
-			String othermore,String payid,String paycentid,String othermoreid1,String othermoreid2,
-		String pricestype,String islinecent) {
-		ResultMap resultMap = userService.usercent(usercent, mycent, request, othermore,  payid, paycentid, pricestype,othermoreid1,othermoreid2,islinecent);
-		return resultMap;
-	}
+	
 	
 	
 
