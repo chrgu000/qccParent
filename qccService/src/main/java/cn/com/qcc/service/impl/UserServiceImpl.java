@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.jms.Destination;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +24,6 @@ import cn.com.qcc.mapper.AccessMapper;
 import cn.com.qcc.mapper.BrandMapper;
 import cn.com.qcc.mapper.BranduserMapper;
 import cn.com.qcc.mapper.BrokerMapper;
-import cn.com.qcc.mapper.CodeMapper;
 import cn.com.qcc.mapper.ConsumeMapper;
 import cn.com.qcc.mapper.FurnitureMapper;
 import cn.com.qcc.mapper.HistorycentMapper;
@@ -59,8 +57,6 @@ import cn.com.qcc.pojo.BrandExample;
 import cn.com.qcc.pojo.Branduser;
 import cn.com.qcc.pojo.BranduserExample;
 import cn.com.qcc.pojo.Broker;
-import cn.com.qcc.pojo.Code;
-import cn.com.qcc.pojo.CodeExample;
 import cn.com.qcc.pojo.Inteconn;
 import cn.com.qcc.pojo.Invite;
 import cn.com.qcc.pojo.InviteExample;
@@ -103,7 +99,6 @@ public class UserServiceImpl implements UserService {
 	@Autowired ProfileMapper profileMapper;
 	@Autowired PaymodalMapper paymodalMapper;
 	@Autowired PayexpertMapper payexpertMapper;
-	@Autowired CodeMapper codeMapper;
 	@Autowired UserMapper userMapper;
 	@Autowired JedisClient jedisClient;
 	@Autowired LandlordMapper landlordMapper;
@@ -131,36 +126,7 @@ public class UserServiceImpl implements UserService {
 	private final static String appkey = "8w7jv4qb8ckny";
 	private final static String secret = "1S7NZ4qxFM";
 
-	// 根据短信密码登录
-	public ResultMap codeLogin(Long telephone, String code, HttpServletRequest request) {
-
-		// 获取验证码 type =3表示更改手机号码
-		if (telephone == null) {
-			return ResultMap.build(100,"输入电话号码");
-		}
-		Code code_search = getcheckcode("3", telephone);
-		if (code_search == null) {
-			return ResultMap.build(101, "验证码失效");
-		}
-		String code_get = "";
-		if (code != null && !"".equals(code)) {
-			code_get = getBASE64(code);
-		}
-		if (!code_search.getCode().equals(code_get)) {
-			return ResultMap.build(102,"验证码错误");
-		}
-		// 查询用户的基本信息根据基本信息判断去哪个页面
-		UserCustomer userCustomer = userCustomerMapper.getUserMessage(telephone);
-		if (userCustomer == null) {
-			return ResultMap.build(500, "请先成为我们的用户");
-		}
-		// 如果用户正常登陆查询出所有权限的集合
-		// String[] urls = userCustomer.getAccessurlid().split(",");
-		// List<Access> accesses = userCustomerMapper.getallurls(urls);
-		// userCustomer.setAccess(accesses);
-		userCustomer.setPassword("");
-		return ResultMap.IS_200(userCustomer);
-	}
+	
 
 	@Override
 	public UserCustomer getUserAccessToken(String token) {
@@ -457,24 +423,13 @@ public class UserServiceImpl implements UserService {
 		vipcountMapper.insertSelective(vipcount);
 	}
 
-	public ResultMap userReg(User user, Profile profile, Code code) {
+	public ResultMap userReg(User user, Profile profile) {
 		// 校验本系统中是否已经有该手机号的注册
 		User user_s = checktelephoneexixt(user.getTelephone());
 		if (user_s != null) {
 			return ResultMap.build(400, "该号码已经注册过。");
 		}
-		// 获取验证码 type =3表示更改手机号码
-		Code code_search = getcheckcode("3", user.getTelephone());
-		if (code_search == null) {
-			return ResultMap.build(400, "验证码失效");
-		}
-		String code_get = "";
-		if (code.getCode() != null && !"".equals(code.getCode())) {
-			code_get = getBASE64(code.getCode());
-		}
-		if (!code_search.getCode().equals(code_get)) {
-			return ResultMap.build(500, "验证码错误");
-		}
+		
 		userMapper.insertSelective(user);
 		profile.setUser_id(user.getUserid());
 		profileMapper.insert(profile);
@@ -569,20 +524,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	// 根据短信密码登录
-	public ResultMap codeLogin(User user, Code code) {
+	public ResultMap codeLogin(User user) {
 
-		// 获取验证码 type =3表示更改手机号码
-		Code code_search = getcheckcode("3", user.getTelephone());
-		if (code_search == null) {
-			return ResultMap.build(400, "验证码失效");
-		}
-		String code_get = "";
-		if (code.getCode() != null && !"".equals(code.getCode())) {
-			code_get = getBASE64(code.getCode());
-		}
-		if (!code_search.getCode().equals(code_get)) {
-			return ResultMap.build(500, "验证码错误");
-		}
 
 		UserExample example = new UserExample();
 		UserExample.Criteria createCriteria = example.createCriteria();
@@ -604,20 +547,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	// 通过手机号修改密码
-	public ResultMap findPwdByTel(User user, Code code) {
+	public ResultMap findPwdByTel(User user) {
 
-		// 获取验证码 type =3表示更改手机号码
-		Code code_search = getcheckcode("3", user.getTelephone());
-		if (code_search == null) {
-			return ResultMap.build(400, "验证码失效");
-		}
-		String code_get = "";
-		if (code.getCode() != null && !"".equals(code.getCode())) {
-			code_get = getBASE64(code.getCode());
-		}
-		if (!code_search.getCode().equals(code_get)) {
-			return ResultMap.build(500, "验证码错误");
-		}
 		User user_id = getUserByphone(user.getTelephone());
 		user.setUserid(user_id.getUserid());
 		userMapper.updateByPrimaryKeySelective(user);
@@ -1004,18 +935,6 @@ public class UserServiceImpl implements UserService {
 			if (CheckDataUtil.checkNotEmpty(user_s)) {
 				return ResultMap.build(400, "该手机号已经注册，无法修改。");
 			}
-			// 获取验证码 type =3表示更改手机号码
-			Code code = getcheckcode("3", userCustomer.getTelephone());
-			if (CheckDataUtil.checkisEmpty(code)) {
-				return ResultMap.build(400, "验证码失效");
-			}
-			String code_get = "";
-			if (CheckDataUtil.checkNotEmpty(userCustomer.getCode())) {
-				code_get = getBASE64(userCustomer.getCode());
-			}
-			if (CheckDataUtil.checkNotEqual(code.getCode(), code_get)) {
-				return ResultMap.build(500, "验证码错误");
-			}
 			user.setTelephone(userCustomer.getTelephone());
 			userMapper.updateByPrimaryKeySelective(user);
 		}
@@ -1095,43 +1014,9 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
-	@Override
-	public ResultMap insertcheckcode(String code, Long telephone, String type) {
-		Code insert_code = new Code();
-		insert_code.setUpdate_time(new Date());
-		insert_code.setCreate_time(new Date());
-		insert_code.setType(type);
-		insert_code.setTelephone(telephone);
-		insert_code.setCode(code);
-		CodeExample example = new CodeExample();
-		CodeExample.Criteria criteria = example.createCriteria();
-		criteria.andTelephoneEqualTo(telephone);
-		List<Code> code_search = codeMapper.selectByExample(example);
-		if (code_search.size() > 0 && !code_search.isEmpty()) {
-			insert_code.setCodeid(code_search.get(0).getCodeid());
-			codeMapper.updateByPrimaryKeySelective(insert_code);
-			return ResultMap.IS_200();
-		}
-		codeMapper.insertSelective(insert_code);
-		return ResultMap.IS_200();
-	}
+	
 
-	@Override
-	public Code getcheckcode(String type, Long telephone) {
-		Date current = new Date();
-		Date before = new Date(current.getTime() - 300000);
-		Date after = new Date(current.getTime() + 300000);
-		CodeExample example = new CodeExample();
-		CodeExample.Criteria criteria = example.createCriteria();
-		criteria.andTelephoneEqualTo(telephone);
-		criteria.andTypeEqualTo(type);
-		criteria.andUpdate_timeBetween(before, after);
-		List<Code> code_search = codeMapper.selectByExample(example);
-		if (code_search.size() > 0 && !code_search.isEmpty()) {
-			return code_search.get(0);
-		}
-		return null;
-	}
+	
 
 	// 根据主键更新对象
 	public void updateUserByUserId(User user) {
@@ -1656,22 +1541,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResultMap changeloginword(String password, Long telephone, String code) {
-		// 获取验证码 type =3表示更改手机号码
-		if (telephone == null) {
-			return ResultMap.build(100,"输入电话号码");
-		}
-		Code code_search = getcheckcode("3", telephone);
-		if (code_search == null) {
-			return ResultMap.build(101, "验证码失效");
-		}
-		String code_get = "";
-		if (code != null && !"".equals(code)) {
-			code_get = getBASE64(code);
-		}
-		if (!code_search.getCode().equals(code_get)) {
-			return ResultMap.build(102,"验证码错误");
-		}
+	public ResultMap changeloginword(String password, Long telephone) {
 		UserExample example = new UserExample();
 		UserExample.Criteria criteria = example.createCriteria();
 		criteria.andTelephoneEqualTo(telephone);
@@ -1695,6 +1565,10 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		userMapper.updateByPrimaryKeySelective(userupdate);
 	}
+
+
+
+
 
 
 	

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
@@ -23,14 +24,20 @@ import cn.com.qcc.queryvo.MailCustomer;
 import cn.com.qcc.queryvo.MailVo;
 import cn.com.qcc.queryvo.UserCentCustomer;
 import cn.com.qcc.queryvo.UserCentVo;
-import cn.com.qcc.queryvo.UserCustomer;
+import cn.com.qcc.queryvo.UserRoomCustomer;
+import cn.com.qcc.service.CheckCodeService;
+import cn.com.qcc.service.UserRoomService;
 import cn.com.qcc.service.UserService;
 
 @Controller
 @RequestMapping("/companion")
-public class UserController {
+public class UserRoomController {
 	@Autowired
 	UserService userService;
+	@Autowired
+	UserRoomService  userRoomService;
+	@Autowired
+	CheckCodeService checkCodeService;
 
 	// 申请成为我们的伙伴
 	@RequestMapping("/regiestland")
@@ -40,12 +47,55 @@ public class UserController {
 		return resultMap;
 	}
 
-	// 通过电话号码和验证码登录伙伴后台
+	/**
+	 * 房东端通过验证码登录
+	 * **/
 	@RequestMapping("/login")
 	@ResponseBody
 	public ResultMap loginmanager(Long telephone, String code, HttpServletRequest res) {
-		ResultMap resultMap = userService.codeLogin(telephone, code, res);
-		return resultMap;
+		// 第一步校验验证是否正常
+		ResultMap resultMap = checkCodeService.DoCheckPhoneCode(code, telephone);
+		if (resultMap.getCode() !=200) 
+			//说明验证验证失败
+			return resultMap;
+		
+		// 第二步 根据电话号码查询房东登录信息
+		UserRoomCustomer userRoomCustomer = userRoomService.getLandOrManagerMess(telephone) ;
+		// 如果没有查到登录信息说明该用户不能登录房东后台
+		if (CheckDataUtil.checkisEmpty(userRoomCustomer)) 
+			return ResultMap.build(400, "非管理用户不可登录房东后台");
+		
+		// 清空密码返回数据 [有可能做密码校验所以这里带有登录密码]
+		userRoomCustomer.setPassword("");
+		return ResultMap.build(200, "登录成功" , userRoomCustomer);
+	
+	}
+	
+	/**
+	 * 房东端密码登录
+	 **/
+	@RequestMapping(value = "/loginbyword")
+	@ResponseBody
+	public ResultMap userLoginByPwd( String password,Long telephone)  {
+		// 第一步校验数据完整
+		if (CheckDataUtil.checkisEmpty(password )
+				|| CheckDataUtil.checkisEmpty(telephone)) 
+			return ResultMap.build(400, "输入手机号码或者密码");
+		// 获取加密后的密码
+		password = IDUtils.getprivatePassword(password);
+		// 第二步 根据电话号码查询房东登录信息
+		UserRoomCustomer userRoomCustomer = userRoomService.getLandOrManagerMess(telephone) ;
+		// 如果没有查到登录信息说明该用户不能登录房东后台
+		if (CheckDataUtil.checkisEmpty(userRoomCustomer)) 
+			return ResultMap.build(400, "非管理用户不可登录房东后台");
+		
+		// 获取原始密码
+		String oraname = userRoomCustomer.getPassword();
+		if (!password.equals(oraname)) {
+			return ResultMap.build(400, "用户名/密码错误");
+		}
+		userRoomCustomer.setPassword("");
+		return ResultMap.build(200, "登录成功" , userRoomCustomer);
 	}
 
 	
@@ -179,27 +229,7 @@ public class UserController {
 	}
 	
 	
-	/**
-	 * 房东端密码登录
-	 */
-	@RequestMapping(value = "/loginbyword")
-	@ResponseBody
-	public ResultMap userLoginByPwd( String password,Long telephone)  {
-		if (password == null || "".equals(password)) {return ResultMap.build(400, "输入密码");}
-		if (telephone == null) {return ResultMap.build(400, "输入电话");}
-		//password = getFromBASE64(password);  //password = Sha1.getSha1(password + "_zf");
-		password = IDUtils.getprivatePassword(password);
-		// 封装登录信息
-		UserCustomer loginuser = userService.getusermessbypassword(telephone);
-		// 这里到时候过滤哪些用户不能进...
-		if (loginuser == null) {return ResultMap.build(400,"用户名/密码错误");}
-		String oraname = loginuser.getPassword();
-		if (!password.equals(oraname)) {
-			return ResultMap.build(400, "用户名/密码错误");
-		}
-		loginuser.setPassword("");
-		return ResultMap.build(200, "登录成功" , loginuser);
-	}
+	
 	
 	// 修改密码
 	@RequestMapping("/changeloginword")
@@ -207,8 +237,11 @@ public class UserController {
 	public ResultMap changepassword (String password,Long telephone ,String code) {
 		if (password ==null || "".equals(password)) {return ResultMap.build(400,"输入密码");}
 		//password = getFromBASE64(password); password = Sha1.getSha1(password + "_zf");
+		ResultMap resultMap = checkCodeService.DoCheckPhoneCode(code, telephone);
+		if (resultMap.getCode() !=200) 
+			return resultMap;
 		password = IDUtils.getprivatePassword(password);
-		ResultMap resultMap = userService.changeloginword(password , telephone,code);
+		resultMap = userService.changeloginword(password , telephone);
 		return resultMap;
 	}
 

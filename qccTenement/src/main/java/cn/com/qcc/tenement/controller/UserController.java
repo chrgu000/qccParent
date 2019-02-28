@@ -39,7 +39,6 @@ import cn.com.qcc.detailcommon.Sha1;
 import cn.com.qcc.mapper.BrokerMapper;
 import cn.com.qcc.pojo.Area;
 import cn.com.qcc.pojo.Broker;
-import cn.com.qcc.pojo.Code;
 import cn.com.qcc.pojo.Detaileaddress;
 import cn.com.qcc.pojo.Lucre;
 import cn.com.qcc.pojo.Profile;
@@ -54,6 +53,7 @@ import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.queryvo.UserVo;
 import cn.com.qcc.queryvo.VillageCustomer;
 import cn.com.qcc.service.BrowseService;
+import cn.com.qcc.service.CheckCodeService;
 import cn.com.qcc.service.FansService;
 import cn.com.qcc.service.InteService;
 import cn.com.qcc.service.MessagesService;
@@ -85,6 +85,8 @@ public class UserController {
 	BrokerMapper brokerMapper;
 	@Autowired
 	InteService inteService;
+	@Autowired
+	CheckCodeService checkCodeService;
 	
 	
 	/**
@@ -128,23 +130,25 @@ public class UserController {
 	@RequestMapping(value = "/user/register")
 	public @ResponseBody ResultMap userReg(HttpSession session, User user, HttpServletRequest request,
 			HttpServletResponse Response) throws NumberFormatException, IOException {
+		
+		
+		
+		
 		// 用来生成accesstoken
 		UUID uuid1 = UUID.randomUUID();
 		String tel_code = request.getParameter("tel_code");
-		String code1 = getFromBASE64(tel_code);
+		tel_code = getFromBASE64(tel_code);
 		String password = request.getParameter("password");
+		
+		// 校验验证码是否正确
+		ResultMap resultMap = checkCodeService.DoCheckPhoneCode(tel_code, 
+				Long.valueOf(request.getParameter("telephone")));
+		if (resultMap.getCode() !=200) 
+			return resultMap;
 		user.setAccestoken(String.valueOf(uuid1));
 		user.setTelephone(Long.valueOf(request.getParameter("telephone")));
-
-		// Base64解密
-		// String password1 = getFromBASE64(password);
-		// String
-		// str=password1.substring(password1.indexOf("_")+1,password1.length());
-		// Sha1加密
-
 		String password1 = getFromBASE64(password);
 		String str1 = Sha1.getSha1(password1 + "_zf");
-
 		user.setCreate_time(new Date());
 		user.setUpdate_time(new Date());
 		user.setPassword(str1);
@@ -168,17 +172,10 @@ public class UserController {
 		profile.setAvatar("http://www.hadoop.zzw777.com/d7b6b65a-5ee1-4d6f-9f18-5a6fbc589387");
 		profile.setMail("163.com");
 		profile.setSex("未知");
-		// code表的插入
-		Code code = new Code();
-		code.setCode(code1);
-		code.setType("0");
-		code.setCreate_time(new Date());
-		code.setUpdate_time(new Date());
-		code.setTelephone(Long.valueOf(request.getParameter("telephone")));
-		session.removeAttribute("code");
+		
 
 		Map<String, Object> map = new HashMap<String, Object>();
-		ResultMap resultMap = userService.userReg(user, profile, code);
+		resultMap = userService.userReg(user, profile);
 		if (resultMap.getCode() == 200) {
 			map.put("userId", resultMap.getObj());
 			map.put("accessToken", uuid1);
@@ -201,21 +198,19 @@ public class UserController {
 	@RequestParam(defaultValue="0")Double longitude ,	
 	String openavatar, Long userid, HttpServletResponse response, String obj ,HttpServletRequest request) throws Exception {
 		UUID uuid = UUID.randomUUID();
-		if (telephone == null ) {
-			return ResultMap.build(400, "登录电话不能为空！");
-		}
-		if (tel_code == null || "".equals(tel_code)) {
-			return ResultMap.build(400, "输入验证码");
-		}
+		
+		ResultMap resultMap = checkCodeService.DoCheckPhoneCode(tel_code, telephone);
+		if (resultMap.getCode() !=200) 
+			return resultMap;
+		
+		
 		String acctoken = "";
-		Code code = new Code();
-		code.setCode(tel_code);
 		User user = new User();
 		user.setLatitude(latitude);
 		user.setLongitude(longitude);
 		user.setAccestoken(String.valueOf(uuid));
 		user.setTelephone(telephone);
-		ResultMap resultMap = userService.codeLogin(user, code);
+		resultMap = userService.codeLogin(user);
 		user = (User) resultMap.getObj();
 		if (resultMap.getCode() != 200) {
 			return resultMap;
@@ -225,9 +220,6 @@ public class UserController {
 		if (user == null) {
 			// 说明用户没有注册 -- 走注册流程 ---
 			user = new User();
-			code.setType("0");
-			code.setCreate_time(new Date());
-			code.setUpdate_time(new Date());
 			user.setCreate_time(new Date());
 			user.setUpdate_time(new Date());
 			user.setPassword("4d76087378d5f71bd9f994668e342e92e7894d80");
@@ -249,7 +241,7 @@ public class UserController {
 			profile.setUser_name("qcc_" + subtext);
 			profile.setAvatar("http://www.hadoop.zzw777.com/d7b6b65a-5ee1-4d6f-9f18-5a6fbc589387");
 			profile.setSex("未知");
-			resultMap = userService.userReg(user, profile, code);
+			resultMap = userService.userReg(user, profile);
 			Long userId = (Long) resultMap.getObj();
 			String token = userService.addRongToken(userId, "z" + userId,
 					"http://www.hadoop.zzw777.com/d7b6b65a-5ee1-4d6f-9f18-5a6fbc589387");
@@ -449,7 +441,6 @@ public class UserController {
 
 	/**
 	 * 通过手机号找回密码
-	 * 
 	 * @param
 	 * @return
 	 */
@@ -459,20 +450,26 @@ public class UserController {
 		String tel_code = request.getParameter("tel_code");
 		String password = request.getParameter("password");
 		Long telephone = Long.valueOf(request.getParameter("telephone"));
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		ResultMap resultMap = checkCodeService.DoCheckPhoneCode(tel_code, telephone);
+		if (resultMap.getCode() !=200) {
+			map.put("code", 400);
+			map.put("msg", "失败");
+			return map;
+			
+		}
+		
 		// 解密
 		String password1 = getFromBASE64(password);
 		String str1 = Sha1.getSha1(password1 + "_zf");
-		Map<String, Object> map = new HashMap<String, Object>();
+		
 		try {
 			User user = new User();
 			user.setTelephone(telephone);
 			user.setPassword(str1);
-			// code表的插入
-			Code code = new Code();
-			code.setCode(tel_code);
-			code.setTelephone(telephone);
 			session.removeAttribute("code");
-			ResultMap resultMap = userService.findPwdByTel(user, code);
+			resultMap = userService.findPwdByTel(user);
 			if (resultMap.getCode() == 200) {
 				map.put("code", 200);
 				map.put("msg", "成功");

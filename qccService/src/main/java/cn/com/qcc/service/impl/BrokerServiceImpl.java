@@ -9,7 +9,6 @@ import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.HttpSign;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.mapper.BrokerMapper;
-import cn.com.qcc.mapper.CodeMapper;
 import cn.com.qcc.mapper.LandloadBrokerMapper;
 import cn.com.qcc.mapper.ProfileMapper;
 import cn.com.qcc.mapper.SystemstateMapper;
@@ -28,7 +27,6 @@ import cn.com.qcc.service.BrokerService;
 import weixin.util.XiaoChengXuCodeUtil;
 @Service
 public class BrokerServiceImpl implements BrokerService{
-	@Autowired CodeMapper codeMapper;
 	@Autowired BrokerMapper brokerMapper;
 	@Autowired ProfileMapper profileMapper;
 	@Autowired HydCoalCustomerMapper hydCoalCustomerMapper;

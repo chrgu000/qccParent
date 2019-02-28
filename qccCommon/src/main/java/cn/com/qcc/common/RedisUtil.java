@@ -30,5 +30,10 @@ public class RedisUtil {
 	/***过期时间2年***/
 	public static final Integer HOUSE_MODEL_OUT_TIME = 60*60*24*360*2;
 	
+	/**手机验证码**/
+	public static final String PHONE_CODE_SEND = "telephoneCode:";
+	/***验证码过期时间  10分钟***/
+	public static final Integer PHONE_CODE_SEND_TIME = 60*10;
+	
 
 }

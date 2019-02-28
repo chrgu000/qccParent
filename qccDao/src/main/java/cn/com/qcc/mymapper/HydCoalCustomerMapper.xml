@@ -83,7 +83,7 @@
 			 finance.categoryname
 			from landbuilding 
 				LEFT JOIN finance on finance.financeid = landbuilding.financeid
-		where landbuilding.userid =#{userid} and landbuilding.buildingid =#{buildingid} and landbuilding.state = 2
+		where landbuilding.userid =#{userid} and landbuilding.buildingid =#{buildingid} and landbuilding.state = 1
   	</select>
   	
   	

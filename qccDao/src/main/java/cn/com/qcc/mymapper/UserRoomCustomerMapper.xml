@@ -1,0 +1,36 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.UserRoomCustomerMapper" >
+
+
+
+
+	  <!-- 根据电话号码获取房东的登录信息 -->
+	  <select id="getLandMess" resultType="cn.com.qcc.queryvo.UserRoomCustomer" parameterType="string">
+	  				SELECT 		`user`.`password` ,
+				  				 `user`.userid ,
+	               				'1' usertype ,
+				    			`user`.acctoken ,
+	                			`user`.accestoken
+			    from `user`
+				INNER JOIN landlord on `user`.userid = landlord.landuserid
+			where `user`.telephone = #{telephone}
+	  </select>
+	  
+	  
+	  
+	  <!-- 根据电话号码管理的的登录信息 -->
+	  <select id="getManagerMess" resultType="cn.com.qcc.queryvo.UserRoomCustomer" parameterType="string">
+	  				SELECT           `user`.`password` ,
+					  				 `user`.userid ,
+		               		        '2' usertype ,
+					    			  `user`.acctoken ,
+		                	          `user`.accestoken
+			 from `user` 
+				INNER  JOIN landlord_manager 
+				on `user`.userid = landlord_manager.manageruserid
+				where `user`.telephone =  #{telephone}
+	  </select>
+
+
+</mapper>

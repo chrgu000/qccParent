@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import WangYiUtil.WangYiCommon;
 import cn.com.qcc.common.CheckDataUtil;
+import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SendMessage;
+import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.pojo.User;
 import cn.com.qcc.service.UserService;
 import sun.misc.BASE64Decoder;
@@ -20,6 +22,8 @@ public class SendMessageController {
 
 	@Autowired
 	UserService userService;
+	@Autowired
+	JedisClient jedisClient;
 
 	/**
 	 * 用户注册发送验证码
@@ -127,7 +131,10 @@ public class SendMessageController {
 		if (result == 200) { // 如果为0，表示成功发送
 			String code1 =(String)map.get("obj");
 			String code = getBASE64(code1);
-			userService.insertcheckcode(code,telephone,"3");
+			// 把验证码设置缓存中
+			jedisClient.set(RedisUtil.PHONE_CODE_SEND + telephone, code);
+			jedisClient.expire(RedisUtil.PHONE_CODE_SEND + telephone, RedisUtil.PHONE_CODE_SEND_TIME);
+			//userService.insertcheckcode(code,telephone,"3");
 			return ResultMap.build(200, code);
 		} else {
 			return ResultMap.build(100, "短信发送失败");

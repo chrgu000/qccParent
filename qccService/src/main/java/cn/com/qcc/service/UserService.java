@@ -9,7 +9,6 @@ import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Area;
 import cn.com.qcc.pojo.Brand;
 import cn.com.qcc.pojo.Branduser;
-import cn.com.qcc.pojo.Code;
 import cn.com.qcc.pojo.Invite;
 import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.pojo.Lucre;
@@ -33,26 +32,8 @@ import cn.com.qcc.queryvo.UserVo;
 public interface UserService {
 
 
-	/**
-	 * 根据验证码登录
-	 * 
-	 * @param telephone
-	 *            : 电话号码
-	 * @param code
-	 *            : 加密后的code
-	 * 
-	 **/
-	public ResultMap codeLogin(Long telephone, String code, HttpServletRequest request);
+	
 
-	/**
-	 * 校验验证码是否正确
-	 * 
-	 * @param telephone
-	 *            : 用户电话号码
-	 * @param type
-	 *            : 默认3 。
-	 **/
-	Code getcheckcode(String type, Long telephone);
 
 	/**
 	 * 通过用户手机查询user表是否存在该用户
@@ -63,18 +44,7 @@ public interface UserService {
 	 **/
 	public User getUserByphone(Long telephone);
 
-	/**
-	 * 用户用验证码登录之前需要发送验证码 code表插入数据
-	 * 
-	 * @param code
-	 *            : 短信接口返回的验证码
-	 * @param telephone
-	 *            : 用户电话号码
-	 * @param type
-	 *            : 默认就是3
-	 * 
-	 **/
-	public ResultMap insertcheckcode(String code, Long telephone, String type);
+	
 
 	/**
 	 * 根据token获取用户信息
@@ -194,10 +164,10 @@ public interface UserService {
 	 * 
 	 * @param user
 	 */
-	public ResultMap userReg(User user, Profile profile, Code code);
+	public ResultMap userReg(User user, Profile profile);
 
 	// 根据验证码登录
-	public ResultMap codeLogin(User user, Code code);
+	public ResultMap codeLogin(User user);
 
 	// 根据accesToken新注册查询用户的id
 	public User findUserid(User user);
@@ -216,7 +186,7 @@ public interface UserService {
 	public User findPwdByUserid(User user);
 
 	// 根据电话号码查询用户密码
-	public ResultMap findPwdByTel(User user, Code code);
+	public ResultMap findPwdByTel(User user);
 
 	// 根据电话登录时改acc和update_time
 	public void updateAccesstoken(User user);
@@ -418,7 +388,7 @@ public interface UserService {
 	/**
 	 * 通过手机号修改密码
 	 * **/
-	public ResultMap changeloginword(String password, Long telephone, String code);
+	public ResultMap changeloginword(String password, Long telephone);
 	
 	/**
 	 * 查询提现的信息
