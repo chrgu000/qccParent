@@ -13,8 +13,8 @@ public class PictureDeleteMess implements MessageListener {
 	public void onMessage(Message message) {
 		TextMessage textMessage = (TextMessage)message;
 		try {
-			// 休眠9秒钟等待上传完成
-			Thread.sleep(9000);
+			// 休眠 20 秒钟等待图片上传防止上传 一半 时候删除图片导致报错
+			Thread.sleep(1000 * 20);
 			String  filePath =   (String)textMessage.getText() ;
 			System.out.println("==========删除本地图片收到消息======：" + filePath );
 			String[] splitPath = filePath.split("-");
@@ -29,7 +29,6 @@ public class PictureDeleteMess implements MessageListener {
 		} catch (JMSException e) {
 			e.printStackTrace();
 		}catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

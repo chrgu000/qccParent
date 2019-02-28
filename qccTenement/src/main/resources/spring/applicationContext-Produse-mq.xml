@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jms="http://www.springframework.org/schema/jms"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd
+	http://www.springframework.org/schema/jms
+    http://www.springframework.org/schema/jms/spring-jms-2.5.xsd">
+	
+    <!-- 1.ActiveMQ的连接工厂 -->
+	<bean id="targetConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://127.0.0.1:61616" />
+	</bean>
+	<!-- 2.Spring Caching连接工厂 -->
+	<bean id="connectionFactory"
+		class="org.springframework.jms.connection.CachingConnectionFactory">
+		<property name="targetConnectionFactory" ref="targetConnectionFactory"></property>
+		<!-- Session缓存数量 -->
+		<property name="sessionCacheSize" value="50" />
+	</bean>
+	<!-- 3.队列模板 -->
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="receiveTimeout" value="10000" />
+	</bean>
+	
+	<!--   ====================================  和求租相关的消息   ======================================================= -->
+	<!-- NO.1  求租被更新或者信息 -->
+	<bean id="qiuzuAddOrUpdate" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="qiuzuAddOrUpdate" />
+	</bean>  
+	
+	
+	<!-- NO.2 进入求租详情 -->
+	<bean id="qiuzuSearch" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="qiuzuSearch" />
+	</bean>
+	
+	<!-- NO.3 求租状态改变  -->
+	<bean id="qiuzuChange" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="qiuzuChange" />
+	</bean>
+	
+	
+	<!--  ================================================房源相关 ========================================= -->
+	<!-- NO.4  房源被更新或者信息 -->
+	<bean id="houseAddOrUpdate" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="houseAddOrUpdate" />
+	</bean>  
+	
+	
+	<!--  NO.5  批量录入房源 -->
+	<bean id="houseAddBatch" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="houseAddBatch" />
+	</bean>  
+	
+	
+	<!-- NO.6 房源出售新增或者编辑 -->
+	<bean id="houseSaleAddOrUpdate" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="houseSaleAddOrUpdate" />
+	</bean>  
+	
+	<!-- NO.7  改变房子状态 -->
+	<bean id="updateHousestates" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="updateHousestates" />
+	</bean>  
+	
+	
+	<!-- NO.8  进入房源详情-->
+	<bean id="houseSearch" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="houseSearch" />
+	</bean>  
+	
+	<!-- ====================================  楼栋相关模板消息=========================================== -->
+	<!--  NO.9 新增楼栋的监听-->
+	<bean id="builAdd" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="builAdd" />
+	</bean>  
+	
+	
+	<!-- NO.10 楼栋查询的监听-->
+	<bean id="builSearch" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="builSearch" />
+	</bean>  
+	
+	
+	
+	<!--  =================================部落发布物品======================================= -->
+	<!-- NO.11 部落发布物品 -->
+	<bean id="tribeDetailAdd" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="tribeDetailAdd" />
+	</bean>  
+	
+	<!-- NO.12 监听部落查询 -->
+	<bean id="tribeSearch" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="tribeSearch" />
+	</bean>  
+	
+	<!-- NO.13  进入物品找人详情 -->
+	<bean id="searchDetail" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="searchDetail" />
+	</bean>  
+	
+	
+	
+	<!-- NO.14 物品或者房子挂在  部落 -->
+	<bean id="detailToTribe" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="detailToTribe" />
+	</bean>  
+	
+	
+	
+	<!-- NO.15 用户修改了信息 -->
+	<bean id="userUpdate" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="userUpdate" />
+	</bean>  
+	
+	<!-- NO.16 删除本地图片 -->
+	<bean id="deletepicture" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="deletepicture" />
+	</bean>  
+	
+	<!-- NO.17 楼栋编辑 -->
+	<bean id="builUpdate" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="builUpdate" />
+	</bean>  
+	
+	<!-- NO.18 根据楼栋id编辑房子 -->
+	<bean id="updateHouseByBuildingid" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="updateHouseByBuildingid" />
+	</bean>  
+	
+	<!-- NO.19 群组啦人 -->
+	<bean id="groupLaren" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="groupLaren" />
+	</bean>  
+	
+	<!-- NO.20 发布一条小区导入索引库 -->
+	<bean id="villageAdd" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="villageAdd" />
+	</bean>  
+</beans>

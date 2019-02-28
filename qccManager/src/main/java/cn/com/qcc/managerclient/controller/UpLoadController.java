@@ -42,10 +42,7 @@ public class UpLoadController {
 	MycentMapper mycentMapper;
 	@Resource  Destination deletepicture;
 	@Autowired JmsTemplate jmsTemplate;
-	
-	
 	private final static String batchloadpath = "/root/cents/batchpicure/";
-	//private final static String batchloadpath = "D://";
 	private final static String qnweb_path = "http://www.hadoop.zzw777.com/";
 	/*
 	 * 上传身份证之内的审核
