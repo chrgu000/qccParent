@@ -3,7 +3,6 @@
 <mapper namespace="cn.com.qcc.mapper.HousepayMapper" >
   <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Housepay" >
     <id column="housepayid" property="housepayid" jdbcType="BIGINT" />
-    <result column="usercentid" property="usercentid" jdbcType="BIGINT" />
     <result column="houseid" property="houseid" jdbcType="BIGINT" />
     <result column="financeid" property="financeid" jdbcType="BIGINT" />
     <result column="payexpertid" property="payexpertid" jdbcType="BIGINT" />
@@ -73,8 +72,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    housepayid, usercentid, houseid, financeid, payexpertid, paystate, currentstate, 
-    centprices, description, create_time, update_time
+    housepayid, houseid, financeid, payexpertid, paystate, currentstate, centprices, 
+    description, create_time, update_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.HousepayExample" >
     select
@@ -107,17 +106,17 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Housepay" >
-  <selectKey  resultType="long"  order="AFTER"  keyProperty="housepayid" >
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="housepayid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
-    insert into housepay (housepayid, usercentid, houseid, 
-      financeid, payexpertid, paystate, 
-      currentstate, centprices, description, 
-      create_time, update_time)
-    values (#{housepayid,jdbcType=BIGINT}, #{usercentid,jdbcType=BIGINT}, #{houseid,jdbcType=BIGINT}, 
-      #{financeid,jdbcType=BIGINT}, #{payexpertid,jdbcType=BIGINT}, #{paystate,jdbcType=INTEGER}, 
-      #{currentstate,jdbcType=INTEGER}, #{centprices,jdbcType=DOUBLE}, #{description,jdbcType=VARCHAR}, 
-      #{create_time,jdbcType=TIMESTAMP}, #{update_time,jdbcType=TIMESTAMP})
+    insert into housepay (housepayid, houseid, financeid, 
+      payexpertid, paystate, currentstate, 
+      centprices, description, create_time, 
+      update_time)
+    values (#{housepayid,jdbcType=BIGINT}, #{houseid,jdbcType=BIGINT}, #{financeid,jdbcType=BIGINT}, 
+      #{payexpertid,jdbcType=BIGINT}, #{paystate,jdbcType=INTEGER}, #{currentstate,jdbcType=INTEGER}, 
+      #{centprices,jdbcType=DOUBLE}, #{description,jdbcType=VARCHAR}, #{create_time,jdbcType=TIMESTAMP}, 
+      #{update_time,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Housepay" >
    <selectKey  resultType="long"  order="AFTER"  keyProperty="housepayid" >
@@ -127,9 +126,6 @@
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="housepayid != null" >
         housepayid,
-      </if>
-      <if test="usercentid != null" >
-        usercentid,
       </if>
       <if test="houseid != null" >
         houseid,
@@ -162,9 +158,6 @@
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="housepayid != null" >
         #{housepayid,jdbcType=BIGINT},
-      </if>
-      <if test="usercentid != null" >
-        #{usercentid,jdbcType=BIGINT},
       </if>
       <if test="houseid != null" >
         #{houseid,jdbcType=BIGINT},
@@ -207,9 +200,6 @@
       <if test="record.housepayid != null" >
         housepayid = #{record.housepayid,jdbcType=BIGINT},
       </if>
-      <if test="record.usercentid != null" >
-        usercentid = #{record.usercentid,jdbcType=BIGINT},
-      </if>
       <if test="record.houseid != null" >
         houseid = #{record.houseid,jdbcType=BIGINT},
       </if>
@@ -245,7 +235,6 @@
   <update id="updateByExample" parameterType="map" >
     update housepay
     set housepayid = #{record.housepayid,jdbcType=BIGINT},
-      usercentid = #{record.usercentid,jdbcType=BIGINT},
       houseid = #{record.houseid,jdbcType=BIGINT},
       financeid = #{record.financeid,jdbcType=BIGINT},
       payexpertid = #{record.payexpertid,jdbcType=BIGINT},
@@ -262,9 +251,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.Housepay" >
     update housepay
     <set >
-      <if test="usercentid != null" >
-        usercentid = #{usercentid,jdbcType=BIGINT},
-      </if>
       <if test="houseid != null" >
         houseid = #{houseid,jdbcType=BIGINT},
       </if>
@@ -297,8 +283,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Housepay" >
     update housepay
-    set usercentid = #{usercentid,jdbcType=BIGINT},
-      houseid = #{houseid,jdbcType=BIGINT},
+    set houseid = #{houseid,jdbcType=BIGINT},
       financeid = #{financeid,jdbcType=BIGINT},
       payexpertid = #{payexpertid,jdbcType=BIGINT},
       paystate = #{paystate,jdbcType=INTEGER},

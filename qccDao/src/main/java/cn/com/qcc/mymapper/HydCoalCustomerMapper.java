@@ -14,6 +14,7 @@ import cn.com.qcc.queryvo.HistorymeterCustomer;
 import cn.com.qcc.queryvo.HistorymeterVo;
 import cn.com.qcc.queryvo.HydCoalCustomer;
 import cn.com.qcc.queryvo.HydCoalVo;
+import cn.com.qcc.queryvo.PayexpertCustomer;
 import cn.com.qcc.queryvo.ReckoningCustomer;
 
 public interface HydCoalCustomerMapper {
@@ -45,7 +46,7 @@ public interface HydCoalCustomerMapper {
 	List<HistorymeterCustomer> meterbuils(HistorymeterCustomer historymeterCustomer);
 	
 	//根据房子ID查分期账单
-	List<Payexpert> payexpbyhouseid(Long houseid);
+	List<PayexpertCustomer> payexpbyhouseid(Long houseid);
 	
 	//查询抄表详情
 	HistorymeterCustomer hismeterdetail(Long historymeterid);

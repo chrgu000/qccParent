@@ -13,6 +13,7 @@ import cn.com.qcc.queryvo.HistorymeterCustomer;
 import cn.com.qcc.queryvo.HistorymeterVo;
 import cn.com.qcc.queryvo.HydCoalCustomer;
 import cn.com.qcc.queryvo.HydCoalVo;
+import cn.com.qcc.queryvo.PayexpertCustomer;
 import cn.com.qcc.queryvo.ReckoningCustomer;
 
 
@@ -93,7 +94,7 @@ public interface HydCoalService {
 	 *	根据房子ID。查询分期账单
 	 * @param houseid : 当前房子ID
 	 **/
-	List<Payexpert> payexpbyhouseid(Long houseid);
+	List<PayexpertCustomer> payexpbyhouseid(Long houseid);
 
 	/**
 	 *	根据主键查询当前想起

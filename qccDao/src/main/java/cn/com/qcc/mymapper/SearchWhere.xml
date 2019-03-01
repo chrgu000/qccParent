@@ -82,16 +82,18 @@
 			<!-- 合同快到期当前时间 -10 租客待登记 两个条件同时成历 -->
 			<if test="houseCustomer.rentname !=null and houseCustomer.rentname == 'centkuai' ">
 				AND  
-				usercent.end_time > #{houseCustomer.currentday} and 
-				usercent.end_time <![CDATA[<=#{houseCustomer.end_time}]]>
+				housepay.end_time > #{houseCustomer.currentday} and 
+				housepay.end_time <![CDATA[<=#{houseCustomer.end_time}]]>
 			</if>
 			
 			<!-- 3天待收款 -->
 			<if test="houseCustomer.rentname !=null and houseCustomer.rentname == 'daishoukuan' ">
-		          AND usercent.usercentid in (
-						SELECT usercentid from housepay where paystate = 1 and 
+		          AND housepay.usercentid in (
+						SELECT payexpert.usercentid from housepay 
+							   INNER JOIN payexpert on payexpert.payexpertid = housepay.payexpertid
+						where paystate = 1 and 
 						housepay.create_time >#{houseCustomer.currentday} and
-						 housepay.create_time <![CDATA[<=#{houseCustomer.end_time}]]>   
+						housepay.create_time <![CDATA[<=#{houseCustomer.end_time}]]>   
 				   )
 			</if>
 			

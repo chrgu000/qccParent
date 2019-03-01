@@ -11,19 +11,31 @@
 				house.buildingid ,
 				house.house_number ,
 				house.update_time ,
-				IFNULL(usercent.usercentnum,'')usercentnum ,
+				IFNULL(housepay.usercentnum,'')usercentnum ,
 				IFNULL(`user`.telephone,'')telephone ,
 				IFNULL(`profile`.real_name,house.house_number)realname ,
-				usercent.end_time cententtime ,
+				housepay.end_time cententtime ,
 				IFNULL(area.`name`,'') trading ,
 				IFNULL(village.villagename,'') villagename ,
 				IFNULL(building.building,'')building , 
-				ifnull(usercent.usercentid , -1) usercentid,
+				ifnull(housepay.usercentid , -1) usercentid,
 		    	IFNULL(eventcount.totalcount,0)  housecount ,
 		    	housepay.needpaytime
 		 from house
-			LEFT JOIN usercent on house.houseid = usercent.houseid and usercent.centstate not in (3,4 )
-			LEFT JOIN `user` on `user`.userid = usercent.userid
+		 LEFT JOIN (  	
+  				SELECT MIN(create_time) needpaytime   , 
+								 usercent.usercentid   , 
+						     housepay.houseid ,
+							   usercent.userid ,
+								 usercent.usercentnum ,
+						     usercent.end_time
+					from housepay 
+					LEFT JOIN payexpert on payexpert.payexpertid = housepay.payexpertid
+					LEFT JOIN usercent on usercent.usercentid = payexpert.usercentid
+					where housepay.paystate = 1  and usercent.centstate in (1,2)
+					GROUP BY usercent.usercentnum
+		  )  housepay ON  housepay.houseid = house.houseid
+			LEFT JOIN `user` on `user`.userid = housepay.userid
 			LEFT JOIN `profile` on `user`.userid = `profile`.user_id
 			LEFT JOIN building on house.buildingid = building.buildingid
 			LEFT JOIN village on building.villageid = village.villageid
@@ -39,11 +51,7 @@
 				AND house.housestatus NOT IN (3)
 				GROUP BY house.buildingid
 		  )eventcount on eventcount.buildingid = building.buildingid
-		  LEFT JOIN (  	
-  				SELECT MIN(create_time) needpaytime   , usercentid   from housepay 
-				where housepay.paystate = 1  GROUP BY housepay.usercentid 
-		  )  housepay ON  housepay.usercentid = usercent.usercentid
-		  where house.user_id = #{userid} and house.housestatus !='3'
+		  where house.user_id =#{userid} and house.housestatus !='3'
 		<!-- 这里封装房源的查询条件 --> 
  	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_roomparrent_where"></include>
  	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"></include>
@@ -57,20 +65,39 @@
  	
  	<!-- 根据查询条件查询房态图 -->	
  	<select id="roompatternCount" resultType="integer" parameterType="cn.com.qcc.queryvo.HouseVo">
- 			SELECT 
+ 		SELECT 
 				 count(1)
 		 from house
-			LEFT JOIN usercent on house.houseid = usercent.houseid and usercent.centstate not in (3,4 )
-			LEFT JOIN `user` on `user`.userid = usercent.userid
+		 LEFT JOIN (  	
+  				SELECT           MIN(create_time) needpaytime   , 
+								 usercent.usercentid   , 
+						         housepay.houseid ,
+							     usercent.userid ,
+								 usercent.usercentnum ,
+						     usercent.end_time
+					from housepay 
+					LEFT JOIN payexpert on payexpert.payexpertid = housepay.payexpertid
+					LEFT JOIN usercent on usercent.usercentid = payexpert.usercentid
+					where housepay.paystate = 1  and usercent.centstate in (1,2)
+					GROUP BY usercent.usercentnum
+		  )  housepay ON  housepay.houseid = house.houseid
+			LEFT JOIN `user` on `user`.userid = housepay.userid
 			LEFT JOIN `profile` on `user`.userid = `profile`.user_id
 			LEFT JOIN building on house.buildingid = building.buildingid
 			LEFT JOIN village on building.villageid = village.villageid
 			LEFT JOIN area on area.`code` = village.`code`  
-			LEFT JOIN (  	
-  				SELECT MIN(create_time) needpaytime   , usercentid   from housepay 
-				where housepay.paystate = 1  GROUP BY housepay.usercentid 
-		    )  housepay ON  housepay.usercentid = usercent.usercentid
-		  where house.user_id = #{userid} and house.housestatus !='3'
+			LEFT JOIN (
+				SELECT
+					COUNT(1) totalcount ,
+					buildingid 
+				FROM
+					house
+				WHERE
+					house.user_id = #{userid}
+				AND house.housestatus NOT IN (3)
+				GROUP BY house.buildingid
+		  )eventcount on eventcount.buildingid = building.buildingid
+		  where house.user_id =#{userid} and house.housestatus !='3'
 		<!-- 这里封装房源的查询条件 --> 
  	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_roomparrent_where"></include>
  	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"></include>
@@ -84,8 +111,10 @@
  	
  	
  	<select id="getPayModel" parameterType="java.util.List"
-		resultType="cn.com.qcc.pojo.Housepay">
-		SELECT * from housepay where housepay.usercentid in 
+		resultType="cn.com.qcc.queryvo.HousepayCustomer">
+		SELECT payexpert.usercentid , housepay.* from housepay
+			LEFT JOIN payexpert on housepay.payexpertid = payexpert.payexpertid
+		where payexpert.usercentid in 
 		<foreach item="item" collection="idsList" separator="," open="("
 			close=")" index="">
 			#{item, jdbcType=VARCHAR}
@@ -110,6 +139,41 @@
 			LEFT JOIN building ON house.buildingid = building.buildingid
 			LEFT JOIN village ON building.villageid = village.villageid
 			where usercent.usercentid = #{usercentid}
+	</select>
+	
+	
+	
+	
+	<!-- 根据房东ID查询出对应区域分组-->
+	<select id="getlandareaname" parameterType="cn.com.qcc.queryvo.BuildingCustomer"
+		resultType="cn.com.qcc.queryvo.BuildingCustomer">
+		SELECT area.`code` ,area.`name` trading from area where area.`code` in (
+			SELECT area.parentId from area where area.`code` in (
+		SELECT  DISTINCT village.`code`  from house LEFT JOIN building on house.buildingid = building.buildingid
+			LEFT JOIN village on building.villageid = village.villageid 
+		where house.user_id = #{userid} and village.`code` is not null 
+		and house.housestatus !='3'
+		) 
+		)
+	</select>
+	
+	
+	
+	<!-- 根据房东ID查询出楼栋列表-->
+	<select id="getlandbuildingname" parameterType="cn.com.qcc.queryvo.BuildingCustomer"
+		resultType="cn.com.qcc.queryvo.BuildingCustomer">
+				SELECT building.building ,village.villagename ,building.buildingid,
+			detaileaddress.detailes
+		 from building 
+			INNER JOIN village on building.villageid = village.villageid
+			and building.buildingid in (
+			SELECT DISTINCT house.buildingid from house where house.user_id = #{userid}
+			and house.housestatus !='3'
+		)
+		<if test="code != null and code !=''">
+			 and village.`code` like  CONCAT('',#{code},'%')
+		</if>
+		  INNER JOIN detaileaddress on detaileaddress.detailid = building.detailid
 	</select>
  	
  	

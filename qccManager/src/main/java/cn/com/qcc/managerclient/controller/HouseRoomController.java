@@ -123,7 +123,7 @@ public class HouseRoomController {
 	@RequestMapping("/getlandareaname")
 	@ResponseBody
 	public ResultMap getlandareaname(BuildingCustomer buildingCustomer) {
-		List<BuildingCustomer> getlandareaname = houseService.getlandareaname(buildingCustomer);
+		List<BuildingCustomer> getlandareaname = houseRoomService.getlandareaname(buildingCustomer);
 		return ResultMap.IS_200(getlandareaname);
 	}
 	
@@ -131,7 +131,7 @@ public class HouseRoomController {
 	@RequestMapping("/getlandbuildingname")
 	@ResponseBody
 	public ResultMap getlandbuildingname(BuildingCustomer buildingCustomer) {
-		List<BuildingCustomer> getlandareaname = houseService.getlandbuildingname(buildingCustomer);
+		List<BuildingCustomer> getlandareaname = houseRoomService.getlandbuildingname(buildingCustomer);
 		return ResultMap.IS_200(getlandareaname);
 	}
 	

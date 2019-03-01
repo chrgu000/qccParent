@@ -308,33 +308,9 @@
 	
 	
 	
-	<!-- 根据房东ID查询出对应区域分组-->
-	<select id="getlandareaname" parameterType="cn.com.qcc.queryvo.BuildingCustomer"
-		resultType="cn.com.qcc.queryvo.BuildingCustomer">
-		SELECT area.`code` ,area.`name` trading from area where area.`code` in (
-			SELECT area.parentId from area where area.`code` in (
-		SELECT  DISTINCT village.`code`  from house LEFT JOIN building on house.buildingid = building.buildingid
-			LEFT JOIN village on building.villageid = village.villageid 
-		where house.user_id = #{userid} and village.`code` is not null 
-		) 
-		)
-	</select>
 	
-	<!-- 根据房东ID查询出楼栋列表-->
-	<select id="getlandbuildingname" parameterType="cn.com.qcc.queryvo.BuildingCustomer"
-		resultType="cn.com.qcc.queryvo.BuildingCustomer">
-				SELECT building.building ,village.villagename ,building.buildingid,
-			detaileaddress.detailes
-		 from building 
-			INNER JOIN village on building.villageid = village.villageid
-			and building.buildingid in (
-			SELECT DISTINCT house.buildingid from house where house.user_id = #{userid}
-		)
-		<if test="code != null and code !=''">
-			 and village.`code` like  CONCAT('',#{code},'%')
-		</if>
-		  INNER JOIN detaileaddress on detaileaddress.detailid = building.detailid
-	</select>
+	
+	
 	
 	<!-- 根据房东ID和楼栋Id查询对应的房源信息-->
 	<select id="housebybuildingid" parameterType="cn.com.qcc.queryvo.HouseCustomer"

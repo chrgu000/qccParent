@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.mapper.HistorymeterHousepayMapper;
@@ -38,6 +39,7 @@ import cn.com.qcc.queryvo.HistorymeterCustomer;
 import cn.com.qcc.queryvo.HistorymeterVo;
 import cn.com.qcc.queryvo.HydCoalCustomer;
 import cn.com.qcc.queryvo.HydCoalVo;
+import cn.com.qcc.queryvo.PayexpertCustomer;
 import cn.com.qcc.queryvo.ReckoningCustomer;
 import cn.com.qcc.service.HydCoalService;
 
@@ -356,7 +358,7 @@ public class HydCoalServiceImpl implements HydCoalService{
 	}
 
 	//根据房子ID查询分期账单
-	public List<Payexpert> payexpbyhouseid(Long houseid) {
+	public List<PayexpertCustomer> payexpbyhouseid(Long houseid) {
 		// TODO Auto-generated method stub
 		return hydCoalCustomerMapper.payexpbyhouseid(houseid);
 	}
@@ -395,15 +397,21 @@ public class HydCoalServiceImpl implements HydCoalService{
 	 **/
 	public ResultMap hydbuil(Long historymeterid, Long payexpertid, Double unitprice) {
 		//抄表之前先校验数据完整性
-		if (historymeterid == null) {return ResultMap.build(300,"数据不全");}
-		if (payexpertid == null) {return ResultMap.build(300, "数据不全");}
+		if (CheckDataUtil.checkisEmpty(historymeterid )
+				|| CheckDataUtil.checkisEmpty(payexpertid ) 
+				|| CheckDataUtil.checkisEmpty(unitprice )
+				) {
+			return ResultMap.build(300, "数据异常");
+		}
+		
 		Historymeter historymeter = historymeterMapper.selectByPrimaryKey(historymeterid);
-		if (historymeter == null) {return ResultMap.build(300, "数据不全");}
 		Payexpert payexpert = payexpertMapper.selectByPrimaryKey(payexpertid);
-		if (payexpert == null) {return ResultMap.build(300, "数据不全");}
+		if (CheckDataUtil.checkisEmpty(historymeter)
+				|| CheckDataUtil.checkisEmpty( payexpert )) {
+			return ResultMap.build(300, "数据不全");
+		}
+		
 		Double count = historymeter.getAftercount() - historymeter.getBeforecount(); //抄表头部
-		Usercent usercent = getUsercent(historymeter.getHouseid());
-		if (usercent == null) {return ResultMap.build(300,"数据不全");}
 		
 		// 先校验下当前类目下是否有账单
 		Historymeter checkmeter = CheckmeterExist(historymeter);
@@ -416,7 +424,6 @@ public class HydCoalServiceImpl implements HydCoalService{
 		housepay.setFinanceid( Long.valueOf(historymeter.getFinanceid()) ); //设置类目ID
 		housepay.setHouseid(historymeter.getHouseid()); //设置房间ID
 		housepay.setPaystate(1);                    //当前未支付
-		housepay.setUsercentid(usercent.getUsercentid()); //设置租约ID
 		housepay.setDescription("单价：" + unitprice);
 		housepay.setCentprices(unitprice * count); //设置当前价格
 		housepay.setCreate_time(payexpert.getStart_time()); //租约开始时间就是交房租时间
@@ -443,18 +450,7 @@ public class HydCoalServiceImpl implements HydCoalService{
 		return hydCoalCustomerMapper.checkmeter(historymeter);
 	}
 
-	private Usercent getUsercent(Long houseid) {
-		UsercentExample example = new UsercentExample();
-		UsercentExample.Criteria criteria = example.createCriteria();
-		criteria.andHouseidEqualTo(houseid);
-		criteria.andCentstateEqualTo(1); //当前租约下
-		List<Usercent> usercents = usercentMapper.selectByExample(example);
-		if (usercents.size() == 1) {
-			return usercents.get(0);
-		}
-		return null;
-	}
-
+	
 	/**
 	 *	根据抄表主键获取housepayid
 	 * @param historymeterid :抄表主键
@@ -593,15 +589,17 @@ public class HydCoalServiceImpl implements HydCoalService{
 	 * 添加其他账单
 	 * **/
 	public ResultMap addotherbuil(Housepay housepay) {
-		if (housepay.getPayexpertid() == null) {return ResultMap.build(300, "数据异常");}
-		if (housepay.getCentprices() == null) {return ResultMap.build(300, "数据异常");}
-		if (housepay.getHouseid() == null) {return ResultMap.build(300, "数据异常"); }
-		if (housepay.getFinanceid() == null) { return ResultMap.build(300,"数据异常");}
+		
+		if (CheckDataUtil.checkisEmpty(housepay.getPayexpertid() )
+				|| CheckDataUtil.checkisEmpty(housepay.getCentprices() ) 
+				|| CheckDataUtil.checkisEmpty(housepay.getHouseid() )
+				|| CheckDataUtil.checkisEmpty(housepay.getFinanceid() )) {
+			return ResultMap.build(300, "数据异常");
+		}
 		Payexpert payexpert = payexpertMapper.selectByPrimaryKey(housepay.getPayexpertid());
-		if (payexpert == null) {return ResultMap.build(300, "数剧异常");}
-		Usercent usercent = getUsercent(housepay.getHouseid());
-		if (usercent == null) {return ResultMap.build(300,"抄表异常");}
-		//校验当前账单是否已经存在
+		if (CheckDataUtil.checkisEmpty( payexpert  )) {
+			return ResultMap.build(300, "数剧异常");
+		}
 		Housepay checkhousepay = checkpaybuilexist(housepay);
 		if (checkhousepay !=null) {
 			return ResultMap.build(300,"勿重复添加账单");
@@ -609,7 +607,6 @@ public class HydCoalServiceImpl implements HydCoalService{
 		housepay.setCreate_time(payexpert.getStart_time());
 		housepay.setCurrentstate(1);
 		housepay.setPaystate(1);  
-		housepay.setUsercentid(usercent.getUsercentid());
 		housepayMapper.insertSelective(housepay);
 		return ResultMap.build(200, "添加成功");
 	}

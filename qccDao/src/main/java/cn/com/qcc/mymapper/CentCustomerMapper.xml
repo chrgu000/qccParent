@@ -21,12 +21,12 @@
 				housepay.housepayid,
 				IFNULL(housepay.description,'无')description
 				from housepay 
+				LEFT JOIN payexpert on payexpert.payexpertid = housepay.payexpertid
 				LEFT JOIN finance on housepay.financeid = finance.financeid
-				LEFT JOIN usercent on housepay.usercentid = usercent.usercentid
+				LEFT JOIN usercent on usercent.usercentid = payexpert.usercentid
 				LEFT JOIN `profile` on `profile`.user_id = usercent.userid
 				LEFT JOIN `user` on `profile`.user_id = `user`.userid
 				LEFT JOIN house on house.houseid = usercent.houseid
-				LEFT JOIN payexpert on payexpert.payexpertid = housepay.payexpertid
 				where housepayid = #{housepayid}
 		  </select>
 		  
@@ -54,7 +54,8 @@
 			LEFT JOIN house on house.houseid = housepay.houseid
 			LEFT JOIN building on house.buildingid = building.buildingid
 			LEFT JOIN village on building.villageid = village.villageid
-			LEFT JOIN usercent on housepay.usercentid = usercent.usercentid
+			LEFT JOIN payexpert on payexpert.payexpertid = housepay.payexpertid
+			LEFT JOIN usercent on payexpert.usercentid = usercent.usercentid
 			LEFT JOIN `user` on usercent.userid = `user`.userid
 			LEFT JOIN apartment on house.apartment_id = apartment.apartmentid
 			LEFT JOIN `profile` on `profile`.user_id = `user`.userid

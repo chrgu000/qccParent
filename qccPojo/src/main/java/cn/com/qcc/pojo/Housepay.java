@@ -6,9 +6,6 @@ public class Housepay {
     /** 租赁总账单id*/
     private Long housepayid;
 
-    /** 租客登记的ID*/
-    private Long usercentid;
-
     /** 房子主键*/
     private Long houseid;
 
@@ -42,14 +39,6 @@ public class Housepay {
 
     public void setHousepayid(Long housepayid) {
         this.housepayid = housepayid;
-    }
-
-    public Long getUsercentid() {
-        return usercentid;
-    }
-
-    public void setUsercentid(Long usercentid) {
-        this.usercentid = usercentid;
     }
 
     public Long getHouseid() {

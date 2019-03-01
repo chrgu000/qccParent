@@ -25,6 +25,7 @@ import cn.com.qcc.queryvo.HistorymeterCustomer;
 import cn.com.qcc.queryvo.HistorymeterVo;
 import cn.com.qcc.queryvo.HydCoalCustomer;
 import cn.com.qcc.queryvo.HydCoalVo;
+import cn.com.qcc.queryvo.PayexpertCustomer;
 import cn.com.qcc.queryvo.ReckoningCustomer;
 import cn.com.qcc.service.HydCoalService;
 
@@ -124,7 +125,7 @@ public class HydCoalController {
 	@RequestMapping("/payexpbyhouseid")
 	@ResponseBody
 	public ResultMap payexpbyhouseid (Long houseid) {
-		List<Payexpert> paylist = hydCoalService.payexpbyhouseid(houseid);
+		List<PayexpertCustomer> paylist = hydCoalService.payexpbyhouseid(houseid);
 		return ResultMap.IS_200(paylist);
 	}
 	

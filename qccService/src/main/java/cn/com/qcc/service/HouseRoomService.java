@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Mycent;
 import cn.com.qcc.pojo.Usercent;
+import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.HouseRoomCustomer;
 import cn.com.qcc.queryvo.HouseVo;
@@ -47,5 +48,16 @@ public interface HouseRoomService {
 	public ResultMap usercent(Usercent usercent, Mycent mycent, HttpServletRequest request, String othermore,
 			String payid, String paycentid, String pricestype, String othermoreid1, String othermoreid2,
 			String islinecent);
+	
+	
+	/**
+	 * 根据房东ID 查询出对应的区域分组
+	 **/
+	List<BuildingCustomer> getlandareaname(BuildingCustomer buildingCustomer);
+	
+	/**
+	 * 根据房东ID查询房东房源对应的楼栋
+	 */
+	List<BuildingCustomer> getlandbuildingname(BuildingCustomer buildingCustomer);
 
 }

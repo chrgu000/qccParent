@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import cn.com.qcc.pojo.Payexpert;
 import cn.com.qcc.queryvo.HousepayCustomer;
 import cn.com.qcc.queryvo.PayexpertCustomer;
 import cn.com.qcc.queryvo.UserCentCustomer;
@@ -27,21 +26,8 @@ public interface UserRoomCustomerMapper {
 	/**  租约详情的 账单 **/
 	public List<UserCentCustomer> usercentdetaillist(String usercentnum);
 	
-	/** 根据租约编号查询财务信息 **/ 
-	public List<UserCentCustomer> financialbycentnum(String usercentnum);
-	
-	/**这里是查询押金列表**/ 
-	public List<UserCentCustomer> yacentsbycentnum(String usercentnum);
-	
-	/** 根据租约ID查询分期信息 **/ 
-	public List<UserCentCustomer> centpayexbyid(Long usercentid);
-	
 	/** 查询基本费用**/ 
 	public List<UserCentCustomer> firstpay(Long usercentid);
-	
-	
-	/*** 根据分期ID查询账单信息  **/ 
-	public List<UserCentCustomer> housepaylistbyid(Long payexpertid);
 	
 	/**查询分期信息**/
 	List<PayexpertCustomer> getPayExpertByuserCentIds(@Param("idsList")List<Long> expertIds);
@@ -52,5 +38,42 @@ public interface UserRoomCustomerMapper {
 	/**根据租户id查询租约id**/
 	List<UserCentCustomer> getUserCentsByUserId(Long userid);
 	
+	/**根据租约编号查询租约列表**/
+	List<UserCentCustomer> getUserCentsByUsercentnum(String usercentnum);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*** 根据分期ID查询账单信息  
+	public List<UserCentCustomer> housepaylistbyid(Long payexpertid);
+	根据租约编号查询财务信息
+	public List<UserCentCustomer> financialbycentnum(String usercentnum);
+	这里是查询押金列表
+	public List<UserCentCustomer> yacentsbycentnum(String usercentnum);
+	根据租约ID查询分期信息 
+	public List<UserCentCustomer> centpayexbyid(Long usercentid);
+	**/ 
 
 }

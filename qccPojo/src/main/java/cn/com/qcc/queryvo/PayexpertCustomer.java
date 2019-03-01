@@ -9,7 +9,19 @@ public class PayexpertCustomer extends Payexpert{
 	/**当期没有交费的金额**/
 	private double centprices;
 	
+	//签约次数
+	private int centtimes;
+	
 	private List<HousepayCustomer> payList;
+	
+
+	public int getCenttimes() {
+		return centtimes;
+	}
+
+	public void setCenttimes(int centtimes) {
+		this.centtimes = centtimes;
+	}
 
 	public double getCentprices() {
 		return centprices;

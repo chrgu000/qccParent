@@ -300,30 +300,9 @@ public class HouseServiceImpl implements HouseService {
 	
 	
 
-	/**
-	 * 根据房东ID 查询出对应的区域分组
-	 **/
-	public List<BuildingCustomer> getlandareaname(BuildingCustomer buildingCustomer) {
-
-		List<BuildingCustomer> landareaname = houseCustomerMapper.getlandareaname(buildingCustomer);
-
-		return landareaname;
-	}
-
 	
-	/**
-	 * 根据房东ID查询房东房源对应的楼栋
-	 */
-	public List<BuildingCustomer> getlandbuildingname(BuildingCustomer buildingCustomer) {
-		List<BuildingCustomer> buils = houseCustomerMapper.getlandbuildingname(buildingCustomer);
-		String strbuil = "";
-		for (BuildingCustomer buil : buils) {
-			strbuil = buil.getDetailes();
-			strbuil = strbuil.substring(strbuil.indexOf("市") + 1, strbuil.length());
-			buil.setDetailes(strbuil);
-		}
-		return buils;
-	}
+	
+	
 
 	/**
 	 * 根据楼栋ID 和userid 查询房东下面的房源

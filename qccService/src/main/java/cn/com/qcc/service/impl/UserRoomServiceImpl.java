@@ -58,9 +58,13 @@ public class UserRoomServiceImpl implements UserRoomService {
 	/**查询房源所有的基本租约信息 包括续签的**/
 	public ResultMap usercentdetail(String usercentnum) {
 		Map<String, Object> map = new HashMap<>();
-		// 这里是查询房屋押金
+		
 		UserCentCustomer centprices = userRoomCustomerMapper.usercentdetailprices(usercentnum);
+		
+		// 根据租约编号查询租约详情信息
 		UserCentCustomer userCentCustomer = userRoomCustomerMapper.usercentdetail(usercentnum);
+		// 第一步根据 租约编号 获取 所有的房源租约列表
+		
 		List<UserCentCustomer> cents = userRoomCustomerMapper.usercentdetaillist(usercentnum);
 		String payname = ""; // 付款方式 QTC153058298916062
 		for (UserCentCustomer cent : cents) {
@@ -92,47 +96,10 @@ public class UserRoomServiceImpl implements UserRoomService {
 	
 	/**通过租约编号查询到账单详情**/
 	public ResultMap financialbycentnum(String usercentnum) {
-		Map<String, Object> map = new HashMap<>();
-		List<UserCentCustomer> cents = userRoomCustomerMapper.financialbycentnum(usercentnum );
-		List<UserCentCustomer> yacents = userRoomCustomerMapper.yacentsbycentnum(usercentnum);
-		for (UserCentCustomer cent : cents) { // 第一层查询租约分组。
-			List<UserCentCustomer> centpayex = userRoomCustomerMapper.centpayexbyid(cent.getUsercentid());
-			// 查询费用集合
-			String countName = IDUtils.foematInteger(cent.getCenttimes());
-			cent.setCountName("第" + countName + "次签约");
-			for (UserCentCustomer payex : centpayex) {
-				// 查询详情
-				List<UserCentCustomer> list = userRoomCustomerMapper.housepaylistbyid(payex.getPayexpertid());
-				for (UserCentCustomer centlist : list) {
-					// 计算逾期时间
-					if (centlist.getPaystate() == 1) {
-						int needoutday = DateUtil.daysBetween(new Date(), centlist.getNeedpaytime());
-						centlist.setNeedoutday(needoutday);
-					}
-				}
-				payex.setUsercents(list);
-			}
-			cent.setUsercents(centpayex);
-		}
-		for (UserCentCustomer yacent : yacents) {
-			if (yacent.getPaystate() == 1) {
-				int needoutday = DateUtil.daysBetween(new Date(), yacent.getNeedpaytime());
-				yacent.setNeedoutday(needoutday);
-			}
-		}
-		map.put("financialist", cents);
-		map.put("yacents", yacents);
-		return ResultMap.IS_200(map);
-	}
-
-
-	/**通过用户id查询待支付的账单集合**/
-	public ResultMap findhousebile(Long userid) {
 		
 		// ==== 由于涉及到的业务复杂和提高性能这里只能做三次数据库查询 ===
-		
-		// 第一步根据 用户id 获取 所有的房源租约列表
-		List<UserCentCustomer> houseList = userRoomCustomerMapper.getUserCentsByUserId(userid);
+		// 第一步根据 租约编号 获取 所有的房源租约列表
+		List<UserCentCustomer> houseList = userRoomCustomerMapper.getUserCentsByUsercentnum(usercentnum);
 		// 获取租约的id 集合 查询所有的分期信息   [由于 租约可能续签 所以会有两期  所有这里分期列表绑定的是租约id ]
 		if (CheckDataUtil.checkisEmpty(houseList)) {
 			return ResultMap.build(400,"没有对应的账单");
@@ -141,7 +108,6 @@ public class UserRoomServiceImpl implements UserRoomService {
 		for (UserCentCustomer userCent : houseList) {
 			userCentIds.add(userCent.getUsercentid());
 		}
-		// 第二步 应该是查询账单的集合 由于账单 关联的是 租约id  和 分期id
 		List<PayexpertCustomer> expertList = userRoomCustomerMapper.getPayExpertByuserCentIds(userCentIds);
 		// 获取到所有的分期id
 		List<Long> expertIds = new ArrayList<>();
@@ -150,6 +116,22 @@ public class UserRoomServiceImpl implements UserRoomService {
 		}
 		// 第三步 根据 分期id查询所有账单
 		List<HousepayCustomer> payList = userRoomCustomerMapper.getHousePayByCentIds(expertIds);
+		// 整合三方数据
+		houseList = MeroUserCentAndExpertAddHousePay(houseList , expertList , payList );
+		Map<String, Object> hashMap = new HashMap<>();
+		List<HousepayCustomer> yacents = new ArrayList<>();
+		//最后把押金提取出来
+		for (UserCentCustomer house: houseList) {
+			yacents.addAll(house.getYanList());
+		}
+		hashMap.put("financialist", houseList);
+		hashMap.put("yacents", yacents);
+		return ResultMap.IS_200(hashMap);
+	}
+
+
+	private List<UserCentCustomer> MeroUserCentAndExpertAddHousePay(List<UserCentCustomer> houseList, List<PayexpertCustomer> expertList,
+			List<HousepayCustomer> payList) {
 		// 第四步开始整合三集合的数据
 		for (UserCentCustomer userCent : houseList) {
 			// 先整合分期
@@ -196,6 +178,37 @@ public class UserRoomServiceImpl implements UserRoomService {
 			userCent.setExpertList(expretAdd);
 		}
 		
+		return houseList;
+	}
+
+
+	/**通过用户id查询待支付的账单集合**/
+	public ResultMap findhousebile(Long userid) {
+		
+		// ==== 由于涉及到的业务复杂和提高性能这里只能做三次数据库查询 ===
+		
+		// 第一步根据 用户id 获取 所有的房源租约列表
+		List<UserCentCustomer> houseList = userRoomCustomerMapper.getUserCentsByUserId(userid);
+		// 获取租约的id 集合 查询所有的分期信息   [由于 租约可能续签 所以会有两期  所有这里分期列表绑定的是租约id ]
+		if (CheckDataUtil.checkisEmpty(houseList)) {
+			return ResultMap.build(400,"没有对应的账单");
+		}
+		List<Long> userCentIds = new ArrayList<>();
+		for (UserCentCustomer userCent : houseList) {
+			userCentIds.add(userCent.getUsercentid());
+		}
+		// 第二步 应该是查询账单的集合 由于账单 关联的是 租约id  和 分期id
+		List<PayexpertCustomer> expertList = userRoomCustomerMapper.getPayExpertByuserCentIds(userCentIds);
+		// 获取到所有的分期id
+		List<Long> expertIds = new ArrayList<>();
+		for (PayexpertCustomer expert : expertList) {
+			expertIds.add(expert.getPayexpertid());
+		}
+		// 第三步 根据 分期id查询所有账单
+		List<HousepayCustomer> payList = userRoomCustomerMapper.getHousePayByCentIds(expertIds);
+		
+		// 第四步 整合数据
+		houseList = MeroUserCentAndExpertAddHousePay(houseList , expertList , payList );
 		
 		return ResultMap.IS_200(houseList);
 	}

@@ -159,37 +159,37 @@
   	</select>
   	
   	<!-- 根据房子ID查询分期账单-->
-  	<select id="payexpbyhouseid" resultType="cn.com.qcc.pojo.Payexpert" parameterType="long" >
-		SELECT * from payexpert where payexpert.payexpertid in (
-			SELECT DISTINCT payexpert.payexpertid from payexpert 
-			LEFT JOIN housepay on payexpert.payexpertid = housepay.payexpertid 
-			LEFT JOIN usercent on usercent.usercentid = housepay.usercentid 
-		where usercent.houseid =  #{houseid} and usercent.centstate = 1
-		) ORDER BY payexpert.end_time asc 
+  	<select id="payexpbyhouseid" resultType="cn.com.qcc.queryvo.PayexpertCustomer" parameterType="long" >
+		SELECT payexpert.* ,usercent.centtimes from payexpert
+			INNER JOIN usercent on usercent.usercentid = payexpert.usercentid
+			where usercent.centstate in (1,2) and usercent.houseid = 4287 
+			ORDER BY  centtimes asc  ,start_time asc 
   	</select>
   	
   	<!-- 获取抄表的详情-->
   	<select id="hismeterdetail" resultType="cn.com.qcc.queryvo.HistorymeterCustomer" parameterType="long" >
-			SELECT historymeter.aftercount ,
-			 historymeter.beforecount ,
-		     historymeter.update_time ,
-		     historymeter.historymeterid ,
-		     historymeter.houseid,
-	         `profile`.real_name realname ,
-	         finance.categoryname ,
-	         his.real_name centname ,
-	         hydcoal.unitprice
-	 from historymeter
+			SELECT
+			historymeter.beforecount ,
+			historymeter.aftercount ,
+			historymeter.update_time ,
+			historymeter.historymeterid ,
+			historymeter.houseid ,
+			hydcoal.unitprice ,
+			historymeter.userid ,
+			`profile`.real_name realname ,
+			usercent.real_name   centname ,
+			finance.categoryname 
+		FROM
+			historymeter
+		LEFT JOIN finance ON finance.financeid = historymeter.financeid
 		LEFT JOIN `profile` on historymeter.userid = `profile`.user_id
+		LEFT JOIN hydcoal ON hydcoal.houseid = historymeter.houseid
+		AND hydcoal.financeid = historymeter.financeid
 		LEFT JOIN (
-			SELECT usercent.houseid , `profile`.real_name  from usercent 
-		LEFT JOIN `profile` on usercent.userid = `profile`.user_id
-	  where usercent.houseid = (SELECT houseid from historymeter where historymeterid = #{historymeterid})
-	  ) his on his.houseid = historymeter.houseid
-		LEFT JOIN usercent on usercent.userid = `profile`.user_id
-		and historymeter.houseid = usercent.houseid
-	  LEFT JOIN finance on finance.financeid = historymeter.financeid
-	  LEFT JOIN hydcoal on hydcoal.houseid  = historymeter.houseid and hydcoal.financeid = historymeter.financeid
+		SELECT `profile`.real_name , usercent.houseid from usercent
+			LEFT JOIN `profile` on usercent.userid = `profile`.user_id 
+		 where centtimes = 1 
+		)usercent on usercent.houseid = historymeter.houseid 
 	 where historymeter.historymeterid = #{historymeterid} 
   	</select>
   	

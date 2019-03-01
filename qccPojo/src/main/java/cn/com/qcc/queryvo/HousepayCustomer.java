@@ -15,8 +15,16 @@ public class HousepayCustomer  extends Housepay{
 	private int  needoutday;
 	// 需要支付的时间
 	private Date needpaytime ;
+	//租约id
+	private Long usercentid;
 	
-	
+	public Long getUsercentid() {
+		return usercentid;
+	}
+
+	public void setUsercentid(Long usercentid) {
+		this.usercentid = usercentid;
+	}
 
 	public Date getNeedpaytime() {
 		return needpaytime;

@@ -72,15 +72,9 @@ public interface HouseService {
 	 **/
 	List<HouseCustomer> needpaycentlist(HouseCustomer houseCustomer);
 
-	/**
-	 * 根据房东ID 查询出对应的区域分组
-	 **/
-	List<BuildingCustomer> getlandareaname(BuildingCustomer buildingCustomer);
+	
 
-	/**
-	 * 根据房东ID查询房东房源对应的楼栋
-	 */
-	List<BuildingCustomer> getlandbuildingname(BuildingCustomer buildingCustomer);
+
 
 	/**
 	 * 根据楼栋ID 和userid 查询房东下面的房源

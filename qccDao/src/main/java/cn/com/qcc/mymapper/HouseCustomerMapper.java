@@ -67,10 +67,10 @@ public interface HouseCustomerMapper {
 	
 	List<HouseCustomer> grouptimeandtime(HouseCustomer houseCustomer);
 	
-	List<BuildingCustomer> getlandareaname(BuildingCustomer buildingCustomer);
 	
 	
-	List<BuildingCustomer> getlandbuildingname(BuildingCustomer buildingCustomer);
+	
+	
 	
 	
 	//根据房东Id 和楼栋ID 查询出对应的房子。

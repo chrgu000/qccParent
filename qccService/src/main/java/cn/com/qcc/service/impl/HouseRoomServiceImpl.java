@@ -53,9 +53,11 @@ import cn.com.qcc.pojo.Paymodal;
 import cn.com.qcc.pojo.Rentmodal;
 import cn.com.qcc.pojo.Usercent;
 import cn.com.qcc.pojo.UsercentExample;
+import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.HouseRoomCustomer;
 import cn.com.qcc.queryvo.HouseVo;
+import cn.com.qcc.queryvo.HousepayCustomer;
 import cn.com.qcc.queryvo.UserCentCustomer;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.service.HouseRoomService;
@@ -113,7 +115,7 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 		}
 		
 		
-		List<Housepay> payList = new ArrayList<>();
+		List<HousepayCustomer> payList = new ArrayList<>();
 		if (CheckDataUtil.checkNotEmpty(idList)) 
 			payList = 	houseRoomCustomerMapper.getPayModel(idList);
 		
@@ -124,7 +126,7 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 			//其他费用支付
 			double otherpricespay = 0 ;
 			// 取出没有支付的最小日期
-			for (Housepay pay : payList) {
+			for (HousepayCustomer pay : payList) {
 				// 当是 同一条租约时候开始计算数据
 				if (house.getUsercentid().longValue()== pay.getUsercentid().longValue()) {
 					//如果是 29 租金
@@ -514,6 +516,7 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 				// 这里要生产分期
 				payexpert.setPayexpertname(pertname);
 				payexpert.setEnd_time(start_time);
+				payexpert.setUsercentid(usercent.getUsercentid());
 				payexpertMapper.insertSelective(payexpert);
 				// 在生产分期账单
 				housepay.setPayexpertid(payexpert.getPayexpertid());
@@ -521,7 +524,7 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 				// 这里设置需要交房租时间
 				housepay.setPaystate(1);// 未支付状态
 				housepay.setCurrentstate(1);// 当前租期
-				housepay.setUsercentid(usercent.getUsercentid()); // 租客登记的唯一约束
+				//housepay.setUsercentid(usercent.getUsercentid()); // 租客登记的唯一约束
 				if (i == 0) {
 					// 这里是算其他的价格
 					if (str != null) {
@@ -764,5 +767,32 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 		houseCustomer.setTotalprices(payprices + duoshou);
 		return houseCustomer;
 	}
+	
+	
+	/**
+	 * 根据房东ID 查询出对应的区域分组
+	 **/
+	public List<BuildingCustomer> getlandareaname(BuildingCustomer buildingCustomer) {
+
+		List<BuildingCustomer> landareaname = houseRoomCustomerMapper.getlandareaname(buildingCustomer);
+
+		return landareaname;
+	}
+	
+	
+	/**
+	 * 根据房东ID查询房东房源对应的楼栋
+	 */
+	public List<BuildingCustomer> getlandbuildingname(BuildingCustomer buildingCustomer) {
+		List<BuildingCustomer> buils = houseRoomCustomerMapper.getlandbuildingname(buildingCustomer);
+		String strbuil = "";
+		for (BuildingCustomer buil : buils) {
+			strbuil = buil.getDetailes();
+			strbuil = strbuil.substring(strbuil.indexOf("市") + 1, strbuil.length());
+			buil.setDetailes(strbuil);
+		}
+		return buils;
+	}
+
 
 }
