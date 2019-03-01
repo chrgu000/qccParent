@@ -6,6 +6,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
@@ -56,6 +58,7 @@ import cn.com.qcc.queryvo.UserVo;
 import cn.com.qcc.queryvo.VillageCustomer;
 import cn.com.qcc.service.AccessService;
 @Service
+@Transactional
 public class AccessServiceImpl implements AccessService {
 	@Autowired SystemstateMapper systemstateMapper;
 	@Autowired AccessMapper accessMapper;

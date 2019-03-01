@@ -11,6 +11,8 @@ import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.IDUtils;
@@ -82,6 +84,7 @@ import cn.com.qcc.service.solrdao.HouseSolrDao;
 import cn.com.qcc.service.solrdao.TribeSolrDao;
 
 @Service
+@Transactional
 public class HouseServiceImpl implements HouseService {
 
 	@Autowired private  HouseSolrDao houseSolrDao;
@@ -331,76 +334,11 @@ public class HouseServiceImpl implements HouseService {
 		return houseCustomerMapper.housebybuildingid(houseCustomer);
 	}
 
-	/**
-	 * 根据房源ID 和userid 发起退房操作
-	 * @param houseid : 当前房源ID
-	 **/
-	public HouseCustomer roomoutsearch(Long houseid) {
-
-		// 第一步，查询当前租约已经交过的所有押金
-		Double sumcentprices = houseCustomerMapper.centpricespay(houseid);
-
-		// 第二步 ，查询本月或者之前 是否有没有交 的费用总和
-		HouseCustomer search = new HouseCustomer();
-		search.setHouseid(houseid);
-		search.setCurrentday(new Date());
-		Double notpayprices = houseCustomerMapper.centpricesnotpay(search);
-		if (notpayprices == null) {
-			notpayprices = 0.0D;
-		}
-		// 这里查询大于本期的已经支付的金额
-		Double duoshou = houseCustomerMapper.centpricespayout(search);
-
-		// 第三步，计算最近一次房租的情况
-		HouseCustomer houseCustomer = houseCustomerMapper.centpricesnow(search);
-		if (houseCustomer == null) {
-			houseCustomer = new HouseCustomer();
-		}
-		houseCustomer.setMarginprices(sumcentprices + "");
-		houseCustomer.setOtherpricesnotpay(notpayprices + ""); // 其他费用没有交的
-		houseCustomer.setDuoshou(duoshou);
-		// 计算超出天数
-		Double payprices = 0.0D;
-
-		if (houseCustomer.getCreate_time() != null) {
-			int totalday = DateUtil.daysBetween(houseCustomer.getCreate_time(), houseCustomer.getUpdate_time());
-			int intday = DateUtil.daysBetween(houseCustomer.getCreate_time(), new Date());
-			if (houseCustomer.getPayexstate() != null && houseCustomer.getPayexstate() == 1) {
-				payprices = sumcentprices - notpayprices
-						- Double.valueOf(houseCustomer.getCentprices()) * intday / totalday;
-				;
-			}
-			if (houseCustomer.getPayexstate() != null && houseCustomer.getPayexstate() == 2) {
-				payprices = sumcentprices - notpayprices;
-			}
-		}
-		houseCustomer.setTotalprices(payprices + duoshou);
-		return houseCustomer;
-	}
+	
 
 	
 	
-	/**
-	 * 进行退房操作
-	 * @param houseid  : houseid
-	 **/
-	public ResultMap roomout(Long houseid) {
-		if (houseid == null) {
-			return ResultMap.build(300, "选择房子");
-		}
-		// 第一步当前租约改为历史租约
-		houseCustomerMapper.usercentbehistory(houseid);
-		// 第二步设置 房子账单为历史账单
-		houseCustomerMapper.housepaybehistory(houseid);
-		// 设置房子为可以租状态
-		House house = new House();
-		house.setHouseid(houseid);
-		house.setHousestatus("1");
-		house.setUpdate_time(new Date());
-		house.setCreate_time(new Date());
-		houseMapper.updateByPrimaryKeySelective(house);
-		return ResultMap.build(200, "操作成功");
-	}
+	
 
 	/**
 	 * 发布房源信息 出租

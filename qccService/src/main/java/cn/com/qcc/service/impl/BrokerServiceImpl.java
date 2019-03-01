@@ -3,6 +3,7 @@ import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.DateUtil;
@@ -26,6 +27,7 @@ import cn.com.qcc.queryvo.UserVo;
 import cn.com.qcc.service.BrokerService;
 import weixin.util.XiaoChengXuCodeUtil;
 @Service
+@Transactional
 public class BrokerServiceImpl implements BrokerService{
 	@Autowired BrokerMapper brokerMapper;
 	@Autowired ProfileMapper profileMapper;

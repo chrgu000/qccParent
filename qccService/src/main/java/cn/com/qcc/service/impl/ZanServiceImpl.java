@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.mapper.ArticledetailMapper;
@@ -26,6 +27,7 @@ import cn.com.qcc.queryvo.ZanCustomer;
 import cn.com.qcc.service.ZanService;
 
 @Service
+@Transactional
 public class ZanServiceImpl implements ZanService {
 
 	@Autowired ZanMapper zanMapper;

@@ -10,6 +10,8 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.JsonUtils;
 import cn.com.qcc.common.PageQuery;
@@ -37,6 +39,7 @@ import cn.com.qcc.service.QiuzuService;
 import cn.com.qcc.service.solrdao.QiuzuSolrDao;
 
 @Service
+@Transactional
 public class QiuzuServiceImpl implements QiuzuService {
 
 	@Autowired QiuZuCustomerMapper qiuZuCustomerMapper;

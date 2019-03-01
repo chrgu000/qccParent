@@ -113,7 +113,7 @@
 			 from house LEFT JOIN `profile` on house.user_id = `profile`.user_id
 				INNER JOIN building on house.buildingid = building.buildingid
 				INNER JOIN detaileaddress on building.detailid = detaileaddress.detailid
-				INNER JOIN landlord on house.user_id = landlord.userid
+				INNER JOIN landlord on house.user_id = landlord.landuserid
 				where house.houseid =#{houseid}
   </select>
   
@@ -124,106 +124,21 @@
 	from usercent where usercent.usercentnum = #{usercentnum};
   </select>
   
-    <!-- 根据租户 的id查询租户的基本信息生成合同 -->
-  <select id="usercentdetail" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="string" >
-			SELECT MIN(usercent.start_time)start_time ,
-					 MAX(usercent.end_time)end_time,
-					 usercent.usercentnum ,
-					 usercent.userid ,
-					 `profile`.real_name realname,
-			     `user`.telephone ,
-					usercent.houseid ,
-					house.house_number,
-		      house.floor ,
-					apartment.apartmentname ,
-		      building.building ,
-		      village.villagename
-					from usercent 
-					LEFT JOIN `profile` on `profile`.user_id = usercent.userid
-		      LEFT JOIN `user` on `profile`.user_id = `user`.userid
-		      LEFT JOIN house on usercent.houseid = house.houseid
-					LEFT JOIN building on house.buildingid = building.buildingid
-		      LEFT JOIN apartment on house.apartment_id = apartment.apartmentid
-		      LEFT JOIN village on village.villageid = building.villageid
-		where usercent.usercentnum = #{usercentnum}
-  </select>
+   
   
-   <!-- 这里是查询押金总和 -->
-  <select id="usercentdetailprices" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="string" >
-		SELECT SUM(centprices)centprices  from housepay where usercentid in (
-	SELECT usercentid from usercent where usercentnum = #{usercentnum}
-		) and  housepay.financeid in (SELECT financeid from finance where fatherid = 6)
-  </select>
   
-  <!-- 根据租户 的id查询租户的基本信息生成合同 -->
-  <select id="usercentdetaillist" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="string" >
-		SELECT usercent.start_time,
-			 usercent.end_time,
-			 usercent.usercentid,
-       ss.fname,
-       rentmodal.rentname ,
-       housepay.centprices ,
-       IFNULL(payother.centprices,'0')currentprices ,
-       usercent.paystyleid ,
-			 historycent.historycenturl ,
-       usercent.centtimes
-		from usercent 
-	 INNER JOIN rentmodal on usercent.rentmodalid = rentmodal.rentmodalid 
-   INNER JOIN (SELECT rentmodalid ,rentname fname from rentmodal)ss on rentmodal.fatherid = ss.rentmodalid 
-   INNER JOIN housepay on housepay.usercentid = usercent.usercentid
-	 LEFT JOIN (SELECT  SUM(housepay.centprices)centprices , housepay.usercentid  from housepay where 
-	 housepay.financeid in (SELECT finance.financeid FROM finance where fatherid = 6) GROUP BY housepay.usercentid)
-		payother on payother.usercentid = usercent.usercentid
-  INNER JOIN historycent on historycent.usercentid = usercent.usercentid
-	where usercent.usercentnum = #{usercentnum} and housepay.financeid = 30
- 
-  </select>
   
-    <!-- 根据租户 的id查询租户的基本信息生成合同 -->
-  <select id="firstpay" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="long" >
-			SELECT housepay.centprices currentprices, finance.categoryname from housepay 
-		 LEFT JOIN finance on housepay.financeid = finance.financeid
-  where housepay.usercentid = #{usercentid}
-	and housepay.payexpertid = (SELECT MIN(payexpertid) from housepay where usercentid =  #{usercentid})
-  </select>
   
-    <!-- 根据租户 的id查询租户的基本信息生成合同 -->
-  <select id="financialbycentnum" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="string" >
-			SELECT usercent.centtimes ,usercent.start_time ,usercent.end_time ,
-				usercent.usercentid
-			from usercent where usercent.usercentnum = #{usercentid}
-  </select>
   
-    <!-- 根据租约ID查询分期信息 -->
-  <select id="centpayexbyid" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="long" >
-			SELECT payexpert.payexpertname ,payexpert.start_time 
-	,payexpert.end_time ,payexpert.payexpertid ,
-	IFNULL(tts.centprices,'0')centprices
- from payexpert LEFT JOIN housepay on payexpert.payexpertid = housepay.payexpertid
-	LEFT JOIN (SELECT SUM(housepay.centprices)centprices ,housepay.payexpertid 
-	from housepay where housepay.paystate = 1 GROUP BY housepay.payexpertid)tts on tts.payexpertid = payexpert.payexpertid
-	where housepay.usercentid = #{usercentid}  GROUP BY housepay.payexpertid
-  </select>
   
-    <!-- 根据分期ID查询账单信息 -->
-  <select id="housepaylistbyid" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="long" >
-		SELECT finance.categoryname ,housepay.create_time needpaytime,
-				housepay.centprices ,housepay.paystate,housepay.housepayid
-			from housepay 
-			LEFT JOIN finance on housepay.financeid = finance.financeid
-		where housepay.payexpertid = #{payexpertid}
-  </select>
   
-    <!-- 这里是查询押金列表 -->
-  <select id="yacentsbycentnum" resultType="cn.com.qcc.queryvo.UserCentCustomer" parameterType="string" >
-		SELECT centprices ,finance.categoryname , housepay.create_time needpaytime ,
-			housepay.paystate ,housepay.update_time ,housepay.housepayid
-		 from housepay 
-			LEFT JOIN finance on housepay.financeid = finance.financeid
-		where usercentid in (
-			SELECT usercentid from usercent where usercentnum = #{usercentnum}
-				) and  housepay.financeid in (SELECT financeid from finance where finance.fatherid = 6)
-  </select>
+   
+  
+   
+  
+   
+  
+   
   
   
    <!-- 根据租户 的id查询租户的基本信息生成合同 -->

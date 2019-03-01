@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.ResultMap;
@@ -59,6 +60,7 @@ import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.service.ReleaseService;
 
 @Service
+@Transactional
 public class ReleaseServiceImpl implements ReleaseService {
 	@Autowired
 	ArticledetailMapper articledetailMapper;

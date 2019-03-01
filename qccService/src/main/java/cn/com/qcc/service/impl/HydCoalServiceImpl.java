@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.mapper.HistorymeterHousepayMapper;
@@ -40,6 +42,7 @@ import cn.com.qcc.queryvo.ReckoningCustomer;
 import cn.com.qcc.service.HydCoalService;
 
 @Service
+@Transactional
 public class HydCoalServiceImpl implements HydCoalService{
 	
 	@Autowired

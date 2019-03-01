@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.mapper.BuyMapper;
@@ -23,6 +24,7 @@ import cn.com.qcc.queryvo.BuyCustomer;
 import cn.com.qcc.service.BuyService;
 
 @Service
+@Transactional
 public class BuyServiceImpl implements BuyService {
 
 	@Autowired

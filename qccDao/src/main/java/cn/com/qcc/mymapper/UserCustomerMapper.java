@@ -55,29 +55,13 @@ public interface UserCustomerMapper {
 	// 查询续约的最大次数
 	public Integer getCentTimes(String usercentnum);
 
-	// 查询租约详情信息
-	public UserCentCustomer usercentdetail(String usercentnum);
 
-	// 租约详情的 账单
-	public List<UserCentCustomer> usercentdetaillist(String usercentnum);
+	
 
-	// 租约详情的价格
-	public UserCentCustomer usercentdetailprices(String usercentnum);
+	
 
-	// 查询基本费用
-	public List<UserCentCustomer> firstpay(Long usercentid);
+	
 
-	// 根据租约编号查询财务信息
-	public List<UserCentCustomer> financialbycentnum(String usercentnum);
-
-	// 根据租约ID查询分期信息
-	public List<UserCentCustomer> centpayexbyid(Long usercentid);
-
-	// 根据分期ID查询账单信息
-	public List<UserCentCustomer> housepaylistbyid(Long payexpertid);
-
-	// 这里是查询押金列表
-	public List<UserCentCustomer> yacentsbycentnum(String usercentnum);
 
 	// 租客登记的列表
 	public List<UserCentCustomer> housepersionlist(HouseVo houseVo);

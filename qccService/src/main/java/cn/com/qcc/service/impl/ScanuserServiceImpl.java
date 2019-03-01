@@ -2,11 +2,14 @@ package cn.com.qcc.service.impl;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import cn.com.qcc.mapper.SceneuserMapper;
 import cn.com.qcc.mapper.WeixinuserinfoMapper;
 import cn.com.qcc.pojo.Weixinuserinfo;
 import cn.com.qcc.service.ScanuserService;
 @Service
+@Transactional
 public class ScanuserServiceImpl implements ScanuserService {
 
 	@Autowired

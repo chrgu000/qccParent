@@ -13,6 +13,7 @@ import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.DateUtil;
@@ -80,6 +81,7 @@ import cn.com.qcc.service.solrdao.TribeSolrDao;
 
 //部落或者群
 @Service
+@Transactional
 public class TribeServiceImpl implements TribeService {
 
 	@Autowired

@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import cn.com.qcc.pojo.Housepay;
 import cn.com.qcc.queryvo.HouseRoomCustomer;
 import cn.com.qcc.queryvo.HouseVo;
+import cn.com.qcc.queryvo.UserCentCustomer;
 
 public interface HouseRoomCustomerMapper {
 	
@@ -17,5 +18,8 @@ public interface HouseRoomCustomerMapper {
 	List<Housepay> getPayModel(@Param("idsList")List<String> idList);
 
 	int roompatternCount(HouseVo houseVo);
+	
+	/**根据租约id查询房源信息**/
+	UserCentCustomer searchCentHouseMess(Long userCentId);
 
 }

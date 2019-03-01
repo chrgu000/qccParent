@@ -6,8 +6,9 @@ import java.util.List;
 import cn.com.qcc.pojo.Usercent;
 public class UserCentCustomer extends Usercent {
 	private String historycenturl;
-	private Integer house_number;
+	private String house_number;
 	private String apartmentname;
+	private String dayLong ;
 	private Integer floor;
 	private String realname;
 	private String villagename;
@@ -56,9 +57,34 @@ public class UserCentCustomer extends Usercent {
 	private Integer centpricescount; //房租租金总和
 	private Integer daishoucount; //待收款总计
 	
+	private List<PayexpertCustomer> expertList;
 	
+	private List<HousepayCustomer> yanList;
 	
-	
+	public String getDayLong() {
+		return dayLong;
+	}
+
+	public void setDayLong(String dayLong) {
+		this.dayLong = dayLong;
+	}
+
+	public List<HousepayCustomer> getYanList() {
+		return yanList;
+	}
+
+	public void setYanList(List<HousepayCustomer> yanList) {
+		this.yanList = yanList;
+	}
+
+	public List<PayexpertCustomer> getExpertList() {
+		return expertList;
+	}
+
+	public void setExpertList(List<PayexpertCustomer> expertList) {
+		this.expertList = expertList;
+	}
+
 	public Integer getHycprices() {
 		return hycprices;
 	}
@@ -197,11 +223,12 @@ public class UserCentCustomer extends Usercent {
 		this.historycenturl = historycenturl;
 	}
 
-	public Integer getHouse_number() {
+	
+	public String getHouse_number() {
 		return house_number;
 	}
 
-	public void setHouse_number(Integer house_number) {
+	public void setHouse_number(String house_number) {
 		this.house_number = house_number;
 	}
 

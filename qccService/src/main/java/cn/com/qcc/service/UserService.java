@@ -107,15 +107,9 @@ public interface UserService {
 	 **/
 	public List<UserCentCustomer> paylistshowbecent(Long usercentid);
 
-	/**
-	 * 查询租约详情
-	 */
-	public ResultMap usercentdetail(String usercentnum);
+	
 
-	/**
-	 * 根据租约编号查询账单详情
-	 */
-	public ResultMap financialbycentnum(String usercentnum);
+	
 
 	/**
 	 * 同步通讯录好友

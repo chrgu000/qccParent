@@ -12,6 +12,8 @@ import org.apache.http.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import WangYiUtil.WangYiUtil;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.DateUtil;
@@ -64,7 +66,6 @@ import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.pojo.Lucre;
 import cn.com.qcc.pojo.Maillist;
 import cn.com.qcc.pojo.MaillistExample;
-import cn.com.qcc.pojo.Paymodal;
 import cn.com.qcc.pojo.Profile;
 import cn.com.qcc.pojo.ProfileExample;
 import cn.com.qcc.pojo.Rongconn;
@@ -91,6 +92,7 @@ import cn.com.qcc.queryvo.UserVo;
 
 @SuppressWarnings("restriction")
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 	@Autowired RongconnMapper rongconnMapper;
 	@Autowired UserconnMapper userconnMapper;
@@ -264,71 +266,9 @@ public class UserServiceImpl implements UserService {
 		return list;
 	}
 
-	@Override
-	public ResultMap usercentdetail(String usercentnum) {
-		Map<String, Object> map = new HashMap<>();
-		// 这里是查询房屋押金
-		UserCentCustomer centprices = userCustomerMapper.usercentdetailprices(usercentnum);
-		UserCentCustomer userCentCustomer = userCustomerMapper.usercentdetail(usercentnum);
-		List<UserCentCustomer> cents = userCustomerMapper.usercentdetaillist(usercentnum);
-		String payname = ""; // 付款方式 QTC153058298916062
-		for (UserCentCustomer cent : cents) {
-			String[] ids = cent.getPaystyleid().split(",");
-			Paymodal pa1 = paymodalMapper.selectByPrimaryKey(Long.valueOf(ids[0]));
-			Paymodal pa2 = paymodalMapper.selectByPrimaryKey(Long.valueOf(ids[1]));
-			payname = pa1.getTypename() + pa2.getTypename();
-			cent.setPaystylename(payname);
-			payname = "";
-			// 查询费用集合
-			List<UserCentCustomer> pays = userCustomerMapper.firstpay(cent.getUsercentid());
-			cent.setUsercents(pays);
-			String countName = IDUtils.foematInteger(cent.getCenttimes());
-			cent.setCountName("第" + countName + "次签约");
-		}
-		// 设置总押金
-		userCentCustomer.setCurrentprices(centprices.getCentprices());
-		// 计算租约时间长度
-		String datalong = IDUtils.datecompany(userCentCustomer.getEnd_time(), userCentCustomer.getStart_time());
-		userCentCustomer.setCountName(datalong);
-		map.put("usercent", userCentCustomer);
-		map.put("centlist", cents);
-		return ResultMap.IS_200(map);
-	}
+	
 
-	@Override
-	public ResultMap financialbycentnum(String usercentnum) {
-		Map<String, Object> map = new HashMap<>();
-		List<UserCentCustomer> cents = userCustomerMapper.financialbycentnum(usercentnum);
-		List<UserCentCustomer> yacents = userCustomerMapper.yacentsbycentnum(usercentnum);
-		for (UserCentCustomer cent : cents) { // 第一层查询租约分组。
-			List<UserCentCustomer> centpayex = userCustomerMapper.centpayexbyid(cent.getUsercentid());
-			// 查询费用集合
-			String countName = IDUtils.foematInteger(cent.getCenttimes());
-			cent.setCountName("第" + countName + "次签约");
-			for (UserCentCustomer payex : centpayex) {
-				// 查询详情
-				List<UserCentCustomer> list = userCustomerMapper.housepaylistbyid(payex.getPayexpertid());
-				for (UserCentCustomer centlist : list) {
-					// 计算逾期时间
-					if (centlist.getPaystate() == 1) {
-						int needoutday = DateUtil.daysBetween(new Date(), centlist.getNeedpaytime());
-						centlist.setNeedoutday(needoutday);
-					}
-				}
-				payex.setUsercents(list);
-			}
-			cent.setUsercents(centpayex);
-		}
-		for (UserCentCustomer yacent : yacents) {
-			if (yacent.getPaystate() == 1) {
-				int needoutday = DateUtil.daysBetween(new Date(), yacent.getNeedpaytime());
-				yacent.setNeedoutday(needoutday);
-			}
-		}
-		map.put("financialist", cents);
-		map.put("yacents", yacents);
-		return ResultMap.IS_200(map);
-	}
+	
 
 	public ResultMap syncmail(List<Maillist> mails, Long userid) {
 		if (mails.isEmpty() && mails.size() < 0) {

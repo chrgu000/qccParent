@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.mapper.ArticledetailMapper;
@@ -29,6 +30,7 @@ import cn.com.qcc.queryvo.HouseVo;
 import cn.com.qcc.service.BrowseService;
 
 @Service
+@Transactional
 public class BrowseServiceImpl implements BrowseService {
 
 	@Autowired

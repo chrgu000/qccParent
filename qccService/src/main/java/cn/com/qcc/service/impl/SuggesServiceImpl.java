@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.mapper.SuggesMapper;
@@ -17,6 +18,7 @@ import cn.com.qcc.queryvo.VillageeVo;
 import cn.com.qcc.service.SuggesService;
 
 @Service
+@Transactional
 public class SuggesServiceImpl implements SuggesService{
 
 	@Autowired

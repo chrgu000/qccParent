@@ -5,6 +5,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SendMessage;
@@ -32,6 +34,7 @@ import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.service.CentService;
 
 @Service
+@Transactional
 public class CentServiceImpl implements CentService {
 	@Autowired
 	FinanceMapper financeMapper;
@@ -147,7 +150,7 @@ public class CentServiceImpl implements CentService {
 				Long houseid1 = housepersionlist.get(i).getHouseid();
 				Long houseid2 = housepersionlist.get(j).getHouseid();
 				if (houseid1 - houseid2==0) {
-					housepersionlist.get(j).setHouse_number(-1);
+					housepersionlist.get(j).setHouse_number("-1");
 				}
 				if (builid1 - builid2==0) {
 					housepersionlist.get(j).setBuilding("");

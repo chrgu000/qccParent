@@ -14,18 +14,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+import javax.jms.Destination;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import WangYiUtil.WangYiCommon;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.ResultMap;
-import cn.com.qcc.common.SendMessage;
 import cn.com.qcc.common.XwpfTUtil;
 import cn.com.qcc.mapper.FurnitureMapper;
 import cn.com.qcc.mapper.HistorycentMapper;
@@ -37,6 +39,7 @@ import cn.com.qcc.mapper.PaymodalMapper;
 import cn.com.qcc.mapper.ProfileMapper;
 import cn.com.qcc.mapper.RentmodalMapper;
 import cn.com.qcc.mapper.UsercentMapper;
+import cn.com.qcc.mess.util.SendMessUtil;
 import cn.com.qcc.mymapper.HouseCustomerMapper;
 import cn.com.qcc.mymapper.HouseRoomCustomerMapper;
 import cn.com.qcc.mymapper.UserCustomerMapper;
@@ -47,10 +50,7 @@ import cn.com.qcc.pojo.Housepay;
 import cn.com.qcc.pojo.Mycent;
 import cn.com.qcc.pojo.Payexpert;
 import cn.com.qcc.pojo.Paymodal;
-import cn.com.qcc.pojo.Profile;
-import cn.com.qcc.pojo.ProfileExample;
 import cn.com.qcc.pojo.Rentmodal;
-import cn.com.qcc.pojo.User;
 import cn.com.qcc.pojo.Usercent;
 import cn.com.qcc.pojo.UsercentExample;
 import cn.com.qcc.queryvo.HouseCustomer;
@@ -59,8 +59,8 @@ import cn.com.qcc.queryvo.HouseVo;
 import cn.com.qcc.queryvo.UserCentCustomer;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.service.HouseRoomService;
-
 @Service
+@Transactional
 public class HouseRoomServiceImpl implements HouseRoomService{
 	
 	@Autowired HouseRoomCustomerMapper houseRoomCustomerMapper;
@@ -76,6 +76,8 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 	@Autowired HistorycentMapper historycentMapper;
 	@Autowired HouseCustomerMapper houseCustomerMapper;
 	@Autowired FurnitureMapper furnitureMapper;
+	@Resource  Destination userCentCreate;
+	@Autowired JmsTemplate jmsTemplate;
 	
 	
 
@@ -91,6 +93,7 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 		for (int i = 0; i < houseList.size(); i++) {// 从第一个数开始，到最后一个数-1次循环
 			if (CheckDataUtil.checkNotEmpty( houseList.get(i).getUsercentid() ));
 			idList.add( houseList.get(i).getUsercentid().toString() );
+			
 			for (int j = houseList.size() - 1; j > i; j--) {// 从最后一个数开始到i+1
 				Long buil1 = houseList.get(i).getBuildingid();
 				Long buil2 = houseList.get(j).getBuildingid();
@@ -459,12 +462,15 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 			if (start < end) {
 				String pertname = "";
 				Payexpert payexpert = new Payexpert();
+				payexpert.setState(1); // 没有推送账单
 				Housepay housepay = new Housepay();
 				Calendar calendar = Calendar.getInstance();
 				payexpert.setStart_time(start_time); // 分期的开始日期 [也即使账单的开始日期]
 				calendar.setTime(start_time);
 				if (i == 0) {
 					pertname = "首期";
+					// 如果是首期的话.需要推送账单
+					payexpert.setState(2);
 					// 首期可以忽视收租日期
 					housepay.setCreate_time(start_time);
 					// 首期需要su
@@ -507,7 +513,6 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 
 				// 这里要生产分期
 				payexpert.setPayexpertname(pertname);
-				payexpert.setState(1); // 没有推送账单
 				payexpert.setEnd_time(start_time);
 				payexpertMapper.insertSelective(payexpert);
 				// 在生产分期账单
@@ -682,22 +687,82 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 			map.put("centurl", url);
 		}
 		map.put("usercentid", usercent.getUsercentid());
-
-		/** 
-		 * 添加历史租客和设置房源为已租的状态。
-		 * 在返回之前设置房子状态为已经租的状态
-		 */
-		House house = new House();
-		house.setHouseid(usercent.getHouseid());
-		house.setHousestatus("2");
-		houseMapper.updateByPrimaryKeySelective(house);
-		
-		// 发送短信告诉租客
-		String content ="";
-		String phone = profile.getTelephone().toString();
-		String modelId = WangYiCommon.LAND_CENT_PUSH;
-		SendMessage.sendNoticMess(content, phone, modelId);
+		// 发送模板消息 如果建立了租约 需要 发短信 。下架房源之内的在消息里面完成
+		String sendData = usercent.getUsercentid().toString();
+		SendMessUtil.sendData(jmsTemplate, userCentCreate, sendData);
 		return ResultMap.IS_200(map);
+	}
+	
+	
+	
+	/**
+	 * 退房不结账
+	 * @param houseid  : houseid
+	 **/
+	public ResultMap roomout(Long houseid) {
+		if (houseid == null) {
+			return ResultMap.build(300, "选择房子");
+		}
+		// 第一步当前租约改为历史租约
+		houseCustomerMapper.usercentbehistory(houseid);
+		// 第二步设置 房子账单为历史账单
+		houseCustomerMapper.housepaybehistory(houseid);
+		// 设置房子为可以租状态
+		House house = new House();
+		house.setHouseid(houseid);
+		house.setHousestatus("1");
+		house.setUpdate_time(new Date());
+		house.setCreate_time(new Date());
+		houseMapper.updateByPrimaryKeySelective(house);
+		return ResultMap.build(200, "操作成功");
+	}
+	
+	
+	/**
+	 * 根据房源ID 和userid 发起退房操作
+	 * @param houseid : 当前房源ID
+	 **/
+	public HouseCustomer roomoutsearch(Long houseid) {
+
+		// 第一步，查询当前租约已经交过的所有押金
+		Double sumcentprices = houseCustomerMapper.centpricespay(houseid);
+
+		// 第二步 ，查询本月或者之前 是否有没有交 的费用总和
+		HouseCustomer search = new HouseCustomer();
+		search.setHouseid(houseid);
+		search.setCurrentday(new Date());
+		Double notpayprices = houseCustomerMapper.centpricesnotpay(search);
+		if (notpayprices == null) {
+			notpayprices = 0.0D;
+		}
+		// 这里查询大于本期的已经支付的金额
+		Double duoshou = houseCustomerMapper.centpricespayout(search);
+
+		// 第三步，计算最近一次房租的情况
+		HouseCustomer houseCustomer = houseCustomerMapper.centpricesnow(search);
+		if (houseCustomer == null) {
+			houseCustomer = new HouseCustomer();
+		}
+		houseCustomer.setMarginprices(sumcentprices + "");
+		houseCustomer.setOtherpricesnotpay(notpayprices + ""); // 其他费用没有交的
+		houseCustomer.setDuoshou(duoshou);
+		// 计算超出天数
+		Double payprices = 0.0D;
+
+		if (houseCustomer.getCreate_time() != null) {
+			int totalday = DateUtil.daysBetween(houseCustomer.getCreate_time(), houseCustomer.getUpdate_time());
+			int intday = DateUtil.daysBetween(houseCustomer.getCreate_time(), new Date());
+			if (houseCustomer.getPayexstate() != null && houseCustomer.getPayexstate() == 1) {
+				payprices = sumcentprices - notpayprices
+						- Double.valueOf(houseCustomer.getCentprices()) * intday / totalday;
+				;
+			}
+			if (houseCustomer.getPayexstate() != null && houseCustomer.getPayexstate() == 2) {
+				payprices = sumcentprices - notpayprices;
+			}
+		}
+		houseCustomer.setTotalprices(payprices + duoshou);
+		return houseCustomer;
 	}
 
 }

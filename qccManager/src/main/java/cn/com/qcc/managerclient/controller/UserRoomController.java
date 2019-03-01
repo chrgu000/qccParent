@@ -171,14 +171,23 @@ public class UserRoomController {
 	@RequestMapping("/usercentdetail")
 	@ResponseBody
 	public ResultMap usercentdetail (String usercentnum) {
-		return  userService.usercentdetail(usercentnum);
+		return  userRoomService.usercentdetail(usercentnum);
 	}
 	
+	/**通过租约编号查询账单详情**/
 	@RequestMapping("/financialbycentnum")
 	@ResponseBody
 	public ResultMap financialbycentnum (String usercentnum) {
-		return  userService.financialbycentnum(usercentnum);
+		return  userRoomService.financialbycentnum(usercentnum);
 	}
+	
+	/**通过用户id查询到账单详情***/
+	@RequestMapping("/findhousebile")
+	@ResponseBody
+	public ResultMap findhousebile (Long userid ) {
+		return  userRoomService.findhousebile(userid);
+	}
+	
 	
 	//同步通讯录
 	@ResponseBody

@@ -8,6 +8,8 @@ import javax.jms.Destination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import WangYiUtil.WangYiUtil;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.PageQuery;
@@ -43,6 +45,7 @@ import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.queryvo.VillageeVo;
 import cn.com.qcc.service.RongService;
 @Service
+@Transactional
 public class RongServiceImpl implements RongService {
 
 	@Autowired

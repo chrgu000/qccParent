@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.com.qcc.mapper.ApartmentMapper;
 import cn.com.qcc.pojo.Apartment;
@@ -11,6 +12,7 @@ import cn.com.qcc.pojo.ApartmentExample;
 import cn.com.qcc.service.ApartmentService;
 
 @Service
+@Transactional
 public class ApartmentServiceImpl implements ApartmentService {
 
 	@Autowired

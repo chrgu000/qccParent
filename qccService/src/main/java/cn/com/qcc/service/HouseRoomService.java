@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Mycent;
 import cn.com.qcc.pojo.Usercent;
+import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.HouseRoomCustomer;
 import cn.com.qcc.queryvo.HouseVo;
 
@@ -15,6 +16,19 @@ public interface HouseRoomService {
 	/**房态图列表**/
 	List<HouseRoomCustomer> roompattern(HouseVo houseVo);
 	int roompatternCount(HouseVo houseVo);
+	
+	
+	/**
+	 * 进行退房操作
+	 * @param houseid  : houseid
+	 **/
+	ResultMap roomout(Long houseid);
+	
+	/**
+	 * 根据房源ID 和userid 发起退房操作 退房结账
+	 * @param houseid : 当前房源ID
+	 **/
+	HouseCustomer roomoutsearch(Long houseid);
 	
 	
 	/**

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.mapper.ReportMapper;
@@ -15,6 +16,7 @@ import cn.com.qcc.pojo.Reportdetail;
 import cn.com.qcc.service.ReportService;
 
 @Service
+@Transactional
 public class ReportServiceImpl implements ReportService {
 
 	@Autowired

@@ -225,6 +225,66 @@ public class PayexpertExample {
             return (Criteria) this;
         }
 
+        public Criteria andUsercentidIsNull() {
+            addCriterion("usercentid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsercentidIsNotNull() {
+            addCriterion("usercentid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsercentidEqualTo(Long value) {
+            addCriterion("usercentid =", value, "usercentid");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsercentidNotEqualTo(Long value) {
+            addCriterion("usercentid <>", value, "usercentid");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsercentidGreaterThan(Long value) {
+            addCriterion("usercentid >", value, "usercentid");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsercentidGreaterThanOrEqualTo(Long value) {
+            addCriterion("usercentid >=", value, "usercentid");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsercentidLessThan(Long value) {
+            addCriterion("usercentid <", value, "usercentid");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsercentidLessThanOrEqualTo(Long value) {
+            addCriterion("usercentid <=", value, "usercentid");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsercentidIn(List<Long> values) {
+            addCriterion("usercentid in", values, "usercentid");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsercentidNotIn(List<Long> values) {
+            addCriterion("usercentid not in", values, "usercentid");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsercentidBetween(Long value1, Long value2) {
+            addCriterion("usercentid between", value1, value2, "usercentid");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsercentidNotBetween(Long value1, Long value2) {
+            addCriterion("usercentid not between", value1, value2, "usercentid");
+            return (Criteria) this;
+        }
+
         public Criteria andPayexpertnameIsNull() {
             addCriterion("payexpertname is null");
             return (Criteria) this;

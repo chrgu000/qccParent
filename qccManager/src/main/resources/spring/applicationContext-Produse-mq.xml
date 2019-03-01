@@ -142,4 +142,11 @@
 	<bean id="villageAdd" class="org.apache.activemq.command.ActiveMQQueue">
 		<constructor-arg value="villageAdd" />
 	</bean>  
+	
+	
+	<!-- NO.21 房东发布租约 -->
+	<bean id="userCentCreate" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="userCentCreate" />
+	</bean>  
+	
 </beans>

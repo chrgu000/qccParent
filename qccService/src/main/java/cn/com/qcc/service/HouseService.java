@@ -89,17 +89,9 @@ public interface HouseService {
 	 **/
 	List<HouseCustomer> housebybuildingid(HouseCustomer houseCustomer);
 
-	/**
-	 * 根据房源ID 和userid 发起退房操作
-	 * @param houseid : 当前房源ID
-	 **/
-	HouseCustomer roomoutsearch(Long houseid);
+	
 
-	/**
-	 * 进行退房操作
-	 * @param houseid  : houseid
-	 **/
-	ResultMap roomout(Long houseid);
+	
 
 	/** 发布房源信息 出售
 	 * @param house_number : 房号

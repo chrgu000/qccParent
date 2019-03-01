@@ -91,6 +91,26 @@
 			#{item, jdbcType=VARCHAR}
 		</foreach>
 	</select>
+	
+	
+	<!-- 根据租约id查询房源 -->
+	<select id="searchCentHouseMess"  resultType="cn.com.qcc.queryvo.UserCentCustomer">
+			SELECT
+				`user`.telephone,
+				usercent.usercentnum,
+				building.building,
+				village.villagename,
+				house.houseid,
+				house.house_number
+				
+			FROM
+				usercent
+			LEFT JOIN `user` ON usercent.userid = `user`.userid
+			LEFT JOIN house ON usercent.houseid = house.houseid
+			LEFT JOIN building ON house.buildingid = building.buildingid
+			LEFT JOIN village ON building.villageid = village.villageid
+			where usercent.usercentid = #{usercentid}
+	</select>
  	
  	
  	

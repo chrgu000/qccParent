@@ -147,7 +147,7 @@ public class HouseRoomController {
 	@RequestMapping ("/roomoutsearch")
 	@ResponseBody
 	public ResultMap roomoutsearch (Long houseid) {
-		HouseCustomer houseCustomer  = houseService.roomoutsearch(houseid);
+		HouseCustomer houseCustomer  = houseRoomService.roomoutsearch(houseid);
 		return ResultMap.IS_200(houseCustomer);
 	}
 	
@@ -155,7 +155,7 @@ public class HouseRoomController {
 	@RequestMapping ("/roomout")
 	@ResponseBody
 	public ResultMap roomout (Long houseid) {
-		ResultMap resultMap = houseService.roomout(houseid);
+		ResultMap resultMap = houseRoomService.roomout(houseid);
 		return resultMap;
 	}
 

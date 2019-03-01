@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
@@ -13,6 +14,7 @@ import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.queryvo.LandlordCustomer;
 import cn.com.qcc.service.LandLordService;
 @Service
+@Transactional
 public class LandLordServiceImpl implements LandLordService{
 
 	@Autowired LandLordCustomerMapper landLordCustomerMapper;

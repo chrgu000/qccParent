@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.mapper.CommoninteMapper;
@@ -28,6 +29,7 @@ import cn.com.qcc.service.InteService;
 
 
 @Service
+@Transactional
 public class InteServiceImpl implements InteService {
 
 	@Autowired

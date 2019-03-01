@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Payexpert" >
     <id column="payexpertid" property="payexpertid" jdbcType="BIGINT" />
     <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="usercentid" property="usercentid" jdbcType="BIGINT" />
     <result column="payexpertname" property="payexpertname" jdbcType="VARCHAR" />
     <result column="start_time" property="start_time" jdbcType="TIMESTAMP" />
     <result column="end_time" property="end_time" jdbcType="TIMESTAMP" />
@@ -67,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    payexpertid, state, payexpertname, start_time, end_time
+    payexpertid, state, usercentid, payexpertname, start_time, end_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.PayexpertExample" >
     select
@@ -100,16 +101,18 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Payexpert" >
-    <selectKey  resultType="long"  order="AFTER"  keyProperty="payexpertid" >
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="payexpertid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
-    insert into payexpert (payexpertid, state, payexpertname, 
-      start_time, end_time)
-    values (#{payexpertid,jdbcType=BIGINT}, #{state,jdbcType=INTEGER}, #{payexpertname,jdbcType=VARCHAR}, 
-      #{start_time,jdbcType=TIMESTAMP}, #{end_time,jdbcType=TIMESTAMP})
+    insert into payexpert (payexpertid, state, usercentid, 
+      payexpertname, start_time, end_time
+      )
+    values (#{payexpertid,jdbcType=BIGINT}, #{state,jdbcType=INTEGER}, #{usercentid,jdbcType=BIGINT}, 
+      #{payexpertname,jdbcType=VARCHAR}, #{start_time,jdbcType=TIMESTAMP}, #{end_time,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Payexpert" >
-    <selectKey  resultType="long"  order="AFTER"  keyProperty="payexpertid" >
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="payexpertid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into payexpert
@@ -119,6 +122,9 @@
       </if>
       <if test="state != null" >
         state,
+      </if>
+      <if test="usercentid != null" >
+        usercentid,
       </if>
       <if test="payexpertname != null" >
         payexpertname,
@@ -136,6 +142,9 @@
       </if>
       <if test="state != null" >
         #{state,jdbcType=INTEGER},
+      </if>
+      <if test="usercentid != null" >
+        #{usercentid,jdbcType=BIGINT},
       </if>
       <if test="payexpertname != null" >
         #{payexpertname,jdbcType=VARCHAR},
@@ -163,6 +172,9 @@
       <if test="record.state != null" >
         state = #{record.state,jdbcType=INTEGER},
       </if>
+      <if test="record.usercentid != null" >
+        usercentid = #{record.usercentid,jdbcType=BIGINT},
+      </if>
       <if test="record.payexpertname != null" >
         payexpertname = #{record.payexpertname,jdbcType=VARCHAR},
       </if>
@@ -181,6 +193,7 @@
     update payexpert
     set payexpertid = #{record.payexpertid,jdbcType=BIGINT},
       state = #{record.state,jdbcType=INTEGER},
+      usercentid = #{record.usercentid,jdbcType=BIGINT},
       payexpertname = #{record.payexpertname,jdbcType=VARCHAR},
       start_time = #{record.start_time,jdbcType=TIMESTAMP},
       end_time = #{record.end_time,jdbcType=TIMESTAMP}
@@ -193,6 +206,9 @@
     <set >
       <if test="state != null" >
         state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="usercentid != null" >
+        usercentid = #{usercentid,jdbcType=BIGINT},
       </if>
       <if test="payexpertname != null" >
         payexpertname = #{payexpertname,jdbcType=VARCHAR},
@@ -209,6 +225,7 @@
   <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Payexpert" >
     update payexpert
     set state = #{state,jdbcType=INTEGER},
+      usercentid = #{usercentid,jdbcType=BIGINT},
       payexpertname = #{payexpertname,jdbcType=VARCHAR},
       start_time = #{start_time,jdbcType=TIMESTAMP},
       end_time = #{end_time,jdbcType=TIMESTAMP}

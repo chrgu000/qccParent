@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 
@@ -29,6 +30,7 @@ import cn.com.qcc.service.HouseModelService;
 import cn.com.qcc.service.solrdao.HouseModelSolrDao;
 
 @Service
+@Transactional
 public class HouseModelServiceImpl implements HouseModelService {
 
 	@Autowired

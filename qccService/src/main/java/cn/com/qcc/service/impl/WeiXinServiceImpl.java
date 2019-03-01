@@ -1,6 +1,7 @@
 package cn.com.qcc.service.impl;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import cn.com.qcc.service.WeiXinService;
@@ -16,6 +17,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 @SuppressWarnings("unchecked")
 @Controller
+@Transactional
 @RequestMapping("/userService")
 public class WeiXinServiceImpl implements WeiXinService {
 

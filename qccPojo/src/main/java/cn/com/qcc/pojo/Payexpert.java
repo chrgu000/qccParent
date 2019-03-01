@@ -9,6 +9,9 @@ public class Payexpert {
     /** 1-没有推送账单，2-已经推送账单*/
     private Integer state;
 
+    /** 租约的id*/
+    private Long usercentid;
+
     /** 分期名称*/
     private String payexpertname;
 
@@ -32,6 +35,14 @@ public class Payexpert {
 
     public void setState(Integer state) {
         this.state = state;
+    }
+
+    public Long getUsercentid() {
+        return usercentid;
+    }
+
+    public void setUsercentid(Long usercentid) {
+        this.usercentid = usercentid;
     }
 
     public String getPayexpertname() {

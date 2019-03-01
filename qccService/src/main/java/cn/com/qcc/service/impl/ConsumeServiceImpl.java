@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.com.qcc.mapper.ArticledetailMapper;
 import cn.com.qcc.mapper.ConsumeMapper;
@@ -19,6 +20,7 @@ import cn.com.qcc.queryvo.VipCountCustomer;
 import cn.com.qcc.service.ConsumeService;
 
 @Service
+@Transactional
 public class ConsumeServiceImpl implements ConsumeService {
 
 	@Autowired ConsumeMapper consumeMapper;

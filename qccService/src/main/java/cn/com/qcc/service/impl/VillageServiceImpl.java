@@ -14,6 +14,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.IDUtils;
@@ -69,6 +70,7 @@ import cn.com.qcc.service.solrdao.VillageSolrDao;
 import weixin.util.XiaoChengXuCodeUtil;
 
 @Service
+@Transactional
 public class VillageServiceImpl implements VillageService {
 
 	@Autowired VillageCustomerMapper villageCustomerMapper;

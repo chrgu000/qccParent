@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
@@ -25,6 +26,7 @@ import cn.com.qcc.queryvo.MetroCustomer;
 import cn.com.qcc.service.AddressService;
 
 @Service
+@Transactional
 public class AddressServiceImpl implements AddressService {
 
 	@Autowired AreaMapper areaMapper;

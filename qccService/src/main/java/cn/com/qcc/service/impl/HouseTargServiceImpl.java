@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.com.qcc.mapper.HousetagMapper;
 import cn.com.qcc.mapper.PararuleMapper;
@@ -18,6 +19,7 @@ import cn.com.qcc.queryvo.PreparatoryCustomer;
 import cn.com.qcc.service.HousertargService;
 
 @Service
+@Transactional
 public class HouseTargServiceImpl implements HousertargService {
 
 	@Autowired

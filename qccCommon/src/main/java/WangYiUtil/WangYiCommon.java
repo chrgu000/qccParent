@@ -61,7 +61,7 @@ public class WangYiCommon {
 	public static final String SHOU_YI_TEMPID ="9654153";
 	
 	/**房东发布租约的模板ID**/
-	public static final String LAND_CENT_PUSH = "";
+	public static final String LAND_CENT_PUSH = "9644234";
 	
 	
 
