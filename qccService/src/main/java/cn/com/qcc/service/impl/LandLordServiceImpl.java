@@ -96,6 +96,29 @@ public class LandLordServiceImpl implements LandLordService{
 		addManager.setUpdate_time(new Date());
 		landlordManagerMapper.insertSelective(addManager);
 	}
+	public List<LandlordCustomer> listManager(Long userid) {
+		return landLordCustomerMapper.listManager(userid);
+	}
 	
+	
+	
+	public ResultMap deleteManager(Long landUserid, Long managerUserid) {
+		
+		if (CheckDataUtil.checkisEmpty(landUserid)
+				|| CheckDataUtil.checkisEmpty(managerUserid )) {
+			return ResultMap.build(400, "数据不完整");
+		}
+		try {
+			LandlordManagerExample example= new LandlordManagerExample();
+			LandlordManagerExample.Criteria criteria = example.createCriteria();
+			criteria.andLanduseridEqualTo(landUserid);
+			criteria.andManageruseridEqualTo(managerUserid);
+			landlordManagerMapper.deleteByExample(example);
+			return ResultMap.build(200, "删除成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResultMap.build(200, "删除失败");
+		}
+	}
 
 }

@@ -14,7 +14,10 @@ public interface LandLordCustomerMapper {
 			,@Param("landstate") String landstate);
 	int landloadsearchCount(@Param("landstate")String landstate);
 	
-	
+	/**查询房东的信息**/
 	LandlordCustomer landloadsearchdetail(@Param("userid")Long userid);
+	
+	/**房东查询管理员列表**/
+	List<LandlordCustomer> listManager(Long userid);
 
 }

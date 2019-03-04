@@ -1,5 +1,7 @@
 package cn.com.qcc.managerclient.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,29 +22,40 @@ public class LandLordController {
 	
 	/**添加管理员**/
 	@RequestMapping("/addmanager")
-	public ResultMap addmanager(Long userid , Long telephone) {
-		
+	public ResultMap addmanager(Long userid , String telephone) {
 		if (CheckDataUtil.checkisEmpty(userid)
 				|| CheckDataUtil.checkisEmpty(telephone)) {
 			return ResultMap.build(400, "请输入添加的用户/检查登录状态");
 		}
-		
+		telephone = telephone.replace(" ", "");
 		// 1,校验房东的状态
 	    LandlordCustomer landloadsearchdetail = landLordService.landloadsearchdetail(userid);
 	    if (CheckDataUtil.checkisEmpty(landloadsearchdetail)
 	    		|| CheckDataUtil.checkNotEqual(landloadsearchdetail.getLandstate(), 2)) {
 	    	return ResultMap.build(400, "非房东用户");
 	    }
-		
 	    // 2 , 通过电话号码校验用户信息 非房东-- 非管理 -- 存在该用户才可以添加
-	    Long  managerUserid = landLordService.checkManagerByPhone(telephone);
+	    Long  managerUserid = landLordService.checkManagerByPhone(Long.valueOf(telephone )  );
 	    if (CheckDataUtil.checkisEmpty(managerUserid)) {
 	    	return ResultMap.build(400,"该电话已经有绑定管理信息不可添加");
 	    }
-	    
 	    // 3- 建立房东和管理 的关系
 	    landLordService.landAddManager(landloadsearchdetail.getUserid() , managerUserid );
 		return ResultMap.build(200, "添加成功");
+	}
+	
+	
+	/**房东查询管理员列表**/
+	@RequestMapping("/listManager") 
+	public ResultMap listManager(Long userid) {
+		List<LandlordCustomer> listManager = landLordService.listManager(userid);
+		return ResultMap.IS_200(listManager);
+	}
+	
+	/**删除管理员**/
+	@RequestMapping("/deleteManager")
+	public ResultMap deleteManager(Long landUserid ,Long managerUserid) {
+		return landLordService.deleteManager(landUserid ,managerUserid);
 	}
 
 }

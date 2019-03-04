@@ -8,7 +8,7 @@ import cn.com.qcc.queryvo.LandlordCustomer;
 
 
 public interface LandLordService {
-	//查询所有房东信息
+	/**查询所有房东信息**/
 	List<LandlordCustomer> landloadsearch(PageQuery pagequery , String landstate);
 	int landloadsearchCount(String landstate);
 
@@ -25,6 +25,12 @@ public interface LandLordService {
 	
 	/**房东添加管理员**/
 	void landAddManager(Long landlordUserid, Long managerUserid);
+	
+	/**房东查询管理员列表**/
+	List<LandlordCustomer> listManager(Long userid);
+	
+	/**删除管理员**/
+	ResultMap deleteManager(Long landUserid, Long managerUserid);
 
 	
 

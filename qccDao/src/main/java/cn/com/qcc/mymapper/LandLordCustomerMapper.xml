@@ -29,7 +29,7 @@
 		    </if>
 	</select>
 	
-	
+	<!-- 查询房东的信息 -->
 	<select id="landloadsearchdetail" resultType="cn.com.qcc.queryvo.LandlordCustomer">
 			SELECT landlord.landuserid userid , identity , idpictures , realname , landstate , 
 			area.`name` address ,update_time   
@@ -37,6 +37,20 @@
 			landlord 
 		    LEFT JOIN area on landlord.`code` = area.`code`
 		    where landlord.landuserid = #{userid}
+	</select>
+	
+	<!--房东查询管理员的列表 -->
+	<select id="listManager" resultType="cn.com.qcc.queryvo.LandlordCustomer">
+			SELECT
+			IFNULL(`profile`.real_name,`profile`.user_name ) realname ,
+			`profile`.user_id userid ,
+			`user`.telephone 
+		FROM
+			landlord_manager
+		LEFT JOIN `profile` ON `profile`.user_id = landlord_manager.manageruserid
+		LEFT JOIN `user` on `user`.userid = `profile`.user_id
+		WHERE
+			landlord_manager.landuserid = #{userid}
 	</select>
  
 </mapper>

@@ -6,7 +6,21 @@ public class LandlordCustomer extends Landlord {
 	
 	private Long userid ;
 	
+	
+	private Long telephone;
+	
 	private String address;
+
+	
+	
+
+	public Long getTelephone() {
+		return telephone;
+	}
+
+	public void setTelephone(Long telephone) {
+		this.telephone = telephone;
+	}
 
 	public Long getUserid() {
 		return userid;
