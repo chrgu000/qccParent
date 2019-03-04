@@ -76,9 +76,9 @@
 					IFNULL(ffd.fname,'')fname,
 					housepay.financeid ,
 					sumadd.currentprices
-		  from housepay  INNER JOIN usercent
-			on housepay.usercentid = usercent.usercentid
+		  from housepay 
 			INNER JOIN payexpert on housepay.payexpertid = payexpert.payexpertid
+			INNER JOIN usercent on payexpert.usercentid = usercent.usercentid
 			INNER JOIN finance on finance.financeid = housepay.financeid
 			 LEFT JOIN (
 			SELECT financeid fid ,categoryname fname from finance where financeid  in (
@@ -87,7 +87,7 @@
 		) ffd on ffd.fid = finance.fatherid
 		 INNER JOIN (SELECT SUM(housepay.centprices)currentprices ,payexpertid from housepay GROUP BY payexpertid)
 		sumadd on sumadd.payexpertid = payexpert.payexpertid
-		where housepay.usercentid = #{usercentid}
+		where usercent.usercentid = #{usercentid}
   </select>
   
     <!-- 根据租户 的id查询租户的基本信息生成合同 -->

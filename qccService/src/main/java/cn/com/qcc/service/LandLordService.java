@@ -19,6 +19,12 @@ public interface LandLordService {
 	 * @param state : 状态码
 	 * **/
 	ResultMap checklandstate(Long userid, Integer state);
+	
+	/**校验管理员的状态**/
+	Long checkManagerByPhone(Long telephone);
+	
+	/**房东添加管理员**/
+	void landAddManager(Long landlordUserid, Long managerUserid);
 
 	
 

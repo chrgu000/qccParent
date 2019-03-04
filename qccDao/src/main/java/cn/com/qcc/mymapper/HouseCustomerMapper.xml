@@ -244,7 +244,7 @@
 		WHERE rentmodalid =#{rentmodalid}
 	</select>
 	
-		<!-- 催租吧-->
+	<!-- 催租吧-->
 	<select id="needpaycentlist" parameterType="cn.com.qcc.queryvo.HouseCustomer"
 		resultType="cn.com.qcc.queryvo.HouseCustomer">
 		SELECT MIN(housepay.create_time)needpaytime ,
@@ -252,12 +252,13 @@
 			village.villagename
 		  from housepay 
 			INNER JOIN payexpert on payexpert.payexpertid = housepay.payexpertid 
-			INNER JOIN usercent on usercent.usercentid = housepay.usercentid
+			INNER JOIN usercent on usercent.usercentid = payexpert.usercentid
 			INNER JOIN house on usercent.houseid = house.houseid 
 			INNER JOIN building on house.buildingid = building.buildingid
 			INNER JOIN village on building.villageid = village.villageid
-			where housepay.paystate = 1 and house.user_id = #{userid}
-			GROUP BY housepay.usercentid  
+			where housepay.paystate = 1 and house.user_id = #{userid}  
+			and usercent.centstate in (1 ,2 )
+			GROUP BY usercent.usercentid  
 		ORDER BY housepay.create_time asc  ,building.buildingid asc   
 	</select>
 	
@@ -371,7 +372,7 @@
 			   usercent.end_time
 		 from housepay 
 		inner JOIN payexpert on housepay.payexpertid = payexpert.payexpertid
-		INNER JOIN usercent on usercent.usercentid = housepay.usercentid
+		INNER JOIN usercent on usercent.usercentid = payexpert.usercentid
 		INNER JOIN house on house.houseid = housepay.houseid
 		INNER JOIN building on house.buildingid = building.buildingid
 		INNER JOIN village on building.villageid = village.villageid
