@@ -504,6 +504,76 @@ public class BdmanagerExample {
             addCriterion("password not between", value1, value2, "password");
             return (Criteria) this;
         }
+
+        public Criteria andAcctokenIsNull() {
+            addCriterion("acctoken is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAcctokenIsNotNull() {
+            addCriterion("acctoken is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAcctokenEqualTo(String value) {
+            addCriterion("acctoken =", value, "acctoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAcctokenNotEqualTo(String value) {
+            addCriterion("acctoken <>", value, "acctoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAcctokenGreaterThan(String value) {
+            addCriterion("acctoken >", value, "acctoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAcctokenGreaterThanOrEqualTo(String value) {
+            addCriterion("acctoken >=", value, "acctoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAcctokenLessThan(String value) {
+            addCriterion("acctoken <", value, "acctoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAcctokenLessThanOrEqualTo(String value) {
+            addCriterion("acctoken <=", value, "acctoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAcctokenLike(String value) {
+            addCriterion("acctoken like", value, "acctoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAcctokenNotLike(String value) {
+            addCriterion("acctoken not like", value, "acctoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAcctokenIn(List<String> values) {
+            addCriterion("acctoken in", values, "acctoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAcctokenNotIn(List<String> values) {
+            addCriterion("acctoken not in", values, "acctoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAcctokenBetween(String value1, String value2) {
+            addCriterion("acctoken between", value1, value2, "acctoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAcctokenNotBetween(String value1, String value2) {
+            addCriterion("acctoken not between", value1, value2, "acctoken");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

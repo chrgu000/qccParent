@@ -6,6 +6,9 @@ public class Landlord {
     /** 房东的userid*/
     private Long landuserid;
 
+    /** BD 对应账号*/
+    private String bdid;
+
     /** 身份证号*/
     private String identity;
 
@@ -15,7 +18,7 @@ public class Landlord {
     /** 房东姓名*/
     private String realname;
 
-    /** 1-申请房东，2-通过 ,3不通过 ，4-子账号*/
+    /** 1-申请房东，2-通过 ,3不通过 */
     private Integer landstate;
 
     /** 所属区域*/
@@ -33,6 +36,14 @@ public class Landlord {
 
     public void setLanduserid(Long landuserid) {
         this.landuserid = landuserid;
+    }
+
+    public String getBdid() {
+        return bdid;
+    }
+
+    public void setBdid(String bdid) {
+        this.bdid = bdid == null ? null : bdid.trim();
     }
 
     public String getIdentity() {

@@ -2,6 +2,7 @@ package cn.com.qcc.tenement.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.com.qcc.common.ResultMap;
+import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.detailcommon.TemplateData;
 import cn.com.qcc.detailcommon.WX_TemplateMsgUtil;
 import cn.com.qcc.detailcommon.WX_UserUtil;
@@ -30,6 +32,8 @@ public class TestToken {
 
 	@Autowired
 	HouseSolrDao houseSolrDao;
+	@Autowired
+	JedisClient jedisClient;
 	@RequestMapping("/tts")
 	@ResponseBody
 	public ResultMap testtoke(String openid) throws SolrServerException {
@@ -112,6 +116,9 @@ public class TestToken {
 			e.printStackTrace();
 		}
 		**/
+	
+	
+	
 			
 	
 

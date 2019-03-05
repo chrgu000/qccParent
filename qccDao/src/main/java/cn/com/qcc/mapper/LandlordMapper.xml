@@ -3,6 +3,7 @@
 <mapper namespace="cn.com.qcc.mapper.LandlordMapper" >
   <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Landlord" >
     <id column="landuserid" property="landuserid" jdbcType="BIGINT" />
+    <result column="bdid" property="bdid" jdbcType="VARCHAR" />
     <result column="identity" property="identity" jdbcType="VARCHAR" />
     <result column="idpictures" property="idpictures" jdbcType="VARCHAR" />
     <result column="realname" property="realname" jdbcType="VARCHAR" />
@@ -70,7 +71,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    landuserid, identity, idpictures, realname, landstate, code, landaddress, update_time
+    landuserid, bdid, identity, idpictures, realname, landstate, code, landaddress, update_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.LandlordExample" >
     select
@@ -107,12 +108,14 @@
    <selectKey  resultType="long"  order="AFTER"  keyProperty="landlordid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
-    insert into landlord (landuserid, identity, idpictures, 
-      realname, landstate, code, 
-      landaddress, update_time)
-    values (#{landuserid,jdbcType=BIGINT}, #{identity,jdbcType=VARCHAR}, #{idpictures,jdbcType=VARCHAR}, 
-      #{realname,jdbcType=VARCHAR}, #{landstate,jdbcType=INTEGER}, #{code,jdbcType=BIGINT}, 
-      #{landaddress,jdbcType=VARCHAR}, #{update_time,jdbcType=TIMESTAMP})
+    insert into landlord (landuserid, bdid, identity, 
+      idpictures, realname, landstate, 
+      code, landaddress, update_time
+      )
+    values (#{landuserid,jdbcType=BIGINT}, #{bdid,jdbcType=VARCHAR}, #{identity,jdbcType=VARCHAR}, 
+      #{idpictures,jdbcType=VARCHAR}, #{realname,jdbcType=VARCHAR}, #{landstate,jdbcType=INTEGER}, 
+      #{code,jdbcType=BIGINT}, #{landaddress,jdbcType=VARCHAR}, #{update_time,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Landlord" >
   
@@ -123,6 +126,9 @@
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="landuserid != null" >
         landuserid,
+      </if>
+      <if test="bdid != null" >
+        bdid,
       </if>
       <if test="identity != null" >
         identity,
@@ -149,6 +155,9 @@
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="landuserid != null" >
         #{landuserid,jdbcType=BIGINT},
+      </if>
+      <if test="bdid != null" >
+        #{bdid,jdbcType=VARCHAR},
       </if>
       <if test="identity != null" >
         #{identity,jdbcType=VARCHAR},
@@ -185,6 +194,9 @@
       <if test="record.landuserid != null" >
         landuserid = #{record.landuserid,jdbcType=BIGINT},
       </if>
+      <if test="record.bdid != null" >
+        bdid = #{record.bdid,jdbcType=VARCHAR},
+      </if>
       <if test="record.identity != null" >
         identity = #{record.identity,jdbcType=VARCHAR},
       </if>
@@ -214,6 +226,7 @@
   <update id="updateByExample" parameterType="map" >
     update landlord
     set landuserid = #{record.landuserid,jdbcType=BIGINT},
+      bdid = #{record.bdid,jdbcType=VARCHAR},
       identity = #{record.identity,jdbcType=VARCHAR},
       idpictures = #{record.idpictures,jdbcType=VARCHAR},
       realname = #{record.realname,jdbcType=VARCHAR},
@@ -228,6 +241,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.Landlord" >
     update landlord
     <set >
+      <if test="bdid != null" >
+        bdid = #{bdid,jdbcType=VARCHAR},
+      </if>
       <if test="identity != null" >
         identity = #{identity,jdbcType=VARCHAR},
       </if>
@@ -254,7 +270,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Landlord" >
     update landlord
-    set identity = #{identity,jdbcType=VARCHAR},
+    set bdid = #{bdid,jdbcType=VARCHAR},
+      identity = #{identity,jdbcType=VARCHAR},
       idpictures = #{idpictures,jdbcType=VARCHAR},
       realname = #{realname,jdbcType=VARCHAR},
       landstate = #{landstate,jdbcType=INTEGER},

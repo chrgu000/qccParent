@@ -19,7 +19,6 @@ import cn.com.qcc.pojo.Finance;
 import cn.com.qcc.pojo.Historymeter;
 import cn.com.qcc.pojo.Housepay;
 import cn.com.qcc.pojo.Landbuilding;
-import cn.com.qcc.pojo.Payexpert;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HistorymeterCustomer;
 import cn.com.qcc.queryvo.HistorymeterVo;

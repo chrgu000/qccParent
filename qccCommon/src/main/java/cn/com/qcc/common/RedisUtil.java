@@ -38,5 +38,9 @@ public class RedisUtil {
 	/**BD_自增主键**/
 	public static final String BD_INSERT_ID = "bdInsert:";
 	
+	/**BD安全码***/
+	public static final String  BD_ACCESS_TOKEN = "bd_accessToken:";
+	public static final Integer BD_ACCESS_TOKEN_OUT_TIME = 60*60*24*3;
+	
 
 }

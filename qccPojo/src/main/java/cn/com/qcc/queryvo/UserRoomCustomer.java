@@ -20,6 +20,9 @@ public class UserRoomCustomer {
 	/**用户类型 1 房东 2 管理**/
 	private int usertype;
 	
+	private String realname;
+	
+	private String telephone ;
 	
 	
 	
@@ -34,6 +37,23 @@ public class UserRoomCustomer {
 	
 	
 	
+	
+	
+	
+	
+	
+	public String getRealname() {
+		return realname;
+	}
+	public void setRealname(String realname) {
+		this.realname = realname;
+	}
+	public String getTelephone() {
+		return telephone;
+	}
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
 	public int getUsertype() {
 		return usertype;
 	}

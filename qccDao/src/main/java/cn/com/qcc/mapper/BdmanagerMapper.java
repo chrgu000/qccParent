@@ -2,6 +2,8 @@ package cn.com.qcc.mapper;
 
 import cn.com.qcc.pojo.Bdmanager;
 import cn.com.qcc.pojo.BdmanagerExample;
+import cn.com.qcc.queryvo.UserRoomCustomer;
+
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -27,6 +29,9 @@ public interface BdmanagerMapper {
     int updateByPrimaryKeySelective(Bdmanager record);
 
     int updateByPrimaryKey(Bdmanager record);
+    
+    
+    Bdmanager searchBDByPhoneOrId(String account);
 
-	Bdmanager searchBDByPhoneOrId(String account);
+	List<UserRoomCustomer> searchUserToLand( @Param("searchWhere")  String searchWhere);
 }
