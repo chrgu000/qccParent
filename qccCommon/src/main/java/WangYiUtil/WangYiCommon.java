@@ -62,6 +62,9 @@ public class WangYiCommon {
 	
 	/**房东发布租约的模板ID**/
 	public static final String LAND_CENT_PUSH = "9644234";
+
+	/**BD 账号添加成功后通知用户**/
+	public static final String BD_ADD_NOTIC = "";
 	
 	
 

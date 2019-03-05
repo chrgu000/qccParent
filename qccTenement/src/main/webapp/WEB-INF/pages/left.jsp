@@ -23,6 +23,7 @@
 		<button type="button" class="btn btn-primary  systemstate">系统参数配置</button>
 	</li>
 	
+	
 	<li style="display:none;"  class="list-group-item " id="isshow34">
 		<button type="button" class="btn btn-primary  parerrule">订房规则配置</button>
 	</li>
@@ -208,12 +209,15 @@
 <c:if test="${li.accessid==8}">
 <div class="panel panel-default">
 <div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion"  href="#collapeight"> 
-			审核管理</a> </h4> </div>
+			账号管理</a> </h4> </div>
 <div id="collapeight" class="panel-collapse collapse">
 <ul class="list-group">
 	<li style="display:none;"  class="list-group-item" id="isshow33" >
 			<button type="button" class="btn btn-primary  landlord_examine" >房东入驻审核</button>
    </li>
+   <li   class="list-group-item" >
+		<button type="button" class="btn btn-primary  bdmanager" >B_D账号管理</button>
+	</li>
 </ul>
 </div>
 </div>

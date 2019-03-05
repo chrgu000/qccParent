@@ -313,6 +313,16 @@
 		</div>
 	</div>
 	
+	<!--aPP版本管理-->
+	<div id="bdmanager">
+		<div class="panel panel-default">
+			<div class="panel-heading">BD账号管理</div>
+			<div class="panel-body">
+				<jsp:include page="bd_manager.jsp"/>
+			</div>
+		</div>
+	</div>
+	
 	
 	<!--aPP版本管理-->
 	<div id="app_update">

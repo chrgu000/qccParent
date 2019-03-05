@@ -26,6 +26,7 @@ import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.detailcommon.ExcelExportSXXSSF;
 import cn.com.qcc.detailcommon.Sha1;
 import cn.com.qcc.pojo.Access;
+import cn.com.qcc.pojo.Bdmanager;
 import cn.com.qcc.pojo.Commoninte;
 import cn.com.qcc.pojo.Historyexcle;
 import cn.com.qcc.pojo.Percent;
@@ -40,6 +41,7 @@ import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.queryvo.UserVo;
 import cn.com.qcc.queryvo.VillageCustomer;
 import cn.com.qcc.service.AccessService;
+import cn.com.qcc.service.BDService;
 import cn.com.qcc.service.InteService;
 import cn.com.qcc.service.LandLordService;
 import cn.com.qcc.service.UserService;
@@ -49,7 +51,6 @@ import sun.misc.BASE64Decoder;
 
 @SuppressWarnings("restriction")
 @Controller
-
 public class BackController{
 
 	@Autowired UserService userService;
@@ -59,8 +60,33 @@ public class BackController{
 	@Autowired VillageService villageService;
 	@Autowired LandLordService landLordService;
 	@Autowired HouseSolrDao houseSolrDao;
+	@Autowired BDService bdService;
 	
 	
+	@RequestMapping("/bd/save")
+	@ResponseBody
+	public ResultMap addBD(Bdmanager bdmanager) {
+		return bdService.addOrUpdate(bdmanager);
+	}
+	
+	@RequestMapping("/bd/changeState")
+	@ResponseBody
+	public ResultMap changeState(String bdid) {
+		return bdService.changeState(bdid);
+	}
+	
+	@RequestMapping("/bd/list")
+	@ResponseBody
+	public ResultMap listBD() {
+		return bdService.listBD();
+	}
+	
+	@RequestMapping("/bd/searchOne")
+	@ResponseBody
+	public ResultMap searchOne (String bdid) {
+		return bdService.findOne(bdid);
+		
+	}
 	@RequestMapping ("/back/getLikeVillage") 
 	@ResponseBody
 	public ResultMap getLikeVillage (String likename) {

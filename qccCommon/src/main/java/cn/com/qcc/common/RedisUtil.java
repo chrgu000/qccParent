@@ -35,5 +35,8 @@ public class RedisUtil {
 	/***验证码过期时间  10分钟***/
 	public static final Integer PHONE_CODE_SEND_TIME = 60*10;
 	
+	/**BD_自增主键**/
+	public static final String BD_INSERT_ID = "bdInsert:";
+	
 
 }

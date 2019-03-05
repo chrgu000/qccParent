@@ -24,9 +24,10 @@
 	  <select id="getManagerMess" resultType="cn.com.qcc.queryvo.UserRoomCustomer" parameterType="long">
 	  				SELECT           `user`.`password` ,
 					  				 `user`.userid ,
-		               		        '2' usertype ,
+		               		         '2' usertype ,
 					    			  `user`.acctoken ,
-		                	          `user`.accestoken
+		                	          `user`.accestoken ,
+		                	          landlord_manager.state landstate 
 			 from `user` 
 				INNER  JOIN landlord_manager 
 				on `user`.userid = landlord_manager.manageruserid
