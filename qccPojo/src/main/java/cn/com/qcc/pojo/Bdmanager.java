@@ -27,6 +27,9 @@ public class Bdmanager {
     /** 登录安全码*/
     private String securitytoken;
 
+    /** BD头像*/
+    private String avatar;
+
     public String getBdid() {
         return bdid;
     }
@@ -89,5 +92,13 @@ public class Bdmanager {
 
     public void setSecuritytoken(String securitytoken) {
         this.securitytoken = securitytoken == null ? null : securitytoken.trim();
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar == null ? null : avatar.trim();
     }
 }

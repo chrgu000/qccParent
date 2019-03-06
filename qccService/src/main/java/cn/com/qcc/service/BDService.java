@@ -35,4 +35,7 @@ public interface BDService {
 
 	Bdmanager getBdidByToken(String BD_ACCTOKEN);
 
+	/**查询我的房东**/
+	List<UserRoomCustomer> myLand(String bD_ACCTOKEN , Long code);
+
 }

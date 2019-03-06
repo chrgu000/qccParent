@@ -86,11 +86,21 @@ public class BDController {
 	// BD添加房东
 	@RequestMapping ("/bdaddLand")
 	public ResultMap addLand (String BD_ACCTOKEN ,  Long userid , String address ,Long code ) {
-		
-	
-		
 		return bdService.addLand(BD_ACCTOKEN , userid , address , code);
 	}
+	
+	
+	// 我管理的房东
+	@RequestMapping ("/bdmyLand")
+	public ResultMap bdmyLand (String BD_ACCTOKEN  ,Long code ) {
+		
+		List<UserRoomCustomer> myLand = bdService.myLand(BD_ACCTOKEN , code);	
+		
+		return ResultMap.IS_200(myLand);			
+		
+		
+	}
+	
 	
 	
 	

@@ -1,5 +1,6 @@
 package cn.com.qcc.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -72,8 +73,9 @@ public class BDServiceImpl implements BDService{
 					jedisClient.set(RedisUtil.BD_INSERT_ID, bdId);
 				}
 				jedisClient.incr(RedisUtil.BD_INSERT_ID);
-				
+				bdmanager.setBdid("qbd" + bdId);
 				String avatar = "http://www.hadoop.zzw777.com/d7b6b65a-5ee1-4d6f-9f18-5a6fbc589387";
+				bdmanager.setAvatar(avatar);
 				//生成网易的token
 				Map<String, Object> returnmap = WangYiUtil.getACCIDANDTOKEN(bdmanager.getBdid(), "qcc_" + bdmanager.getBdid(),
 						avatar);
@@ -90,7 +92,7 @@ public class BDServiceImpl implements BDService{
 				
 				bdmanager.setState(1);
 				bdmanager.setPassword("");
-				bdmanager.setBdid("qbd" + bdId);
+			
 				bdmanager.setUpate_time(new Date());
 				bdmanager.setAcctoken(acctoken);
 				bdmanager.setSecuritytoken(securitytoken);
@@ -246,6 +248,26 @@ public class BDServiceImpl implements BDService{
 			return null;
 		}
 		return list.get(0);
+	}
+
+	// BD 查询我的房东
+	public List<UserRoomCustomer> myLand(String BD_ACCTOKEN , Long code ) {
+		Bdmanager bdmanager = getBdidByToken(BD_ACCTOKEN);
+		if (CheckDataUtil.checkisEmpty(bdmanager)
+				|| CheckDataUtil.checkisEmpty(bdmanager.getBdid())
+				|| CheckDataUtil.checkNotEqual(bdmanager.getState(), 1)) {
+			return new ArrayList<>();
+		}
+		
+		UserRoomCustomer search = new UserRoomCustomer();
+		search.setBdid(bdmanager.getBdid());
+		
+		if (CheckDataUtil.checkNotEmpty(code)) {
+			search.setCode(code);
+		}
+		
+		List<UserRoomCustomer> landList = bdmanagerMapper.getLandList(search);
+		return landList;
 	}
 
 }

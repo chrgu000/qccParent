@@ -1,5 +1,7 @@
 package cn.com.qcc.queryvo;
 
+import java.util.Date;
+
 public class UserRoomCustomer {
 	
 	/**房东的状态**/
@@ -24,6 +26,15 @@ public class UserRoomCustomer {
 	
 	private String telephone ;
 	
+	private String bdid;
+	
+	private String avatar;
+	
+	private String cityname;
+	
+	private Long code ;
+	
+	private Date updatetime;
 	
 	
 	
@@ -42,6 +53,48 @@ public class UserRoomCustomer {
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public Date getUpdatetime() {
+		return updatetime;
+	}
+	public void setUpdatetime(Date updatetime) {
+		this.updatetime = updatetime;
+	}
+	public Long getCode() {
+		return code;
+	}
+	public void setCode(Long code) {
+		this.code = code;
+	}
+	public String getCityname() {
+		return cityname;
+	}
+	public void setCityname(String cityname) {
+		this.cityname = cityname;
+	}
+	public String getAvatar() {
+		return avatar;
+	}
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+	public String getBdid() {
+		return bdid;
+	}
+	public void setBdid(String bdid) {
+		this.bdid = bdid;
+	}
 	public String getRealname() {
 		return realname;
 	}
