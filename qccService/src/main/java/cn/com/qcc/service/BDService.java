@@ -25,14 +25,14 @@ public interface BDService {
 	Bdmanager searchBDByPhoneOrId(String account);
 
 	/**BD修改登录密码**/
-	ResultMap changePassword(Long telephone, String bdid, String password);
+	ResultMap changePassword(Long telephone, String BD_ACCTOKEN, String password);
 
 	/**查询想要添加的房东**/
 	List<UserRoomCustomer> searchUserToLand(String searchWhere);
 	
 	/**BD添加房东**/
-	ResultMap addLand(String bdid, Long userid , String address , Long code);
+	ResultMap addLand(String BD_ACCTOKEN, Long userid , String address , Long code);
 
-	ResultMap getBdidByToken(String bD_ACCTOKEN);
+	Bdmanager getBdidByToken(String BD_ACCTOKEN);
 
 }

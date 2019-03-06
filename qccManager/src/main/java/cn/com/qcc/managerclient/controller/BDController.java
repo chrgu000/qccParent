@@ -34,8 +34,9 @@ public class BDController {
 		
 		// 通过手机号或者账号查询
 		Bdmanager maBdmanager = bdService.searchBDByPhoneOrId(account);
+		System.out.println( maBdmanager.getState()  );
 		if (CheckDataUtil.checkisEmpty(maBdmanager)
-				||maBdmanager.getState() == 0) 
+				||maBdmanager.getState().intValue() != 1) 
 			return ResultMap.build(400, "账号禁用");
 		
 		// 通过验证码校验
@@ -58,25 +59,19 @@ public class BDController {
 			return ResultMap.build(400,"请求错误");
 		}
 		
-		
-		return ResultMap.build(200,"登录成功" , maBdmanager.getAcctoken());
+		maBdmanager.setPassword("");
+		return ResultMap.build(200,"登录成功" , maBdmanager);
 	}
 	
 	
 	@RequestMapping("/bdchangloginword")
 	public ResultMap changePassword(Long telephone , String code , String BD_ACCTOKEN , String password) {
-		
-		// 通过ACCTION 获取BD id
-		ResultMap resultMap = getBDID_BY_ACCTION(BD_ACCTOKEN );
-		if (resultMap.getCode() != 200) 
-			return resultMap;
-		String bdid = resultMap.getObj().toString();
 		// 先校验手机验证码
-		resultMap = checkCodeService.DoCheckPhoneCode(code, telephone);
+		ResultMap resultMap = checkCodeService.DoCheckPhoneCode(code, telephone);
 		if (resultMap.getCode() !=200) {
 			return resultMap;
 		}
-		return bdService.changePassword (telephone ,bdid , password);
+		return bdService.changePassword (telephone ,BD_ACCTOKEN , password);
 	}
 	
 	
@@ -92,24 +87,12 @@ public class BDController {
 	@RequestMapping ("/bdaddLand")
 	public ResultMap addLand (String BD_ACCTOKEN ,  Long userid , String address ,Long code ) {
 		
-		// 通过ACCTION 获取BD id
-		ResultMap resultMap = getBDID_BY_ACCTION(BD_ACCTOKEN);
-		if (resultMap.getCode() != 200) 
-			return resultMap;
-		String bdid = resultMap.getObj().toString();
-		if (CheckDataUtil.checkisEmpty(bdid)
-				|| CheckDataUtil.checkisEmpty(userid)) {
-			return ResultMap.build(400,"操作失败");
-		}
+	
 		
-		return bdService.addLand(bdid , userid , address , code);
+		return bdService.addLand(BD_ACCTOKEN , userid , address , code);
 	}
 	
 	
-	public ResultMap getBDID_BY_ACCTION (String BD_ACCTOKEN ) {
-		
-		return bdService.getBdidByToken(BD_ACCTOKEN);
-		
-	}
+	
 	
 }

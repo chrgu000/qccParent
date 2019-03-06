@@ -21,8 +21,11 @@ public class Bdmanager {
     /** 密码*/
     private String password;
 
-    /** 验证安全token*/
+    /** 网易token*/
     private String acctoken;
+
+    /** 登录安全码*/
+    private String securitytoken;
 
     public String getBdid() {
         return bdid;
@@ -78,5 +81,13 @@ public class Bdmanager {
 
     public void setAcctoken(String acctoken) {
         this.acctoken = acctoken == null ? null : acctoken.trim();
+    }
+
+    public String getSecuritytoken() {
+        return securitytoken;
+    }
+
+    public void setSecuritytoken(String securitytoken) {
+        this.securitytoken = securitytoken == null ? null : securitytoken.trim();
     }
 }

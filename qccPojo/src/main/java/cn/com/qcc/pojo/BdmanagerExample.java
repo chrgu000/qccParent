@@ -574,6 +574,76 @@ public class BdmanagerExample {
             addCriterion("acctoken not between", value1, value2, "acctoken");
             return (Criteria) this;
         }
+
+        public Criteria andSecuritytokenIsNull() {
+            addCriterion("securitytoken is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecuritytokenIsNotNull() {
+            addCriterion("securitytoken is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecuritytokenEqualTo(String value) {
+            addCriterion("securitytoken =", value, "securitytoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecuritytokenNotEqualTo(String value) {
+            addCriterion("securitytoken <>", value, "securitytoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecuritytokenGreaterThan(String value) {
+            addCriterion("securitytoken >", value, "securitytoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecuritytokenGreaterThanOrEqualTo(String value) {
+            addCriterion("securitytoken >=", value, "securitytoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecuritytokenLessThan(String value) {
+            addCriterion("securitytoken <", value, "securitytoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecuritytokenLessThanOrEqualTo(String value) {
+            addCriterion("securitytoken <=", value, "securitytoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecuritytokenLike(String value) {
+            addCriterion("securitytoken like", value, "securitytoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecuritytokenNotLike(String value) {
+            addCriterion("securitytoken not like", value, "securitytoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecuritytokenIn(List<String> values) {
+            addCriterion("securitytoken in", values, "securitytoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecuritytokenNotIn(List<String> values) {
+            addCriterion("securitytoken not in", values, "securitytoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecuritytokenBetween(String value1, String value2) {
+            addCriterion("securitytoken between", value1, value2, "securitytoken");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecuritytokenNotBetween(String value1, String value2) {
+            addCriterion("securitytoken not between", value1, value2, "securitytoken");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

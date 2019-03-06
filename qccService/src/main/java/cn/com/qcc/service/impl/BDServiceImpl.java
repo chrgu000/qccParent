@@ -2,12 +2,15 @@ package cn.com.qcc.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import WangYiUtil.WangYiCommon;
+import WangYiUtil.WangYiPoJo;
+import WangYiUtil.WangYiUtil;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.RedisUtil;
@@ -39,33 +42,59 @@ public class BDServiceImpl implements BDService{
 	@Autowired
 	LandlordMapper landlordMapper;
 
+	@SuppressWarnings("static-access")
 	@Override
 	public ResultMap addOrUpdate(Bdmanager bdmanager) {
 		
+		// bd账号
 		String bdId = "";
-		String acctoken = UUID.randomUUID().toString();
+		// 登录安全码
+		String securitytoken = UUID.randomUUID().toString();
+		// 网易云token
+		String acctoken = "";
 		if (CheckDataUtil.checkisEmpty(bdmanager.getRealname())
 				|| CheckDataUtil.checkisEmpty(bdmanager.getTelephone())) {
 			return ResultMap.build(400, "数据不全");
 		}
+		
+		boolean falg = checkPhone(bdmanager.getBdid() , bdmanager.getTelephone());
+		if (falg ==false) return ResultMap.build(400,"电话号码占用");
+		
+		
+		
+		// 新建账号
 		if (CheckDataUtil.checkisEmpty(bdmanager.getBdid())) {
-			bdId = jedisClient.get(RedisUtil.BD_INSERT_ID);
-			if (CheckDataUtil.checkisEmpty(bdId)) {
-				bdId = "10001";
-				jedisClient.set(RedisUtil.BD_INSERT_ID, bdId);
-			}
-			jedisClient.incr(RedisUtil.BD_INSERT_ID);
-			bdmanager.setState(1);
-			bdmanager.setPassword("");
-			bdmanager.setBdid("qbd" + bdId);
-			bdmanager.setUpate_time(new Date());
-			bdmanager.setAcctoken(acctoken);
 			try {
 				
-				boolean falg = checkPhone(bdmanager.getBdid() , bdmanager.getTelephone());
-				if (falg ==false) return ResultMap.build(400,"电话号码占用");
-				bdmanagerMapper.insertSelective(bdmanager);
+				bdId = jedisClient.get(RedisUtil.BD_INSERT_ID);
+				if (CheckDataUtil.checkisEmpty(bdId)) {
+					bdId = "10001";
+					jedisClient.set(RedisUtil.BD_INSERT_ID, bdId);
+				}
+				jedisClient.incr(RedisUtil.BD_INSERT_ID);
 				
+				String avatar = "http://www.hadoop.zzw777.com/d7b6b65a-5ee1-4d6f-9f18-5a6fbc589387";
+				//生成网易的token
+				Map<String, Object> returnmap = WangYiUtil.getACCIDANDTOKEN(bdmanager.getBdid(), "qcc_" + bdmanager.getBdid(),
+						avatar);
+				if (returnmap.get("code").equals(200)) {
+					String ssobj = returnmap.get("info").toString();
+					net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(ssobj);
+					WangYiPoJo wpojo = (WangYiPoJo) jsonobj.toBean(jsonobj, WangYiPoJo.class);
+					acctoken = wpojo.getToken();
+				}
+				
+				if (CheckDataUtil.checkisEmpty(acctoken)) {
+					return ResultMap.build(400, "操作失败");
+				}
+				
+				bdmanager.setState(1);
+				bdmanager.setPassword("");
+				bdmanager.setBdid("qbd" + bdId);
+				bdmanager.setUpate_time(new Date());
+				bdmanager.setAcctoken(acctoken);
+				bdmanager.setSecuritytoken(securitytoken);
+				bdmanagerMapper.insertSelective(bdmanager);
 				
 				// 如果 添加成功发送手机
 				String modelId = WangYiCommon.BD_ADD_NOTIC;
@@ -79,25 +108,18 @@ public class BDServiceImpl implements BDService{
 				return ResultMap.build(400, "失败,账号重复");
 			}
 		} else {
-			boolean falg = checkPhone(bdmanager.getBdid() , bdmanager.getTelephone());
-			if (falg ==false) return ResultMap.build(400,"电话号码占用");
-			
 			// 判断电话号码是否变更
 			bdId = bdmanager.getBdid();
 			Bdmanager search = bdmanagerMapper.selectByPrimaryKey(bdmanager.getBdid());
-			
 			//如果电话号码不一致
 			if (CheckDataUtil.checkNotEqual(search.getTelephone(), bdmanager.getTelephone())) {
 				// 如果 添加成功发送手机
 				String modelId = WangYiCommon.BD_ADD_NOTIC;
 				SendMessage.sendNoticMess(bdmanager.getBdid(),
 						bdmanager.getTelephone(), modelId);
-				
-				
+				// 重置登录安全码
+				bdmanager.setSecuritytoken(securitytoken);
 			}
-			
-			
-			bdmanager.setAcctoken(acctoken);
 			bdmanagerMapper.updateByPrimaryKeySelective(bdmanager);
 			return ResultMap.build(200, "编辑成功");
 		}
@@ -106,6 +128,9 @@ public class BDServiceImpl implements BDService{
 	private boolean  checkPhone(String bdid, String telephone) {
 		BdmanagerExample example = new BdmanagerExample();
 		BdmanagerExample.Criteria criteria = example.createCriteria();
+		if (CheckDataUtil.checkisEmpty(bdid)) {
+			bdid = "-1";
+		}
 		criteria.andBdidNotEqualTo(bdid);
 		criteria.andTelephoneEqualTo(telephone);
 		List<Bdmanager> list = bdmanagerMapper.selectByExample(example);
@@ -146,8 +171,9 @@ public class BDServiceImpl implements BDService{
 	}
 
 	@Override
-	public ResultMap changePassword(Long telephone, String bdid, String password) {
-		Bdmanager bdmanager = bdmanagerMapper.selectByPrimaryKey(bdid);
+	public ResultMap changePassword(Long telephone, String BD_ACCTOKEN, String password) {
+		Bdmanager bdmanager = getBdidByToken(BD_ACCTOKEN);
+		
 		if (CheckDataUtil.checkisEmpty(bdmanager)
 				|| CheckDataUtil.checkNotEqual(telephone, bdmanager.getTelephone())
 				|| CheckDataUtil.checkisEmpty(password)) {
@@ -165,7 +191,7 @@ public class BDServiceImpl implements BDService{
 	}
 
 	@Override
-	public ResultMap addLand(String bdid, Long userid , String address ,Long code) {
+	public ResultMap addLand(String BD_ACCTOKEN, Long userid , String address ,Long code) {
 		
 		if (CheckDataUtil.checkisEmpty(address)
 				|| CheckDataUtil.checkisEmpty(code)) {
@@ -179,7 +205,7 @@ public class BDServiceImpl implements BDService{
 		}
 		
 		// 校验bd是否正常
-		Bdmanager bdmanager = bdmanagerMapper.selectByPrimaryKey(bdid);
+		Bdmanager bdmanager = getBdidByToken(BD_ACCTOKEN);
 		if (CheckDataUtil.checkisEmpty(bdmanager)
 				|| bdmanager.getState() == 0) {
 			return ResultMap.build(400, "异常的BD账号");
@@ -190,7 +216,7 @@ public class BDServiceImpl implements BDService{
 		if (CheckDataUtil.checkNotEmpty(landlord)) {
 			if (landlord.getLandstate() == 2) {return ResultMap.build(400, "已经是房东");}
 			landlord.setLandstate(2);
-			landlord.setBdid(bdid);
+			landlord.setBdid(bdmanager.getBdid());
 			landlord.setLandaddress(address);
 			landlord.setCode(code);
 			landlordMapper.updateByPrimaryKeySelective(landlord);
@@ -198,7 +224,7 @@ public class BDServiceImpl implements BDService{
 		}
 		
 		landlord = new Landlord();
-		landlord.setBdid(bdid);
+		landlord.setBdid(bdmanager.getBdid());
 		landlord.setLandaddress(address);
 		landlord.setCode(code);
 		landlord.setUpdate_time(new Date());
@@ -207,20 +233,19 @@ public class BDServiceImpl implements BDService{
 	}
 
 	@Override
-	public ResultMap getBdidByToken(String bD_ACCTOKEN) {
-		if (CheckDataUtil.checkisEmpty(bD_ACCTOKEN)) {
-			return ResultMap.build(400,"少参数");
+	public Bdmanager getBdidByToken(String BD_ACCTOKEN) {
+		if (CheckDataUtil.checkisEmpty(BD_ACCTOKEN)) {
+			return null;
 		}
-		
 		BdmanagerExample example = new BdmanagerExample();
 		BdmanagerExample.Criteria criteria = example.createCriteria();
-		criteria.andAcctokenEqualTo(bD_ACCTOKEN);
+		criteria.andSecuritytokenEqualTo(BD_ACCTOKEN);
 		List<Bdmanager> list = bdmanagerMapper.selectByExample(example);
 		
 		if (CheckDataUtil.checkisEmpty(list)) {
-			return ResultMap.build(400, "");
+			return null;
 		}
-		return ResultMap.IS_200(list.get(0).getBdid());
+		return list.get(0);
 	}
 
 }

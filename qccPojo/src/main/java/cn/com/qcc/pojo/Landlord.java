@@ -30,6 +30,18 @@ public class Landlord {
     /** 更新时间*/
     private Date update_time;
 
+    /** 品牌名称*/
+    private String brandname;
+
+    /** 公司名称*/
+    private String corporate;
+
+    /** 营业执照编号*/
+    private String businessnum;
+
+    /** 营业执照图片*/
+    private String businesspicture;
+
     public Long getLanduserid() {
         return landuserid;
     }
@@ -100,5 +112,37 @@ public class Landlord {
 
     public void setUpdate_time(Date update_time) {
         this.update_time = update_time;
+    }
+
+    public String getBrandname() {
+        return brandname;
+    }
+
+    public void setBrandname(String brandname) {
+        this.brandname = brandname == null ? null : brandname.trim();
+    }
+
+    public String getCorporate() {
+        return corporate;
+    }
+
+    public void setCorporate(String corporate) {
+        this.corporate = corporate == null ? null : corporate.trim();
+    }
+
+    public String getBusinessnum() {
+        return businessnum;
+    }
+
+    public void setBusinessnum(String businessnum) {
+        this.businessnum = businessnum == null ? null : businessnum.trim();
+    }
+
+    public String getBusinesspicture() {
+        return businesspicture;
+    }
+
+    public void setBusinesspicture(String businesspicture) {
+        this.businesspicture = businesspicture == null ? null : businesspicture.trim();
     }
 }

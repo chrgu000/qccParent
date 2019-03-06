@@ -86,6 +86,37 @@ public class WangYiUtil {
 		
 		return map;
 	}
+	
+	
+	
+	/**创建用户**/
+	public static  Map<String, Object> getACCIDANDTOKEN(String userid, String name, String icon)
+			throws ParseException, IOException {
+		
+		// 设置请求头部信息
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpPost httpPost = SetSendHead(WangYiCommon.CREATEUSER);
+		
+		// 设置请求的参数
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		// 用户的userid 对应的云唯一约束
+		nvps.add(new BasicNameValuePair("accid", userid + "")); 
+		// 用户昵称
+		nvps.add(new BasicNameValuePair("name", name)); 
+		// 用户头像
+		nvps.add(new BasicNameValuePair("icon", icon)); 
+		httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
+		
+		// 执行请求
+		HttpResponse response = httpClient.execute(httpPost);
+		
+		// 打印执行结果
+		String str = EntityUtils.toString(response.getEntity(), "utf-8");
+		net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
+		Map<String, Object> map = (Map<String, Object>) jsonobj;
+		
+		return map;
+	}
 
 	// 批量发送消息
 	public static void piliangqiuzu(String body, String toAccids) {

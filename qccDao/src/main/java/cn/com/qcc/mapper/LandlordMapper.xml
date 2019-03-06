@@ -11,6 +11,10 @@
     <result column="code" property="code" jdbcType="BIGINT" />
     <result column="landaddress" property="landaddress" jdbcType="VARCHAR" />
     <result column="update_time" property="update_time" jdbcType="TIMESTAMP" />
+    <result column="brandname" property="brandname" jdbcType="VARCHAR" />
+    <result column="corporate" property="corporate" jdbcType="VARCHAR" />
+    <result column="businessnum" property="businessnum" jdbcType="VARCHAR" />
+    <result column="businesspicture" property="businesspicture" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -71,7 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    landuserid, bdid, identity, idpictures, realname, landstate, code, landaddress, update_time
+    landuserid, bdid, identity, idpictures, realname, landstate, code, landaddress, update_time, 
+    brandname, corporate, businessnum, businesspicture
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.LandlordExample" >
     select
@@ -104,21 +109,21 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Landlord" >
-  
    <selectKey  resultType="long"  order="AFTER"  keyProperty="landlordid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into landlord (landuserid, bdid, identity, 
       idpictures, realname, landstate, 
-      code, landaddress, update_time
-      )
+      code, landaddress, update_time, 
+      brandname, corporate, businessnum, 
+      businesspicture)
     values (#{landuserid,jdbcType=BIGINT}, #{bdid,jdbcType=VARCHAR}, #{identity,jdbcType=VARCHAR}, 
       #{idpictures,jdbcType=VARCHAR}, #{realname,jdbcType=VARCHAR}, #{landstate,jdbcType=INTEGER}, 
-      #{code,jdbcType=BIGINT}, #{landaddress,jdbcType=VARCHAR}, #{update_time,jdbcType=TIMESTAMP}
-      )
+      #{code,jdbcType=BIGINT}, #{landaddress,jdbcType=VARCHAR}, #{update_time,jdbcType=TIMESTAMP}, 
+      #{brandname,jdbcType=VARCHAR}, #{corporate,jdbcType=VARCHAR}, #{businessnum,jdbcType=VARCHAR}, 
+      #{businesspicture,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Landlord" >
-  
    <selectKey  resultType="long"  order="AFTER"  keyProperty="landlordid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
@@ -151,6 +156,18 @@
       <if test="update_time != null" >
         update_time,
       </if>
+      <if test="brandname != null" >
+        brandname,
+      </if>
+      <if test="corporate != null" >
+        corporate,
+      </if>
+      <if test="businessnum != null" >
+        businessnum,
+      </if>
+      <if test="businesspicture != null" >
+        businesspicture,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="landuserid != null" >
@@ -179,6 +196,18 @@
       </if>
       <if test="update_time != null" >
         #{update_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="brandname != null" >
+        #{brandname,jdbcType=VARCHAR},
+      </if>
+      <if test="corporate != null" >
+        #{corporate,jdbcType=VARCHAR},
+      </if>
+      <if test="businessnum != null" >
+        #{businessnum,jdbcType=VARCHAR},
+      </if>
+      <if test="businesspicture != null" >
+        #{businesspicture,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -218,6 +247,18 @@
       <if test="record.update_time != null" >
         update_time = #{record.update_time,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.brandname != null" >
+        brandname = #{record.brandname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.corporate != null" >
+        corporate = #{record.corporate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.businessnum != null" >
+        businessnum = #{record.businessnum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.businesspicture != null" >
+        businesspicture = #{record.businesspicture,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -233,7 +274,11 @@
       landstate = #{record.landstate,jdbcType=INTEGER},
       code = #{record.code,jdbcType=BIGINT},
       landaddress = #{record.landaddress,jdbcType=VARCHAR},
-      update_time = #{record.update_time,jdbcType=TIMESTAMP}
+      update_time = #{record.update_time,jdbcType=TIMESTAMP},
+      brandname = #{record.brandname,jdbcType=VARCHAR},
+      corporate = #{record.corporate,jdbcType=VARCHAR},
+      businessnum = #{record.businessnum,jdbcType=VARCHAR},
+      businesspicture = #{record.businesspicture,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -265,6 +310,18 @@
       <if test="update_time != null" >
         update_time = #{update_time,jdbcType=TIMESTAMP},
       </if>
+      <if test="brandname != null" >
+        brandname = #{brandname,jdbcType=VARCHAR},
+      </if>
+      <if test="corporate != null" >
+        corporate = #{corporate,jdbcType=VARCHAR},
+      </if>
+      <if test="businessnum != null" >
+        businessnum = #{businessnum,jdbcType=VARCHAR},
+      </if>
+      <if test="businesspicture != null" >
+        businesspicture = #{businesspicture,jdbcType=VARCHAR},
+      </if>
     </set>
     where landuserid = #{landuserid,jdbcType=BIGINT}
   </update>
@@ -277,7 +334,11 @@
       landstate = #{landstate,jdbcType=INTEGER},
       code = #{code,jdbcType=BIGINT},
       landaddress = #{landaddress,jdbcType=VARCHAR},
-      update_time = #{update_time,jdbcType=TIMESTAMP}
+      update_time = #{update_time,jdbcType=TIMESTAMP},
+      brandname = #{brandname,jdbcType=VARCHAR},
+      corporate = #{corporate,jdbcType=VARCHAR},
+      businessnum = #{businessnum,jdbcType=VARCHAR},
+      businesspicture = #{businesspicture,jdbcType=VARCHAR}
     where landuserid = #{landuserid,jdbcType=BIGINT}
   </update>
 </mapper>

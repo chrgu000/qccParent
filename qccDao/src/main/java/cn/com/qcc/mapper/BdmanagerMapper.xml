@@ -9,6 +9,7 @@
     <result column="state" property="state" jdbcType="INTEGER" />
     <result column="password" property="password" jdbcType="VARCHAR" />
     <result column="acctoken" property="acctoken" jdbcType="VARCHAR" />
+    <result column="securitytoken" property="securitytoken" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -69,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    bdid, telephone, realname, upate_time, state, password, acctoken
+    bdid, telephone, realname, upate_time, state, password, acctoken, securitytoken
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.BdmanagerExample" >
     select
@@ -104,10 +105,10 @@
   <insert id="insert" parameterType="cn.com.qcc.pojo.Bdmanager" >
     insert into bdmanager (bdid, telephone, realname, 
       upate_time, state, password, 
-      acctoken)
+      acctoken, securitytoken)
     values (#{bdid,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{realname,jdbcType=VARCHAR}, 
       #{upate_time,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER}, #{password,jdbcType=VARCHAR}, 
-      #{acctoken,jdbcType=VARCHAR})
+      #{acctoken,jdbcType=VARCHAR}, #{securitytoken,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Bdmanager" >
     insert into bdmanager
@@ -133,6 +134,9 @@
       <if test="acctoken != null" >
         acctoken,
       </if>
+      <if test="securitytoken != null" >
+        securitytoken,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="bdid != null" >
@@ -155,6 +159,9 @@
       </if>
       <if test="acctoken != null" >
         #{acctoken,jdbcType=VARCHAR},
+      </if>
+      <if test="securitytoken != null" >
+        #{securitytoken,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -188,6 +195,9 @@
       <if test="record.acctoken != null" >
         acctoken = #{record.acctoken,jdbcType=VARCHAR},
       </if>
+      <if test="record.securitytoken != null" >
+        securitytoken = #{record.securitytoken,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -201,7 +211,8 @@
       upate_time = #{record.upate_time,jdbcType=TIMESTAMP},
       state = #{record.state,jdbcType=INTEGER},
       password = #{record.password,jdbcType=VARCHAR},
-      acctoken = #{record.acctoken,jdbcType=VARCHAR}
+      acctoken = #{record.acctoken,jdbcType=VARCHAR},
+      securitytoken = #{record.securitytoken,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -227,6 +238,9 @@
       <if test="acctoken != null" >
         acctoken = #{acctoken,jdbcType=VARCHAR},
       </if>
+      <if test="securitytoken != null" >
+        securitytoken = #{securitytoken,jdbcType=VARCHAR},
+      </if>
     </set>
     where bdid = #{bdid,jdbcType=VARCHAR}
   </update>
@@ -237,12 +251,12 @@
       upate_time = #{upate_time,jdbcType=TIMESTAMP},
       state = #{state,jdbcType=INTEGER},
       password = #{password,jdbcType=VARCHAR},
-      acctoken = #{acctoken,jdbcType=VARCHAR}
+      acctoken = #{acctoken,jdbcType=VARCHAR},
+      securitytoken = #{securitytoken,jdbcType=VARCHAR}
     where bdid = #{bdid,jdbcType=VARCHAR}
   </update>
   
   
-   
   <select id="searchBDByPhoneOrId" resultType="cn.com.qcc.pojo.Bdmanager">
   		SELECT * from bdmanager where bdid = #{account} or telephone = #{account}
   </select>
