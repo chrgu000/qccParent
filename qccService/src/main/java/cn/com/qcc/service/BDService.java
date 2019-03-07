@@ -44,5 +44,8 @@ public interface BDService {
 
 	/**给房东绑定楼栋**/
 	ResultMap addBuildingToland(Long userid, Long buildingid);
+	
+	/**删除房东绑定的楼栋**/
+	ResultMap deleteBuildingland(Long userid, Long buildingid);
 
 }

@@ -90,10 +90,7 @@ public class SendMessageController {
 	}
 	
 	
-	public static void main (String [] args) {
-		
-		
-	}
+	
 	
 	
 	

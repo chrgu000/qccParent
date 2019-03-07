@@ -114,6 +114,13 @@ public class BDController {
 	}
 	
 	
+	// 删除房东绑定的楼栋
+	@RequestMapping("/deleteBuildingland")
+	public ResultMap deleteBuildingland (Long userid , Long buildingid) {
+		
+		return bdService.deleteBuildingland(userid , buildingid);
+	}
+	
 	
 	
 	

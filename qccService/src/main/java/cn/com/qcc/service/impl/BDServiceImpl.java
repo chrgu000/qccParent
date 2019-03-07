@@ -5,10 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import WangYiUtil.WangYiCommon;
 import WangYiUtil.WangYiPoJo;
 import WangYiUtil.WangYiUtil;
@@ -27,7 +25,6 @@ import cn.com.qcc.pojo.Bdmanager;
 import cn.com.qcc.pojo.BdmanagerExample;
 import cn.com.qcc.pojo.Buildinglandlord;
 import cn.com.qcc.pojo.BuildinglandlordExample;
-import cn.com.qcc.pojo.BuildinglandlordExample.Criteria;
 import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.UserCustomer;
@@ -315,6 +312,24 @@ public class BDServiceImpl implements BDService{
 		buildinglandlordMapper.insertSelective(insert);
 		
 		return ResultMap.build(200,"操作成功");
+	}
+
+	@Override
+	public ResultMap deleteBuildingland(Long userid, Long buildingid) {
+		
+		if (CheckDataUtil.checkisEmpty(userid)
+				|| CheckDataUtil.checkisEmpty(buildingid)) {
+			return ResultMap.build(400, "删除失败");
+		}
+		
+		
+		BuildinglandlordExample example = new BuildinglandlordExample();
+		BuildinglandlordExample.Criteria criteria = example.createCriteria();
+		criteria.andBuildingidEqualTo(buildingid);
+		criteria.andLandlordidEqualTo(userid);
+		buildinglandlordMapper.deleteByExample(example);
+		
+		return ResultMap.build(200, "删除成功");
 	}
 
 }

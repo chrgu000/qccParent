@@ -599,8 +599,6 @@ public class WangYiUtil {
 		
 	}
 
-	public static void main(String[] args) {
-		
-	}
+	
 
 }
