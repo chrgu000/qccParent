@@ -13,6 +13,7 @@ import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.pojo.Bdmanager;
+import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.UserRoomCustomer;
 import cn.com.qcc.service.BDService;
 import cn.com.qcc.service.CheckCodeService;
@@ -93,12 +94,23 @@ public class BDController {
 	// 我管理的房东
 	@RequestMapping ("/bdmyLand")
 	public ResultMap bdmyLand (String BD_ACCTOKEN  ,Long code ) {
-		
 		List<UserRoomCustomer> myLand = bdService.myLand(BD_ACCTOKEN , code);	
-		
 		return ResultMap.IS_200(myLand);			
-		
-		
+	}
+	
+	
+	// 查询想要添加的楼栋
+	@RequestMapping("/searchAddBuildingToland")
+	public ResultMap searchAddBuildingToland (String searchWhere) {
+		List<BuildingCustomer> builList = bdService.searchAddBuildingToland(searchWhere);
+		return ResultMap.IS_200(builList);
+	}
+	
+	
+	// 添加楼栋
+	@RequestMapping("/addBuildingToland")
+	public ResultMap addBuildingToland (Long userid , Long buildingid) { 
+		return bdService.addBuildingToland(userid , buildingid);
 	}
 	
 	

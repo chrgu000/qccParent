@@ -4,6 +4,7 @@ import java.util.List;
 
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Bdmanager;
+import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.UserRoomCustomer;
 
 public interface BDService {
@@ -37,5 +38,11 @@ public interface BDService {
 
 	/**查询我的房东**/
 	List<UserRoomCustomer> myLand(String bD_ACCTOKEN , Long code);
+
+	/**查询想要添加的楼栋**/
+	List<BuildingCustomer> searchAddBuildingToland(String searchWhere);
+
+	/**给房东绑定楼栋**/
+	ResultMap addBuildingToland(Long userid, Long buildingid);
 
 }

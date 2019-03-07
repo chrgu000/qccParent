@@ -19,12 +19,17 @@ import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SendMessage;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mapper.BdmanagerMapper;
+import cn.com.qcc.mapper.BuildinglandlordMapper;
 import cn.com.qcc.mapper.LandlordMapper;
 import cn.com.qcc.mapper.ProfileMapper;
 import cn.com.qcc.mymapper.UserCustomerMapper;
 import cn.com.qcc.pojo.Bdmanager;
 import cn.com.qcc.pojo.BdmanagerExample;
+import cn.com.qcc.pojo.Buildinglandlord;
+import cn.com.qcc.pojo.BuildinglandlordExample;
+import cn.com.qcc.pojo.BuildinglandlordExample.Criteria;
 import cn.com.qcc.pojo.Landlord;
+import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.queryvo.UserRoomCustomer;
 import cn.com.qcc.service.BDService;
@@ -42,7 +47,9 @@ public class BDServiceImpl implements BDService{
 	UserCustomerMapper userCustomerMapper;
 	@Autowired
 	LandlordMapper landlordMapper;
-
+	@Autowired
+	BuildinglandlordMapper buildinglandlordMapper;
+	
 	@SuppressWarnings("static-access")
 	@Override
 	public ResultMap addOrUpdate(Bdmanager bdmanager) {
@@ -229,6 +236,7 @@ public class BDServiceImpl implements BDService{
 		landlord.setBdid(bdmanager.getBdid());
 		landlord.setLandaddress(address);
 		landlord.setCode(code);
+		landlord.setLanduserid(userid);
 		landlord.setUpdate_time(new Date());
 		landlordMapper.insertSelective(landlord);
 		return ResultMap.build(200, "添加成功");
@@ -268,6 +276,45 @@ public class BDServiceImpl implements BDService{
 		
 		List<UserRoomCustomer> landList = bdmanagerMapper.getLandList(search);
 		return landList;
+	}
+
+	/// 查询想要添加的楼栋
+	public List<BuildingCustomer> searchAddBuildingToland(String searchWhere) {
+		return bdmanagerMapper.searchAddBuildingToland(searchWhere);
+	}
+
+	// 给房东绑定楼栋。
+	public ResultMap addBuildingToland(Long userid, Long buildingid) {
+		
+		
+		if (CheckDataUtil.checkisEmpty(userid)
+				|| CheckDataUtil.checkisEmpty(buildingid)) {
+			return ResultMap.build(400, "数据不全");
+		}
+		
+		// 校验房东
+		Landlord landlord = landlordMapper.selectByPrimaryKey(userid);
+		if (CheckDataUtil.checkisEmpty(landlord)
+				|| landlord.getLandstate() !=2) {
+			return ResultMap.build(400, "非房东用户");
+		}
+		
+		// 校验楼栋
+		BuildinglandlordExample example = new BuildinglandlordExample();
+		BuildinglandlordExample.Criteria criteria = example.createCriteria();
+		criteria.andBuildingidEqualTo(buildingid);
+		List<Buildinglandlord> list = buildinglandlordMapper.selectByExample(example);
+		
+		if (CheckDataUtil.checkNotEmpty(list)) {
+			return ResultMap.build(400, "该楼栋已经绑定");
+		}
+		
+		Buildinglandlord insert = new Buildinglandlord();
+		insert.setBuildingid(buildingid);
+		insert.setLandlordid(userid);
+		buildinglandlordMapper.insertSelective(insert);
+		
+		return ResultMap.build(200,"操作成功");
 	}
 
 }

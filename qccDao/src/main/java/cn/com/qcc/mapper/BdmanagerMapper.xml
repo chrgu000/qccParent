@@ -333,4 +333,27 @@
 				AND landlord.code = #{code}
 		</if>
   </select>
+  
+  
+  
+   <select id="searchAddBuildingToland" resultType="cn.com.qcc.queryvo.BuildingCustomer"
+   	>
+  		SELECT
+				building.building ,
+				village.villagename ,
+				area.`name` trading ,
+				building.buildingid 
+			
+			FROM
+				building
+			INNER  JOIN village on village.villageid = building.villageid 
+			INNER JOIN area on area.`code` = village.`code` 
+			
+			where building.buildingid not in (
+			
+			SELECT buildingid from buildinglandlord
+			)
+			AND building.identity like CONCAT('%',#{searchWhere},'%')
+			LIMIT 0, 40
+  </select>
 </mapper>
