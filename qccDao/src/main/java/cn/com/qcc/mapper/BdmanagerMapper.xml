@@ -297,6 +297,7 @@
 					landlord
 				WHERE
 					landstate = 2
+					and landlord.bdid != '' 
 			)
 			AND `profile`.user_id NOT IN (
 				SELECT  manageruserid

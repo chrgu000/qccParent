@@ -146,5 +146,12 @@ public class BDController {
 	}
 	
 	
+	// 移除房源
+	@RequestMapping("/removeland")
+	public ResultMap removeland (Long userid) {
+		
+		return bdService.removeland(userid);
+	}
+	
 	
 }

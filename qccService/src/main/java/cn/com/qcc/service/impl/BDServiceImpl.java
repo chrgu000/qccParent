@@ -226,6 +226,7 @@ public class BDServiceImpl implements BDService{
 		if (CheckDataUtil.checkNotEmpty(searchlandlord)) {
 			landlord.setLanduserid(userid);
 			landlord.setLandstate(2);
+			landlord.setBdid(bdmanager.getBdid());
 			landlord.setUpdate_time(new Date());
 			landlordMapper.updateByPrimaryKeySelective(landlord);
 			return ResultMap.build(200, "编辑成功");
@@ -234,6 +235,7 @@ public class BDServiceImpl implements BDService{
 		
 		landlord.setLanduserid(userid);
 		landlord.setLandstate(2);
+		landlord.setBdid(bdmanager.getBdid());
 		landlord.setUpdate_time(new Date());
 		landlordMapper.insertSelective(landlord);
 		return ResultMap.build(200, "添加成功");
@@ -346,6 +348,14 @@ public class BDServiceImpl implements BDService{
     // 编辑的查询
 	public UserRoomCustomer bdlandeditsearch(Long userid) {
 		return bdmanagerMapper.bdlandeditsearch(userid);
+	}
+
+	@Override
+	public ResultMap removeland(Long userid) {
+		Landlord search = landlordMapper.selectByPrimaryKey(userid);
+		search.setBdid("");
+		landlordMapper.updateByPrimaryKeySelective(search);
+		return ResultMap.IS_200();
 	}
 
 }

@@ -53,5 +53,8 @@ public interface BDService {
 	List<BuildingCustomer> searchBuildingBylandId(Long userid);
 	
 	UserRoomCustomer bdlandeditsearch(Long userid);
+	
+	/** 移除管理房东 **/
+	ResultMap removeland(Long userid);
 
 }

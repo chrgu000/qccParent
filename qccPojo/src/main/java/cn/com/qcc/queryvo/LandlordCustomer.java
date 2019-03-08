@@ -9,7 +9,7 @@ public class LandlordCustomer extends Landlord {
 	
 	private Long telephone;
 	
-	private String address;
+	
 
 	
 	
@@ -30,13 +30,7 @@ public class LandlordCustomer extends Landlord {
 		this.userid = userid;
 	}
 
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
+	
 	
 	
 
