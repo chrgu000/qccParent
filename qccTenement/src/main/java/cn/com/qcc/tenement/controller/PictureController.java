@@ -49,6 +49,8 @@ public class PictureController {
 	@RequestMapping("/videoUpload")
 	@ResponseBody
 	public ResultMap videoUpload(MultipartFile content) {
+		
+		
 		if (content.isEmpty()) 
 			return ResultMap.build(400, "选择文件");
 		//获取文件大小
@@ -69,7 +71,7 @@ public class PictureController {
 		SimpleUpload.vedioUpload(content, key);
 		// 设置返回的路径
 		String returPath  = qview_path + key ;
-		return ResultMap.IS_200(returPath);
+		return ResultMap.build(200, "视频上传成功 !!"  ,returPath);
 	}
 	
 	@ResponseBody

@@ -9,7 +9,7 @@
     <result column="realname" property="realname" jdbcType="VARCHAR" />
     <result column="landstate" property="landstate" jdbcType="INTEGER" />
     <result column="code" property="code" jdbcType="BIGINT" />
-    <result column="landaddress" property="landaddress" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
     <result column="update_time" property="update_time" jdbcType="TIMESTAMP" />
     <result column="brandname" property="brandname" jdbcType="VARCHAR" />
     <result column="corporate" property="corporate" jdbcType="VARCHAR" />
@@ -75,7 +75,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    landuserid, bdid, identity, idpictures, realname, landstate, code, landaddress, update_time, 
+    landuserid, bdid, identity, idpictures, realname, landstate, code, address, update_time, 
     brandname, corporate, businessnum, businesspicture
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.LandlordExample" >
@@ -109,22 +109,22 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Landlord" >
-   <selectKey  resultType="long"  order="AFTER"  keyProperty="landlordid" >
+     <selectKey  resultType="long"  order="AFTER"  keyProperty="landlordid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into landlord (landuserid, bdid, identity, 
       idpictures, realname, landstate, 
-      code, landaddress, update_time, 
+      code, address, update_time, 
       brandname, corporate, businessnum, 
       businesspicture)
     values (#{landuserid,jdbcType=BIGINT}, #{bdid,jdbcType=VARCHAR}, #{identity,jdbcType=VARCHAR}, 
       #{idpictures,jdbcType=VARCHAR}, #{realname,jdbcType=VARCHAR}, #{landstate,jdbcType=INTEGER}, 
-      #{code,jdbcType=BIGINT}, #{landaddress,jdbcType=VARCHAR}, #{update_time,jdbcType=TIMESTAMP}, 
+      #{code,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, #{update_time,jdbcType=TIMESTAMP}, 
       #{brandname,jdbcType=VARCHAR}, #{corporate,jdbcType=VARCHAR}, #{businessnum,jdbcType=VARCHAR}, 
       #{businesspicture,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Landlord" >
-   <selectKey  resultType="long"  order="AFTER"  keyProperty="landlordid" >
+     <selectKey  resultType="long"  order="AFTER"  keyProperty="landlordid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into landlord
@@ -150,8 +150,8 @@
       <if test="code != null" >
         code,
       </if>
-      <if test="landaddress != null" >
-        landaddress,
+      <if test="address != null" >
+        address,
       </if>
       <if test="update_time != null" >
         update_time,
@@ -191,8 +191,8 @@
       <if test="code != null" >
         #{code,jdbcType=BIGINT},
       </if>
-      <if test="landaddress != null" >
-        #{landaddress,jdbcType=VARCHAR},
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
       </if>
       <if test="update_time != null" >
         #{update_time,jdbcType=TIMESTAMP},
@@ -241,8 +241,8 @@
       <if test="record.code != null" >
         code = #{record.code,jdbcType=BIGINT},
       </if>
-      <if test="record.landaddress != null" >
-        landaddress = #{record.landaddress,jdbcType=VARCHAR},
+      <if test="record.address != null" >
+        address = #{record.address,jdbcType=VARCHAR},
       </if>
       <if test="record.update_time != null" >
         update_time = #{record.update_time,jdbcType=TIMESTAMP},
@@ -273,7 +273,7 @@
       realname = #{record.realname,jdbcType=VARCHAR},
       landstate = #{record.landstate,jdbcType=INTEGER},
       code = #{record.code,jdbcType=BIGINT},
-      landaddress = #{record.landaddress,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
       update_time = #{record.update_time,jdbcType=TIMESTAMP},
       brandname = #{record.brandname,jdbcType=VARCHAR},
       corporate = #{record.corporate,jdbcType=VARCHAR},
@@ -304,8 +304,8 @@
       <if test="code != null" >
         code = #{code,jdbcType=BIGINT},
       </if>
-      <if test="landaddress != null" >
-        landaddress = #{landaddress,jdbcType=VARCHAR},
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
       </if>
       <if test="update_time != null" >
         update_time = #{update_time,jdbcType=TIMESTAMP},
@@ -333,7 +333,7 @@
       realname = #{realname,jdbcType=VARCHAR},
       landstate = #{landstate,jdbcType=INTEGER},
       code = #{code,jdbcType=BIGINT},
-      landaddress = #{landaddress,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
       update_time = #{update_time,jdbcType=TIMESTAMP},
       brandname = #{brandname,jdbcType=VARCHAR},
       corporate = #{corporate,jdbcType=VARCHAR},

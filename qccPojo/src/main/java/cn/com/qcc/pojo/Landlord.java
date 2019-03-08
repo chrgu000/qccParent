@@ -25,7 +25,7 @@ public class Landlord {
     private Long code;
 
     /** utf8*/
-    private String landaddress;
+    private String address;
 
     /** 更新时间*/
     private Date update_time;
@@ -98,12 +98,12 @@ public class Landlord {
         this.code = code;
     }
 
-    public String getLandaddress() {
-        return landaddress;
+    public String getAddress() {
+        return address;
     }
 
-    public void setLandaddress(String landaddress) {
-        this.landaddress = landaddress == null ? null : landaddress.trim();
+    public void setAddress(String address) {
+        this.address = address == null ? null : address.trim();
     }
 
     public Date getUpdate_time() {

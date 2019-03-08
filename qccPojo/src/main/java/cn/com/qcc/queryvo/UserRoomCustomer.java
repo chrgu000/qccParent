@@ -36,6 +36,17 @@ public class UserRoomCustomer {
 	
 	private Date updatetime;
 	
+	private String brandname;
+	
+	private String corporate;
+	
+	private String businesspicture;
+	
+	private String businessnum ; 
+	
+	private String address;
+	
+	private String trading;
 	
 	
 	
@@ -65,6 +76,44 @@ public class UserRoomCustomer {
 	
 	
 	
+	
+	
+	public String getBrandname() {
+		return brandname;
+	}
+	public void setBrandname(String brandname) {
+		this.brandname = brandname;
+	}
+	public String getCorporate() {
+		return corporate;
+	}
+	public void setCorporate(String corporate) {
+		this.corporate = corporate;
+	}
+	public String getBusinesspicture() {
+		return businesspicture;
+	}
+	public void setBusinesspicture(String businesspicture) {
+		this.businesspicture = businesspicture;
+	}
+	public String getBusinessnum() {
+		return businessnum;
+	}
+	public void setBusinessnum(String businessnum) {
+		this.businessnum = businessnum;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public String getTrading() {
+		return trading;
+	}
+	public void setTrading(String trading) {
+		this.trading = trading;
+	}
 	public Date getUpdatetime() {
 		return updatetime;
 	}

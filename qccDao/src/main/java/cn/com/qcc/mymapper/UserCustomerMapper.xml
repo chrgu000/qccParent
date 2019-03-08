@@ -109,7 +109,7 @@
 			  detaileaddress.detailes ,
 			  house.house_number ,
 			  house.area ,
-			  IFNULL(landlord.landaddress ,'')landaddress
+			  IFNULL(landlord.address ,'')landaddress
 			 from house LEFT JOIN `profile` on house.user_id = `profile`.user_id
 				INNER JOIN building on house.buildingid = building.buildingid
 				INNER JOIN detaileaddress on building.detailid = detaileaddress.detailid

@@ -4,6 +4,7 @@ import java.util.List;
 
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Bdmanager;
+import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.UserRoomCustomer;
 
@@ -32,7 +33,7 @@ public interface BDService {
 	List<UserRoomCustomer> searchUserToLand(String searchWhere);
 	
 	/**BD添加房东**/
-	ResultMap addLand(String BD_ACCTOKEN, Long userid , String address , Long code);
+	ResultMap addLand(String BD_ACCTOKEN, Landlord landlord ,Long userid);
 
 	Bdmanager getBdidByToken(String BD_ACCTOKEN);
 
@@ -47,5 +48,10 @@ public interface BDService {
 	
 	/**删除房东绑定的楼栋**/
 	ResultMap deleteBuildingland(Long userid, Long buildingid);
+	
+	/**查询房东对应的楼栋**/
+	List<BuildingCustomer> searchBuildingBylandId(Long userid);
+	
+	UserRoomCustomer bdlandeditsearch(Long userid);
 
 }

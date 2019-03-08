@@ -43,4 +43,10 @@ public interface BdmanagerMapper {
 	
 	//查询想要添加的楼栋
 	List<BuildingCustomer> searchAddBuildingToland(String searchWhere);
+	
+	/**根据房东id查询楼栋**/
+	List<BuildingCustomer> searchBuildingBylandId(Long userid);
+	
+	/**编辑的查询**/
+	UserRoomCustomer bdlandeditsearch(Long userid);
 }

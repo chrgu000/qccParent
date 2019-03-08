@@ -187,6 +187,10 @@ public class BDServiceImpl implements BDService{
 		}
 		password = IDUtils.getprivatePassword(password);
 		bdmanager.setPassword(password);
+		
+		// 重置登录安全码
+		String securitytoken = UUID.randomUUID().toString();
+		bdmanager.setSecuritytoken(securitytoken);
 		bdmanagerMapper.updateByPrimaryKeySelective(bdmanager);
 		return ResultMap.build(200, "修改成功");
 	}
@@ -197,10 +201,10 @@ public class BDServiceImpl implements BDService{
 	}
 
 	@Override
-	public ResultMap addLand(String BD_ACCTOKEN, Long userid , String address ,Long code) {
+	public ResultMap addLand(String BD_ACCTOKEN, Landlord landlord , Long userid) {
 		
-		if (CheckDataUtil.checkisEmpty(address)
-				|| CheckDataUtil.checkisEmpty(code)) {
+		if (CheckDataUtil.checkisEmpty(landlord.getAddress())
+				|| CheckDataUtil.checkisEmpty(landlord.getCode())) {
 			return ResultMap.build(400, "选择区域");
 		}
 		
@@ -218,22 +222,18 @@ public class BDServiceImpl implements BDService{
 		}
 		
 		// 判断是否有房东数据
-		Landlord landlord = landlordMapper.selectByPrimaryKey(userid);
-		if (CheckDataUtil.checkNotEmpty(landlord)) {
-			if (landlord.getLandstate() == 2) {return ResultMap.build(400, "已经是房东");}
+		Landlord searchlandlord = landlordMapper.selectByPrimaryKey(userid);
+		if (CheckDataUtil.checkNotEmpty(searchlandlord)) {
+			landlord.setLanduserid(userid);
 			landlord.setLandstate(2);
-			landlord.setBdid(bdmanager.getBdid());
-			landlord.setLandaddress(address);
-			landlord.setCode(code);
+			landlord.setUpdate_time(new Date());
 			landlordMapper.updateByPrimaryKeySelective(landlord);
-			return ResultMap.build(200, "添加成功");
+			return ResultMap.build(200, "编辑成功");
 		}
 		
-		landlord = new Landlord();
-		landlord.setBdid(bdmanager.getBdid());
-		landlord.setLandaddress(address);
-		landlord.setCode(code);
+		
 		landlord.setLanduserid(userid);
+		landlord.setLandstate(2);
 		landlord.setUpdate_time(new Date());
 		landlordMapper.insertSelective(landlord);
 		return ResultMap.build(200, "添加成功");
@@ -330,6 +330,22 @@ public class BDServiceImpl implements BDService{
 		buildinglandlordMapper.deleteByExample(example);
 		
 		return ResultMap.build(200, "删除成功");
+	}
+
+	@Override
+	public List<BuildingCustomer> searchBuildingBylandId(Long userid) {
+		// TODO Auto-generated method stub
+		List<BuildingCustomer> list =  bdmanagerMapper.searchBuildingBylandId(userid);
+		if (CheckDataUtil.checkisEmpty(list)) {
+			list = new ArrayList<>();
+		}
+		
+		return list ;
+	}
+
+    // 编辑的查询
+	public UserRoomCustomer bdlandeditsearch(Long userid) {
+		return bdmanagerMapper.bdlandeditsearch(userid);
 	}
 
 }

@@ -565,73 +565,73 @@ public class LandlordExample {
             return (Criteria) this;
         }
 
-        public Criteria andLandaddressIsNull() {
-            addCriterion("landaddress is null");
+        public Criteria andAddressIsNull() {
+            addCriterion("address is null");
             return (Criteria) this;
         }
 
-        public Criteria andLandaddressIsNotNull() {
-            addCriterion("landaddress is not null");
+        public Criteria andAddressIsNotNull() {
+            addCriterion("address is not null");
             return (Criteria) this;
         }
 
-        public Criteria andLandaddressEqualTo(String value) {
-            addCriterion("landaddress =", value, "landaddress");
+        public Criteria andAddressEqualTo(String value) {
+            addCriterion("address =", value, "address");
             return (Criteria) this;
         }
 
-        public Criteria andLandaddressNotEqualTo(String value) {
-            addCriterion("landaddress <>", value, "landaddress");
+        public Criteria andAddressNotEqualTo(String value) {
+            addCriterion("address <>", value, "address");
             return (Criteria) this;
         }
 
-        public Criteria andLandaddressGreaterThan(String value) {
-            addCriterion("landaddress >", value, "landaddress");
+        public Criteria andAddressGreaterThan(String value) {
+            addCriterion("address >", value, "address");
             return (Criteria) this;
         }
 
-        public Criteria andLandaddressGreaterThanOrEqualTo(String value) {
-            addCriterion("landaddress >=", value, "landaddress");
+        public Criteria andAddressGreaterThanOrEqualTo(String value) {
+            addCriterion("address >=", value, "address");
             return (Criteria) this;
         }
 
-        public Criteria andLandaddressLessThan(String value) {
-            addCriterion("landaddress <", value, "landaddress");
+        public Criteria andAddressLessThan(String value) {
+            addCriterion("address <", value, "address");
             return (Criteria) this;
         }
 
-        public Criteria andLandaddressLessThanOrEqualTo(String value) {
-            addCriterion("landaddress <=", value, "landaddress");
+        public Criteria andAddressLessThanOrEqualTo(String value) {
+            addCriterion("address <=", value, "address");
             return (Criteria) this;
         }
 
-        public Criteria andLandaddressLike(String value) {
-            addCriterion("landaddress like", value, "landaddress");
+        public Criteria andAddressLike(String value) {
+            addCriterion("address like", value, "address");
             return (Criteria) this;
         }
 
-        public Criteria andLandaddressNotLike(String value) {
-            addCriterion("landaddress not like", value, "landaddress");
+        public Criteria andAddressNotLike(String value) {
+            addCriterion("address not like", value, "address");
             return (Criteria) this;
         }
 
-        public Criteria andLandaddressIn(List<String> values) {
-            addCriterion("landaddress in", values, "landaddress");
+        public Criteria andAddressIn(List<String> values) {
+            addCriterion("address in", values, "address");
             return (Criteria) this;
         }
 
-        public Criteria andLandaddressNotIn(List<String> values) {
-            addCriterion("landaddress not in", values, "landaddress");
+        public Criteria andAddressNotIn(List<String> values) {
+            addCriterion("address not in", values, "address");
             return (Criteria) this;
         }
 
-        public Criteria andLandaddressBetween(String value1, String value2) {
-            addCriterion("landaddress between", value1, value2, "landaddress");
+        public Criteria andAddressBetween(String value1, String value2) {
+            addCriterion("address between", value1, value2, "address");
             return (Criteria) this;
         }
 
-        public Criteria andLandaddressNotBetween(String value1, String value2) {
-            addCriterion("landaddress not between", value1, value2, "landaddress");
+        public Criteria andAddressNotBetween(String value1, String value2) {
+            addCriterion("address not between", value1, value2, "address");
             return (Criteria) this;
         }
 

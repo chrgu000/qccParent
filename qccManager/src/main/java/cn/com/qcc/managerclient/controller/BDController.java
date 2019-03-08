@@ -13,6 +13,7 @@ import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.pojo.Bdmanager;
+import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.UserRoomCustomer;
 import cn.com.qcc.service.BDService;
@@ -86,14 +87,21 @@ public class BDController {
 	
 	// BD添加房东
 	@RequestMapping ("/bdaddLand")
-	public ResultMap addLand (String BD_ACCTOKEN ,  Long userid , String address ,Long code ) {
-		return bdService.addLand(BD_ACCTOKEN , userid , address , code);
+	public ResultMap addLand (String BD_ACCTOKEN ,Landlord landlord , Long userid 
+			) {
+		return bdService.addLand(BD_ACCTOKEN ,landlord , userid);
 	}
 	
 	
 	// 我管理的房东
 	@RequestMapping ("/bdmyLand")
 	public ResultMap bdmyLand (String BD_ACCTOKEN  ,Long code ) {
+		
+		Bdmanager bdmanager = bdService.getBdidByToken(BD_ACCTOKEN);
+		if (CheckDataUtil.checkisEmpty(bdmanager)
+				|| bdmanager.getState().intValue() != 1 ) {
+			return ResultMap.build(400, "你已被移除BD管理");
+		}
 		List<UserRoomCustomer> myLand = bdService.myLand(BD_ACCTOKEN , code);	
 		return ResultMap.IS_200(myLand);			
 	}
@@ -107,20 +115,35 @@ public class BDController {
 	}
 	
 	
+	
+	// 根据房东id查询楼栋列表
+	@RequestMapping("/searchBuildingBylandId")
+	public ResultMap searchBuildingBylandId (Long userid) {
+		List<BuildingCustomer> builList = bdService.searchBuildingBylandId(userid);
+		return ResultMap.IS_200(builList);
+	}
+	
+	
 	// 添加楼栋
 	@RequestMapping("/addBuildingToland")
-	public ResultMap addBuildingToland (Long userid , Long buildingid) { 
+	public ResultMap addBuildingToland (  Long userid , Long buildingid) { 
 		return bdService.addBuildingToland(userid , buildingid);
 	}
 	
 	
 	// 删除房东绑定的楼栋
 	@RequestMapping("/deleteBuildingland")
-	public ResultMap deleteBuildingland (Long userid , Long buildingid) {
-		
+	public ResultMap deleteBuildingland ( Long userid , Long buildingid) {
 		return bdService.deleteBuildingland(userid , buildingid);
 	}
 	
+	
+	// 编辑的查询
+	@RequestMapping("/bdlandeditsearch")
+	public ResultMap bdlandeditsearch (Long userid ) {
+		UserRoomCustomer bdlandeditsearch = bdService.bdlandeditsearch(userid);
+		return ResultMap.IS_200(bdlandeditsearch);
+	}
 	
 	
 	
