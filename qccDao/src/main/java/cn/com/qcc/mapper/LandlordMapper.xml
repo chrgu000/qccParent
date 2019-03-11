@@ -109,9 +109,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Landlord" >
-     <selectKey  resultType="long"  order="AFTER"  keyProperty="landlordid" >
-            SELECT LAST_INSERT_ID() 
-    </selectKey>
+    
     insert into landlord (landuserid, bdid, identity, 
       idpictures, realname, landstate, 
       code, address, update_time, 
@@ -124,9 +122,7 @@
       #{businesspicture,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Landlord" >
-     <selectKey  resultType="long"  order="AFTER"  keyProperty="landlordid" >
-            SELECT LAST_INSERT_ID() 
-    </selectKey>
+    
     insert into landlord
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="landuserid != null" >

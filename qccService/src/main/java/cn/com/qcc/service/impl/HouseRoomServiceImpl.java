@@ -30,6 +30,8 @@ import cn.com.qcc.mapper.FurnitureMapper;
 import cn.com.qcc.mapper.HistorycentMapper;
 import cn.com.qcc.mapper.HouseMapper;
 import cn.com.qcc.mapper.HousepayMapper;
+import cn.com.qcc.mapper.LandlordManagerMapper;
+import cn.com.qcc.mapper.LandlordMapper;
 import cn.com.qcc.mapper.MycentMapper;
 import cn.com.qcc.mapper.PayexpertMapper;
 import cn.com.qcc.mapper.PaymodalMapper;
@@ -44,6 +46,9 @@ import cn.com.qcc.pojo.Furniture;
 import cn.com.qcc.pojo.Historycent;
 import cn.com.qcc.pojo.House;
 import cn.com.qcc.pojo.Housepay;
+import cn.com.qcc.pojo.Landlord;
+import cn.com.qcc.pojo.LandlordManager;
+import cn.com.qcc.pojo.LandlordManagerExample;
 import cn.com.qcc.pojo.Mycent;
 import cn.com.qcc.pojo.Payexpert;
 import cn.com.qcc.pojo.Paymodal;
@@ -77,12 +82,40 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 	@Autowired FurnitureMapper furnitureMapper;
 	@Resource  Destination userCentCreate;
 	@Autowired JmsTemplate jmsTemplate;
+	@Autowired LandlordMapper landlordMapper;
+	@Autowired LandlordManagerMapper landlordManagerMapper;
 	
 	
 
 
 	/**查询房态图**/
 	public List<HouseRoomCustomer> roompattern(HouseVo houseVo) {
+		
+		// 判断当前用户是不是房东
+		Landlord landlord = landlordMapper.selectByPrimaryKey(houseVo.getUserid());
+		String inUserIds = "";
+		if (CheckDataUtil.checkNotEmpty(landlord)
+				|| landlord.getLandstate().intValue() == 2) {
+			LandlordManagerExample example = new LandlordManagerExample();
+			LandlordManagerExample.Criteria criteria = example.createCriteria();
+			criteria.andLanduseridEqualTo(houseVo.getUserid());
+			List<LandlordManager> selectByExample = landlordManagerMapper.selectByExample(example);
+			if (CheckDataUtil.checkNotEmpty(selectByExample)) {
+				for (LandlordManager manager : selectByExample) {
+					inUserIds +=manager.getManageruserid() +",";
+				}
+				inUserIds = inUserIds + houseVo.getUserid();
+			} else {
+				inUserIds = houseVo.getUserid().toString();
+			}
+		}else {
+			inUserIds = houseVo.getUserid().toString();
+		}
+		
+		System.out.println(inUserIds);
+		houseVo.setInUserIds(inUserIds);
+		
+		
 		// 第一步,查询出基本的房源信息列表
 		List<HouseRoomCustomer> houseList = houseRoomCustomerMapper.roompattern(houseVo);
 		

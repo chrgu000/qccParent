@@ -20,12 +20,14 @@ import cn.com.qcc.mapper.BdmanagerMapper;
 import cn.com.qcc.mapper.BuildinglandlordMapper;
 import cn.com.qcc.mapper.LandlordMapper;
 import cn.com.qcc.mapper.ProfileMapper;
+import cn.com.qcc.mapper.UserMapper;
 import cn.com.qcc.mymapper.UserCustomerMapper;
 import cn.com.qcc.pojo.Bdmanager;
 import cn.com.qcc.pojo.BdmanagerExample;
 import cn.com.qcc.pojo.Buildinglandlord;
 import cn.com.qcc.pojo.BuildinglandlordExample;
 import cn.com.qcc.pojo.Landlord;
+import cn.com.qcc.pojo.User;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.queryvo.UserRoomCustomer;
@@ -46,6 +48,8 @@ public class BDServiceImpl implements BDService{
 	LandlordMapper landlordMapper;
 	@Autowired
 	BuildinglandlordMapper buildinglandlordMapper;
+	@Autowired
+	UserMapper userMapper;
 	
 	@SuppressWarnings("static-access")
 	@Override
@@ -220,24 +224,31 @@ public class BDServiceImpl implements BDService{
 				|| bdmanager.getState() == 0) {
 			return ResultMap.build(400, "异常的BD账号");
 		}
-		
+		// 这里需要通知房东
+		User landDetail = userMapper.selectByPrimaryKey(userid);
+		String content =bdmanager.getRealname() +"," + bdmanager.getTelephone();
+		String phone = landDetail.getTelephone().toString();
+		String modelId = WangYiCommon.BD_ADD_LAND_NOTIC;
 		// 判断是否有房东数据
 		Landlord searchlandlord = landlordMapper.selectByPrimaryKey(userid);
 		if (CheckDataUtil.checkNotEmpty(searchlandlord)) {
+			String oldBdid = searchlandlord.getBdid();
 			landlord.setLanduserid(userid);
 			landlord.setLandstate(2);
 			landlord.setBdid(bdmanager.getBdid());
 			landlord.setUpdate_time(new Date());
 			landlordMapper.updateByPrimaryKeySelective(landlord);
+			if (CheckDataUtil.checkNotEqual(oldBdid, bdmanager.getBdid())) {
+				SendMessage.sendNoticMess(content, phone, modelId);
+			}
 			return ResultMap.build(200, "编辑成功");
 		}
-		
-		
 		landlord.setLanduserid(userid);
 		landlord.setLandstate(2);
 		landlord.setBdid(bdmanager.getBdid());
 		landlord.setUpdate_time(new Date());
 		landlordMapper.insertSelective(landlord);
+		SendMessage.sendNoticMess(content, phone, modelId);
 		return ResultMap.build(200, "添加成功");
 	}
 
@@ -356,6 +367,18 @@ public class BDServiceImpl implements BDService{
 		search.setBdid("");
 		landlordMapper.updateByPrimaryKeySelective(search);
 		return ResultMap.IS_200();
+	}
+
+	@Override
+	public ResultMap editAvatar(String bD_ACCTOKEN, String avatar) {
+		// TODO Auto-generated method stub
+		Bdmanager bdidByToken = getBdidByToken(bD_ACCTOKEN);
+		if (CheckDataUtil.checkisEmpty(bdidByToken)) {
+			return ResultMap.build(400, "未知用户");
+		}
+		bdidByToken.setAvatar(avatar);
+		bdmanagerMapper.updateByPrimaryKeySelective(bdidByToken);
+		return ResultMap.build(200, "编辑成功") ;
 	}
 
 }

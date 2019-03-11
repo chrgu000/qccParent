@@ -48,10 +48,20 @@ public class HouseVo {
 	
 	private String orderbytime;
 	
+	private String inUserIds ;
 	
 	
 	
 	
+	
+	public String getInUserIds() {
+		return inUserIds;
+	}
+
+	public void setInUserIds(String inUserIds) {
+		this.inUserIds = inUserIds;
+	}
+
 	public BrandCustomer getBrandCustomer() {
 		return brandCustomer;
 	}

@@ -47,11 +47,11 @@
 				FROM
 					house
 				WHERE
-					house.user_id = #{userid}
+				house.user_id in (inUserIds)
 				AND house.housestatus NOT IN (3)
 				GROUP BY house.buildingid
 		  )eventcount on eventcount.buildingid = building.buildingid
-		  where house.user_id =#{userid} and house.housestatus !='3'
+		  where house.user_id in (inUserIds)  and house.housestatus !='3'
 		<!-- 这里封装房源的查询条件 --> 
  	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_roomparrent_where"></include>
  	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"></include>
@@ -93,11 +93,11 @@
 				FROM
 					house
 				WHERE
-					house.user_id = #{userid}
+					house.user_id in (inUserIds)
 				AND house.housestatus NOT IN (3)
 				GROUP BY house.buildingid
 		  )eventcount on eventcount.buildingid = building.buildingid
-		  where house.user_id =#{userid} and house.housestatus !='3'
+		  where house.user_id  in (inUserIds) and house.housestatus !='3'
 		<!-- 这里封装房源的查询条件 --> 
  	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_roomparrent_where"></include>
  	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"></include>

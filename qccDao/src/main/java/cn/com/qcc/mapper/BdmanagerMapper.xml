@@ -285,10 +285,19 @@
   		SELECT
 				`profile`.user_id userid, 
 				`profile`.real_name realname, 
-				`user`.telephone 
+				`user`.telephone , 
+				 IFNULL(landlord.address,'')address ,
+				 IFNULL(landlord.brandname,'') brandname, 
+				 IFNULL(landlord.businessnum,'')businessnum ,
+                 IFNULL(landlord.businesspicture,'')businesspicture ,
+				 IFNULL(landlord.corporate,'')corporate ,
+				 IFNULL(area.`name`,'') trading ,
+				 area.`code`  
 			FROM
 				`profile`
 			INNER JOIN `user` on `user`.userid = `profile`.user_id
+			LEFT JOIN landlord ON `user`.userid = landlord.landuserid
+			LEFT JOIN area on area.`code` = landlord.`code`
 			WHERE
 				`profile`.signstate = 2
 			AND `profile`.user_id NOT IN (
@@ -320,6 +329,7 @@
   		SELECT
 			landlord.landuserid userid,
 			landlord.landstate  ,
+			`user`.telephone , 
 			landlord.update_time updatetime ,
 			IFNULL( `profile`.real_name,`profile`.user_name ) realname ,
 			`profile`.avatar  ,
@@ -327,6 +337,7 @@
 		FROM
 			landlord
 		LEFT JOIN `profile` on `profile`.user_id = landlord.landuserid
+		LEFT JOIN  `user` on user.userid = `profile`.user_id
 		LEFT JOIN area on area.`code` = landlord.`code` 
 		WHERE
 		landlord.bdid = #{bdid}

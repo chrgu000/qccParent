@@ -460,10 +460,12 @@ public class SendMessage {
 	 * @param modelId : 模板消息id
 	 * */
 	public static void sendNoticMess(String content ,String phone,String modelId) {
-		String [] contents = content.split("^");
-		String [] phones = phone.split("^");
+		String [] contents = content.split(",");
+		String [] phones = phone.split(",");
 		content = prease(contents);
 		phone =   prease(phones);
+		System.out.println(contents.length);
+		System.out.println(phone);
 		WangYiUtil.sendNoticMess(content, phone, modelId);
 	}
 	

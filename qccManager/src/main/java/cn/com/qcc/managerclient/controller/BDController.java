@@ -33,10 +33,15 @@ public class BDController {
 	
 	@RequestMapping("/bdlogin/{type}")
 	public ResultMap login (String account , String word ,@PathVariable int type ) {
+		/** 	
+		type = 2 ;
+		account = "qbd10006";
+		word = "4d76087378d5f71bd9f994668e342e92e7894d80";
+	**/
+		
 		
 		// 通过手机号或者账号查询
 		Bdmanager maBdmanager = bdService.searchBDByPhoneOrId(account);
-		System.out.println( maBdmanager.getState()  );
 		if (CheckDataUtil.checkisEmpty(maBdmanager)
 				||maBdmanager.getState().intValue() != 1) 
 			return ResultMap.build(400, "账号禁用");
@@ -149,8 +154,13 @@ public class BDController {
 	// 移除房源
 	@RequestMapping("/removeland")
 	public ResultMap removeland (Long userid) {
-		
 		return bdService.removeland(userid);
+	}
+	
+	// 编辑头像
+	@RequestMapping("/bdeditAvatar")
+	public ResultMap editAvatar (String BD_ACCTOKEN  ,String  avatar) {
+		return bdService.editAvatar(BD_ACCTOKEN ,avatar );
 	}
 	
 	

@@ -57,4 +57,6 @@ public interface BDService {
 	/** 移除管理房东 **/
 	ResultMap removeland(Long userid);
 
+	ResultMap editAvatar(String bD_ACCTOKEN, String avatar);
+
 }

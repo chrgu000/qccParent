@@ -21,6 +21,7 @@ import cn.com.qcc.common.Base64;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.CheckSumBuilder;
 import cn.com.qcc.common.JsonUtils;
+import cn.com.qcc.common.SendMessage;
 
 @SuppressWarnings({ "deprecation", "resource", "static-access", "unchecked" })
 public class WangYiUtil {
@@ -479,6 +480,14 @@ public class WangYiUtil {
 			e.printStackTrace();
 			return returnmap;
 		}
+	}
+	
+	
+	public static void main (String [] args) {
+		String modelId = "9654153";
+		String phones = "17683875971,18682067129";
+		String contents="50,10";
+		SendMessage.sendNoticMess(contents, phones, modelId);
 	}
 	
 	/**发送用户收益通知**/

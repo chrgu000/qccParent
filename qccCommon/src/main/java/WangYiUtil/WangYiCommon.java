@@ -66,6 +66,9 @@ public class WangYiCommon {
 	/**BD 账号添加成功后通知用户**/
 	public static final String BD_ADD_NOTIC = "9664334";
 	
+	/**BD 添加房东后通知房东**/
+	public static final String BD_ADD_LAND_NOTIC = "9764325";
+	
 	
 
 }
