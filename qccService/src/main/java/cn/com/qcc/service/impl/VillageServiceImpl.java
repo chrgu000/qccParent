@@ -127,9 +127,6 @@ public class VillageServiceImpl implements VillageService {
 		if (village.getCode() == null || "".equals(village.getCode())) {
 			return ResultMap.build(701, "检查区域");
 		}
-		/*if (village.getUserid() == null) {
-			return ResultMap.build(404, "操作需要登录");
-		}*/
 		if (village.getPicture() == null || "".equals(village.getPicture())) {
 			return ResultMap.build(401, "插入图片");
 		}
@@ -151,18 +148,25 @@ public class VillageServiceImpl implements VillageService {
 		}
 		// 通过
 		Integer searchstate = systemstateMapper.selectByPrimaryKey(7).getDefaultstate();
-		village.setState(searchstate);
 		village.setDetailid(Long.valueOf(detailid));
-		// 设置更新时间
-		village.setUpdate_time(new Date());
-		village.setXcxpicture("");
-		villageMapper.insertSelective(village);
-		
+		// 这里做新增操作
+		if (CheckDataUtil.checkisEmpty(village.getVillageid())) {
+			village.setState(searchstate);
+			// 设置更新时间
+			village.setUpdate_time(new Date());
+			village.setXcxpicture("");
+			villageMapper.insertSelective(village);
+		} else {
+			// 否则做编辑操作
+			village.setBdid(null);
+			villageMapper.updateByPrimaryKeySelective(village);
+		}
 		String sendData = village.getVillageid()+"";
 		SendMessUtil.sendData(jmsTemplate, villageAdd, sendData);
 		
+		
 		// 发布成功后发送消息
-		return ResultMap.build(200, "更新成功");
+		return ResultMap.build(200, "操作成功");
 	}
 
 	// 检验最小地址是否存在
@@ -230,7 +234,7 @@ public class VillageServiceImpl implements VillageService {
 		}
 
 		Long lot = checklongandlat(detaileaddress);
-		if (lot > 0) {
+		if (lot > 0 && CheckDataUtil.checkisEmpty(building.getBuildingid())) {
 			return ResultMap.build(700, "检查定位");
 		}
 		Long detailid = checkeDetailaAddressExists(detaileaddress);
@@ -239,16 +243,25 @@ public class VillageServiceImpl implements VillageService {
 			detailid = detaileaddress.getDetailid();
 		}
 		Integer searchstate = systemstateMapper.selectByPrimaryKey(8).getDefaultstate();
-		building.setState(searchstate);
-		building.setUpdate_time(new Date());
 		building.setDetailid(Long.valueOf(detailid));
-		building.setXcxpicture("");
-		buildingMapper.insertSelective(building);
+		
+		if (CheckDataUtil.checkisEmpty(building.getBuildingid())) {
+			building.setState(searchstate);
+			building.setUpdate_time(new Date());
+			building.setXcxpicture("");
+			buildingMapper.insertSelective(building);
+		} else {
+			building.setBdid(null);
+			building.setBuildingcode(null);
+			buildingMapper.updateByPrimaryKeySelective(building);
+		}
+		
+		
 		
 		// 添加楼栋成功需要发送模板消息
 		String sendData = building.getBuildingid() + "";
 		SendMessUtil.sendData(jmsTemplate, builAdd, sendData);
-		return ResultMap.build(200, "添加成功");
+		return ResultMap.build(200, "操作成功");
 	}
 
 
@@ -594,14 +607,6 @@ public class VillageServiceImpl implements VillageService {
 		detaileaddressMapper.deleteByPrimaryKey(detailid);
 	}
 
-	/**查询楼栋的基本信息
-	 * @param buildingid : 楼栋ID
-	 * 
-	 * **/ 
-	public BuildingCustomer getsimplebuilding(Long buildingid) {
-
-		return villageCustomerMapper.getsimplebuilding(buildingid);
-	}
 
 	/**
 	 * 更新楼栋
@@ -1198,6 +1203,17 @@ public class VillageServiceImpl implements VillageService {
 		}
 		villageSolrDao.onevillagetosolr(village);
 		return ResultMap.IS_200();
+	}
+
+	@Override
+	public VillageCustomer villageEditSearch(Long villageid) {
+		// TODO Auto-generated method stub
+		return villageCustomerMapper.villageEditSearch(villageid);
+	}
+
+	@Override
+	public BuildingCustomer builEditSearch(Long buildingid) {
+		return villageCustomerMapper.builEditSearch(buildingid);
 	}
 
 	

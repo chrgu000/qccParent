@@ -385,13 +385,6 @@ public class VillageController {
 		return ResultMap.IS_200();
 	}
 
-	// 获取楼栋的详情信息
-	@ResponseBody
-	@RequestMapping("/village/simplebuildingdetail")
-	public ResultMap getbuildingdetail(Long buildingid) {
-		Building buildings = villageService.getsimplebuilding(buildingid);
-		return ResultMap.IS_200(buildings);
-	}
 
 	// 编辑楼栋
 	@RequestMapping("/village/updatebuilding")
@@ -664,8 +657,22 @@ public class VillageController {
 	}
 
 	
+	/**小区编辑的查询**/
+	@RequestMapping("/villageEditSearch")
+	@ResponseBody
+	public ResultMap villageEditSearch(Long villageid) {
+		VillageCustomer search = villageService.villageEditSearch(villageid);
+		return ResultMap.IS_200(search);
+	}
 	
 	
+	/**楼栋编辑的查询**/
+	@RequestMapping("/builEditSearch")
+	@ResponseBody
+	public ResultMap builEditSearch(Long buildingid) {
+		BuildingCustomer search = villageService.builEditSearch(buildingid);
+		return ResultMap.IS_200(search);
+	}
 	
 
 }

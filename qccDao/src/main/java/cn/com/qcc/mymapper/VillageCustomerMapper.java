@@ -76,7 +76,6 @@ public interface VillageCustomerMapper {
 
 	List<BuildingCustomer> update_villagedetailid(VillageeVo villagevo);
 	
-	BuildingCustomer getsimplebuilding( @Param("buildingid")Long buildingid);
 	
 	//查询出所有的code
 	List<Village>  getvillagebuidingcode();
@@ -120,6 +119,11 @@ public interface VillageCustomerMapper {
 	
 	/**根据code和查询关键字查询小区**/
 	List<VillageCustomer> getvillagebycode(@Param("code")Long code, @Param("searchWhere")String searchWhere);
+	
+	/**小区编辑的查询**/
+	VillageCustomer villageEditSearch(Long villageid);
+	
+	BuildingCustomer builEditSearch(Long buildingid);
 
 	
 

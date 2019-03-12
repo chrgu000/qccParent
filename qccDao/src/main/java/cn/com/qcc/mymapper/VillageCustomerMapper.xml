@@ -497,6 +497,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="searchWhere !=null and searchWhere !='' ">
 			and	building.`building` like CONCAT('%',#{searchWhere},'%')
 		</if>
+		LIMIT 0 , 50
 	</select>
 
 
@@ -726,13 +727,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	
 	<!--楼栋详情简单-->
-	<select id="getsimplebuilding" parameterType="long" resultType="cn.com.qcc.queryvo.BuildingCustomer">
+	<select id="builEditSearch" parameterType="long" resultType="cn.com.qcc.queryvo.BuildingCustomer">
 		SELECT building.*,metro.`name` metroname ,metro.finalstop , village.`code`,
-			IFNULL(brand.brand,'无品牌')brand ,detaileaddress.detailes ,village.villagename
+			IFNULL(brand.brand,'无品牌')brand ,detaileaddress.* ,village.villagename 
+			,area.name
 			from building 
 		LEFT JOIN metro on building.metroid = metro.metroid
 		LEFT JOIN brand on building.brandid = brand.brandid
 		LEFT JOIN village on village.villageid = building.villageid
+		LEFT JOIN area on area.`code` = village.`code` 
      LEFT JOIN detaileaddress on detaileaddress.detailid = building.detailid
 		where building.buildingid = #{buildingid}
 	</select>
@@ -1001,7 +1004,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<!-- 根据关键字查询小区 -->
 	<select id="getvillagebycode" resultType="cn.com.qcc.queryvo.VillageCustomer" >
-	
 		SELECT
 			village.villageid ,
 			village.`code` ,
@@ -1017,7 +1019,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="searchWhere !=null and  searchWhere!='' ">
 			AND village.`villagename` like  CONCAT('',#{searchWhere},'%')
 		</if>
-		
+		LIMIT 0 ,50
+	</select>
 	
+	
+	
+	
+	<!-- 小区编辑的查询 -->
+	<select id="villageEditSearch" resultType="cn.com.qcc.queryvo.VillageCustomer" >
+		SELECT
+				*
+			FROM
+				village
+			LEFT JOIN detaileaddress on detaileaddress.detailid = village.detailid
+			LEFT JOIN area on area.`code` = village.`code` 
+			WHERE
+				village.villageid = #{villageid}
 	</select>
 </mapper>

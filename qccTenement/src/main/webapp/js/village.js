@@ -652,7 +652,7 @@ function getbuildingdetail (buildingid,code) {
 			'buildingid' : buildingid
 		},
 		type : 'POST',
-		url : '/Tenement/village/simplebuildingdetail',
+		url : '/Tenement/builEditSearch',
 		success : function (data) {
 			$('.building_code').val(data.obj.code);
 			$('.building_building').val(data.obj.building);

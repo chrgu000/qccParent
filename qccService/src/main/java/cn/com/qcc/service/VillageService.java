@@ -119,10 +119,6 @@ public interface VillageService {
 	 * **/
 	void deletebuidilding(Long buildingid);
 
-	/**查询楼栋的基本信息
-	 * @param buildingid : 楼栋ID
-	 * **/ 
-	Building getsimplebuilding(Long buildingid);
 
 	/**
 	 * 更新楼栋
@@ -243,6 +239,12 @@ public interface VillageService {
 	
 	/**一条小区记录导入索引库**/
 	ResultMap onevillagetosolr(long villageid);
+	
+	/**小区编辑的查询**/
+	VillageCustomer villageEditSearch(Long villageid);
+	
+	/**楼栋编辑的查询**/
+	BuildingCustomer builEditSearch(Long buildingid);
 	
 	
 	
