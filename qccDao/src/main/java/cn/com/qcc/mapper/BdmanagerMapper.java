@@ -32,7 +32,7 @@ public interface BdmanagerMapper {
     int updateByPrimaryKey(Bdmanager record);
     
     
-    // 根据登录账号查询登录信息
+ // 根据登录账号查询登录信息
     Bdmanager searchBDByPhoneOrId(String account);
 
     // 查询想要添加的房东
@@ -49,4 +49,8 @@ public interface BdmanagerMapper {
 	
 	/**编辑的查询**/
 	UserRoomCustomer bdlandeditsearch(Long userid);
+
+	Bdmanager findOne(String bdid);
+
+	List<Bdmanager> listBD();
 }

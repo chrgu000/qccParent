@@ -116,6 +116,10 @@ public interface VillageCustomerMapper {
 	
 	/**一个房子导入索引库**/
 	VillageCustomer onevillagetosolr(long villageid);
+	
+	
+	/**根据code和查询关键字查询小区**/
+	List<VillageCustomer> getvillagebycode(@Param("code")Long code, @Param("searchWhere")String searchWhere);
 
 	
 

@@ -175,9 +175,13 @@
  		<if test="likename !=null and likename != '' ">
  			and   brand.brand like CONCAT('%',#{likename},'%')
  		</if>
+ 		
+ 	
  		 and (
  			brand.codes = '0' or brand.codes like CONCAT('',#{likecode},'%')
- 		) and brand.state != '3'
+ 		) 
+ 		
+ 		and brand.state != '3'
 	</select>
 	
 	

@@ -997,4 +997,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		  ) buyhouse on buyhouse.villageid = village.villageid 
 			where village.villageid =#{villageid}
 	</select>
+	
+	
+	<!-- 根据关键字查询小区 -->
+	<select id="getvillagebycode" resultType="cn.com.qcc.queryvo.VillageCustomer" >
+	
+		SELECT
+			village.villageid ,
+			village.`code` ,
+			village.villagename  ,
+			area.`name` trading 
+		FROM
+			village
+		INNER JOIN area on area.`code` = village.`code`
+		WHERE 1=1 
+		<if test="code!=null">
+			AND village.`code` like  CONCAT('',#{code},'%')
+		</if>
+		<if test="searchWhere !=null and  searchWhere!='' ">
+			AND village.`villagename` like  CONCAT('',#{searchWhere},'%')
+		</if>
+		
+	
+	</select>
 </mapper>

@@ -3,6 +3,7 @@
 <mapper namespace="cn.com.qcc.mapper.BdmanagerMapper" >
   <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Bdmanager" >
     <id column="bdid" property="bdid" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
     <result column="telephone" property="telephone" jdbcType="VARCHAR" />
     <result column="realname" property="realname" jdbcType="VARCHAR" />
     <result column="upate_time" property="upate_time" jdbcType="TIMESTAMP" />
@@ -71,7 +72,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    bdid, telephone, realname, upate_time, state, password, acctoken, securitytoken, 
+    bdid, code, telephone, realname, upate_time, state, password, acctoken, securitytoken, 
     avatar
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.BdmanagerExample" >
@@ -105,20 +106,23 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Bdmanager" >
-    insert into bdmanager (bdid, telephone, realname, 
-      upate_time, state, password, 
-      acctoken, securitytoken, avatar
-      )
-    values (#{bdid,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{realname,jdbcType=VARCHAR}, 
-      #{upate_time,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER}, #{password,jdbcType=VARCHAR}, 
-      #{acctoken,jdbcType=VARCHAR}, #{securitytoken,jdbcType=VARCHAR}, #{avatar,jdbcType=VARCHAR}
-      )
+    insert into bdmanager (bdid, code, telephone, 
+      realname, upate_time, state, 
+      password, acctoken, securitytoken, 
+      avatar)
+    values (#{bdid,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, 
+      #{realname,jdbcType=VARCHAR}, #{upate_time,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER}, 
+      #{password,jdbcType=VARCHAR}, #{acctoken,jdbcType=VARCHAR}, #{securitytoken,jdbcType=VARCHAR}, 
+      #{avatar,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Bdmanager" >
     insert into bdmanager
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="bdid != null" >
         bdid,
+      </if>
+      <if test="code != null" >
+        code,
       </if>
       <if test="telephone != null" >
         telephone,
@@ -148,6 +152,9 @@
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="bdid != null" >
         #{bdid,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
       </if>
       <if test="telephone != null" >
         #{telephone,jdbcType=VARCHAR},
@@ -187,6 +194,9 @@
       <if test="record.bdid != null" >
         bdid = #{record.bdid,jdbcType=VARCHAR},
       </if>
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=VARCHAR},
+      </if>
       <if test="record.telephone != null" >
         telephone = #{record.telephone,jdbcType=VARCHAR},
       </if>
@@ -219,6 +229,7 @@
   <update id="updateByExample" parameterType="map" >
     update bdmanager
     set bdid = #{record.bdid,jdbcType=VARCHAR},
+      code = #{record.code,jdbcType=VARCHAR},
       telephone = #{record.telephone,jdbcType=VARCHAR},
       realname = #{record.realname,jdbcType=VARCHAR},
       upate_time = #{record.upate_time,jdbcType=TIMESTAMP},
@@ -234,6 +245,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.Bdmanager" >
     update bdmanager
     <set >
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
       <if test="telephone != null" >
         telephone = #{telephone,jdbcType=VARCHAR},
       </if>
@@ -263,7 +277,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Bdmanager" >
     update bdmanager
-    set telephone = #{telephone,jdbcType=VARCHAR},
+    set code = #{code,jdbcType=VARCHAR},
+      telephone = #{telephone,jdbcType=VARCHAR},
       realname = #{realname,jdbcType=VARCHAR},
       upate_time = #{upate_time,jdbcType=TIMESTAMP},
       state = #{state,jdbcType=INTEGER},
@@ -273,9 +288,11 @@
       avatar = #{avatar,jdbcType=VARCHAR}
     where bdid = #{bdid,jdbcType=VARCHAR}
   </update>
+
   
   
-   <select id="searchBDByPhoneOrId" resultType="cn.com.qcc.pojo.Bdmanager">
+  
+  <select id="searchBDByPhoneOrId" resultType="cn.com.qcc.pojo.Bdmanager">
   		SELECT * from bdmanager where bdid = #{account} or telephone = #{account}
   </select>
   
@@ -414,5 +431,23 @@
 		LEFT JOIN area on area.`code` = landlord.`code`
 		
 		where `user`.userid = #{userid}
+  </select>
+  
+  
+    
+  <select id="findOne" resultType="cn.com.qcc.pojo.Bdmanager">
+  		SELECT bdmanager.* ,
+			 IFNULL(area.`name`,'中国')address
+	from bdmanager
+	LEFT JOIN area on area.`code` = bdmanager.`code` 
+  		where bdid = #{bdid}
+  </select>
+  
+  
+  <select id="listBD" resultType="cn.com.qcc.pojo.Bdmanager">
+  		SELECT bdmanager.* ,
+			 IFNULL(area.`name`,'中国')address
+	from bdmanager
+	LEFT JOIN area on area.`code` = bdmanager.`code` 
   </select>
 </mapper>

@@ -57,12 +57,15 @@ function getprovince (attr) {
 	if (attr == 'building') {select = $('#b_1').empty();}			//这里是楼栋发布统计四级联动
 	if (attr == 'metro') {select = $('#metro_1').empty();}			//这里是地铁四级联动
 	if (attr == 'export') {select = $('#export_1').empty();}
+	if (attr == 'bd') {select = $('#bd_1').empty();
+	}
 	//这里吧select传入调出省一级的地址
 	getprovinceajax(select);
 }
 //获得省地址一级的ajax
 function getprovinceajax(select) {
 	select.append('<option>请选择</option>');
+	
 	$.ajax({
 		url : '/Tenement/area/getareabycode',
 		success : function(a) {

@@ -1424,6 +1424,76 @@ public class BuildingExample {
             addCriterion("update_time not between", value1, value2, "update_time");
             return (Criteria) this;
         }
+
+        public Criteria andBdidIsNull() {
+            addCriterion("bdid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBdidIsNotNull() {
+            addCriterion("bdid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBdidEqualTo(String value) {
+            addCriterion("bdid =", value, "bdid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBdidNotEqualTo(String value) {
+            addCriterion("bdid <>", value, "bdid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBdidGreaterThan(String value) {
+            addCriterion("bdid >", value, "bdid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBdidGreaterThanOrEqualTo(String value) {
+            addCriterion("bdid >=", value, "bdid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBdidLessThan(String value) {
+            addCriterion("bdid <", value, "bdid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBdidLessThanOrEqualTo(String value) {
+            addCriterion("bdid <=", value, "bdid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBdidLike(String value) {
+            addCriterion("bdid like", value, "bdid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBdidNotLike(String value) {
+            addCriterion("bdid not like", value, "bdid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBdidIn(List<String> values) {
+            addCriterion("bdid in", values, "bdid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBdidNotIn(List<String> values) {
+            addCriterion("bdid not in", values, "bdid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBdidBetween(String value1, String value2) {
+            addCriterion("bdid between", value1, value2, "bdid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBdidNotBetween(String value1, String value2) {
+            addCriterion("bdid not between", value1, value2, "bdid");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

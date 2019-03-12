@@ -18,16 +18,36 @@ $(function () {
 		 $('.bd_telephone').val('');
 		 $('.bd_realname').val('');
 		 $('.bd_id').val('');
+		 getprovince('bd');
 		
 	});
 	
 	
 	$('.bd_save').click(function () {
+		var searchcode ='';
+		var  c1 = $('#bd_1').val();
+		var c2 = $('#bd_2').val();
+		 var c3 = $('#bd_3').val();
+		 var c4 = $('#bd_4').val();
+		 var current = $('.currentSelect').val();
+		
+		 if (c1 !=null && c1!='请选择') {
+			 searchcode = c1;
+		 } if (c2 !=null && c2!='请选择') {
+			 searchcode = c2;
+		 }if (c3 !=null && c3!='请选择') {
+			 searchcode = c3;
+		 } if (c4 !=null && c4!='请选择') {
+			 searchcode = c4;
+		 }if (current !=null && current!='') {
+			 searchcode = current;
+		 }
+		
 		var bdid= $('.bd_id').val();
 		var telephone= $('.bd_telephone').val();
 		var realname = $('.bd_realname').val();
 		$.ajax({
-			data : {bdid:bdid ,telephone:telephone , realname:realname },
+			data : {bdid:bdid ,telephone:telephone , realname:realname ,code:searchcode},
 			method : 'post',
 			url : '/Tenement/bd/save',
 			success : function(data) {
@@ -50,7 +70,7 @@ function listbd () {
 			form.empty();
 			$.each(data.obj,function(index, value) {
 				var body_in ='<tr><td >'+value.bdid+'</td><td>'+value.telephone+'</td>'+
-				'<td>'+value.realname+'</td><td>'+bdState[value.state]+'</td>'+
+				'<td>'+value.realname+'</td><td>'+value.address+'</td><td>'+bdState[value.state]+'</td>'+
 				'<td><a onclick=searchOneBd(\''+value.bdid+'\') class="btn   btn-primary" data-toggle="modal" data-target="#bd_add_update">编辑 </a>'
 				+'<a style="margin-left: 15px"; onclick=changestate(\''+value.bdid+'\') class="btn   btn-primary" >'+showState[value.state]+'</a></td></tr>';
 				form.append(body_in);
@@ -71,6 +91,8 @@ function changestate(bdid) {
 }
 
 function searchOneBd (bdid) {
+	getprovince('bd');
+	
 	$.ajax({
 		data : {bdid:bdid},
 		method : 'post',
@@ -79,6 +101,9 @@ function searchOneBd (bdid) {
 			 $('.bd_telephone').val(data.obj.telephone);
 			 $('.bd_realname').val(data.obj.realname);
 			 $('.bd_id').val(data.obj.bdid);
+			 $('#bd_select div').empty();
+			 $('#bd_select').append('<div><span>当前选中：'+data.obj.address+'</span>' +
+					 '<input class="currentSelect" type="hidden"   value="'+data.obj.code+'"/></div>');
 		}
 	});
 }

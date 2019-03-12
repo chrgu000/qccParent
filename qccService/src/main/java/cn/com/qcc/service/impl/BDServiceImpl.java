@@ -55,6 +55,10 @@ public class BDServiceImpl implements BDService{
 	@Override
 	public ResultMap addOrUpdate(Bdmanager bdmanager) {
 		
+		if (CheckDataUtil.checkisEmpty(bdmanager.getCode())) {
+			bdmanager.setCode("");
+		}
+		
 		// bd账号
 		String bdId = "";
 		// 登录安全码
@@ -149,14 +153,13 @@ public class BDServiceImpl implements BDService{
 
 	@Override
 	public ResultMap listBD() {
-		List<Bdmanager> list = bdmanagerMapper.selectByExample(null);
+		List<Bdmanager> list = bdmanagerMapper.listBD();
 		return ResultMap.IS_200(list);
 	}
 
 	@Override
 	public ResultMap findOne(String bdid) {
-		// TODO Auto-generated method stub
-		Bdmanager bdmanager =  bdmanagerMapper.selectByPrimaryKey(bdid);
+		Bdmanager bdmanager =  bdmanagerMapper.findOne(bdid);
 		return ResultMap.IS_200(bdmanager);
 	}
 

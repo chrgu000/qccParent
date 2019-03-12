@@ -127,9 +127,9 @@ public class VillageServiceImpl implements VillageService {
 		if (village.getCode() == null || "".equals(village.getCode())) {
 			return ResultMap.build(701, "检查区域");
 		}
-		if (village.getUserid() == null) {
+		/*if (village.getUserid() == null) {
 			return ResultMap.build(404, "操作需要登录");
-		}
+		}*/
 		if (village.getPicture() == null || "".equals(village.getPicture())) {
 			return ResultMap.build(401, "插入图片");
 		}
@@ -187,9 +187,9 @@ public class VillageServiceImpl implements VillageService {
 		if (CheckDataUtil.checkisEmpty(building.getBrandid()) || building.getBrandid()<0 ) {
 			building.setBrandid(null);
 		}
-		if (CheckDataUtil.checkisEmpty(building.getUserid())) {
+		/*if (CheckDataUtil.checkisEmpty(building.getUserid())) {
 			return ResultMap.build(404, "请先登录");
-		}
+		}*/
 		if (CheckDataUtil.checkisEmpty(building.getBuilding())) {
 			return ResultMap.build(704, "输入楼栋名称");
 		}
@@ -517,14 +517,8 @@ public class VillageServiceImpl implements VillageService {
 	/**根据code查询小区基本信息
 	 * @param code : 区域的code
 	 * **/
-	public List<Village> getvillagebycode(Long code , String searchWhere) {
-		VillageExample example = new VillageExample();
-		VillageExample.Criteria criteria = example.createCriteria();
-		if (CheckDataUtil.checkNotEmpty(searchWhere)) {
-			criteria.andVillagenameLike("%"+searchWhere+"%");
-		}
-		criteria.andCodeEqualTo(code);
-		return villageMapper.selectByExample(example);
+	public List<VillageCustomer> getvillagebycode(Long code , String searchWhere) {
+		return villageCustomerMapper.getvillagebycode(code , searchWhere);
 	}
 
 	/**

@@ -350,7 +350,7 @@ public class VillageController {
 	@ResponseBody
 	@RequestMapping("/tribe/getvillagebycode")
 	public ResultMap getvillagebycode(Long code ,String searchWhere) {
-		List<Village> villagelist = villageService.getvillagebycode(code , searchWhere);
+		List<VillageCustomer> villagelist = villageService.getvillagebycode(code , searchWhere);
 		return ResultMap.IS_200(villagelist);
 	}
 

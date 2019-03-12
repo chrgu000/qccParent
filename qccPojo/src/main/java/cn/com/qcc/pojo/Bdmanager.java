@@ -3,8 +3,13 @@ package cn.com.qcc.pojo;
 import java.util.Date;
 
 public class Bdmanager {
+	
+	private String address;
     /** bd账号*/
     private String bdid;
+
+    /** 管理的区域*/
+    private String code;
 
     /** 联系电话*/
     private String telephone;
@@ -30,12 +35,30 @@ public class Bdmanager {
     /** BD头像*/
     private String avatar;
 
-    public String getBdid() {
+    
+    
+    public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getBdid() {
         return bdid;
     }
 
     public void setBdid(String bdid) {
         this.bdid = bdid == null ? null : bdid.trim();
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code == null ? null : code.trim();
     }
 
     public String getTelephone() {

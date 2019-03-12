@@ -18,6 +18,7 @@
 				<td class ='visible-lg'  >账号</td>
 				<td class ='visible-lg'  >联系电话</td>
 				<td class ='visible-lg' >用户姓名</td>
+				<td class ='visible-lg' >管理区域</td>
 				<td class ='visible-lg' >状态</td>
 				<td >操作</td>
 			</tr>
@@ -48,6 +49,25 @@
 				  <input type="text" class="form-control bd_telephone"  />
 				  <label for="name">备注信息</label>
 				  <input type="text" class="form-control bd_realname"  />
+				  <label for="name">管理区域     
+				  		<span>   (如果不选默认管理全部)   </span>
+				  </label>
+				  <div id ="bd_select">
+				<select style="width: 100px; "onchange="getnextaddress(bd_1)" id="bd_1">
+					<option></option>
+				</select>
+				
+				<select style="width: 100px; "onchange="getnextaddress(bd_2)" id="bd_2">
+				</select>
+				
+				<select style="width: 100px; "onchange="getnextaddress(bd_3)" id="bd_3">
+				</select>
+				 
+				<select style="width: 100px; " id="bd_4">
+				</select>
+				
+				<span id="current"></span>
+		</div>
             </div>
             <div class="modal-footer">
             	<span id="living_error"></span>
