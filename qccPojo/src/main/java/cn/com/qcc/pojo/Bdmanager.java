@@ -3,22 +3,23 @@ package cn.com.qcc.pojo;
 import java.util.Date;
 
 public class Bdmanager {
-	
-	private String address;
     /** bd账号*/
     private String bdid;
 
     /** 管理的区域*/
     private String code;
 
-    /** 联系电话*/
-    private String telephone;
+    /** 用户id*/
+    private Long userid;
 
     /** 真实姓名*/
     private String realname;
 
     /** 更新时间*/
     private Date upate_time;
+
+    /** 是否可以编辑区域 1- 只读 2-编辑*/
+    private Integer isedit;
 
     /** 状态 0-不可用 1-可用*/
     private Integer state;
@@ -35,17 +36,7 @@ public class Bdmanager {
     /** BD头像*/
     private String avatar;
 
-    
-    
-    public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getBdid() {
+    public String getBdid() {
         return bdid;
     }
 
@@ -61,12 +52,12 @@ public class Bdmanager {
         this.code = code == null ? null : code.trim();
     }
 
-    public String getTelephone() {
-        return telephone;
+    public Long getUserid() {
+        return userid;
     }
 
-    public void setTelephone(String telephone) {
-        this.telephone = telephone == null ? null : telephone.trim();
+    public void setUserid(Long userid) {
+        this.userid = userid;
     }
 
     public String getRealname() {
@@ -83,6 +74,14 @@ public class Bdmanager {
 
     public void setUpate_time(Date upate_time) {
         this.upate_time = upate_time;
+    }
+
+    public Integer getIsedit() {
+        return isedit;
+    }
+
+    public void setIsedit(Integer isedit) {
+        this.isedit = isedit;
     }
 
     public Integer getState() {

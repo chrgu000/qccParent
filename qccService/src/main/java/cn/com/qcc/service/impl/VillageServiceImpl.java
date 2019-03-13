@@ -121,6 +121,9 @@ public class VillageServiceImpl implements VillageService {
 		if (detaileaddress.getLatitude() == null || "".equals(detaileaddress.getLatitude())) {
 			return ResultMap.build(700, "检查定位");
 		}
+		if (CheckDataUtil.checkisEmpty(village.getUserid())) {
+			return ResultMap.build(404, "请先登录");
+		}
 		if (detaileaddress.getDetailes() == null || "".equals(detaileaddress.getDetailes())) {
 			return ResultMap.build(700, "输入详情地址");
 		}
@@ -191,9 +194,9 @@ public class VillageServiceImpl implements VillageService {
 		if (CheckDataUtil.checkisEmpty(building.getBrandid()) || building.getBrandid()<0 ) {
 			building.setBrandid(null);
 		}
-		/*if (CheckDataUtil.checkisEmpty(building.getUserid())) {
+		if (CheckDataUtil.checkisEmpty(building.getUserid())) {
 			return ResultMap.build(404, "请先登录");
-		}*/
+		}
 		if (CheckDataUtil.checkisEmpty(building.getBuilding())) {
 			return ResultMap.build(704, "输入楼栋名称");
 		}

@@ -124,9 +124,11 @@ public interface HouseCustomerMapper {
 	// 查看房屋详情
 	public HouseCustomer findHouseDetails(@Param("houseid") Long houseid);
 
-	// 查询我的出租
-	public List<HouseCustomer> findmyrent( @Param("userid") Long userid , @Param("pagequery") PageQuery pagequery);
-
+	/**我的出租的列表分页**/
+	public List<HouseCustomer> findmyrent( @Param("inUserIds") String inUserIds , @Param("pagequery") PageQuery pagequery);
+	int findmyrentCount( @Param("inUserIds") String inUserIds);
+	
+	
 	// 查询我的出售
 	public List<HouseCustomer> findmysall( @Param("userid") Long userid);
 
@@ -223,8 +225,7 @@ public interface HouseCustomerMapper {
 	/**根据housetagid 查询标签类型**/
 	List<Housetag> getTargByHouseTargId(@Param("housetagid") String housetagid);
 	
-	/**我的出租的列表分页**/
-	int findmyrentCount( @Param("userid") Long userid);
+	
 
 	List<PreparatoryCustomer> preparListbyhouseids(@Param("houseids") List<Long> houseid);
 	

@@ -1415,7 +1415,7 @@
 				FROM
 					house
 				WHERE
-					user_id = #{userid}  and
+					user_id in (${inUserIds})    and
 				houstatus='1' and housestatus != '3'
 			)
 		
@@ -1438,7 +1438,7 @@
 						FROM
 							house
 						WHERE
-							user_id = #{userid}  and
+							user_id in  (${inUserIds})   and
 						houstatus='1' and housestatus != '3'
 			      )
 	</select>	

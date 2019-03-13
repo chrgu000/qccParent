@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.BdCustomerMapper" >
+
+
+  <!-- 查询想要添加的BD账号-->
+  <select id="searchAddBD"  resultType="cn.com.qcc.queryvo.UserCustomer">
+  		SELECT `user`.userid ,`profile`.user_name ,
+  		IFNULL(`profile`.real_name , '未知')realname ,
+		 `user`.telephone
+		 from `user` 
+			LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+		where `user`.userid not in (
+				SELECT userid from bdmanager where  bdmanager.state = 1 
+			)
+		<if test="searchWhere !=null and searchWhere !=''">
+			 and (
+			`user`.telephone    LIKE CONCAT('',#{searchWhere},'%')
+			or `profile`.real_name   LIKE CONCAT('',#{searchWhere},'%')
+				)
+		</if>
+		<if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if> 
+  </select>
+  
+  
+ <!-- 查询想要添加的BD账号-->
+  <select id="searchAddBDCount"  resultType="integer">
+  		SELECT count(1)
+		 from `user` 
+			LEFT JOIN `profile` on `user`.userid = `profile`.user_id
+		where `user`.userid not in (
+			SELECT userid from bdmanager where  bdmanager.state = 1 
+			)
+		<if test="searchWhere !=null and searchWhere !=''">
+			 and (
+			`user`.telephone    LIKE CONCAT('',#{searchWhere},'%')
+			or `profile`.real_name   LIKE CONCAT('',#{searchWhere},'%')
+				)
+		</if>
+  </select>
+  
+  
+     <select id="searchBDByPhoneOrId" resultType="cn.com.qcc.queryvo.BdManagerCustomer">
+  		SELECT bdmanager.* , `user`.telephone  from bdmanager 
+			LEFT JOIN `user` on bdmanager.userid = `user`.userid
+		where bdid = #{account} or `user`.telephone =#{account}
+  </select>
+  
+  
+   <select id="getLandList" resultType="cn.com.qcc.queryvo.UserRoomCustomer"
+   	parameterType = "cn.com.qcc.queryvo.UserRoomCustomer" >
+  		SELECT
+			landlord.landuserid userid,
+			landlord.landstate  ,
+			`user`.telephone , 
+			landlord.update_time updatetime ,
+			IFNULL( `profile`.real_name,`profile`.user_name ) realname ,
+			`profile`.avatar  ,
+			IFNULL(area.`name`   ,'未知') cityname 
+		FROM
+			landlord
+		LEFT JOIN `profile` on `profile`.user_id = landlord.landuserid
+		LEFT JOIN  `user` on user.userid = `profile`.user_id
+		LEFT JOIN area on area.`code` = landlord.`code` 
+		WHERE
+		landlord.bdid = #{bdid}
+		<if test="code !=null">
+				AND landlord.code = #{code}
+		</if>
+  </select>
+  
+  
+  
+   
+   <select id="searchUserToLand" resultType="cn.com.qcc.queryvo.UserRoomCustomer">
+  		SELECT
+				`profile`.user_id userid, 
+				`profile`.real_name realname, 
+				`user`.telephone , 
+				 IFNULL(landlord.address,'')address ,
+				 IFNULL(landlord.brandname,'') brandname, 
+				 IFNULL(landlord.businessnum,'')businessnum ,
+                 IFNULL(landlord.businesspicture,'')businesspicture ,
+				 IFNULL(landlord.corporate,'')corporate ,
+				 IFNULL(area.`name`,'') trading ,
+				 area.`code`  
+			FROM
+				`profile`
+			INNER JOIN `user` on `user`.userid = `profile`.user_id
+			LEFT JOIN landlord ON `user`.userid = landlord.landuserid
+			LEFT JOIN area on area.`code` = landlord.`code`
+			WHERE
+				`profile`.signstate = 2
+			AND `profile`.user_id NOT IN (
+				SELECT  landuserid
+				FROM
+					landlord
+				WHERE
+					landstate = 2
+					and landlord.bdid != '' 
+			)
+			AND `profile`.user_id NOT IN (
+				SELECT  manageruserid
+				FROM
+					landlord_manager
+				WHERE
+					landlord_manager.state = 2
+			)
+			<if test="searchWhere !=null and searchWhere !=''">
+				and  (   `user`.telephone like CONCAT('%',#{searchWhere},'%') 
+				 or `profile`.real_name like CONCAT('%',#{searchWhere},'%')
+				      )
+			</if>
+			LIMIT 0,  50
+  </select>
+  
+  
+  
+  
+  
+  
+   <select id="searchAddBuildingToland" resultType="cn.com.qcc.queryvo.BuildingCustomer"
+   	>
+  		SELECT
+				building.building ,
+				village.villagename ,
+				area.`name` trading ,
+				building.buildingid 
+			
+			FROM
+				building
+			INNER  JOIN village on village.villageid = building.villageid 
+			INNER JOIN area on area.`code` = village.`code` 
+			
+			where building.buildingid not in (
+			
+			SELECT buildingid from buildinglandlord
+			)
+			AND building.identity like CONCAT('%',#{searchWhere},'%')
+			LIMIT 0, 40
+  </select>
+  
+  
+  
+    <select id="searchBuildingBylandId" resultType="cn.com.qcc.queryvo.BuildingCustomer"
+   	>
+  		SELECT
+				building.building ,
+				village.villagename ,
+				area.`name` trading ,
+				building.buildingid 
+			
+			FROM
+				building
+			INNER  JOIN village on village.villageid = building.villageid 
+			INNER JOIN area on area.`code` = village.`code` 
+			
+			where building.buildingid  in (
+			
+				SELECT buildinglandlord.buildingid  from
+				buildinglandlord where buildinglandlord.landlordid = #{userid}
+			)
+  </select>
+  
+  
+  
+  
+   <select id="bdlandeditsearch" resultType="cn.com.qcc.queryvo.UserRoomCustomer"
+   	>
+  		SELECT
+			landuserid userid  ,
+			landlord.`code` ,
+			IFNULL(landlord.brandname,'')brandname , 
+			IFNULL(landlord.corporate,'') corporate ,
+			IFNULL(landlord.idpictures,'') idpictures ,
+			IFNULL(landlord.businessnum,'')businessnum ,
+			IFNULL(landlord.address,'') address ,
+			`user`.telephone ,
+			IFNULL(`profile`.real_name,`profile`.user_name) realname ,
+			area.`name` trading 
+		FROM
+			landlord
+		LEFT JOIN `user` on `user`.userid = landlord.landuserid
+		LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+		LEFT JOIN area on area.`code` = landlord.`code`
+		
+		where `user`.userid = #{userid}
+  </select>
+  
+  
+    
+  <select id="findOne" resultType="cn.com.qcc.queryvo.BdManagerCustomer">
+  		SELECT bdmanager.* , `user`.telephone , 
+			 IFNULL(area.`name`,'中国')address
+	from bdmanager
+	LEFT JOIN `user` on `user`.userid = bdmanager.userid
+	LEFT JOIN area on area.`code` = bdmanager.`code` 
+  		where bdid = #{bdid}
+  </select>
+  
+  
+  <select id="listBD" resultType="cn.com.qcc.queryvo.BdManagerCustomer">
+  		SELECT bdmanager.* ,`user`.telephone , 
+			 IFNULL(area.`name`,'中国')address
+	from bdmanager
+	LEFT JOIN area on area.`code` = bdmanager.`code` 
+	LEFT JOIN `user` on `user`.userid = bdmanager.userid
+  </select>
+  
+  
+   <select id="searchEditBrandList" resultType="cn.com.qcc.pojo.Brand">
+  		SELECT brandid  , brand ,brand.onepicture from brand 
+			where 1=1 
+			<if test="code !=null and code != '' ">
+				AND codes like CONCAT('%',#{code},'%')
+		    </if>
+		    <if test="searchWhere !=null and searchWhere != '' ">
+				AND brand like CONCAT('%',#{searchWhere},'%')
+		    </if>
+		    <if test="pagequery !=null ">
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+			</if> 
+  </select>
+  
+  
+     <select id="searchEditBrandListCount" resultType="integer">
+  		SELECT count(1) from brand 
+			where 1=1 
+			<if test="code !=null and code != '' ">
+				AND codes like CONCAT('%',#{code},'%')
+		    </if>
+		    <if test="searchWhere !=null and searchWhere != '' ">
+				AND brand like CONCAT('%',#{searchWhere},'%')
+		    </if>
+  </select>
+  
+  
+</mapper>

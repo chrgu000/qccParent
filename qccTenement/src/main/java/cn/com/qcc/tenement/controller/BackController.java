@@ -62,10 +62,24 @@ public class BackController{
 	@Autowired HouseSolrDao houseSolrDao;
 	@Autowired BDService bdService;
 	
+	@RequestMapping("/bd/searchAddBd")
+	@ResponseBody
+	public ResultMap searchAddBd(@RequestParam(defaultValue="1")int currentpage ,
+			@RequestParam(defaultValue="7")int pagesize, String searchWhere) {
+		int infoCount = bdService.searchAddBDCount(searchWhere);
+		PageQuery pagequery = new PageQuery();
+		pagequery.setPageParams(infoCount, pagesize, currentpage);
+		List<UserCustomer> users = bdService.searchAddBD(searchWhere, pagequery);
+		Map<String, Object> map = new HashMap<>();
+		map.put("pagequery",pagequery);
+		map.put("userList", users);
+		return ResultMap.IS_200(map);
+	}
+	
 	
 	@RequestMapping("/bd/save")
 	@ResponseBody
-	public ResultMap addBD(Bdmanager bdmanager) {
+	public ResultMap addBD(Bdmanager bdmanager ) {
 		return bdService.addOrUpdate(bdmanager);
 	}
 	
@@ -73,6 +87,12 @@ public class BackController{
 	@ResponseBody
 	public ResultMap changeState(String bdid) {
 		return bdService.changeState(bdid);
+	}
+	
+	@RequestMapping("/bd/changeEditstate")
+	@ResponseBody
+	public ResultMap changeEditstate(String bdid) {
+		return bdService.changeEditstate(bdid);
 	}
 	
 	@RequestMapping("/bd/list")

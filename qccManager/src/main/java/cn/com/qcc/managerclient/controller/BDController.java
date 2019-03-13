@@ -1,19 +1,25 @@
 package cn.com.qcc.managerclient.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.IDUtils;
+import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.pojo.Bdmanager;
+import cn.com.qcc.pojo.Brand;
 import cn.com.qcc.pojo.Landlord;
+import cn.com.qcc.queryvo.BdManagerCustomer;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.UserRoomCustomer;
 import cn.com.qcc.service.BDService;
@@ -41,9 +47,9 @@ public class BDController {
 		
 		
 		// 通过手机号或者账号查询
-		Bdmanager maBdmanager = bdService.searchBDByPhoneOrId(account);
-		if (CheckDataUtil.checkisEmpty(maBdmanager)
-				||maBdmanager.getState().intValue() != 1) 
+		BdManagerCustomer bdCustomer = bdService.searchBDByPhoneOrId(account);
+		if (CheckDataUtil.checkisEmpty(bdCustomer)
+				||bdCustomer.getState().intValue() != 1) 
 			return ResultMap.build(400, "账号禁用");
 		
 		// 通过验证码校验
@@ -55,7 +61,7 @@ public class BDController {
 		// 通过密码校验
 		else if (type ==2 ){
 			//原始密码
-			String orgPassword = maBdmanager.getPassword();
+			String orgPassword = bdCustomer.getPassword();
 			// 现在密码
 			String passWord = IDUtils.getprivatePassword(word);
 			//String passWord  = word;
@@ -66,8 +72,8 @@ public class BDController {
 			return ResultMap.build(400,"请求错误");
 		}
 		
-		maBdmanager.setPassword("");
-		return ResultMap.build(200,"登录成功" , maBdmanager);
+		bdCustomer.setPassword("");
+		return ResultMap.build(200,"登录成功" , bdCustomer);
 	}
 	
 	
@@ -163,5 +169,28 @@ public class BDController {
 		return bdService.editAvatar(BD_ACCTOKEN ,avatar );
 	}
 	
+	
+	// 查询我管理的品牌列表
+	@RequestMapping("/bdsearchEditBrandList")
+	public ResultMap searchEditBrandList(String code ,
+			String searchWhere ,@RequestParam(defaultValue="8")int pagesize ,
+			@RequestParam(defaultValue="1") int currentpage){
+		if (CheckDataUtil.checkNotEmpty(code)) {
+			if (code.startsWith("11") || code.startsWith("12") || code.startsWith("31") || code.startsWith("50")) {
+				code = code.substring(0, 2);
+			}else {
+				code = code.substring(0,4);
+			}
+		}
+		int infoCount = bdService.searchEditBrandListCount(code , searchWhere );
+		PageQuery pagequery = new PageQuery();
+		pagequery.setPageParams(infoCount, pagesize, currentpage);
+		List<Brand> branList =  bdService.searchEditBrandList(code , searchWhere,pagequery);
+		Map<String, Object> map = new HashMap<>();
+		
+		map.put("pagequery", pagequery);
+		map.put("branList", branList);
+		return ResultMap.IS_200(map);
+	}
 	
 }

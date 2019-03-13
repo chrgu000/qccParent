@@ -29,6 +29,8 @@ import cn.com.qcc.mapper.BuildingMapper;
 import cn.com.qcc.mapper.HouseMapper;
 import cn.com.qcc.mapper.HouseorderMapper;
 import cn.com.qcc.mapper.HousetagMapper;
+import cn.com.qcc.mapper.LandlordManagerMapper;
+import cn.com.qcc.mapper.LandlordMapper;
 import cn.com.qcc.mapper.PreparatoryMapper;
 import cn.com.qcc.mapper.PriceMapper;
 import cn.com.qcc.mapper.SystemstateMapper;
@@ -52,6 +54,9 @@ import cn.com.qcc.pojo.Houseorder;
 import cn.com.qcc.pojo.HouseorderExample;
 import cn.com.qcc.pojo.Housetag;
 import cn.com.qcc.pojo.HousetagExample;
+import cn.com.qcc.pojo.Landlord;
+import cn.com.qcc.pojo.LandlordManager;
+import cn.com.qcc.pojo.LandlordManagerExample;
 import cn.com.qcc.pojo.Metro;
 import cn.com.qcc.pojo.Paymodal;
 import cn.com.qcc.pojo.Preparatory;
@@ -114,6 +119,8 @@ public class HouseServiceImpl implements HouseService {
 	@Autowired TribeCustomerMapper tribeCustomerMapper;
 	@Autowired TribeMapper tribeMapper;
 	@Autowired BargainMapper bargainMapper;
+	@Autowired LandlordMapper landlordMapper;
+	@Autowired LandlordManagerMapper landlordManagerMapper;
 	
 	
 	
@@ -1035,10 +1042,40 @@ public class HouseServiceImpl implements HouseService {
 	 * @param userid : 用户ID
 	 */
 	public List<HouseCustomer> findmyrent(Long userid ,PageQuery pagequery) {
-		return houseCustomerMapper.findmyrent(userid ,pagequery);
+		String inUserIds = getInUserIds(userid);
+		return houseCustomerMapper.findmyrent(inUserIds ,pagequery);
 	}
+	private String getInUserIds(Long userid) {
+		String inUserIds = "";
+		// 判断当前用户是不是房东
+		Landlord landlord = landlordMapper.selectByPrimaryKey(userid);
+		if (CheckDataUtil.checkNotEmpty(landlord)
+				&& landlord.getLandstate().intValue() == 2) {
+			LandlordManagerExample example = new LandlordManagerExample();
+			LandlordManagerExample.Criteria criteria = example.createCriteria();
+			criteria.andLanduseridEqualTo(userid);
+			List<LandlordManager> selectByExample = landlordManagerMapper.selectByExample(example);
+			if (CheckDataUtil.checkNotEmpty(selectByExample)) {
+				for (LandlordManager manager : selectByExample) {
+					inUserIds +=manager.getManageruserid() +",";
+				}
+				inUserIds = inUserIds + userid;
+			} else {
+				inUserIds = userid.toString();
+			}
+		}else {
+			inUserIds = userid.toString();
+		}
+		return inUserIds;
+	}
+
+
+
+
+
 	public int findmyrentCount(Long userid) {
-		return houseCustomerMapper.findmyrentCount(userid);
+		String inUserIds = getInUserIds(userid);
+		return houseCustomerMapper.findmyrentCount(inUserIds);
 	}
 
 	/**
@@ -1060,11 +1097,13 @@ public class HouseServiceImpl implements HouseService {
 
 	private SolrQuery getfindHouseByVillage2query(Long userid, Long buildingid, PageQuery pagequery) {
 		SolrQuery query = new SolrQuery();
+		String userids = getInUserIds(userid);
+		String joinOrString = SolrPageUtil.joinOrString(userids, "userid");
 		query.setQuery("*:*");
 		//查询所有出租的
 		query.add("fq", "housetype:1");
 		query.add("fq", "housestatus:(NOT 3)");
-		query.add("fq", "userid:"+userid+"");
+		query.add("fq", joinOrString);
 		query.add("fq", "buildingid:"+buildingid+"");
 		query.addSort("house_number",ORDER.asc);
 		SolrPageUtil.setStartAndEnd(pagequery, query);

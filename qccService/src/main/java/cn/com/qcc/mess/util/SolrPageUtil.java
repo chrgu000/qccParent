@@ -413,6 +413,44 @@ public class SolrPageUtil {
 		}
 		
 	}
+	
+	/**
+	 * @param inString : 入参字符
+	 * @param param : 连接参数
+	 * **/
+	public static String joinOrString (String inString ,String param) {
+		String[] split = inString.split(",");
+		String result="";
+		if (split.length == 1) {
+			result +=  param + ":" +  split[0] + "";
+		} else {
+			for  (int i =0 ;i<split.length;i++) {
+				
+				if (i==0) {
+					result += "("+param+":" +  split[i] + " or ";
+				}else if (i == split.length -1) {
+					result +=  param +":" +  split[i] + " ) ";
+				} else {
+					result += param + ":" +  split[i] + " or ";
+				}
+				
+				
+			}
+			
+		}
+		return result;
+	}
+	
+	public static void main (String [] args)  {
+		
+		String inString= "1,8";
+		String param = "userid";
+		String hello = joinOrString(inString, param);
+		
+		// (apartmentname:*五室* or apartmentname:*六室* or apartmentname:*七室* " "or apartmentname:*八室*  or apartmentname:*九室* or apartmentname:*十室*)
+		
+		System.out.println(hello);
+	}
 
 
 }

@@ -245,73 +245,63 @@ public class BdmanagerExample {
             return (Criteria) this;
         }
 
-        public Criteria andTelephoneIsNull() {
-            addCriterion("telephone is null");
+        public Criteria andUseridIsNull() {
+            addCriterion("userid is null");
             return (Criteria) this;
         }
 
-        public Criteria andTelephoneIsNotNull() {
-            addCriterion("telephone is not null");
+        public Criteria andUseridIsNotNull() {
+            addCriterion("userid is not null");
             return (Criteria) this;
         }
 
-        public Criteria andTelephoneEqualTo(String value) {
-            addCriterion("telephone =", value, "telephone");
+        public Criteria andUseridEqualTo(Long value) {
+            addCriterion("userid =", value, "userid");
             return (Criteria) this;
         }
 
-        public Criteria andTelephoneNotEqualTo(String value) {
-            addCriterion("telephone <>", value, "telephone");
+        public Criteria andUseridNotEqualTo(Long value) {
+            addCriterion("userid <>", value, "userid");
             return (Criteria) this;
         }
 
-        public Criteria andTelephoneGreaterThan(String value) {
-            addCriterion("telephone >", value, "telephone");
+        public Criteria andUseridGreaterThan(Long value) {
+            addCriterion("userid >", value, "userid");
             return (Criteria) this;
         }
 
-        public Criteria andTelephoneGreaterThanOrEqualTo(String value) {
-            addCriterion("telephone >=", value, "telephone");
+        public Criteria andUseridGreaterThanOrEqualTo(Long value) {
+            addCriterion("userid >=", value, "userid");
             return (Criteria) this;
         }
 
-        public Criteria andTelephoneLessThan(String value) {
-            addCriterion("telephone <", value, "telephone");
+        public Criteria andUseridLessThan(Long value) {
+            addCriterion("userid <", value, "userid");
             return (Criteria) this;
         }
 
-        public Criteria andTelephoneLessThanOrEqualTo(String value) {
-            addCriterion("telephone <=", value, "telephone");
+        public Criteria andUseridLessThanOrEqualTo(Long value) {
+            addCriterion("userid <=", value, "userid");
             return (Criteria) this;
         }
 
-        public Criteria andTelephoneLike(String value) {
-            addCriterion("telephone like", value, "telephone");
+        public Criteria andUseridIn(List<Long> values) {
+            addCriterion("userid in", values, "userid");
             return (Criteria) this;
         }
 
-        public Criteria andTelephoneNotLike(String value) {
-            addCriterion("telephone not like", value, "telephone");
+        public Criteria andUseridNotIn(List<Long> values) {
+            addCriterion("userid not in", values, "userid");
             return (Criteria) this;
         }
 
-        public Criteria andTelephoneIn(List<String> values) {
-            addCriterion("telephone in", values, "telephone");
+        public Criteria andUseridBetween(Long value1, Long value2) {
+            addCriterion("userid between", value1, value2, "userid");
             return (Criteria) this;
         }
 
-        public Criteria andTelephoneNotIn(List<String> values) {
-            addCriterion("telephone not in", values, "telephone");
-            return (Criteria) this;
-        }
-
-        public Criteria andTelephoneBetween(String value1, String value2) {
-            addCriterion("telephone between", value1, value2, "telephone");
-            return (Criteria) this;
-        }
-
-        public Criteria andTelephoneNotBetween(String value1, String value2) {
-            addCriterion("telephone not between", value1, value2, "telephone");
+        public Criteria andUseridNotBetween(Long value1, Long value2) {
+            addCriterion("userid not between", value1, value2, "userid");
             return (Criteria) this;
         }
 
@@ -442,6 +432,66 @@ public class BdmanagerExample {
 
         public Criteria andUpate_timeNotBetween(Date value1, Date value2) {
             addCriterion("upate_time not between", value1, value2, "upate_time");
+            return (Criteria) this;
+        }
+
+        public Criteria andIseditIsNull() {
+            addCriterion("isedit is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIseditIsNotNull() {
+            addCriterion("isedit is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIseditEqualTo(Integer value) {
+            addCriterion("isedit =", value, "isedit");
+            return (Criteria) this;
+        }
+
+        public Criteria andIseditNotEqualTo(Integer value) {
+            addCriterion("isedit <>", value, "isedit");
+            return (Criteria) this;
+        }
+
+        public Criteria andIseditGreaterThan(Integer value) {
+            addCriterion("isedit >", value, "isedit");
+            return (Criteria) this;
+        }
+
+        public Criteria andIseditGreaterThanOrEqualTo(Integer value) {
+            addCriterion("isedit >=", value, "isedit");
+            return (Criteria) this;
+        }
+
+        public Criteria andIseditLessThan(Integer value) {
+            addCriterion("isedit <", value, "isedit");
+            return (Criteria) this;
+        }
+
+        public Criteria andIseditLessThanOrEqualTo(Integer value) {
+            addCriterion("isedit <=", value, "isedit");
+            return (Criteria) this;
+        }
+
+        public Criteria andIseditIn(List<Integer> values) {
+            addCriterion("isedit in", values, "isedit");
+            return (Criteria) this;
+        }
+
+        public Criteria andIseditNotIn(List<Integer> values) {
+            addCriterion("isedit not in", values, "isedit");
+            return (Criteria) this;
+        }
+
+        public Criteria andIseditBetween(Integer value1, Integer value2) {
+            addCriterion("isedit between", value1, value2, "isedit");
+            return (Criteria) this;
+        }
+
+        public Criteria andIseditNotBetween(Integer value1, Integer value2) {
+            addCriterion("isedit not between", value1, value2, "isedit");
             return (Criteria) this;
         }
 

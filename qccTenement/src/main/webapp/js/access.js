@@ -1134,14 +1134,11 @@ function searchAddRole(currentpage) {
 		success : function(data) {
 			if(data.code == 200){
 				// 创建分页条
-				build_common_nav('search_adduserrole_nav_area',data);
+				build_common_nav('search_addbd_nav_area',data);
 				//显示分页数据
-				build_common_page('search_adduserrole_info_area',data);
+				build_common_page('search_addbd_info_area',data);
 				// 加载数据
 				buil_searchAddRole_list(data);
-				
-				
-				
 			}
 		}
 	});

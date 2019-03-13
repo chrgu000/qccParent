@@ -2,16 +2,20 @@ package cn.com.qcc.service;
 
 import java.util.List;
 
+import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Bdmanager;
+import cn.com.qcc.pojo.Brand;
 import cn.com.qcc.pojo.Landlord;
+import cn.com.qcc.queryvo.BdManagerCustomer;
 import cn.com.qcc.queryvo.BuildingCustomer;
+import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.queryvo.UserRoomCustomer;
 
 public interface BDService {
 	
 	/**添加编辑BD用户**/
-	ResultMap addOrUpdate(Bdmanager bdmanager);
+	ResultMap addOrUpdate(Bdmanager bdmanager );
 
 	/**查询BD列表**/
 	ResultMap listBD();
@@ -24,7 +28,7 @@ public interface BDService {
 	ResultMap changeState(String bdid);
 
 	/**根据电话号码或者id 查询BD**/
-	Bdmanager searchBDByPhoneOrId(String account);
+	BdManagerCustomer searchBDByPhoneOrId(String account);
 
 	/**BD修改登录密码**/
 	ResultMap changePassword(Long telephone, String BD_ACCTOKEN, String password);
@@ -58,5 +62,16 @@ public interface BDService {
 	ResultMap removeland(Long userid);
 
 	ResultMap editAvatar(String bD_ACCTOKEN, String avatar);
+
+	ResultMap changeEditstate(String bdid);
+	
+	
+	/**查询需要添加的系统账号**/
+	int searchAddBDCount(String searchWhere);
+	List<UserCustomer> searchAddBD(String searchWhere, PageQuery pagequery);
+	
+	/**查询编辑的品牌列表**/
+	List<Brand> searchEditBrandList(String code, String searchWhere ,PageQuery pagequery);
+	int searchEditBrandListCount(String code, String searchWhere);
 
 }

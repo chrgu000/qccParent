@@ -12,6 +12,7 @@ import WangYiUtil.WangYiPoJo;
 import WangYiUtil.WangYiUtil;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.IDUtils;
+import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SendMessage;
@@ -21,13 +22,16 @@ import cn.com.qcc.mapper.BuildinglandlordMapper;
 import cn.com.qcc.mapper.LandlordMapper;
 import cn.com.qcc.mapper.ProfileMapper;
 import cn.com.qcc.mapper.UserMapper;
+import cn.com.qcc.mymapper.BdCustomerMapper;
 import cn.com.qcc.mymapper.UserCustomerMapper;
 import cn.com.qcc.pojo.Bdmanager;
 import cn.com.qcc.pojo.BdmanagerExample;
+import cn.com.qcc.pojo.Brand;
 import cn.com.qcc.pojo.Buildinglandlord;
 import cn.com.qcc.pojo.BuildinglandlordExample;
 import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.pojo.User;
+import cn.com.qcc.queryvo.BdManagerCustomer;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.queryvo.UserRoomCustomer;
@@ -50,10 +54,12 @@ public class BDServiceImpl implements BDService{
 	BuildinglandlordMapper buildinglandlordMapper;
 	@Autowired
 	UserMapper userMapper;
+	@Autowired
+	BdCustomerMapper bdCustomerMapper;
 	
 	@SuppressWarnings("static-access")
 	@Override
-	public ResultMap addOrUpdate(Bdmanager bdmanager) {
+	public ResultMap addOrUpdate(Bdmanager bdmanager ) {
 		
 		if (CheckDataUtil.checkisEmpty(bdmanager.getCode())) {
 			bdmanager.setCode("");
@@ -66,15 +72,15 @@ public class BDServiceImpl implements BDService{
 		// 网易云token
 		String acctoken = "";
 		if (CheckDataUtil.checkisEmpty(bdmanager.getRealname())
-				|| CheckDataUtil.checkisEmpty(bdmanager.getTelephone())) {
+				) {
 			return ResultMap.build(400, "数据不全");
 		}
 		
-		boolean falg = checkPhone(bdmanager.getBdid() , bdmanager.getTelephone());
-		if (falg ==false) return ResultMap.build(400,"电话号码占用");
+		boolean falg = checkUserId(bdmanager.getBdid() , bdmanager.getUserid());
+		if (falg ==false) return ResultMap.build(400,"用户存在");
 		
 		
-		
+		User user = userMapper.selectByPrimaryKey(bdmanager.getUserid());
 		// 新建账号
 		if (CheckDataUtil.checkisEmpty(bdmanager.getBdid())) {
 			try {
@@ -104,7 +110,7 @@ public class BDServiceImpl implements BDService{
 				
 				bdmanager.setState(1);
 				bdmanager.setPassword("");
-			
+				bdmanager.setIsedit(0);
 				bdmanager.setUpate_time(new Date());
 				bdmanager.setAcctoken(acctoken);
 				bdmanager.setSecuritytoken(securitytoken);
@@ -113,7 +119,7 @@ public class BDServiceImpl implements BDService{
 				// 如果 添加成功发送手机
 				String modelId = WangYiCommon.BD_ADD_NOTIC;
 				SendMessage.sendNoticMess(bdmanager.getBdid(),
-						bdmanager.getTelephone(), modelId);
+						user.getTelephone().toString(), modelId);
 				
 				
 				return ResultMap.build(200, "添加成功");
@@ -126,11 +132,11 @@ public class BDServiceImpl implements BDService{
 			bdId = bdmanager.getBdid();
 			Bdmanager search = bdmanagerMapper.selectByPrimaryKey(bdmanager.getBdid());
 			//如果电话号码不一致
-			if (CheckDataUtil.checkNotEqual(search.getTelephone(), bdmanager.getTelephone())) {
+			if (CheckDataUtil.checkNotEqual(search.getUserid(), bdmanager.getUserid())) {
 				// 如果 添加成功发送手机
 				String modelId = WangYiCommon.BD_ADD_NOTIC;
 				SendMessage.sendNoticMess(bdmanager.getBdid(),
-						bdmanager.getTelephone(), modelId);
+						user.getTelephone().toString(), modelId);
 				// 重置登录安全码
 				bdmanager.setSecuritytoken(securitytoken);
 			}
@@ -139,34 +145,37 @@ public class BDServiceImpl implements BDService{
 		}
 	}
 
-	private boolean  checkPhone(String bdid, String telephone) {
+	private boolean  checkUserId(String bdid, Long userid) {
 		BdmanagerExample example = new BdmanagerExample();
 		BdmanagerExample.Criteria criteria = example.createCriteria();
 		if (CheckDataUtil.checkisEmpty(bdid)) {
 			bdid = "-1";
 		}
 		criteria.andBdidNotEqualTo(bdid);
-		criteria.andTelephoneEqualTo(telephone);
+		criteria.andUseridEqualTo(userid);
 		List<Bdmanager> list = bdmanagerMapper.selectByExample(example);
 		return list.size() == 0;
 	}
 
 	@Override
 	public ResultMap listBD() {
-		List<Bdmanager> list = bdmanagerMapper.listBD();
+		List<BdManagerCustomer> list = bdCustomerMapper.listBD();
 		return ResultMap.IS_200(list);
 	}
 
 	@Override
 	public ResultMap findOne(String bdid) {
-		Bdmanager bdmanager =  bdmanagerMapper.findOne(bdid);
+		BdManagerCustomer bdmanager =  bdCustomerMapper.findOne(bdid);
 		return ResultMap.IS_200(bdmanager);
 	}
 
 	@Override
 	public ResultMap changeState(String  bdid) {
+		// 重置token
+		String  securitytoken = UUID.randomUUID().toString();
 		Bdmanager search = bdmanagerMapper.selectByPrimaryKey(bdid);
 		if (CheckDataUtil.checkNotEmpty(search)) {
+			search.setSecuritytoken(securitytoken);
 			if (search.getState() == 1) {
 				search.setState(0);
 			}else {
@@ -178,9 +187,8 @@ public class BDServiceImpl implements BDService{
 	}
 
 	@Override
-	public Bdmanager searchBDByPhoneOrId(String account) {
-		// TODO Auto-generated method stub
-		return bdmanagerMapper.searchBDByPhoneOrId(account);
+	public BdManagerCustomer searchBDByPhoneOrId(String account) {
+		return bdCustomerMapper.searchBDByPhoneOrId(account);
 	}
 
 	@Override
@@ -188,7 +196,7 @@ public class BDServiceImpl implements BDService{
 		Bdmanager bdmanager = getBdidByToken(BD_ACCTOKEN);
 		
 		if (CheckDataUtil.checkisEmpty(bdmanager)
-				|| CheckDataUtil.checkNotEqual(telephone, bdmanager.getTelephone())
+				|| CheckDataUtil.checkNotEqual(telephone, telephone)
 				|| CheckDataUtil.checkisEmpty(password)) {
 			return ResultMap.build(400, "操作失败");
 		}
@@ -204,7 +212,7 @@ public class BDServiceImpl implements BDService{
 
 	@Override
 	public List<UserRoomCustomer> searchUserToLand(String searchWhere) {
-		return bdmanagerMapper.searchUserToLand(searchWhere);
+		return bdCustomerMapper.searchUserToLand(searchWhere);
 	}
 
 	@Override
@@ -229,7 +237,8 @@ public class BDServiceImpl implements BDService{
 		}
 		// 这里需要通知房东
 		User landDetail = userMapper.selectByPrimaryKey(userid);
-		String content =bdmanager.getRealname() +"," + bdmanager.getTelephone();
+		String content ="";
+		//bdmanager.getRealname() +"," + bdmanager.getTelephone();
 		String phone = landDetail.getTelephone().toString();
 		String modelId = WangYiCommon.BD_ADD_LAND_NOTIC;
 		// 判断是否有房东数据
@@ -287,13 +296,13 @@ public class BDServiceImpl implements BDService{
 			search.setCode(code);
 		}
 		
-		List<UserRoomCustomer> landList = bdmanagerMapper.getLandList(search);
+		List<UserRoomCustomer> landList = bdCustomerMapper.getLandList(search);
 		return landList;
 	}
 
 	/// 查询想要添加的楼栋
 	public List<BuildingCustomer> searchAddBuildingToland(String searchWhere) {
-		return bdmanagerMapper.searchAddBuildingToland(searchWhere);
+		return bdCustomerMapper.searchAddBuildingToland(searchWhere);
 	}
 
 	// 给房东绑定楼栋。
@@ -351,7 +360,7 @@ public class BDServiceImpl implements BDService{
 	@Override
 	public List<BuildingCustomer> searchBuildingBylandId(Long userid) {
 		// TODO Auto-generated method stub
-		List<BuildingCustomer> list =  bdmanagerMapper.searchBuildingBylandId(userid);
+		List<BuildingCustomer> list =  bdCustomerMapper.searchBuildingBylandId(userid);
 		if (CheckDataUtil.checkisEmpty(list)) {
 			list = new ArrayList<>();
 		}
@@ -361,7 +370,7 @@ public class BDServiceImpl implements BDService{
 
     // 编辑的查询
 	public UserRoomCustomer bdlandeditsearch(Long userid) {
-		return bdmanagerMapper.bdlandeditsearch(userid);
+		return bdCustomerMapper.bdlandeditsearch(userid);
 	}
 
 	@Override
@@ -382,6 +391,46 @@ public class BDServiceImpl implements BDService{
 		bdidByToken.setAvatar(avatar);
 		bdmanagerMapper.updateByPrimaryKeySelective(bdidByToken);
 		return ResultMap.build(200, "编辑成功") ;
+	}
+
+	@Override
+	public ResultMap changeEditstate(String bdid) {
+		// 重置token
+		String  securitytoken = UUID.randomUUID().toString();
+		Bdmanager search = bdmanagerMapper.selectByPrimaryKey(bdid);
+		if (CheckDataUtil.checkNotEmpty(search)) {
+			search.setSecuritytoken(securitytoken);
+			if (search.getIsedit() == 1) {
+				search.setIsedit(0);
+			}else {
+				search.setIsedit(1);
+			}
+			bdmanagerMapper.updateByPrimaryKeySelective(search);
+		}
+		return ResultMap.IS_200();
+	}
+
+	@Override
+	public int searchAddBDCount(String searchWhere) {
+		// TODO Auto-generated method stub
+		return bdCustomerMapper.searchAddBDCount(searchWhere);
+	}
+	@Override
+	public List<UserCustomer> searchAddBD(String searchWhere, PageQuery pagequery) {
+		// TODO Auto-generated method stub
+		return bdCustomerMapper.searchAddBD(searchWhere , pagequery);
+	}
+
+	@Override
+	public List<Brand> searchEditBrandList(String code, String searchWhere, PageQuery pagequery) {
+		// TODO Auto-generated method stub
+		return bdCustomerMapper.searchEditBrandList(code ,searchWhere , pagequery);
+	}
+
+	@Override
+	public int searchEditBrandListCount(String code, String searchWhere) {
+		// TODO Auto-generated method stub
+		return  bdCustomerMapper.searchEditBrandListCount(code ,searchWhere );
 	}
 
 }

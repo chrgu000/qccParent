@@ -294,6 +294,7 @@ function build_common_page(type , data) {
 }
 
 function dopage(type,searchpage) {
+	if ( 'search_addbd_nav_area' === type) {searchAddBd(searchpage);}
 	if ('land_nav_area' === type) {  getlandlordbystate(searchpage); }
 	if ('manager_user_nav_area' === type) {  add_manager_user(searchpage); }
 	if ('user_role_nav' === type ) { getallmanager_user(searchpage);}

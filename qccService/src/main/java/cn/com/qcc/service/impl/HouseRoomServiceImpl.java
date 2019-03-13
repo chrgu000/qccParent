@@ -112,7 +112,6 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 			inUserIds = houseVo.getUserid().toString();
 		}
 		
-		System.out.println(inUserIds);
 		houseVo.setInUserIds(inUserIds);
 		
 		
