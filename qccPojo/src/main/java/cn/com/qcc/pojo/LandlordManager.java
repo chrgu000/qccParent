@@ -3,11 +3,11 @@ package cn.com.qcc.pojo;
 import java.util.Date;
 
 public class LandlordManager {
-    /** 房东主键也就是landlord的userid*/
-    private Long landuserid;
-
     /** 层级管理userid*/
     private Long manageruserid;
+
+    /** 房东主键也就是landlord的userid*/
+    private Long landuserid;
 
     /** 权限的集合*/
     private String accessurlid;
@@ -21,20 +21,20 @@ public class LandlordManager {
     /** 建立关系时间*/
     private Date create_time;
 
-    public Long getLanduserid() {
-        return landuserid;
-    }
-
-    public void setLanduserid(Long landuserid) {
-        this.landuserid = landuserid;
-    }
-
     public Long getManageruserid() {
         return manageruserid;
     }
 
     public void setManageruserid(Long manageruserid) {
         this.manageruserid = manageruserid;
+    }
+
+    public Long getLanduserid() {
+        return landuserid;
+    }
+
+    public void setLanduserid(Long landuserid) {
+        this.landuserid = landuserid;
     }
 
     public String getAccessurlid() {

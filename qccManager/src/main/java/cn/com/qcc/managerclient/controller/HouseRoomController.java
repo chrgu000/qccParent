@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Mycent;
@@ -42,6 +43,12 @@ public class HouseRoomController {
 	@ResponseBody
 	public ResultMap roompattern(@RequestParam(defaultValue = "0") String currentpage,
 			@RequestParam(defaultValue = "12") int pagesize, HouseVo houseVo) {
+		
+		String inUserIds = houseRoomService.getInUserIds(houseVo.getUserid());
+		if (CheckDataUtil.checkisEmpty(inUserIds)) {
+			return ResultMap.build(400, "你已经被移出管理或者房东");
+		}
+		houseVo.setInUserIds(inUserIds);
 		Map<String, Object> map = new HashMap<>();
 		PageQuery pagequery = new PageQuery();
 		int infoCount = houseRoomService.roompatternCount(houseVo);

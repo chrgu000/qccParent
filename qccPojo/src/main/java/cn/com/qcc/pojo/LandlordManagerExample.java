@@ -105,66 +105,6 @@ public class LandlordManagerExample {
             criteria.add(new Criterion(condition, value1, value2));
         }
 
-        public Criteria andLanduseridIsNull() {
-            addCriterion("landuserid is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andLanduseridIsNotNull() {
-            addCriterion("landuserid is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andLanduseridEqualTo(Long value) {
-            addCriterion("landuserid =", value, "landuserid");
-            return (Criteria) this;
-        }
-
-        public Criteria andLanduseridNotEqualTo(Long value) {
-            addCriterion("landuserid <>", value, "landuserid");
-            return (Criteria) this;
-        }
-
-        public Criteria andLanduseridGreaterThan(Long value) {
-            addCriterion("landuserid >", value, "landuserid");
-            return (Criteria) this;
-        }
-
-        public Criteria andLanduseridGreaterThanOrEqualTo(Long value) {
-            addCriterion("landuserid >=", value, "landuserid");
-            return (Criteria) this;
-        }
-
-        public Criteria andLanduseridLessThan(Long value) {
-            addCriterion("landuserid <", value, "landuserid");
-            return (Criteria) this;
-        }
-
-        public Criteria andLanduseridLessThanOrEqualTo(Long value) {
-            addCriterion("landuserid <=", value, "landuserid");
-            return (Criteria) this;
-        }
-
-        public Criteria andLanduseridIn(List<Long> values) {
-            addCriterion("landuserid in", values, "landuserid");
-            return (Criteria) this;
-        }
-
-        public Criteria andLanduseridNotIn(List<Long> values) {
-            addCriterion("landuserid not in", values, "landuserid");
-            return (Criteria) this;
-        }
-
-        public Criteria andLanduseridBetween(Long value1, Long value2) {
-            addCriterion("landuserid between", value1, value2, "landuserid");
-            return (Criteria) this;
-        }
-
-        public Criteria andLanduseridNotBetween(Long value1, Long value2) {
-            addCriterion("landuserid not between", value1, value2, "landuserid");
-            return (Criteria) this;
-        }
-
         public Criteria andManageruseridIsNull() {
             addCriterion("manageruserid is null");
             return (Criteria) this;
@@ -222,6 +162,66 @@ public class LandlordManagerExample {
 
         public Criteria andManageruseridNotBetween(Long value1, Long value2) {
             addCriterion("manageruserid not between", value1, value2, "manageruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andLanduseridIsNull() {
+            addCriterion("landuserid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLanduseridIsNotNull() {
+            addCriterion("landuserid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLanduseridEqualTo(Long value) {
+            addCriterion("landuserid =", value, "landuserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andLanduseridNotEqualTo(Long value) {
+            addCriterion("landuserid <>", value, "landuserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andLanduseridGreaterThan(Long value) {
+            addCriterion("landuserid >", value, "landuserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andLanduseridGreaterThanOrEqualTo(Long value) {
+            addCriterion("landuserid >=", value, "landuserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andLanduseridLessThan(Long value) {
+            addCriterion("landuserid <", value, "landuserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andLanduseridLessThanOrEqualTo(Long value) {
+            addCriterion("landuserid <=", value, "landuserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andLanduseridIn(List<Long> values) {
+            addCriterion("landuserid in", values, "landuserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andLanduseridNotIn(List<Long> values) {
+            addCriterion("landuserid not in", values, "landuserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andLanduseridBetween(Long value1, Long value2) {
+            addCriterion("landuserid between", value1, value2, "landuserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andLanduseridNotBetween(Long value1, Long value2) {
+            addCriterion("landuserid not between", value1, value2, "landuserid");
             return (Criteria) this;
         }
 

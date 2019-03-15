@@ -33,7 +33,8 @@ public interface BdCustomerMapper {
    	
 	
 	//查询想要添加的楼栋
-	List<BuildingCustomer> searchAddBuildingToland(String searchWhere);
+	List<BuildingCustomer> searchAddBuildingToland( @Param("searchWhere") String searchWhere ,
+			@Param("code") Long code , @Param("villageid")  Long villageid);
 	
 	/**根据房东id查询楼栋**/
 	List<BuildingCustomer> searchBuildingBylandId(Long userid);

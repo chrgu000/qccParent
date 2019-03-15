@@ -149,4 +149,9 @@
 		<constructor-arg value="userCentCreate" />
 	</bean>  
 	
+	<!-- NO.22 租客交房租 -->
+	<bean id="userPayHouseAccount" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="userPayHouseAccount" />
+	</bean>  
+	
 </beans>

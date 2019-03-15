@@ -533,8 +533,8 @@ public class VillageServiceImpl implements VillageService {
 	/**根据code查询小区基本信息
 	 * @param code : 区域的code
 	 * **/
-	public List<VillageCustomer> getvillagebycode(Long code , String searchWhere) {
-		return villageCustomerMapper.getvillagebycode(code , searchWhere);
+	public List<VillageCustomer> getvillagebycode(Long code , String searchWhere,Long villageid) {
+		return villageCustomerMapper.getvillagebycode(code , searchWhere , villageid);
 	}
 
 	/**

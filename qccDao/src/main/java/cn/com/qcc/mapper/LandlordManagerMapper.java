@@ -10,13 +10,21 @@ public interface LandlordManagerMapper {
 
     int deleteByExample(LandlordManagerExample example);
 
+    int deleteByPrimaryKey(Long manageruserid);
+
     int insert(LandlordManager record);
 
     int insertSelective(LandlordManager record);
 
     List<LandlordManager> selectByExample(LandlordManagerExample example);
 
+    LandlordManager selectByPrimaryKey(Long manageruserid);
+
     int updateByExampleSelective(@Param("record") LandlordManager record, @Param("example") LandlordManagerExample example);
 
     int updateByExample(@Param("record") LandlordManager record, @Param("example") LandlordManagerExample example);
+
+    int updateByPrimaryKeySelective(LandlordManager record);
+
+    int updateByPrimaryKey(LandlordManager record);
 }

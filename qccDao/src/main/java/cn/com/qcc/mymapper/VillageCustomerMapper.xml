@@ -1019,7 +1019,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="searchWhere !=null and  searchWhere!='' ">
 			AND village.`villagename` like  CONCAT('',#{searchWhere},'%')
 		</if>
-		LIMIT 0 ,50
+		
+		<if test="villageid !=null">
+			AND village.`villageid` = #{villageid}
+		</if>
+		LIMIT 0 ,200
 	</select>
 	
 	

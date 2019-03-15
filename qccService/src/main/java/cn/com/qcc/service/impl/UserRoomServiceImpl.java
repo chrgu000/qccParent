@@ -152,7 +152,6 @@ public class UserRoomServiceImpl implements UserRoomService {
 							pay.setNeedoutday(needoutday);
 						}
 						if (pay.getFatherid() == 6 ) {
-							System.out.println("添加押金");
 							yanList.add(pay);
 						}
 						

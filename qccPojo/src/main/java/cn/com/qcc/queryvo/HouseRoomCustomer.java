@@ -78,11 +78,47 @@ public class HouseRoomCustomer {
 	/**房源闲置的天数**/
 	private int notcentday;
 	
+	private String payIds;
+	
+	private Long userid; 
+	
+	private Long landuserid;
+	
+	private Long manageruserid;
 	
 	
 	
-	
-	
+	public Long getLanduserid() {
+		return landuserid;
+	}
+
+	public void setLanduserid(Long landuserid) {
+		this.landuserid = landuserid;
+	}
+
+	public Long getManageruserid() {
+		return manageruserid;
+	}
+
+	public void setManageruserid(Long manageruserid) {
+		this.manageruserid = manageruserid;
+	}
+
+	public Long getUserid() {
+		return userid;
+	}
+
+	public void setUserid(Long userid) {
+		this.userid = userid;
+	}
+
+	public String getPayIds() {
+		return payIds;
+	}
+
+	public void setPayIds(String payIds) {
+		this.payIds = payIds;
+	}
 
 	public int getNotcentday() {
 		return notcentday;

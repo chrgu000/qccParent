@@ -194,7 +194,24 @@
 			usercent.centtimes ASC
 	</select>
 	
-	
+	<!--根据 分期id查询账单信息 -->
+	<select id="getHousePayByHousePayIds" parameterType="java.util.List"
+		resultType="cn.com.qcc.queryvo.HousePayJsonModel">
+				SELECT
+			finance.categoryname ,
+			housepay.housepayid ,
+			housepay.centprices 
+		FROM
+			housepay
+		LEFT JOIN finance ON housepay.financeid = finance.financeid
+		WHERE
+			housepay.housepayid IN
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		ORDER BY housepay.create_time asc 
+	</select>
 	
 	
 	

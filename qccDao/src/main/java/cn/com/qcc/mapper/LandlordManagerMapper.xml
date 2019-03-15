@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.com.qcc.mapper.LandlordManagerMapper" >
   <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.LandlordManager" >
+    <id column="manageruserid" property="manageruserid" jdbcType="BIGINT" />
     <result column="landuserid" property="landuserid" jdbcType="BIGINT" />
-    <result column="manageruserid" property="manageruserid" jdbcType="BIGINT" />
     <result column="accessurlid" property="accessurlid" jdbcType="VARCHAR" />
     <result column="state" property="state" jdbcType="INTEGER" />
     <result column="update_time" property="update_time" jdbcType="TIMESTAMP" />
@@ -68,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    landuserid, manageruserid, accessurlid, state, update_time, create_time
+    manageruserid, landuserid, accessurlid, state, update_time, create_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.LandlordManagerExample" >
     select
@@ -84,6 +84,16 @@
       order by ${orderByClause}
     </if>
   </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from landlord_manager
+    where manageruserid = #{manageruserid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from landlord_manager
+    where manageruserid = #{manageruserid,jdbcType=BIGINT}
+  </delete>
   <delete id="deleteByExample" parameterType="cn.com.qcc.pojo.LandlordManagerExample" >
     delete from landlord_manager
     <if test="_parameter != null" >
@@ -91,21 +101,21 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.LandlordManager" >
-    insert into landlord_manager (landuserid, manageruserid, accessurlid, 
+    insert into landlord_manager (manageruserid, landuserid, accessurlid, 
       state, update_time, create_time
       )
-    values (#{landuserid,jdbcType=BIGINT}, #{manageruserid,jdbcType=BIGINT}, #{accessurlid,jdbcType=VARCHAR}, 
+    values (#{manageruserid,jdbcType=BIGINT}, #{landuserid,jdbcType=BIGINT}, #{accessurlid,jdbcType=VARCHAR}, 
       #{state,jdbcType=INTEGER}, #{update_time,jdbcType=TIMESTAMP}, #{create_time,jdbcType=TIMESTAMP}
       )
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.LandlordManager" >
     insert into landlord_manager
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="landuserid != null" >
-        landuserid,
-      </if>
       <if test="manageruserid != null" >
         manageruserid,
+      </if>
+      <if test="landuserid != null" >
+        landuserid,
       </if>
       <if test="accessurlid != null" >
         accessurlid,
@@ -121,11 +131,11 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="landuserid != null" >
-        #{landuserid,jdbcType=BIGINT},
-      </if>
       <if test="manageruserid != null" >
         #{manageruserid,jdbcType=BIGINT},
+      </if>
+      <if test="landuserid != null" >
+        #{landuserid,jdbcType=BIGINT},
       </if>
       <if test="accessurlid != null" >
         #{accessurlid,jdbcType=VARCHAR},
@@ -150,11 +160,11 @@
   <update id="updateByExampleSelective" parameterType="map" >
     update landlord_manager
     <set >
-      <if test="record.landuserid != null" >
-        landuserid = #{record.landuserid,jdbcType=BIGINT},
-      </if>
       <if test="record.manageruserid != null" >
         manageruserid = #{record.manageruserid,jdbcType=BIGINT},
+      </if>
+      <if test="record.landuserid != null" >
+        landuserid = #{record.landuserid,jdbcType=BIGINT},
       </if>
       <if test="record.accessurlid != null" >
         accessurlid = #{record.accessurlid,jdbcType=VARCHAR},
@@ -175,8 +185,8 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update landlord_manager
-    set landuserid = #{record.landuserid,jdbcType=BIGINT},
-      manageruserid = #{record.manageruserid,jdbcType=BIGINT},
+    set manageruserid = #{record.manageruserid,jdbcType=BIGINT},
+      landuserid = #{record.landuserid,jdbcType=BIGINT},
       accessurlid = #{record.accessurlid,jdbcType=VARCHAR},
       state = #{record.state,jdbcType=INTEGER},
       update_time = #{record.update_time,jdbcType=TIMESTAMP},
@@ -184,5 +194,35 @@
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.LandlordManager" >
+    update landlord_manager
+    <set >
+      <if test="landuserid != null" >
+        landuserid = #{landuserid,jdbcType=BIGINT},
+      </if>
+      <if test="accessurlid != null" >
+        accessurlid = #{accessurlid,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="update_time != null" >
+        update_time = #{update_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="create_time != null" >
+        create_time = #{create_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where manageruserid = #{manageruserid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.LandlordManager" >
+    update landlord_manager
+    set landuserid = #{landuserid,jdbcType=BIGINT},
+      accessurlid = #{accessurlid,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      update_time = #{update_time,jdbcType=TIMESTAMP},
+      create_time = #{create_time,jdbcType=TIMESTAMP}
+    where manageruserid = #{manageruserid,jdbcType=BIGINT}
   </update>
 </mapper>

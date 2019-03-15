@@ -93,7 +93,7 @@ public interface VillageService {
 	/**根据code查询小区基本信息
 	 * @param code : 区域的code
 	 * **/ 
-	List<VillageCustomer> getvillagebycode(Long code ,String searchWhere);
+	List<VillageCustomer> getvillagebycode(Long code ,String searchWhere,Long villageid);
 
 	/**
 	 * 基本的小区详情

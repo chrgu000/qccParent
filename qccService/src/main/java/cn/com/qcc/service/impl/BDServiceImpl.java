@@ -301,8 +301,8 @@ public class BDServiceImpl implements BDService{
 	}
 
 	/// 查询想要添加的楼栋
-	public List<BuildingCustomer> searchAddBuildingToland(String searchWhere) {
-		return bdCustomerMapper.searchAddBuildingToland(searchWhere);
+	public List<BuildingCustomer> searchAddBuildingToland(String searchWhere , Long code , Long villageid) {
+		return bdCustomerMapper.searchAddBuildingToland(searchWhere , code ,villageid);
 	}
 
 	// 给房东绑定楼栋。

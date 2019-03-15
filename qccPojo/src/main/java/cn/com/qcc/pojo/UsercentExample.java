@@ -535,6 +535,66 @@ public class UsercentExample {
             return (Criteria) this;
         }
 
+        public Criteria andManageruseridIsNull() {
+            addCriterion("manageruserid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andManageruseridIsNotNull() {
+            addCriterion("manageruserid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andManageruseridEqualTo(Long value) {
+            addCriterion("manageruserid =", value, "manageruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andManageruseridNotEqualTo(Long value) {
+            addCriterion("manageruserid <>", value, "manageruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andManageruseridGreaterThan(Long value) {
+            addCriterion("manageruserid >", value, "manageruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andManageruseridGreaterThanOrEqualTo(Long value) {
+            addCriterion("manageruserid >=", value, "manageruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andManageruseridLessThan(Long value) {
+            addCriterion("manageruserid <", value, "manageruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andManageruseridLessThanOrEqualTo(Long value) {
+            addCriterion("manageruserid <=", value, "manageruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andManageruseridIn(List<Long> values) {
+            addCriterion("manageruserid in", values, "manageruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andManageruseridNotIn(List<Long> values) {
+            addCriterion("manageruserid not in", values, "manageruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andManageruseridBetween(Long value1, Long value2) {
+            addCriterion("manageruserid between", value1, value2, "manageruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andManageruseridNotBetween(Long value1, Long value2) {
+            addCriterion("manageruserid not between", value1, value2, "manageruserid");
+            return (Criteria) this;
+        }
+
         public Criteria andYapricesIsNull() {
             addCriterion("yaprices is null");
             return (Criteria) this;

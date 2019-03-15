@@ -18,6 +18,9 @@ public class Vipcount {
     /** 可用余额*/
     private Double balance;
 
+    /** 房屋租金*/
+    private Double houseaccount;
+
     /** 收益总额*/
     private Double account;
 
@@ -65,6 +68,14 @@ public class Vipcount {
 
     public void setBalance(Double balance) {
         this.balance = balance;
+    }
+
+    public Double getHouseaccount() {
+        return houseaccount;
+    }
+
+    public void setHouseaccount(Double houseaccount) {
+        this.houseaccount = houseaccount;
     }
 
     public Double getAccount() {

@@ -405,6 +405,66 @@ public class VipcountExample {
             return (Criteria) this;
         }
 
+        public Criteria andHouseaccountIsNull() {
+            addCriterion("houseaccount is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHouseaccountIsNotNull() {
+            addCriterion("houseaccount is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHouseaccountEqualTo(Double value) {
+            addCriterion("houseaccount =", value, "houseaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHouseaccountNotEqualTo(Double value) {
+            addCriterion("houseaccount <>", value, "houseaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHouseaccountGreaterThan(Double value) {
+            addCriterion("houseaccount >", value, "houseaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHouseaccountGreaterThanOrEqualTo(Double value) {
+            addCriterion("houseaccount >=", value, "houseaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHouseaccountLessThan(Double value) {
+            addCriterion("houseaccount <", value, "houseaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHouseaccountLessThanOrEqualTo(Double value) {
+            addCriterion("houseaccount <=", value, "houseaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHouseaccountIn(List<Double> values) {
+            addCriterion("houseaccount in", values, "houseaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHouseaccountNotIn(List<Double> values) {
+            addCriterion("houseaccount not in", values, "houseaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHouseaccountBetween(Double value1, Double value2) {
+            addCriterion("houseaccount between", value1, value2, "houseaccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andHouseaccountNotBetween(Double value1, Double value2) {
+            addCriterion("houseaccount not between", value1, value2, "houseaccount");
+            return (Criteria) this;
+        }
+
         public Criteria andAccountIsNull() {
             addCriterion("account is null");
             return (Criteria) this;

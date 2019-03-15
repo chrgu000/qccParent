@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import cn.com.qcc.queryvo.HousePayJsonModel;
 import cn.com.qcc.queryvo.HousepayCustomer;
 import cn.com.qcc.queryvo.PayexpertCustomer;
 import cn.com.qcc.queryvo.UserCentCustomer;
@@ -40,6 +41,10 @@ public interface UserRoomCustomerMapper {
 	
 	/**根据租约编号查询租约列表**/
 	List<UserCentCustomer> getUserCentsByUsercentnum(String usercentnum);
+
+	/**根据订单id集合查询订单明细**/
+	List<HousePayJsonModel> getHousePayByHousePayIds( @Param("idsList") String[] housePayIds);
+
 	
 	
 	

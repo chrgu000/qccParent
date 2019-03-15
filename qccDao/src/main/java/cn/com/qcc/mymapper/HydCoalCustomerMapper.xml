@@ -213,7 +213,7 @@
 			INNER JOIN (
 				SELECT   housepay.houseid  ,housepay.centprices , payexpert.start_time from housepay 
 					LEFT JOIN payexpert on housepay.payexpertid = payexpert.payexpertid
-					LEFT JOIN usercent on housepay.usercentid = usercent.usercentid 
+					LEFT JOIN usercent on payexpert.usercentid = usercent.usercentid 
 					where payexpert.start_time >= #{start} and payexpert.start_time  <![CDATA[<=#{end}]]>
 					and usercent.centstate not in (3,4)
 					and  housepay.financeid = 29

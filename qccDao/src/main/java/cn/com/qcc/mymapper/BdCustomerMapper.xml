@@ -133,13 +133,20 @@
 				building
 			INNER  JOIN village on village.villageid = building.villageid 
 			INNER JOIN area on area.`code` = village.`code` 
-			
 			where building.buildingid not in (
-			
 			SELECT buildingid from buildinglandlord
 			)
-			AND building.identity like CONCAT('%',#{searchWhere},'%')
-			LIMIT 0, 40
+			
+			<if test="searchWhere !=null and searchWhere != ''"> 
+				AND building.identity like CONCAT('%',#{searchWhere},'%')
+			</if>
+			<if test="code !=null and code != ''"> 
+				AND building.code like CONCAT('',#{code},'%')
+			</if>
+			<if test="villageid !=null and villageid != ''"> 
+				AND building.villageid  = #{villageid}
+			</if>
+			LIMIT 0, 400
   </select>
   
   

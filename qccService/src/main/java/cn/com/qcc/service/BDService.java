@@ -45,7 +45,7 @@ public interface BDService {
 	List<UserRoomCustomer> myLand(String bD_ACCTOKEN , Long code);
 
 	/**查询想要添加的楼栋**/
-	List<BuildingCustomer> searchAddBuildingToland(String searchWhere);
+	List<BuildingCustomer> searchAddBuildingToland(String searchWhere , Long code , Long villageid);
 
 	/**给房东绑定楼栋**/
 	ResultMap addBuildingToland(Long userid, Long buildingid);

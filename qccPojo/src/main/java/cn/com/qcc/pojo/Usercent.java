@@ -21,8 +21,11 @@ public class Usercent {
     /** 1-未签约，2-已签约，3-毁约 ，4 -历史租约*/
     private Integer centstate;
 
-    /** 管家用户ID推送账单*/
+    /** 房东userid*/
     private Long landuserid;
+
+    /** 管家用户ID推送账单*/
+    private Long manageruserid;
 
     /** 当前房价押金*/
     private Double yaprices;
@@ -108,6 +111,14 @@ public class Usercent {
 
     public void setLanduserid(Long landuserid) {
         this.landuserid = landuserid;
+    }
+
+    public Long getManageruserid() {
+        return manageruserid;
+    }
+
+    public void setManageruserid(Long manageruserid) {
+        this.manageruserid = manageruserid;
     }
 
     public Double getYaprices() {

@@ -268,10 +268,10 @@
 			SELECT DISTINCT MIN(housepay.create_time)needpaytime ,
 			building.building ,house.buildingid,
 			village.villagename ,
-			housepay.usercentid 
+			payexpert.usercentid 
 		  from housepay 
 			INNER JOIN payexpert on payexpert.payexpertid = housepay.payexpertid 
-			INNER JOIN usercent on usercent.usercentid = housepay.usercentid
+			INNER JOIN usercent on usercent.usercentid = payexpert.usercentid
 			INNER JOIN house on usercent.houseid = house.houseid 
 			INNER JOIN building on house.buildingid = building.buildingid
 			INNER JOIN village on building.villageid = village.villageid
@@ -282,7 +282,7 @@
 			<if test="end_time !=null">
 				 and housepay.create_time <![CDATA[<=#{end_time}]]> 
 			</if>
-			GROUP BY housepay.usercentid  
+			GROUP BY payexpert.usercentid  
 		ORDER BY housepay.create_time asc  ,building.buildingid asc   
 	</select>
 	
@@ -292,7 +292,7 @@
 			SELECT DISTINCT MIN(housepay.create_time)needpaytime 
 		  from housepay 
 			INNER JOIN payexpert on payexpert.payexpertid = housepay.payexpertid 
-			INNER JOIN usercent on usercent.usercentid = housepay.usercentid
+			INNER JOIN usercent on usercent.usercentid = payexpert.usercentid  
 			INNER JOIN house on usercent.houseid = house.houseid 
 			INNER JOIN building on house.buildingid = building.buildingid
 			INNER JOIN village on building.villageid = village.villageid
@@ -303,7 +303,7 @@
 			<if test="end_time !=null">
 				 and housepay.create_time <![CDATA[<=#{end_time}]]> 
 			</if>
-			GROUP BY housepay.usercentid  
+			GROUP BY payexpert.usercentid    
 		ORDER BY housepay.create_time asc  ,building.buildingid asc   
 	</select>
 	

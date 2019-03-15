@@ -200,4 +200,13 @@
 		<property name="destination" ref="villageAdd" />
 		<property name="messageListener" ref="villageAddMess" />
 	</bean> 
+	
+	
+	<!-- 用户交租收到消息发送短信   NO.22 租客交房租   -->
+	<bean id="userPayHouseAccountMess" class="cn.com.qcc.tenement.mqmess.UserPayHouseAccountMess"/>
+	<bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="userPayHouseAccount" />
+		<property name="messageListener" ref="userPayHouseAccountMess" />
+	</bean> 
 </beans>

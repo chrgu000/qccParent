@@ -42,5 +42,9 @@ public class RedisUtil {
 	public static final String  BD_ACCESS_TOKEN = "bd_accessToken:";
 	public static final Integer BD_ACCESS_TOKEN_OUT_TIME = 60*60*24*3;
 	
+	/**订单号前缀**/
+	public static final String HOUSEPAY_FIRST_KEY="pay_first:";
+	public static final Integer HOUSEPAY_OUT_TIME = 60*60*24*15;
+	
 
 }

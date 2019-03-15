@@ -46,12 +46,12 @@
 					buildingid 
 				FROM
 					house
-				WHERE
-				house.user_id in (inUserIds)
+				WHERE  
+				house.user_id in (  ${inUserIds} )
 				AND house.housestatus NOT IN (3)
 				GROUP BY house.buildingid
 		  )eventcount on eventcount.buildingid = building.buildingid
-		  where house.user_id in (inUserIds)  and house.housestatus !='3'
+		  where house.user_id in (  ${inUserIds} )  and house.housestatus !='3'
 		<!-- 这里封装房源的查询条件 --> 
  	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_roomparrent_where"></include>
  	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"></include>
@@ -93,11 +93,11 @@
 				FROM
 					house
 				WHERE
-					house.user_id in (inUserIds)
+					house.user_id in (  ${inUserIds}   )
 				AND house.housestatus NOT IN (3)
 				GROUP BY house.buildingid
 		  )eventcount on eventcount.buildingid = building.buildingid
-		  where house.user_id  in (inUserIds) and house.housestatus !='3'
+		  where house.user_id  in (  ${inUserIds}  ) and house.housestatus !='3'
 		<!-- 这里封装房源的查询条件 --> 
  	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_roomparrent_where"></include>
  	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_house_where"></include>
@@ -175,10 +175,51 @@
 		</if>
 		  INNER JOIN detaileaddress on detaileaddress.detailid = building.detailid
 	</select>
+	
+	
+	
+	<!-- 根据房东ID查询出楼栋列表-->
+	<select id="getpayMonery" 
+		resultType="cn.com.qcc.queryvo.HouseRoomCustomer">
+			SELECT
+				housepay.* ,usercent.usercentnum  ,
+				usercent.userid ,usercent.landuserid ,
+				usercent.manageruserid ,
+				house.house_number house_number
+			FROM
+				payexpert
+			LEFT JOIN usercent on payexpert.usercentid = usercent.usercentid
+			INNER JOIN (
+			
+			SELECT
+				IFNULL(SUM(centprices), 0) centprices  , houseid ,housepay.payexpertid
+			FROM
+				housepay
+			WHERE
+				paystate = 1
+				and housepayid in
+				<foreach item="item" collection="idsList" separator="," open="("
+					close=")" index="">
+					#{item, jdbcType=VARCHAR}
+				</foreach> 
+			GROUP BY
+				houseid
+			LIMIT 0,1
+			) housepay on housepay.payexpertid = payexpert.payexpertid
+		LEFT JOIN house on house.houseid = housepay.houseid
+	</select>
  	
  	
  	
- 	
+ 		<!-- 根据房东ID查询出楼栋列表-->
+	<select id="updateHousePayIsPay"  >
+			UPDATE housepay set housepay.paystate = 2 where housepay.housepayid in 
+				<foreach item="item" collection="idsList" separator="," open="("
+					close=")" index="">
+					#{item, jdbcType=VARCHAR}
+				</foreach> 
+			
+	</select>
  	
 
 

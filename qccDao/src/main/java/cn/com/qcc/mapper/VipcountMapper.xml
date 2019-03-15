@@ -7,6 +7,7 @@
     <result column="is_vip" property="is_vip" jdbcType="INTEGER" />
     <result column="cretime_time" property="cretime_time" jdbcType="TIMESTAMP" />
     <result column="balance" property="balance" jdbcType="DOUBLE" />
+    <result column="houseaccount" property="houseaccount" jdbcType="DOUBLE" />
     <result column="account" property="account" jdbcType="DOUBLE" />
     <result column="weixinaccount" property="weixinaccount" jdbcType="VARCHAR" />
     <result column="password" property="password" jdbcType="VARCHAR" />
@@ -70,7 +71,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    user_id, count, is_vip, cretime_time, balance, account, weixinaccount, password
+    user_id, count, is_vip, cretime_time, balance, houseaccount, account, weixinaccount, 
+    password
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.VipcountExample" >
     select
@@ -104,11 +106,13 @@
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Vipcount" >
     insert into vipcount (user_id, count, is_vip, 
-      cretime_time, balance, account, 
-      weixinaccount, password)
+      cretime_time, balance, houseaccount, 
+      account, weixinaccount, password
+      )
     values (#{user_id,jdbcType=BIGINT}, #{count,jdbcType=INTEGER}, #{is_vip,jdbcType=INTEGER}, 
-      #{cretime_time,jdbcType=TIMESTAMP}, #{balance,jdbcType=DOUBLE}, #{account,jdbcType=DOUBLE}, 
-      #{weixinaccount,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR})
+      #{cretime_time,jdbcType=TIMESTAMP}, #{balance,jdbcType=DOUBLE}, #{houseaccount,jdbcType=DOUBLE}, 
+      #{account,jdbcType=DOUBLE}, #{weixinaccount,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Vipcount" >
     insert into vipcount
@@ -127,6 +131,9 @@
       </if>
       <if test="balance != null" >
         balance,
+      </if>
+      <if test="houseaccount != null" >
+        houseaccount,
       </if>
       <if test="account != null" >
         account,
@@ -153,6 +160,9 @@
       </if>
       <if test="balance != null" >
         #{balance,jdbcType=DOUBLE},
+      </if>
+      <if test="houseaccount != null" >
+        #{houseaccount,jdbcType=DOUBLE},
       </if>
       <if test="account != null" >
         #{account,jdbcType=DOUBLE},
@@ -189,6 +199,9 @@
       <if test="record.balance != null" >
         balance = #{record.balance,jdbcType=DOUBLE},
       </if>
+      <if test="record.houseaccount != null" >
+        houseaccount = #{record.houseaccount,jdbcType=DOUBLE},
+      </if>
       <if test="record.account != null" >
         account = #{record.account,jdbcType=DOUBLE},
       </if>
@@ -210,6 +223,7 @@
       is_vip = #{record.is_vip,jdbcType=INTEGER},
       cretime_time = #{record.cretime_time,jdbcType=TIMESTAMP},
       balance = #{record.balance,jdbcType=DOUBLE},
+      houseaccount = #{record.houseaccount,jdbcType=DOUBLE},
       account = #{record.account,jdbcType=DOUBLE},
       weixinaccount = #{record.weixinaccount,jdbcType=VARCHAR},
       password = #{record.password,jdbcType=VARCHAR}
@@ -232,6 +246,9 @@
       <if test="balance != null" >
         balance = #{balance,jdbcType=DOUBLE},
       </if>
+      <if test="houseaccount != null" >
+        houseaccount = #{houseaccount,jdbcType=DOUBLE},
+      </if>
       <if test="account != null" >
         account = #{account,jdbcType=DOUBLE},
       </if>
@@ -250,6 +267,7 @@
       is_vip = #{is_vip,jdbcType=INTEGER},
       cretime_time = #{cretime_time,jdbcType=TIMESTAMP},
       balance = #{balance,jdbcType=DOUBLE},
+      houseaccount = #{houseaccount,jdbcType=DOUBLE},
       account = #{account,jdbcType=DOUBLE},
       weixinaccount = #{weixinaccount,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR}

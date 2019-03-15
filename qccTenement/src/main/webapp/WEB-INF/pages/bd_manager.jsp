@@ -20,7 +20,7 @@
 				<td class ='visible-lg' >用户姓名</td>
 				<td class ='visible-lg' >管理区域</td>
 				<td class ='visible-lg' >状态</td>
-				<td class ='visible-lg' >区域操作</td>
+				<td class ='visible-lg' >数据操作</td>
 				<td >维护</td>
 			</tr>
 			<tbody id="bd_body">

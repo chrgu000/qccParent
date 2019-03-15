@@ -9,6 +9,7 @@
     <result column="userid" property="userid" jdbcType="BIGINT" />
     <result column="centstate" property="centstate" jdbcType="INTEGER" />
     <result column="landuserid" property="landuserid" jdbcType="BIGINT" />
+    <result column="manageruserid" property="manageruserid" jdbcType="BIGINT" />
     <result column="yaprices" property="yaprices" jdbcType="DOUBLE" />
     <result column="centprices" property="centprices" jdbcType="DOUBLE" />
     <result column="centfromid" property="centfromid" jdbcType="BIGINT" />
@@ -79,9 +80,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    usercentid, usercentnum, centtimes, houseid, userid, centstate, landuserid, yaprices, 
-    centprices, centfromid, userstete, othermore, othermoreid, paystyleid, rentmodalid, 
-    end_time, start_time
+    usercentid, usercentnum, centtimes, houseid, userid, centstate, landuserid, manageruserid, 
+    yaprices, centprices, centfromid, userstete, othermore, othermoreid, paystyleid, 
+    rentmodalid, end_time, start_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.UsercentExample" >
     select
@@ -114,21 +115,23 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Usercent" >
-  <selectKey  resultType="long"  order="AFTER"  keyProperty="usercentid" >
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="usercentid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into usercent (usercentid, usercentnum, centtimes, 
       houseid, userid, centstate, 
-      landuserid, yaprices, centprices, 
-      centfromid, userstete, othermore, 
-      othermoreid, paystyleid, rentmodalid, 
-      end_time, start_time)
+      landuserid, manageruserid, yaprices, 
+      centprices, centfromid, userstete, 
+      othermore, othermoreid, paystyleid, 
+      rentmodalid, end_time, start_time
+      )
     values (#{usercentid,jdbcType=BIGINT}, #{usercentnum,jdbcType=VARCHAR}, #{centtimes,jdbcType=INTEGER}, 
       #{houseid,jdbcType=BIGINT}, #{userid,jdbcType=BIGINT}, #{centstate,jdbcType=INTEGER}, 
-      #{landuserid,jdbcType=BIGINT}, #{yaprices,jdbcType=DOUBLE}, #{centprices,jdbcType=DOUBLE}, 
-      #{centfromid,jdbcType=BIGINT}, #{userstete,jdbcType=INTEGER}, #{othermore,jdbcType=VARCHAR}, 
-      #{othermoreid,jdbcType=VARCHAR}, #{paystyleid,jdbcType=VARCHAR}, #{rentmodalid,jdbcType=BIGINT}, 
-      #{end_time,jdbcType=TIMESTAMP}, #{start_time,jdbcType=TIMESTAMP})
+      #{landuserid,jdbcType=BIGINT}, #{manageruserid,jdbcType=BIGINT}, #{yaprices,jdbcType=DOUBLE}, 
+      #{centprices,jdbcType=DOUBLE}, #{centfromid,jdbcType=BIGINT}, #{userstete,jdbcType=INTEGER}, 
+      #{othermore,jdbcType=VARCHAR}, #{othermoreid,jdbcType=VARCHAR}, #{paystyleid,jdbcType=VARCHAR}, 
+      #{rentmodalid,jdbcType=BIGINT}, #{end_time,jdbcType=TIMESTAMP}, #{start_time,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Usercent" >
    <selectKey  resultType="long"  order="AFTER"  keyProperty="usercentid" >
@@ -156,6 +159,9 @@
       </if>
       <if test="landuserid != null" >
         landuserid,
+      </if>
+      <if test="manageruserid != null" >
+        manageruserid,
       </if>
       <if test="yaprices != null" >
         yaprices,
@@ -209,6 +215,9 @@
       </if>
       <if test="landuserid != null" >
         #{landuserid,jdbcType=BIGINT},
+      </if>
+      <if test="manageruserid != null" >
+        #{manageruserid,jdbcType=BIGINT},
       </if>
       <if test="yaprices != null" >
         #{yaprices,jdbcType=DOUBLE},
@@ -272,6 +281,9 @@
       <if test="record.landuserid != null" >
         landuserid = #{record.landuserid,jdbcType=BIGINT},
       </if>
+      <if test="record.manageruserid != null" >
+        manageruserid = #{record.manageruserid,jdbcType=BIGINT},
+      </if>
       <if test="record.yaprices != null" >
         yaprices = #{record.yaprices,jdbcType=DOUBLE},
       </if>
@@ -316,6 +328,7 @@
       userid = #{record.userid,jdbcType=BIGINT},
       centstate = #{record.centstate,jdbcType=INTEGER},
       landuserid = #{record.landuserid,jdbcType=BIGINT},
+      manageruserid = #{record.manageruserid,jdbcType=BIGINT},
       yaprices = #{record.yaprices,jdbcType=DOUBLE},
       centprices = #{record.centprices,jdbcType=DOUBLE},
       centfromid = #{record.centfromid,jdbcType=BIGINT},
@@ -350,6 +363,9 @@
       </if>
       <if test="landuserid != null" >
         landuserid = #{landuserid,jdbcType=BIGINT},
+      </if>
+      <if test="manageruserid != null" >
+        manageruserid = #{manageruserid,jdbcType=BIGINT},
       </if>
       <if test="yaprices != null" >
         yaprices = #{yaprices,jdbcType=DOUBLE},
@@ -392,6 +408,7 @@
       userid = #{userid,jdbcType=BIGINT},
       centstate = #{centstate,jdbcType=INTEGER},
       landuserid = #{landuserid,jdbcType=BIGINT},
+      manageruserid = #{manageruserid,jdbcType=BIGINT},
       yaprices = #{yaprices,jdbcType=DOUBLE},
       centprices = #{centprices,jdbcType=DOUBLE},
       centfromid = #{centfromid,jdbcType=BIGINT},

@@ -59,5 +59,17 @@ public interface HouseRoomService {
 	 * 根据房东ID查询房东房源对应的楼栋
 	 */
 	List<BuildingCustomer> getlandbuildingname(BuildingCustomer buildingCustomer);
+	
+	/**根据订单id查询需要支付的金额**/
+	HouseRoomCustomer getpayMonery(String housepayIds);
+	
+	/**交房租成功的回调
+	 * @param out_trade_no : 订单号
+	 * @param total_amount : 订单总金额
+	 * **/
+	String housepaySuccess(String out_trade_no, String total_amount);
+	
+	/**查询所有的Inids**/
+	String getInUserIds(Long userid);
 
 }

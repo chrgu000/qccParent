@@ -24,12 +24,16 @@ import org.springframework.transaction.annotation.Transactional;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.IDUtils;
+import cn.com.qcc.common.JsonUtils;
+import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.XwpfTUtil;
+import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mapper.FurnitureMapper;
 import cn.com.qcc.mapper.HistorycentMapper;
 import cn.com.qcc.mapper.HouseMapper;
 import cn.com.qcc.mapper.HousepayMapper;
+import cn.com.qcc.mapper.HousepaydetailMapper;
 import cn.com.qcc.mapper.LandlordManagerMapper;
 import cn.com.qcc.mapper.LandlordMapper;
 import cn.com.qcc.mapper.MycentMapper;
@@ -38,14 +42,17 @@ import cn.com.qcc.mapper.PaymodalMapper;
 import cn.com.qcc.mapper.ProfileMapper;
 import cn.com.qcc.mapper.RentmodalMapper;
 import cn.com.qcc.mapper.UsercentMapper;
+import cn.com.qcc.mapper.VipcountMapper;
 import cn.com.qcc.mess.util.SendMessUtil;
 import cn.com.qcc.mymapper.HouseCustomerMapper;
 import cn.com.qcc.mymapper.HouseRoomCustomerMapper;
 import cn.com.qcc.mymapper.UserCustomerMapper;
+import cn.com.qcc.mymapper.UserRoomCustomerMapper;
 import cn.com.qcc.pojo.Furniture;
 import cn.com.qcc.pojo.Historycent;
 import cn.com.qcc.pojo.House;
 import cn.com.qcc.pojo.Housepay;
+import cn.com.qcc.pojo.Housepaydetail;
 import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.pojo.LandlordManager;
 import cn.com.qcc.pojo.LandlordManagerExample;
@@ -55,76 +62,79 @@ import cn.com.qcc.pojo.Paymodal;
 import cn.com.qcc.pojo.Rentmodal;
 import cn.com.qcc.pojo.Usercent;
 import cn.com.qcc.pojo.UsercentExample;
+import cn.com.qcc.pojo.Vipcount;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
+import cn.com.qcc.queryvo.HousePayJsonModel;
 import cn.com.qcc.queryvo.HouseRoomCustomer;
 import cn.com.qcc.queryvo.HouseVo;
 import cn.com.qcc.queryvo.HousepayCustomer;
 import cn.com.qcc.queryvo.UserCentCustomer;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.service.HouseRoomService;
+
 @Service
 @Transactional
-public class HouseRoomServiceImpl implements HouseRoomService{
-	
-	@Autowired HouseRoomCustomerMapper houseRoomCustomerMapper;
-	@Autowired UsercentMapper usercentMapper;
-	@Autowired UserCustomerMapper userCustomerMapper;
-	@Autowired ProfileMapper profileMapper;
-	@Autowired PaymodalMapper paymodalMapper;
-	@Autowired RentmodalMapper rentmodalMapper;
-	@Autowired HousepayMapper housepayMapper;
-	@Autowired MycentMapper mycentMapper;
-	@Autowired HouseMapper houseMapper;
-	@Autowired PayexpertMapper payexpertMapper;
-	@Autowired HistorycentMapper historycentMapper;
-	@Autowired HouseCustomerMapper houseCustomerMapper;
-	@Autowired FurnitureMapper furnitureMapper;
-	@Resource  Destination userCentCreate;
-	@Autowired JmsTemplate jmsTemplate;
-	@Autowired LandlordMapper landlordMapper;
-	@Autowired LandlordManagerMapper landlordManagerMapper;
-	
-	
+public class HouseRoomServiceImpl implements HouseRoomService {
 
-
-	/**查询房态图**/
+	@Autowired
+	HouseRoomCustomerMapper houseRoomCustomerMapper;
+	@Autowired
+	UsercentMapper usercentMapper;
+	@Autowired
+	UserCustomerMapper userCustomerMapper;
+	@Autowired
+	ProfileMapper profileMapper;
+	@Autowired
+	PaymodalMapper paymodalMapper;
+	@Autowired
+	RentmodalMapper rentmodalMapper;
+	@Autowired
+	HousepayMapper housepayMapper;
+	@Autowired
+	MycentMapper mycentMapper;
+	@Autowired
+	HouseMapper houseMapper;
+	@Autowired
+	PayexpertMapper payexpertMapper;
+	@Autowired
+	HistorycentMapper historycentMapper;
+	@Autowired
+	HouseCustomerMapper houseCustomerMapper;
+	@Autowired
+	FurnitureMapper furnitureMapper;
+	@Resource
+	Destination userCentCreate;
+	@Autowired
+	JmsTemplate jmsTemplate;
+	@Autowired
+	LandlordMapper landlordMapper;
+	@Autowired
+	LandlordManagerMapper landlordManagerMapper;
+	@Autowired
+	JedisClient jedisClient;
+	@Autowired
+	UserRoomCustomerMapper userRoomCustomerMapper;
+	@Autowired
+	HousepaydetailMapper housepaydetailMapper;
+	@Autowired
+	VipcountMapper vipcountMapper;
+	@Resource  
+	Destination userPayHouseAccount;
+	/** 查询房态图 **/
 	public List<HouseRoomCustomer> roompattern(HouseVo houseVo) {
-		
-		// 判断当前用户是不是房东
-		Landlord landlord = landlordMapper.selectByPrimaryKey(houseVo.getUserid());
-		String inUserIds = "";
-		if (CheckDataUtil.checkNotEmpty(landlord)
-				|| landlord.getLandstate().intValue() == 2) {
-			LandlordManagerExample example = new LandlordManagerExample();
-			LandlordManagerExample.Criteria criteria = example.createCriteria();
-			criteria.andLanduseridEqualTo(houseVo.getUserid());
-			List<LandlordManager> selectByExample = landlordManagerMapper.selectByExample(example);
-			if (CheckDataUtil.checkNotEmpty(selectByExample)) {
-				for (LandlordManager manager : selectByExample) {
-					inUserIds +=manager.getManageruserid() +",";
-				}
-				inUserIds = inUserIds + houseVo.getUserid();
-			} else {
-				inUserIds = houseVo.getUserid().toString();
-			}
-		}else {
-			inUserIds = houseVo.getUserid().toString();
-		}
-		
-		houseVo.setInUserIds(inUserIds);
-		
-		
+
 		// 第一步,查询出基本的房源信息列表
 		List<HouseRoomCustomer> houseList = houseRoomCustomerMapper.roompattern(houseVo);
-		
+
 		// 第二步,根据租约id查询housepay 支付情况表
 		List<String> idList = new ArrayList<>();
-		
+
 		for (int i = 0; i < houseList.size(); i++) {// 从第一个数开始，到最后一个数-1次循环
-			if (CheckDataUtil.checkNotEmpty( houseList.get(i).getUsercentid() ));
-			idList.add( houseList.get(i).getUsercentid().toString() );
-			
+			if (CheckDataUtil.checkNotEmpty(houseList.get(i).getUsercentid()))
+				;
+			idList.add(houseList.get(i).getUsercentid().toString());
+
 			for (int j = houseList.size() - 1; j > i; j--) {// 从最后一个数开始到i+1
 				Long buil1 = houseList.get(i).getBuildingid();
 				Long buil2 = houseList.get(j).getBuildingid();
@@ -140,31 +150,29 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 				}
 			}
 
-			
 		}
-		
-		
+
 		List<HousepayCustomer> payList = new ArrayList<>();
-		if (CheckDataUtil.checkNotEmpty(idList)) 
-			payList = 	houseRoomCustomerMapper.getPayModel(idList);
-		
+		if (CheckDataUtil.checkNotEmpty(idList))
+			payList = houseRoomCustomerMapper.getPayModel(idList);
+
 		// 第三步,计算各种金额数据给前台
 		for (HouseRoomCustomer house : houseList) {
-			//其他费用没有支付
+			// 其他费用没有支付
 			double otherpricesnotpay = 0;
-			//其他费用支付
-			double otherpricespay = 0 ;
+			// 其他费用支付
+			double otherpricespay = 0;
 			// 取出没有支付的最小日期
 			for (HousepayCustomer pay : payList) {
 				// 当是 同一条租约时候开始计算数据
-				if (house.getUsercentid().longValue()== pay.getUsercentid().longValue()) {
-					//如果是 29 租金
+				if (house.getUsercentid().longValue() == pay.getUsercentid().longValue()) {
+					// 如果是 29 租金
 					if (pay.getFinanceid().longValue() == 29) {
 						// 设置租金状态
 						house.setCentstate(pay.getPaystate());
 						// 设置租金金额
 						house.setCentprices(pay.getCentprices());
-					} 
+					}
 					// 如果是30 计算押金
 					else if (pay.getFinanceid().longValue() == 30) {
 						house.setManagerstate(pay.getPaystate());
@@ -172,33 +180,33 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 					} else {
 						// 计算其他费用分两类 支付的和 没有支付
 						if (pay.getPaystate().longValue() == 1) {
-							//判断时间
+							// 判断时间
 							Long current = new Date().getTime();
 							Long shouKuan = pay.getCreate_time().getTime();
 							// 如果当前时间比 收款时间大 说明其他费用逾期
-							if (current > shouKuan) 
+							if (current > shouKuan)
 								otherpricesnotpay += pay.getCentprices();
 						}
-							
-						//其他费用已经支付本月 1 yue 12 -   2  - 12  2 9 
-						if ( pay.getPaystate().longValue() == 2) {
+
+						// 其他费用已经支付本月 1 yue 12 - 2 - 12 2 9
+						if (pay.getPaystate().longValue() == 2) {
 							Long current = new Date().getTime();
 							Long yishou = 0L;
 							if (CheckDataUtil.checkNotEmpty(pay.getUpdate_time())) {
 								yishou = pay.getUpdate_time().getTime();
 							}
-									
-							//计算距离收款日前后15 
-							if (current > yishou && current < (yishou + 1296000000 * 2) ) 
-								otherpricespay +=pay.getCentprices();
+
+							// 计算距离收款日前后15
+							if (current > yishou && current < (yishou + 1296000000 * 2))
+								otherpricespay += pay.getCentprices();
 						}
-							
+
 					}
 				}
 			}
 			house.setOtherpricespay(otherpricespay);
 			house.setOtherpricesnotpay(otherpricesnotpay);
-			
+
 			if (house.getNeedpaytime() != null) {
 				int needoutday = DateUtil.daysBetween(new Date(), house.getNeedpaytime());
 				house.setNeedoutday(needoutday);
@@ -217,11 +225,11 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 		return houseList;
 	}
 
-
 	@Override
 	public int roompatternCount(HouseVo houseVo) {
 		return houseRoomCustomerMapper.roompatternCount(houseVo);
 	}
+
 	private boolean checkUsercent(Usercent usercent) {
 		UsercentExample example = new UsercentExample();
 		UsercentExample.Criteria criteria = example.createCriteria();
@@ -231,8 +239,9 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 		values.add(2);
 		criteria.andCentstateIn(values);
 		List<Usercent> list = usercentMapper.selectByExample(example);
-		return list.size() == 0 ||  list.isEmpty();
+		return list.size() == 0 || list.isEmpty();
 	}
+
 	private File CheckMyCentExist(Mycent my_search) {
 		String url = my_search.getCenturl();
 		url = url.substring(url.lastIndexOf("/"));
@@ -245,6 +254,7 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 		// 文件存在
 		return f;
 	}
+
 	private String InSerentHistoryCent(Usercent usercent, String newPath) {
 		Historycent historycent = new Historycent();
 		historycent.setUpdate_time(new Date());
@@ -254,6 +264,7 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 		historycentMapper.insertSelective(historycent);
 		return historycent.getHistorycenturl();
 	}
+
 	private String ConsumeCent(Usercent usercent, File file, Integer times) throws IOException {
 		Map<String, Object> params = new HashMap<String, Object>();
 		// 设置参数
@@ -441,6 +452,7 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 		return newName + ".docx";
 
 	}
+
 	private String getDateString(Long start) {
 		String res;
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -449,7 +461,7 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 		res = simpleDateFormat.format(date);
 		return res;
 	}
-	
+
 	// 这里只生成房屋押金。
 	private List<Payexpert> CreatePayExpert(Usercent usercent, String paycentid, String pricestype, Integer num) {
 		Long rentmodalid = usercent.getRentmodalid();
@@ -553,7 +565,8 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 				// 这里设置需要交房租时间
 				housepay.setPaystate(1);// 未支付状态
 				housepay.setCurrentstate(1);// 当前租期
-				//housepay.setUsercentid(usercent.getUsercentid()); // 租客登记的唯一约束
+				// housepay.setUsercentid(usercent.getUsercentid()); //
+				// 租客登记的唯一约束
 				if (i == 0) {
 					// 这里是算其他的价格
 					if (str != null) {
@@ -596,31 +609,36 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 		}
 		return null;
 	}
-	
-	
-	
-	
-	
+
 	/**
 	 * 租客登记时候必须要填写的资料.
-	 * @param houseid     : 登记的房子ID
-	 * @param landuserid  :设置用户的ID，方便管家推送账号和管理
-	 * @param Yaprices    : 当前房间的押金
-	 * @param centfromid  : 租客来源的ID
-	 * @param mycentid    : 合同模板ID
-	 * @param start_time  : 租约开始时间
-	 * @param end_time    : 租约结束时间
-	 * @param pricestype  :其他一次性费用
-	 * @param othermore   : 其他补充合同
-	 * @param islinecent  : yes 表示线上合同
+	 * 
+	 * @param houseid
+	 *            : 登记的房子ID
+	 * @param landuserid
+	 *            :设置用户的ID，方便管家推送账号和管理
+	 * @param Yaprices
+	 *            : 当前房间的押金
+	 * @param centfromid
+	 *            : 租客来源的ID
+	 * @param mycentid
+	 *            : 合同模板ID
+	 * @param start_time
+	 *            : 租约开始时间
+	 * @param end_time
+	 *            : 租约结束时间
+	 * @param pricestype
+	 *            :其他一次性费用
+	 * @param othermore
+	 *            : 其他补充合同
+	 * @param islinecent
+	 *            : yes 表示线上合同
 	 **/
 	public ResultMap usercent(Usercent usercent, Mycent mycent, HttpServletRequest request, String othermore,
 			String payid, String paycentid, String pricestype, String othermoreid1, String othermoreid2,
 			String islinecent) {
+
 		
-		// 先判断该房源是否可以租客 0-返回true 表示 没有签约的房子
-		boolean falg = checkUsercent(usercent);
-		if (falg == false ) return ResultMap.build(400, "该房源已经登记");
 		// 租客来源
 		if (usercent.getCentfromid() == null) {
 			usercent.setCentfromid(1L);
@@ -640,20 +658,35 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 		}
 		// 查询租约登记的最大次数
 		Integer num = userCustomerMapper.getCentTimes(usercent.getUsercentnum());
-		// 当前房源的押金
-		if (num == 1 && usercent.getYaprices() == null) {
-			return ResultMap.build(201, "输入押金");
+		// 如果是第一次签约。 
+		if (num == 1 ) {
+			if (usercent.getYaprices() == null) 
+				return ResultMap.build(201, "输入押金");
+			// 先判断该房源是否可以租客 0-返回true 表示 没有签约的房子
+			boolean falg = checkUsercent(usercent);
+			if (falg == false)
+				return ResultMap.build(400, "该房源已经登录或者该租客有待处理租约");
 		}
-		// 建立管家即是子账号
-		if (usercent.getLanduserid() == null) {
-			usercent.setLanduserid(-1L);
+		// 设置管理
+		if (CheckDataUtil.checkisEmpty(usercent.getManageruserid())) {
+			return ResultMap.build(400, "请设置管家");
 		}
+
+		// 获取房东的userid
+		Long landUserid = getLandUserId(usercent.getManageruserid());
+		if (CheckDataUtil.checkisEmpty(landUserid)) {
+			return ResultMap.build(400, "找不到房东不可发布租约");
+		}
+
+		// 设置房东的id
+		usercent.setLanduserid(landUserid);
+
 		if (usercent.getUserid() == null) {
-			return ResultMap.build(204, "操作需要登录");
+			return ResultMap.build(204, "请选择一个用户");
 		}
 		// 建立关系的房源ID，不可以少。
 		if (usercent.getHouseid() == null) {
-			return ResultMap.build(203,  "选择一个房源");
+			return ResultMap.build(203, "选择一个房源");
 		}
 		// 租约的开始日期不能少
 		if (usercent.getStart_time() == null) {
@@ -678,7 +711,7 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 
 		// 获取用户实名信息
 		UserCustomer profile = userCustomerMapper.searchUserSign(usercent.getUserid());
-		if (profile == null || profile.getSignstate() !=2) {
+		if (profile == null || profile.getSignstate() != 2) {
 			return ResultMap.build(400, "未实名");
 		}
 
@@ -724,12 +757,30 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 		SendMessUtil.sendData(jmsTemplate, userCentCreate, sendData);
 		return ResultMap.IS_200(map);
 	}
-	
-	
-	
+
+	/** 通过管家的userid查询房东的userid **/
+	private Long getLandUserId(Long manageruserid) {
+		// 1- 判断是不是房东用户
+		Landlord landlord = landlordMapper.selectByPrimaryKey(manageruserid);
+		// 如果是房东直接返回
+		if (CheckDataUtil.checkNotEmpty(landlord) && landlord.getLandstate().intValue() == 2) {
+			return landlord.getLanduserid();
+		}
+
+		// 通过管家查询房东
+		LandlordManager manager = landlordManagerMapper.selectByPrimaryKey(manageruserid);
+		// 如果是房东直接返回
+		if (CheckDataUtil.checkNotEmpty(manager) && manager.getState().intValue() == 2) {
+			return manager.getLanduserid();
+		}
+		return null;
+	}
+
 	/**
 	 * 退房不结账
-	 * @param houseid  : houseid
+	 * 
+	 * @param houseid
+	 *            : houseid
 	 **/
 	public ResultMap roomout(Long houseid) {
 		if (houseid == null) {
@@ -748,11 +799,12 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 		houseMapper.updateByPrimaryKeySelective(house);
 		return ResultMap.build(200, "操作成功");
 	}
-	
-	
+
 	/**
 	 * 根据房源ID 和userid 发起退房操作
-	 * @param houseid : 当前房源ID
+	 * 
+	 * @param houseid
+	 *            : 当前房源ID
 	 **/
 	public HouseCustomer roomoutsearch(Long houseid) {
 
@@ -796,8 +848,7 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 		houseCustomer.setTotalprices(payprices + duoshou);
 		return houseCustomer;
 	}
-	
-	
+
 	/**
 	 * 根据房东ID 查询出对应的区域分组
 	 **/
@@ -807,8 +858,7 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 
 		return landareaname;
 	}
-	
-	
+
 	/**
 	 * 根据房东ID查询房东房源对应的楼栋
 	 */
@@ -823,5 +873,97 @@ public class HouseRoomServiceImpl implements HouseRoomService{
 		return buils;
 	}
 
+	/// 根据订单id的集合查询需要支付的金额
+	public HouseRoomCustomer getpayMonery(String housepayIds) {
+		if (CheckDataUtil.checkisEmpty(housepayIds)) {
+			return new HouseRoomCustomer();
+		}
+		String[] split = housepayIds.split(",");
+		return houseRoomCustomerMapper.getpayMonery(split);
+	}
+
+	// 支付成功后需要做的事情
+	public String housepaySuccess(String out_trade_no, String total_amount) {
+		String jsonData = jedisClient.get(RedisUtil.HOUSEPAY_FIRST_KEY + out_trade_no);
+		if (CheckDataUtil.checkisEmpty(jsonData)) {
+			return "fail";
+		}
+		HouseRoomCustomer house = JsonUtils.jsonToPojo(jsonData, HouseRoomCustomer.class);
+		
+		// 1 - 需要把租约修改为已经签约状态
+		UsercentExample example = new UsercentExample();
+		UsercentExample.Criteria criteria = example.createCriteria();
+		criteria.andUsercentnumEqualTo(house.getUsercentnum());
+		criteria.andCentstateEqualTo(1);
+		List<Usercent> list =  usercentMapper.selectByExample(example);
+		if (CheckDataUtil.checkNotEmpty(list)) {
+			Usercent updateCent = list.get(0);
+			updateCent.setCentstate(2);
+			usercentMapper.updateByPrimaryKeySelective(updateCent);
+		}
+		
+		// 2 - 插入交租记录表
+		// 获取到订单的列表
+		String payIds = house.getPayIds();
+		String[] housePayIds = payIds.split(",");
+		// 第三步 根据 分期id查询所有账单
+		List<HousePayJsonModel> payList = userRoomCustomerMapper.getHousePayByHousePayIds(housePayIds);
+		String objectToJson = JsonUtils.objectToJson(payList);
+		Housepaydetail insertData = new Housepaydetail();
+		insertData.setDetailcontent(objectToJson);
+		insertData.setHouseid(house.getHouseid());
+		insertData.setHousenum(house.getHouse_number());
+		insertData.setOrdernum(out_trade_no);
+		insertData.setPaytime(new Date());
+		insertData.setTotalprices(house.getCentprices());
+		insertData.setUsercentnum(house.getUsercentnum());
+		insertData.setUserid(house.getUserid());
+		insertData.setLanduserid(house.getLanduserid());
+		insertData.setManageruserid(house.getManageruserid());
+		housepaydetailMapper.insertSelective(insertData);
+
+		// 3- 给房东钱包加入金额
+		Vipcount vipaccount = vipcountMapper.selectByPrimaryKey(house.getLanduserid());
+		vipaccount.setHouseaccount( vipaccount.getHouseaccount() + house.getCentprices()   );
+		vipcountMapper.updateByPrimaryKeySelective(vipaccount);
+		
+		// 4 - 修改订单为已支付
+		houseRoomCustomerMapper.updateHousePayIsPay(housePayIds);
+		
+		// 发送短信消息
+		String sendData = house.getHouseid() + "-" + house.getUserid() + "-" + house.getLanduserid()
+		+ "-" + house.getManageruserid() + "-" + out_trade_no + "-" + house.getCentprices() ;
+		SendMessUtil.sendData(jmsTemplate, userPayHouseAccount, sendData);
+				
+
+		return "success";
+	}
+
+	@Override
+	public String getInUserIds(Long userid) {
+		// 判断当前用户是不是房东
+		Landlord landlord = landlordMapper.selectByPrimaryKey(userid);
+		String inUserIds = "";
+		if (CheckDataUtil.checkNotEmpty(landlord) && landlord.getLandstate().intValue() == 2) {
+			LandlordManagerExample example = new LandlordManagerExample();
+			LandlordManagerExample.Criteria criteria = example.createCriteria();
+			criteria.andLanduseridEqualTo(userid);
+			List<LandlordManager> selectByExample = landlordManagerMapper.selectByExample(example);
+			if (CheckDataUtil.checkNotEmpty(selectByExample)) {
+				for (LandlordManager manager : selectByExample) {
+					inUserIds += manager.getManageruserid() + ",";
+				}
+				inUserIds = inUserIds + userid;
+			} else {
+				inUserIds = userid.toString();
+			}
+			return inUserIds;
+		} 
+		LandlordManager manager = landlordManagerMapper.selectByPrimaryKey(userid);
+		if (CheckDataUtil.checkNotEmpty(manager) && manager.getState().intValue() == 2) {
+			inUserIds = userid.toString();
+		}
+		return inUserIds;
+	}
 
 }

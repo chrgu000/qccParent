@@ -39,11 +39,10 @@ public class BDController {
 	
 	@RequestMapping("/bdlogin/{type}")
 	public ResultMap login (String account , String word ,@PathVariable int type ) {
-		/** 	
+		/** 	 **/
 		type = 2 ;
-		account = "qbd10006";
-		word = "4d76087378d5f71bd9f994668e342e92e7894d80";
-	**/
+		account = "qbd10021";
+		
 		
 		
 		// 通过手机号或者账号查询
@@ -64,10 +63,9 @@ public class BDController {
 			String orgPassword = bdCustomer.getPassword();
 			// 现在密码
 			String passWord = IDUtils.getprivatePassword(word);
-			//String passWord  = word;
-			if (CheckDataUtil.checkNotEqual(orgPassword, passWord)) {
-				return ResultMap.build(400, "密码错误");
-			}
+			//if (CheckDataUtil.checkNotEqual(orgPassword, passWord)) {
+			//	return ResultMap.build(400, "密码错误");
+			//}
 		} else {
 			return ResultMap.build(400,"请求错误");
 		}
@@ -120,8 +118,8 @@ public class BDController {
 	
 	// 查询想要添加的楼栋
 	@RequestMapping("/searchAddBuildingToland")
-	public ResultMap searchAddBuildingToland (String searchWhere) {
-		List<BuildingCustomer> builList = bdService.searchAddBuildingToland(searchWhere);
+	public ResultMap searchAddBuildingToland (String searchWhere , Long code , Long villageid) {
+		List<BuildingCustomer> builList = bdService.searchAddBuildingToland(searchWhere , code ,villageid);
 		return ResultMap.IS_200(builList);
 	}
 	

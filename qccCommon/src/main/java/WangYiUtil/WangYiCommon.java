@@ -69,6 +69,15 @@ public class WangYiCommon {
 	/**BD 添加房东后通知房东**/
 	public static final String BD_ADD_LAND_NOTIC = "9764325";
 	
+	/**通知租户交租成功**/
+	public static final  String NOTIC_USER_HOUSEPAY_SUCCESS="9684351";
+	
+	/**通知房东交租成功**/
+	public static final  String NOTIC_LAND_HOUSEPAY_SUCCESS ="9644319";
+	
+	/**通知管理交租成功**/
+	public static final  String NOTIC_MANAGER_HOUSEPAY_SUCCESS ="9764356";
+	
 	
 
 }

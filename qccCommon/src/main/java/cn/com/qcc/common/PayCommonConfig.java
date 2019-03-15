@@ -141,4 +141,7 @@ public class PayCommonConfig {
 	
 	/**群组的过滤距离 20km **/
 	public static final int GROUP_DEFAULT_COLATION_JULI = 20 * 1000;
+	
+	/**交房租支付成功回调**/
+	public static final String housepaySuccess = "https://www.zzw777.com/Tenement/housepay/success";
 }
