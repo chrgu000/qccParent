@@ -27,6 +27,7 @@ import cn.com.qcc.mapper.AreaMapper;
 import cn.com.qcc.mapper.BrandMapper;
 import cn.com.qcc.mapper.BrokerMapper;
 import cn.com.qcc.mapper.BuildingMapper;
+import cn.com.qcc.mapper.BuildinglandlordMapper;
 import cn.com.qcc.mapper.DetaileaddressMapper;
 import cn.com.qcc.mapper.HouseMapper;
 import cn.com.qcc.mapper.RentalMapper;
@@ -43,6 +44,7 @@ import cn.com.qcc.pojo.AreaExample;
 import cn.com.qcc.pojo.Broker;
 import cn.com.qcc.pojo.Building;
 import cn.com.qcc.pojo.BuildingExample;
+import cn.com.qcc.pojo.Buildinglandlord;
 import cn.com.qcc.pojo.Detaileaddress;
 import cn.com.qcc.pojo.DetaileaddressExample;
 import cn.com.qcc.pojo.House;
@@ -95,6 +97,7 @@ public class VillageServiceImpl implements VillageService {
 	@Resource  Destination builSearch;
 	@Autowired JmsTemplate jmsTemplate;
 	@Autowired JedisClient jedisClient;
+	@Autowired BuildinglandlordMapper buildinglandlordMapper;
 
 	/**
 	 * 地区下面的小区
@@ -189,7 +192,8 @@ public class VillageServiceImpl implements VillageService {
 	}
 
 	// 发布楼栋
-	public ResultMap savebuild(Village village, Building building, Detaileaddress detaileaddress,String brand) {
+	public ResultMap savebuild(Village village, Building building, Detaileaddress detaileaddress,String brand
+			,Long landuserid) {
 		
 		if (CheckDataUtil.checkisEmpty(building.getBrandid()) || building.getBrandid()<0 ) {
 			building.setBrandid(null);
@@ -253,6 +257,15 @@ public class VillageServiceImpl implements VillageService {
 			building.setUpdate_time(new Date());
 			building.setXcxpicture("");
 			buildingMapper.insertSelective(building);
+			
+			// 添加和房东的绑定关系
+			if (CheckDataUtil.checkNotEmpty(landuserid)) {
+				Buildinglandlord land = new Buildinglandlord();
+				land.setBuildingid(building.getBrandid());
+				land.setLandlordid(landuserid);
+				buildinglandlordMapper.insertSelective(land);
+			}
+			
 		} else {
 			building.setBdid(null);
 			building.setBuildingcode(null);

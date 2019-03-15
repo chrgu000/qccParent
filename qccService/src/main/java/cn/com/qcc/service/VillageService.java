@@ -44,7 +44,8 @@ public interface VillageService {
 
 	/** 发布楼栋
 	 * **/
-	ResultMap savebuild(Village village, Building building, Detaileaddress detaileaddress,String brand);
+	ResultMap savebuild(Village village, Building building, Detaileaddress detaileaddress,String brand
+			,Long landuserid);
 	
 	/**
 	 * 根据城市名称查询CODE

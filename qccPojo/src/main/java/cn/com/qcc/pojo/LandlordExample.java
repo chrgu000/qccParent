@@ -974,6 +974,146 @@ public class LandlordExample {
             addCriterion("businesspicture not between", value1, value2, "businesspicture");
             return (Criteria) this;
         }
+
+        public Criteria andLinkmanIsNull() {
+            addCriterion("linkman is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkmanIsNotNull() {
+            addCriterion("linkman is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkmanEqualTo(String value) {
+            addCriterion("linkman =", value, "linkman");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkmanNotEqualTo(String value) {
+            addCriterion("linkman <>", value, "linkman");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkmanGreaterThan(String value) {
+            addCriterion("linkman >", value, "linkman");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkmanGreaterThanOrEqualTo(String value) {
+            addCriterion("linkman >=", value, "linkman");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkmanLessThan(String value) {
+            addCriterion("linkman <", value, "linkman");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkmanLessThanOrEqualTo(String value) {
+            addCriterion("linkman <=", value, "linkman");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkmanLike(String value) {
+            addCriterion("linkman like", value, "linkman");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkmanNotLike(String value) {
+            addCriterion("linkman not like", value, "linkman");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkmanIn(List<String> values) {
+            addCriterion("linkman in", values, "linkman");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkmanNotIn(List<String> values) {
+            addCriterion("linkman not in", values, "linkman");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkmanBetween(String value1, String value2) {
+            addCriterion("linkman between", value1, value2, "linkman");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkmanNotBetween(String value1, String value2) {
+            addCriterion("linkman not between", value1, value2, "linkman");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkphoneIsNull() {
+            addCriterion("linkphone is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkphoneIsNotNull() {
+            addCriterion("linkphone is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkphoneEqualTo(String value) {
+            addCriterion("linkphone =", value, "linkphone");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkphoneNotEqualTo(String value) {
+            addCriterion("linkphone <>", value, "linkphone");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkphoneGreaterThan(String value) {
+            addCriterion("linkphone >", value, "linkphone");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkphoneGreaterThanOrEqualTo(String value) {
+            addCriterion("linkphone >=", value, "linkphone");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkphoneLessThan(String value) {
+            addCriterion("linkphone <", value, "linkphone");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkphoneLessThanOrEqualTo(String value) {
+            addCriterion("linkphone <=", value, "linkphone");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkphoneLike(String value) {
+            addCriterion("linkphone like", value, "linkphone");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkphoneNotLike(String value) {
+            addCriterion("linkphone not like", value, "linkphone");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkphoneIn(List<String> values) {
+            addCriterion("linkphone in", values, "linkphone");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkphoneNotIn(List<String> values) {
+            addCriterion("linkphone not in", values, "linkphone");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkphoneBetween(String value1, String value2) {
+            addCriterion("linkphone between", value1, value2, "linkphone");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkphoneNotBetween(String value1, String value2) {
+            addCriterion("linkphone not between", value1, value2, "linkphone");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

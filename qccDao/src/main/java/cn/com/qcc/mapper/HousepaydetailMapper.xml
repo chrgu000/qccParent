@@ -12,7 +12,10 @@
     <result column="houseid" property="houseid" jdbcType="BIGINT" />
     <result column="payuserphone" property="payuserphone" jdbcType="VARCHAR" />
     <result column="detailcontent" property="detailcontent" jdbcType="VARCHAR" />
-    <result column="housenum" property="housenum" jdbcType="VARCHAR" />
+    <result column="housedetails" property="housedetails" jdbcType="VARCHAR" />
+    <result column="payusername" property="payusername" jdbcType="VARCHAR" />
+    <result column="managerphone" property="managerphone" jdbcType="VARCHAR" />
+    <result column="managerusername" property="managerusername" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -74,7 +77,7 @@
   </sql>
   <sql id="Base_Column_List" >
     ordernum, usercentnum, totalprices, paytime, landuserid, manageruserid, userid, houseid, 
-    payuserphone, detailcontent, housenum
+    payuserphone, detailcontent, housedetails, payusername, managerphone, managerusername
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.HousepaydetailExample" >
     select
@@ -110,11 +113,13 @@
     insert into housepaydetail (ordernum, usercentnum, totalprices, 
       paytime, landuserid, manageruserid, 
       userid, houseid, payuserphone, 
-      detailcontent, housenum)
+      detailcontent, housedetails, payusername, 
+      managerphone, managerusername)
     values (#{ordernum,jdbcType=VARCHAR}, #{usercentnum,jdbcType=VARCHAR}, #{totalprices,jdbcType=DOUBLE}, 
       #{paytime,jdbcType=TIMESTAMP}, #{landuserid,jdbcType=BIGINT}, #{manageruserid,jdbcType=BIGINT}, 
       #{userid,jdbcType=BIGINT}, #{houseid,jdbcType=BIGINT}, #{payuserphone,jdbcType=VARCHAR}, 
-      #{detailcontent,jdbcType=VARCHAR}, #{housenum,jdbcType=VARCHAR})
+      #{detailcontent,jdbcType=VARCHAR}, #{housedetails,jdbcType=VARCHAR}, #{payusername,jdbcType=VARCHAR}, 
+      #{managerphone,jdbcType=VARCHAR}, #{managerusername,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Housepaydetail" >
     insert into housepaydetail
@@ -149,8 +154,17 @@
       <if test="detailcontent != null" >
         detailcontent,
       </if>
-      <if test="housenum != null" >
-        housenum,
+      <if test="housedetails != null" >
+        housedetails,
+      </if>
+      <if test="payusername != null" >
+        payusername,
+      </if>
+      <if test="managerphone != null" >
+        managerphone,
+      </if>
+      <if test="managerusername != null" >
+        managerusername,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -184,8 +198,17 @@
       <if test="detailcontent != null" >
         #{detailcontent,jdbcType=VARCHAR},
       </if>
-      <if test="housenum != null" >
-        #{housenum,jdbcType=VARCHAR},
+      <if test="housedetails != null" >
+        #{housedetails,jdbcType=VARCHAR},
+      </if>
+      <if test="payusername != null" >
+        #{payusername,jdbcType=VARCHAR},
+      </if>
+      <if test="managerphone != null" >
+        #{managerphone,jdbcType=VARCHAR},
+      </if>
+      <if test="managerusername != null" >
+        #{managerusername,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -228,8 +251,17 @@
       <if test="record.detailcontent != null" >
         detailcontent = #{record.detailcontent,jdbcType=VARCHAR},
       </if>
-      <if test="record.housenum != null" >
-        housenum = #{record.housenum,jdbcType=VARCHAR},
+      <if test="record.housedetails != null" >
+        housedetails = #{record.housedetails,jdbcType=VARCHAR},
+      </if>
+      <if test="record.payusername != null" >
+        payusername = #{record.payusername,jdbcType=VARCHAR},
+      </if>
+      <if test="record.managerphone != null" >
+        managerphone = #{record.managerphone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.managerusername != null" >
+        managerusername = #{record.managerusername,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -248,7 +280,10 @@
       houseid = #{record.houseid,jdbcType=BIGINT},
       payuserphone = #{record.payuserphone,jdbcType=VARCHAR},
       detailcontent = #{record.detailcontent,jdbcType=VARCHAR},
-      housenum = #{record.housenum,jdbcType=VARCHAR}
+      housedetails = #{record.housedetails,jdbcType=VARCHAR},
+      payusername = #{record.payusername,jdbcType=VARCHAR},
+      managerphone = #{record.managerphone,jdbcType=VARCHAR},
+      managerusername = #{record.managerusername,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -283,8 +318,17 @@
       <if test="detailcontent != null" >
         detailcontent = #{detailcontent,jdbcType=VARCHAR},
       </if>
-      <if test="housenum != null" >
-        housenum = #{housenum,jdbcType=VARCHAR},
+      <if test="housedetails != null" >
+        housedetails = #{housedetails,jdbcType=VARCHAR},
+      </if>
+      <if test="payusername != null" >
+        payusername = #{payusername,jdbcType=VARCHAR},
+      </if>
+      <if test="managerphone != null" >
+        managerphone = #{managerphone,jdbcType=VARCHAR},
+      </if>
+      <if test="managerusername != null" >
+        managerusername = #{managerusername,jdbcType=VARCHAR},
       </if>
     </set>
     where ordernum = #{ordernum,jdbcType=VARCHAR}
@@ -300,7 +344,10 @@
       houseid = #{houseid,jdbcType=BIGINT},
       payuserphone = #{payuserphone,jdbcType=VARCHAR},
       detailcontent = #{detailcontent,jdbcType=VARCHAR},
-      housenum = #{housenum,jdbcType=VARCHAR}
+      housedetails = #{housedetails,jdbcType=VARCHAR},
+      payusername = #{payusername,jdbcType=VARCHAR},
+      managerphone = #{managerphone,jdbcType=VARCHAR},
+      managerusername = #{managerusername,jdbcType=VARCHAR}
     where ordernum = #{ordernum,jdbcType=VARCHAR}
   </update>
 </mapper>

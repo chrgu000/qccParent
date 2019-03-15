@@ -253,7 +253,7 @@ public class BDServiceImpl implements BDService{
 			if (CheckDataUtil.checkNotEqual(oldBdid, bdmanager.getBdid())) {
 				SendMessage.sendNoticMess(content, phone, modelId);
 			}
-			return ResultMap.build(200, "编辑成功");
+			return ResultMap.build(200, "编辑成功" , landlord );
 		}
 		landlord.setLanduserid(userid);
 		landlord.setLandstate(2);
@@ -261,7 +261,7 @@ public class BDServiceImpl implements BDService{
 		landlord.setUpdate_time(new Date());
 		landlordMapper.insertSelective(landlord);
 		SendMessage.sendNoticMess(content, phone, modelId);
-		return ResultMap.build(200, "添加成功");
+		return ResultMap.build(200, "添加成功" , landlord );
 	}
 
 	@Override

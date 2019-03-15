@@ -42,6 +42,12 @@ public class Landlord {
     /** 营业执照图片*/
     private String businesspicture;
 
+    /** 联系人*/
+    private String linkman;
+
+    /** 联系人电话*/
+    private String linkphone;
+
     public Long getLanduserid() {
         return landuserid;
     }
@@ -144,5 +150,21 @@ public class Landlord {
 
     public void setBusinesspicture(String businesspicture) {
         this.businesspicture = businesspicture == null ? null : businesspicture.trim();
+    }
+
+    public String getLinkman() {
+        return linkman;
+    }
+
+    public void setLinkman(String linkman) {
+        this.linkman = linkman == null ? null : linkman.trim();
+    }
+
+    public String getLinkphone() {
+        return linkphone;
+    }
+
+    public void setLinkphone(String linkphone) {
+        this.linkphone = linkphone == null ? null : linkphone.trim();
     }
 }

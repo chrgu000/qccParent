@@ -121,6 +121,8 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 	VipcountMapper vipcountMapper;
 	@Resource  
 	Destination userPayHouseAccount;
+	@Autowired
+	UserCustomerMapper userCustomerMapper2;
 	/** 查询房态图 **/
 	public List<HouseRoomCustomer> roompattern(HouseVo houseVo) {
 
@@ -908,11 +910,24 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 		String[] housePayIds = payIds.split(",");
 		// 第三步 根据 分期id查询所有账单
 		List<HousePayJsonModel> payList = userRoomCustomerMapper.getHousePayByHousePayIds(housePayIds);
+		// 查询房源的基本信息
+		HouseCustomer details = houseCustomerMapper.findHouseDetails(house.getHouseid());
+		String housedetails = details.getVillagename() + "-" +
+				details.getBuilding() + "-" +
+				details.getHouse_number() +"(号房)";
+		// 查询支付用户的基本信息
+		UserCustomer centUser = userCustomerMapper.getCommonUserDetailMess(house.getUserid());
+		//查询管理员的基本信息
+		UserCustomer managerUser = userCustomerMapper.getCommonUserDetailMess(house.getManageruserid());
 		String objectToJson = JsonUtils.objectToJson(payList);
 		Housepaydetail insertData = new Housepaydetail();
 		insertData.setDetailcontent(objectToJson);
+		insertData.setManagerphone(managerUser.getTelephone().toString());
+		insertData.setManagerusername(managerUser.getRealname());
+		insertData.setPayusername(centUser.getRealname());
+		insertData.setPayuserphone(centUser.getTelephone().toString());
 		insertData.setHouseid(house.getHouseid());
-		insertData.setHousenum(house.getHouse_number());
+		insertData.setHousedetails(housedetails);
 		insertData.setOrdernum(out_trade_no);
 		insertData.setPaytime(new Date());
 		insertData.setTotalprices(house.getCentprices());

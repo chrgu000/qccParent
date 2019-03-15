@@ -34,7 +34,16 @@ public class Housepaydetail {
     private String detailcontent;
 
     /** 对应的房号*/
-    private String housenum;
+    private String housedetails;
+
+    /** 支付的用户姓名*/
+    private String payusername;
+
+    /** 管理员电话*/
+    private String managerphone;
+
+    /** 管理员姓名*/
+    private String managerusername;
 
     public String getOrdernum() {
         return ordernum;
@@ -116,11 +125,35 @@ public class Housepaydetail {
         this.detailcontent = detailcontent == null ? null : detailcontent.trim();
     }
 
-    public String getHousenum() {
-        return housenum;
+    public String getHousedetails() {
+        return housedetails;
     }
 
-    public void setHousenum(String housenum) {
-        this.housenum = housenum == null ? null : housenum.trim();
+    public void setHousedetails(String housedetails) {
+        this.housedetails = housedetails == null ? null : housedetails.trim();
+    }
+
+    public String getPayusername() {
+        return payusername;
+    }
+
+    public void setPayusername(String payusername) {
+        this.payusername = payusername == null ? null : payusername.trim();
+    }
+
+    public String getManagerphone() {
+        return managerphone;
+    }
+
+    public void setManagerphone(String managerphone) {
+        this.managerphone = managerphone == null ? null : managerphone.trim();
+    }
+
+    public String getManagerusername() {
+        return managerusername;
+    }
+
+    public void setManagerusername(String managerusername) {
+        this.managerusername = managerusername == null ? null : managerusername.trim();
     }
 }

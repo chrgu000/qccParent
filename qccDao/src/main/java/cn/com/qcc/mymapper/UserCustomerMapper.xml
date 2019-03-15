@@ -349,7 +349,7 @@
   
   <!--  ========================================================================================== -->
   
-  <!--根据userid查询用户信息和profile -->
+    <!--根据userid查询用户信息和profile -->
 	<select id="getUserAndProfileByUserid" parameterType="long"
 		resultType="cn.com.qcc.queryvo.UserCustomer">
 		select `user`.* ,`profile`.* ,ifnull (house.housecount,'0') housecount
@@ -1272,6 +1272,20 @@
 				`profile`.real_name  from 
 			`user` LEFT JOIN `profile` on `user`.userid = `profile`.user_id
 		where `user`.userid = #{userid}
+	</select>
+	
+	
+	 <!--登录账单时候查询用户基本信息 -->
+	<select id="getCommonUserDetailMess" parameterType="long"
+		resultType="cn.com.qcc.queryvo.UserCustomer">
+		SELECT
+			IFNULL(`profile`.real_name,`profile`.user_name) realname  ,
+			`user`.telephone 
+		FROM
+			`user`
+		LEFT JOIN `profile` ON `user`.userid = `profile`.user_id
+		WHERE
+			`user`.userid = #{userid}
 	</select>
 	
 	

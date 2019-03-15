@@ -243,6 +243,9 @@ public interface UserCustomerMapper {
 	/**查询用户的实名信息**/
 	public UserCustomer searchUserSign(Long userid);
 	
+	/**在记录账单时候查询登录的基本信息**/
+	public UserCustomer getCommonUserDetailMess(Long userid);
+	
 
 	
 

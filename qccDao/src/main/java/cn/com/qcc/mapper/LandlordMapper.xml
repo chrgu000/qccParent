@@ -15,6 +15,8 @@
     <result column="corporate" property="corporate" jdbcType="VARCHAR" />
     <result column="businessnum" property="businessnum" jdbcType="VARCHAR" />
     <result column="businesspicture" property="businesspicture" jdbcType="VARCHAR" />
+    <result column="linkman" property="linkman" jdbcType="VARCHAR" />
+    <result column="linkphone" property="linkphone" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -76,7 +78,7 @@
   </sql>
   <sql id="Base_Column_List" >
     landuserid, bdid, identity, idpictures, realname, landstate, code, address, update_time, 
-    brandname, corporate, businessnum, businesspicture
+    brandname, corporate, businessnum, businesspicture, linkman, linkphone
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.LandlordExample" >
     select
@@ -109,20 +111,20 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Landlord" >
-    
     insert into landlord (landuserid, bdid, identity, 
       idpictures, realname, landstate, 
       code, address, update_time, 
       brandname, corporate, businessnum, 
-      businesspicture)
+      businesspicture, linkman, linkphone
+      )
     values (#{landuserid,jdbcType=BIGINT}, #{bdid,jdbcType=VARCHAR}, #{identity,jdbcType=VARCHAR}, 
       #{idpictures,jdbcType=VARCHAR}, #{realname,jdbcType=VARCHAR}, #{landstate,jdbcType=INTEGER}, 
       #{code,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, #{update_time,jdbcType=TIMESTAMP}, 
       #{brandname,jdbcType=VARCHAR}, #{corporate,jdbcType=VARCHAR}, #{businessnum,jdbcType=VARCHAR}, 
-      #{businesspicture,jdbcType=VARCHAR})
+      #{businesspicture,jdbcType=VARCHAR}, #{linkman,jdbcType=VARCHAR}, #{linkphone,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Landlord" >
-    
     insert into landlord
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="landuserid != null" >
@@ -164,6 +166,12 @@
       <if test="businesspicture != null" >
         businesspicture,
       </if>
+      <if test="linkman != null" >
+        linkman,
+      </if>
+      <if test="linkphone != null" >
+        linkphone,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="landuserid != null" >
@@ -204,6 +212,12 @@
       </if>
       <if test="businesspicture != null" >
         #{businesspicture,jdbcType=VARCHAR},
+      </if>
+      <if test="linkman != null" >
+        #{linkman,jdbcType=VARCHAR},
+      </if>
+      <if test="linkphone != null" >
+        #{linkphone,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -255,6 +269,12 @@
       <if test="record.businesspicture != null" >
         businesspicture = #{record.businesspicture,jdbcType=VARCHAR},
       </if>
+      <if test="record.linkman != null" >
+        linkman = #{record.linkman,jdbcType=VARCHAR},
+      </if>
+      <if test="record.linkphone != null" >
+        linkphone = #{record.linkphone,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -274,7 +294,9 @@
       brandname = #{record.brandname,jdbcType=VARCHAR},
       corporate = #{record.corporate,jdbcType=VARCHAR},
       businessnum = #{record.businessnum,jdbcType=VARCHAR},
-      businesspicture = #{record.businesspicture,jdbcType=VARCHAR}
+      businesspicture = #{record.businesspicture,jdbcType=VARCHAR},
+      linkman = #{record.linkman,jdbcType=VARCHAR},
+      linkphone = #{record.linkphone,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -318,6 +340,12 @@
       <if test="businesspicture != null" >
         businesspicture = #{businesspicture,jdbcType=VARCHAR},
       </if>
+      <if test="linkman != null" >
+        linkman = #{linkman,jdbcType=VARCHAR},
+      </if>
+      <if test="linkphone != null" >
+        linkphone = #{linkphone,jdbcType=VARCHAR},
+      </if>
     </set>
     where landuserid = #{landuserid,jdbcType=BIGINT}
   </update>
@@ -334,7 +362,9 @@
       brandname = #{brandname,jdbcType=VARCHAR},
       corporate = #{corporate,jdbcType=VARCHAR},
       businessnum = #{businessnum,jdbcType=VARCHAR},
-      businesspicture = #{businesspicture,jdbcType=VARCHAR}
+      businesspicture = #{businesspicture,jdbcType=VARCHAR},
+      linkman = #{linkman,jdbcType=VARCHAR},
+      linkphone = #{linkphone,jdbcType=VARCHAR}
     where landuserid = #{landuserid,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -124,8 +124,9 @@ public class VillageController {
 	// 发布栋楼
 	@RequestMapping("/comm/updateorsavebuild")
 	@ResponseBody
-	public ResultMap updateorsavebuild(Village village, Building building, Detaileaddress detaileaddress,String brand) {
-		ResultMap result = villageService.savebuild(village, building, detaileaddress,brand);
+	public ResultMap updateorsavebuild(Village village, Building building, 
+			Detaileaddress detaileaddress,String brand ,Long landuserid) {
+		ResultMap result = villageService.savebuild(village, building, detaileaddress,brand  ,landuserid);
 		return result;
 	}
 
