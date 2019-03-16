@@ -164,7 +164,13 @@ public class VipCountServiceImpl implements VipCountService {
 	@Override
 	public void deleteweixinaccount(Long userid) {
 		userCustomerMapper.deleteunionid(userid);
-		userCustomerMapper.delteopenid(userid);
+		userCustomerMapper.delteweixinaccount(userid);
+	}
+
+	@Override
+	public void clearUnionId(Long userid) {
+		// TODO Auto-generated method stub
+		userCustomerMapper.deleteunionid(userid);
 	}
 
 

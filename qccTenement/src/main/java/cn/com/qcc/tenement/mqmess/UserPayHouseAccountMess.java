@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import WangYiUtil.WangYiCommon;
 import cn.com.qcc.common.SendMessage;
 import cn.com.qcc.mapper.UserMapper;
-import cn.com.qcc.mess.util.SendMessUtil;
 import cn.com.qcc.mymapper.HouseCustomerMapper;
 import cn.com.qcc.pojo.User;
 import cn.com.qcc.queryvo.HouseCustomer;
@@ -60,7 +59,7 @@ public class UserPayHouseAccountMess implements MessageListener {
 			String contentCommon = details.getVillagename() + "-" +
 					details.getBuilding() + "-" +
 					details.getHouse_number() +"(号房)";
-			contentCommon = contentCommon + "," + centPrices + "," +orderNum;
+			contentCommon = contentCommon + "," + centPrices + " 元"  + "," +orderNum;
 			// 通知租户
 			SendMessage.sendNoticMess(contentCommon, cent.getTelephone().toString(), modelIdUser);
 			// 通知房东

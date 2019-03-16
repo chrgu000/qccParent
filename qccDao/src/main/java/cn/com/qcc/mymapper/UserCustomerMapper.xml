@@ -1261,7 +1261,7 @@
 	<update id="deleteunionid" parameterType="long"> 
 		UPDATE `user` SET unionid = '' where userid = #{userid}
 	</update>
-	<update id="delteopenid" parameterType="long">
+	<update id="delteweixinaccount" parameterType="long">
 		UPDATE vipcount set weixinaccount = '' where vipcount.user_id = #{userid}
 	</update>
 	
@@ -1286,6 +1286,46 @@
 		LEFT JOIN `profile` ON `user`.userid = `profile`.user_id
 		WHERE
 			`user`.userid = #{userid}
+	</select>
+	
+	
+	<!--登录账单时候查询用户基本信息 -->
+	<select id="searchHousePayDetailList" parameterType="long"
+		resultType="cn.com.qcc.pojo.Housepaydetail">
+		SELECT
+					ordernum ,
+					usercentnum , 
+					totalprices ,
+					paytime ,
+					payuserphone,
+					payusername ,
+					detailcontent ,
+					housedetails ,
+					managerusername,
+					managerphone
+			FROM
+				housepaydetail
+			WHERE
+				housepaydetail.userid = #{userid}
+			OR housepaydetail.landuserid =  #{userid}
+			OR housepaydetail.manageruserid =  #{userid}
+			
+			ORDER BY housepaydetail.paytime desc 
+			LIMIT 0 ,50 
+	</select>
+	
+	
+	
+	<!--登录账单时候查询用户基本信息 -->
+	<select id="selectNotVip" 
+		resultType="cn.com.qcc.pojo.Vipcount">
+		SELECT
+			userid user_id,
+			'111' `password`
+		FROM
+			`user`
+		WHERE
+			userid NOT IN (SELECT user_id FROM vipcount)
 	</select>
 	
 	

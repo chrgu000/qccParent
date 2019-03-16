@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import WangYiUtil.WangYiUtil;
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.PayCommonConfig;
 import cn.com.qcc.common.RedisUtil;
@@ -18,6 +18,7 @@ import cn.com.qcc.mapper.BuildingMapper;
 import cn.com.qcc.mapper.HouseMapper;
 import cn.com.qcc.mapper.VillageMapper;
 import cn.com.qcc.mapper.VipcountMapper;
+import cn.com.qcc.mymapper.UserCustomerMapper;
 import cn.com.qcc.pojo.Building;
 import cn.com.qcc.pojo.BuildingExample;
 import cn.com.qcc.pojo.Historyexcle;
@@ -49,6 +50,7 @@ public class Systemtask {
 	@Autowired VipcountMapper vipcountMapper;
 	@Autowired JedisClient jedisClient;
 	@Autowired AccessService accessService;
+	@Autowired UserCustomerMapper userCustomerMapper;
 	
 	
 	/*
@@ -169,9 +171,23 @@ public class Systemtask {
 	
 	
 	// 每天11点执行一次
-	@Scheduled(cron=SystemTaskTime.every_day_11) 
-	public void every_day_11 () {
-		System.out.println("进入定时任务three");
+	@Scheduled(cron=SystemTaskTime.every_day_04) 
+	public void every_day_04 () {
+		List<Vipcount> vipList = userCustomerMapper.selectNotVip();
+		if (CheckDataUtil.checkNotEmpty(vipList)) {
+			for (Vipcount vip : vipList) {
+				vip.setCount(100);
+				vip.setIs_vip(0);
+				vip.setCretime_time(new Date());
+				vip.setBalance(0.0);
+				vip.setHouseaccount(0.0);
+				vip.setAccount(0.0);
+				vip.setWeixinaccount("");
+				vip.setPassword("");
+				vipcountMapper.insertSelective(vip);
+			}
+			
+		}
 	}
 	
 	

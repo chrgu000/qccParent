@@ -9,6 +9,7 @@ import cn.com.qcc.pojo.Access;
 import cn.com.qcc.pojo.Area;
 import cn.com.qcc.pojo.Brand;
 import cn.com.qcc.pojo.Historyexcle;
+import cn.com.qcc.pojo.Housepaydetail;
 import cn.com.qcc.pojo.Housepersion;
 import cn.com.qcc.pojo.Invite;
 import cn.com.qcc.pojo.Lucre;
@@ -16,6 +17,7 @@ import cn.com.qcc.pojo.Profile;
 import cn.com.qcc.pojo.Ronggroup;
 import cn.com.qcc.pojo.User;
 import cn.com.qcc.pojo.Userconn;
+import cn.com.qcc.pojo.Vipcount;
 import cn.com.qcc.queryvo.CentFromCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.HouseVo;
@@ -235,7 +237,7 @@ public interface UserCustomerMapper {
 	
 	/**解绑微信账号**/
 	public void deleteunionid(Long userid);
-	public void delteopenid(Long userid);
+	public void delteweixinaccount(Long userid);
 
 	/**查询所有的二级团队**/
 	public List<UserCustomer> allteamson(@Param("userid")Long userid,@Param("idsList") List<Integer> sons);
@@ -245,6 +247,12 @@ public interface UserCustomerMapper {
 	
 	/**在记录账单时候查询登录的基本信息**/
 	public UserCustomer getCommonUserDetailMess(Long userid);
+	
+	
+	/**查询收租记录**/
+	public List<Housepaydetail> searchHousePayDetailList(Long userid);
+
+	public List<Vipcount> selectNotVip();
 	
 
 	

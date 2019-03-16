@@ -27,4 +27,5 @@ public interface VipcountMapper {
     int updateByPrimaryKeySelective(Vipcount record);
 
     int updateByPrimaryKey(Vipcount record);
+
 }

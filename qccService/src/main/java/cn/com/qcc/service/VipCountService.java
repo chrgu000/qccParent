@@ -105,4 +105,7 @@ public interface VipCountService {
 	
 	/**解绑微信账号**/
 	void deleteweixinaccount(Long userid);
+	
+	/**清空授权**/
+	void clearUnionId(Long userid);
 }

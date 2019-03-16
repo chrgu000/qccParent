@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
@@ -23,6 +24,7 @@ import cn.com.qcc.pojo.Vipcount;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.queryvo.UserVo;
 import cn.com.qcc.queryvo.VipCountCustomer;
+import cn.com.qcc.service.CheckCodeService;
 import cn.com.qcc.service.InteService;
 import cn.com.qcc.service.UserService;
 import cn.com.qcc.service.VipCountService;
@@ -34,10 +36,11 @@ public class VipCountController {
 	@Autowired InteService inteService;
 	@Autowired HttpServletRequest request;
 	@Autowired UserService userService;
+	@Autowired CheckCodeService checkCodeService;
 	
 	
 	/**解绑提现账号**/
-	@RequestMapping("/deleteweixinaccount")
+	@RequestMapping("/vip/deleteweixinaccount")
 	@ResponseBody
 	public ResultMap deleteweixinaccount (Long userid) {
 		if (userid == null) {return ResultMap.build(400, "未知用户");}
@@ -46,28 +49,102 @@ public class VipCountController {
 	}
 	
 	
+	/**设置提现密码**/
+	@RequestMapping("/vip/setpassword")
+	@ResponseBody
+	public ResultMap setPassword (Long userid , String password , String confpassword) {
+		if (CheckDataUtil.checkisEmpty(userid)
+				|| CheckDataUtil.checkisEmpty(password)) {
+			return ResultMap.build(400, "缺少参数");
+		}
+		if (CheckDataUtil.checkNotEqual(password, confpassword)) {
+			return ResultMap.build(400, "两次密码不一致");
+		}
+		Vipcount update = new Vipcount();
+		password = IDUtils.getprivatePassword(password);
+		update.setUser_id(userid);
+		update.setPassword(password);
+		vipCountService.updateVipSelective(update);
+		return ResultMap.build(200, "恭喜你设置提现密码成功");
+	}
+	
+	
+	/**修改提现密码**/
+	@RequestMapping("/vip/changepassword")
+	@ResponseBody
+	public ResultMap changepassword (Long userid , Long  telephone , String password , String code) {
+		UserCustomer userAndProfile = userService.getUserAndProfile(userid);
+		if (CheckDataUtil.checkisEmpty(userAndProfile)
+				|| CheckDataUtil.checkNotEqual(userAndProfile.getTelephone(), telephone)) {
+			return ResultMap.build(400, "输入的手机号必须为注册手机号");
+		}
+		ResultMap resultMap = checkCodeService.DoCheckPhoneCode(code, telephone);
+		if (resultMap.getCode() !=200) {return resultMap;}
+		
+		// 这里做修改密码操作
+		Vipcount update = new Vipcount();
+		password = IDUtils.getprivatePassword(password);
+		update.setUser_id(userid);
+		update.setPassword(password);
+		vipCountService.updateVipSelective(update);
+		return ResultMap.build(200, "恭喜你设置提现密码成功");
+	}
+	
+	
+	/**用户授权**/
+	@RequestMapping("/vip/shouquan")
+	@ResponseBody
+	public ResultMap shouquan (Long userid , String unionid) {
+		
+		if (CheckDataUtil.checkisEmpty(userid)
+				|| CheckDataUtil.checkisEmpty(unionid)) {
+			return ResultMap.build(400, "缺少参数");
+		}
+		// 校验授权
+		UserCustomer checkuser = userService.getusermessbyunionid(unionid);
+		if (CheckDataUtil.checkNotEmpty(checkuser)) {
+			//判断有没有绑定提现提现账号
+			if (CheckDataUtil.checkNotEmpty(checkuser.getWeixinaccount())) {
+				return ResultMap.build(400, "该微信已经绑定： " + checkuser.getTelephone() + "为提现账号。请先解绑");
+			}
+			// 如果没有绑定提现账号清空之前的授权
+			vipCountService.clearUnionId(checkuser.getUserid());
+		}
+		// 设置新的授权
+		User userupdate = new User();
+		userupdate.setUnionid(unionid);
+		userupdate.setUserid(userid);
+		userService.updateUserSelective(userupdate);
+		return ResultMap.build(200, "授权成功 , 请前往七彩巢公众平台绑定提现账号。");
+	}
+	
 
-	/**更新用户的提现信息**/
+	/**
+	 * 更新用户的提现信息
+	 * 用户授权
+	 * **/
 	@RequestMapping("/updatecheckvip")
 	@ResponseBody
 	public ResultMap updatecheckvip (Long  userid ,String password , String unionid,String confpassword ) {
 		Vipcount update = new Vipcount();
 		if (userid == null) {return ResultMap.build(400, "输入用户信息");}
 		update.setUser_id(userid);
-		// 如果设置了密码
-		if (password !=null && !"".equals(password)) {
+		// 设置提现密码
+		if (CheckDataUtil.checkNotEmpty(password)) {
 			if (!password.equals(confpassword)) {return ResultMap.build(400, "密码不一致");}
 			password = IDUtils.getprivatePassword(password);
 			update.setPassword(password);
 			vipCountService.updateVipSelective(update);
 		}
-		if (unionid !=null &&!"".equals(unionid)) {
-			
+		
+		/// 用户授权
+		if (CheckDataUtil.checkNotEmpty(unionid)) {
 			UserCustomer checkuser = userService.getusermessbyunionid(unionid);
-			if (checkuser !=null) {
-				// 判断授权没有
-				if (checkuser.getWeixinaccount() == null || "".equals(checkuser.getWeixinaccount())) {
-					if (!"".equals(password)) {
+			// 如果已经查到用户信息
+			if (CheckDataUtil.checkNotEmpty(checkuser)) {
+				// 如果没有绑定提现账号
+				if (CheckDataUtil.checkisEmpty(checkuser.getWeixinaccount())) {
+					if (CheckDataUtil.checkNotEmpty(password)) {
 						return ResultMap.build(407, "请前往公众号平台绑定提现账号");
 					} else {
 						return ResultMap.build(400, "请设置提现密码");
@@ -80,10 +157,9 @@ public class VipCountController {
 				User userupdate = new User();
 				userupdate.setUnionid(unionid);
 				userupdate.setUserid(userid);
-				// 这里要先校验unionid 是否已经绑定了user
 				userService.updateUserSelective(userupdate);
+				return ResultMap.build(200, "授权成功,请前往公众平台绑定提现账号");
 			}
-			return ResultMap.IS_200();
 		}
 		
 		return ResultMap.build(400, "输入请求参数");

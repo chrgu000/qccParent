@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import WangYiUtil.WangYiUtil;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.IDUtils;
+import cn.com.qcc.common.JsonUtils;
 import cn.com.qcc.common.MyJsonUtil;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
@@ -58,6 +59,7 @@ import cn.com.qcc.pojo.BrandExample;
 import cn.com.qcc.pojo.Branduser;
 import cn.com.qcc.pojo.BranduserExample;
 import cn.com.qcc.pojo.Broker;
+import cn.com.qcc.pojo.Housepaydetail;
 import cn.com.qcc.pojo.Inteconn;
 import cn.com.qcc.pojo.Invite;
 import cn.com.qcc.pojo.InviteExample;
@@ -1504,6 +1506,50 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		userMapper.updateByPrimaryKeySelective(userupdate);
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	@Override
+	public List<Housepaydetail> searchHousePayDetailList(Long userid) {
+		// TODO Auto-generated method stub
+		if (CheckDataUtil.checkisEmpty(userid)) {
+			return new ArrayList<>();
+		}
+		List<Housepaydetail> details =  userCustomerMapper.searchHousePayDetailList(userid);
+		
+		return details;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

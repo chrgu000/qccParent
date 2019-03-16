@@ -1,8 +1,14 @@
 package cn.com.qcc.pojo;
 
 import java.util.Date;
+import java.util.List;
+
+import cn.com.qcc.queryvo.HousePayJsonModel;
 
 public class Housepaydetail {
+	
+	private List<HousePayJsonModel> housepayList;
+	
     /** 微信订单号*/
     private String ordernum;
 
@@ -44,8 +50,17 @@ public class Housepaydetail {
 
     /** 管理员姓名*/
     private String managerusername;
+    
 
-    public String getOrdernum() {
+    public List<HousePayJsonModel> getHousepayList() {
+		return housepayList;
+	}
+
+	public void setHousepayList(List<HousePayJsonModel> housepayList) {
+		this.housepayList = housepayList;
+	}
+
+	public String getOrdernum() {
         return ordernum;
     }
 

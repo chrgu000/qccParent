@@ -9,6 +9,7 @@ import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Area;
 import cn.com.qcc.pojo.Brand;
 import cn.com.qcc.pojo.Branduser;
+import cn.com.qcc.pojo.Housepaydetail;
 import cn.com.qcc.pojo.Invite;
 import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.pojo.Lucre;
@@ -394,6 +395,12 @@ public interface UserService {
 	
 	/**有选择的更新用户**/
 	public void updateUserSelective(User userupdate);
+
+
+	/**查询在线交租或者收租记录**/
+	public List<Housepaydetail> searchHousePayDetailList(Long userid);
+
+
 
 	
 

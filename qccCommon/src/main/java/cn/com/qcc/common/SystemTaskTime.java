@@ -22,9 +22,9 @@ public class SystemTaskTime {
 	public static final String build_xpxpicture = "0 0 4 * * ?";
 	
 	/**
-	 * 每天晚上凌晨1点执行 , 吧对应的收益加入到用户的总收益中提供提现操作
+	 * 每天晚上凌晨4
 	 * **/
-	public static final String every_day_11 = "0 0 11 * * ?";
+	public static final String every_day_04 = "0 0 4 * * ?";
 	
 	
 	/**

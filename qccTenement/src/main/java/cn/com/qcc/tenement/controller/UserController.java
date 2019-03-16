@@ -40,6 +40,7 @@ import cn.com.qcc.mapper.BrokerMapper;
 import cn.com.qcc.pojo.Area;
 import cn.com.qcc.pojo.Broker;
 import cn.com.qcc.pojo.Detaileaddress;
+import cn.com.qcc.pojo.Housepaydetail;
 import cn.com.qcc.pojo.Lucre;
 import cn.com.qcc.pojo.Profile;
 import cn.com.qcc.pojo.Qiuzu;
@@ -98,23 +99,22 @@ public class UserController {
 		if (userid == null ) {return ResultMap.build(404, "请先登录");}
 		UserCustomer userCustomer = userService.checkcash(userid);
 		if (userCustomer == null) {return ResultMap.build(405, "未知用户");};
-		if (userCustomer.getPassword() !=null && !"".equals(userCustomer.getPassword())) {
+		
+		// 为了账号安全需要置空账号信息
+		if (CheckDataUtil.checkNotEmpty(userCustomer.getPassword())) 
 			userCustomer.setPassword("111111");
-		}
-		if (userCustomer.getWeixinaccount() !=null &&!"".equals(userCustomer.getWeixinaccount())) {
+		if (CheckDataUtil.checkNotEmpty(userCustomer.getWeixinaccount())) 
 			userCustomer.setWeixinaccount("111111");
-		}
-		if (userCustomer.getUnionid() !=null &&!"".equals(userCustomer.getUnionid())) {
+		if (CheckDataUtil.checkNotEmpty(userCustomer.getUnionid())) 
 			userCustomer.setUnionid("111111");
-		}
-		// 如果是四个条件同时成立
-		if (userCustomer.getSignstate() == 2 && userCustomer.getPassword() !=""
-				&& userCustomer.getWeixinaccount() !="" && userCustomer.getUnionid() !="") {
-			return ResultMap.IS_200(userCustomer);
-		}else {
+		// 如果有一个条件不成立
+		if (CheckDataUtil.checkisEmpty(userCustomer.getPassword())
+				|| CheckDataUtil.checkisEmpty( userCustomer.getWeixinaccount() )
+				|| CheckDataUtil.checkisEmpty(userCustomer.getUnionid())
+				|| CheckDataUtil.checkNotEqual(userCustomer.getSignstate(), 2)) {
 			return ResultMap.build(407,"部分参数不符合提现条件" ,userCustomer);
 		}
-		
+		return ResultMap.IS_200(userCustomer);
 	}
 	
 	
@@ -130,8 +130,6 @@ public class UserController {
 	@RequestMapping(value = "/user/register")
 	public @ResponseBody ResultMap userReg(HttpSession session, User user, HttpServletRequest request,
 			HttpServletResponse Response) throws NumberFormatException, IOException {
-		
-		
 		
 		
 		// 用来生成accesstoken
@@ -947,6 +945,20 @@ public class UserController {
 		map.put("mylurnce", USERS);
 		map.put("pagequery", pagequery);
 		return ResultMap.IS_200(map);
+	}
+	
+	
+	/***
+	 * 查询在线交租记录 
+	 * **/
+	@RequestMapping("/user/searchHousePayDetailList")
+	@ResponseBody
+	public ResultMap searchHousePayDetailList(Long userid) {
+		
+		List<Housepaydetail> details = userService.searchHousePayDetailList(userid);
+		
+		return ResultMap.IS_200(details);
+		
 	}
 
 

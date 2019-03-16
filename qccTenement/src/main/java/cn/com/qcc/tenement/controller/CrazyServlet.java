@@ -19,6 +19,7 @@ import com.jpay.ext.kit.PaymentKit;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.PayCommonConfig;
 import cn.com.qcc.detailcommon.CommonUtil;
 import cn.com.qcc.mapper.VipcountMapper;
@@ -172,8 +173,9 @@ public class CrazyServlet extends HttpServlet {
 						code_str = "绑定失败,请先授权!";
 						if (checksearch != null) {
 							// 说明查到的信息。在判断是否绑定了提现账号
-							if (checksearch.getWeixinaccount() != null && !"".equals(checksearch.getWeixinaccount())) {
-								code_str = "当前微信已绑定：" + checksearch.getTelephone() + "为手机号," + "若要修改绑定信息。请先解绑!";
+							if (CheckDataUtil.checkNotEmpty(checksearch.getWeixinaccount())) {
+								code_str = "当前微信已绑定：" + checksearch.getTelephone() + "为手机号," 
+							+ "若要修改绑定信息。请先解绑。";
 							} else {
 								// 这是第一次做绑定
 								Vipcount update = new Vipcount();
