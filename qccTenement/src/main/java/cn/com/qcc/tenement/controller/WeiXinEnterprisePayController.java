@@ -1,4 +1,5 @@
 package cn.com.qcc.tenement.controller;
+import java.util.Date;
 import java.util.SortedMap;
 import javax.servlet.http.HttpServletRequest;
 
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.com.qcc.common.CentFileSend;
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.ParamUtil;
 import cn.com.qcc.common.ResultMap;
@@ -19,6 +21,8 @@ import cn.com.qcc.service.VipCountService;
 
 /**
  * 这里专门做企业付款
+ * 
+ * =============    也就是 微信提现 =======================
  * **/
 @Controller
 public class WeiXinEnterprisePayController {
@@ -42,12 +46,12 @@ public class WeiXinEnterprisePayController {
 		if (userCustomer == null) {return ResultMap.build(400, "未知用户");}
 		// 获取微信的账号
 		String openid = userCustomer.getWeixinaccount();
-		if (openid == null || "".equals(openid)) {return ResultMap.build(407,"检查提现账号");}
+		if (CheckDataUtil.checkisEmpty(openid)) {return ResultMap.build(407,"检查提现账号");}
 		// 获取真实姓名
 		String realname = userCustomer.getRealname();
-		if (realname ==null || "".equals(realname)){return ResultMap.build(407, "提现实名姓名");}
+		if (CheckDataUtil.checkisEmpty(realname)){return ResultMap.build(407, "提现实名姓名");}
 		String parntpassword = userCustomer.getPassword();
-		if (parntpassword == null || "".equals(parntpassword)) {return ResultMap.build(407,"设置提现密码");}
+		if (CheckDataUtil.checkisEmpty(parntpassword)) {return ResultMap.build(407,"设置提现密码");}
 		// 校验实名信息
 		Integer signstate = userCustomer.getSignstate();
 		if (signstate != 2) {return ResultMap.build(407, "提现需要实名");}
@@ -66,14 +70,25 @@ public class WeiXinEnterprisePayController {
 			if (updatecount < 0) {
 				return ResultMap.build(400, "七彩币不足");
 			}
-			// 这里是提现收益的操作
-		} else if ("sy".equals(descname)) {
+			
+		} 
+		// 这里是提现收益的操作
+		else if ("sy".equals(descname)) {
 			paydesc = "收益提现";
 			updatecount = userCustomer.getAccount()-outaccount;
 			if (updatecount < 0) {
 				return ResultMap.build(400, "收益余额不足");
 			}
-		} else {
+		} 
+		// 这里是提现房东账户余额
+		else if ("houseaccount".equals(descname)) {
+			paydesc = "房租提现";
+			updatecount = userCustomer.getHousecount() - outaccount;
+			if (updatecount < 0) {
+				return ResultMap.build(400, "房租余额不足");
+			}
+		}
+			else {
 			return ResultMap.build(400, "参数错误");
 		}
 		
@@ -83,8 +98,10 @@ public class WeiXinEnterprisePayController {
 		
 		// 对密码进行加密操作
 		password = IDUtils.getprivatePassword(password);
-		if (! password.equals(parntpassword)) {return ResultMap.build(400, "提现密码错误");}
-		if (account == null || "".equals(account)) {return ResultMap.build(400, "检查提现金额");}
+		if (! password.equals(parntpassword)) 
+			return ResultMap.build(400, "提现密码错误");
+		if (CheckDataUtil.checkisEmpty(account)) 
+			return ResultMap.build(400, "检查提现金额");
 		account = account.substring(0,account.lastIndexOf("."));
 		// 商户订单号 也就是提现订单号
 		String partner_trade_no = IDUtils.genItemId();
@@ -94,12 +111,23 @@ public class WeiXinEnterprisePayController {
 		ResultMap checkmap = ParamUtil.checkxmlpres(xml);
 		if (checkmap.getCode() == 200) {
 			// 如果是提现成功在这里做相关逻辑操作
+			Vipcount update = new Vipcount();
+        	update.setUser_id(userid);
+        	// 七彩币提现
 	        if ("qcb".equals(descname)) {
-	        	Vipcount update = new Vipcount();
-	        	update.setUser_id(userid);
 	        	update.setBalance(updatecount);
-	        	vipCountService.changevipcount(update);
 	        }
+	        // 房租提现
+	        if ("houseaccount".equals(descname)) {
+	        	update.setHouseaccount(updatecount);
+	        }
+	        // 收益
+	        if ("sy".equals(descname)) {
+	        	update.setAccount(updatecount);
+	        }
+	        
+	        update.setCretime_time(new Date());
+	    	vipCountService.changevipcount(update);
 	        
 	        // 这里给提现记录表插入一条数据
 	        vipCountService.insertpartner(partner_trade_no , outaccount , paydesc , userid , 1);

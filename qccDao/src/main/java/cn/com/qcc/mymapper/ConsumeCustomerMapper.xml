@@ -47,6 +47,7 @@
 				IFNULL(inteconn.count, '0') intecount,
 				vipcount.count,
 				vipcount.balance,
+				IFNULL(vipcount.houseaccount ,0) houseaccount ,
 				vipcount.account,
 				IFNULL(masonryconn.count, '0') mascount,
 				vipcount.is_vip,
