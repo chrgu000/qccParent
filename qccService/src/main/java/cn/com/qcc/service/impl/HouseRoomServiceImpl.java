@@ -981,4 +981,48 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 		return inUserIds;
 	}
 
+	@Override
+	public ResultMap deletehousebile(Long userid, String housepayIds) {
+		
+		if (CheckDataUtil.checkisEmpty(userid)
+				|| CheckDataUtil.checkisEmpty(housepayIds)) {
+			return ResultMap.build(400, "缺少参数");
+		}
+		
+		try {
+			
+			String[] split = housepayIds.split(",");
+			// 通过housepayids查询租约的信息
+			Usercent usercent = houseRoomCustomerMapper.searchUserCentByHousePayIds(split);
+			// 如果查不到说明有问题
+			if (CheckDataUtil.checkisEmpty(usercent)) {
+				return ResultMap.build(400,"检查账单,未知的租约。或者多份租约");
+			}
+			//如果不是房东也不是管理员则不可以移除
+			if (CheckDataUtil.checkNotEqual(usercent.getManageruserid(), userid)
+					&& CheckDataUtil.checkNotEqual(usercent.getLanduserid(), userid)) {
+				return ResultMap.build(400, "只有房东和管理员才可废弃账单");
+			}
+			
+			// 判断是否有已经支付过的账单
+			int count = houseRoomCustomerMapper.counthousepayIsPay(split);
+			
+			if (count > 0) {
+				return ResultMap.build(400, "请选择未支付的订单");
+			}
+			
+			// 这里做更新操作
+			houseRoomCustomerMapper.updateHousePayIsDelete(split);
+			
+			return ResultMap.build(200, "操作成功");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResultMap.build(400,"请选择,一份租约的账单");
+		}
+		
+	}
+	
+			
+
 }

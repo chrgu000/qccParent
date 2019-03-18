@@ -3,6 +3,7 @@ package cn.com.qcc.mymapper;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
+import cn.com.qcc.pojo.Usercent;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HouseRoomCustomer;
 import cn.com.qcc.queryvo.HouseVo;
@@ -32,6 +33,16 @@ public interface HouseRoomCustomerMapper {
 	
 	/**修改订单为已支付状态**/
 	void updateHousePayIsPay( @Param ("idsList") String[] housePayIds);
+	/**修改订单为已经废弃状态**/
+	void updateHousePayIsDelete( @Param ("idsList") String[] split);
+	
+	/**根据订单id查询租约的信息**/
+	Usercent searchUserCentByHousePayIds( @Param ("idsList")   String[] split);
+	
+	
+	/**统计已经支付的订单数量**/
+	int counthousepayIsPay(  @Param ("idsList")  String[] split);
+	
 	
 
 }

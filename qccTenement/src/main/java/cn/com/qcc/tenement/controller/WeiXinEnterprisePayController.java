@@ -83,7 +83,8 @@ public class WeiXinEnterprisePayController {
 		// 这里是提现房东账户余额
 		else if ("houseaccount".equals(descname)) {
 			paydesc = "房租提现";
-			updatecount = userCustomer.getHousecount() - outaccount;
+			System.out.println("房租余额 : --------  " + userCustomer.getHouseaccount());
+			updatecount = userCustomer.getHouseaccount() - outaccount;
 			if (updatecount < 0) {
 				return ResultMap.build(400, "房租余额不足");
 			}

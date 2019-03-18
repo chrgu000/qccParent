@@ -83,6 +83,17 @@ public class UserCustomer extends User {
 	private Double account;
 	private String mysign;
 	private Date birthday;
+	private double houseaccount;
+	
+	
+	public double getHouseaccount() {
+		return houseaccount;
+	}
+
+	public void setHouseaccount(double houseaccount) {
+		this.houseaccount = houseaccount;
+	}
+
 	public String getMysign() {
 		return mysign;
 	}

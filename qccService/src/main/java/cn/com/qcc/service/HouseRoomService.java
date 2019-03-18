@@ -71,5 +71,11 @@ public interface HouseRoomService {
 	
 	/**查询所有的Inids**/
 	String getInUserIds(Long userid);
+	
+	/**用户作废账单
+	 * @param userid : 作废人
+	 * @param housepayIds : 订单的集合
+	 * **/
+	ResultMap deletehousebile(Long userid, String housepayIds);
 
 }

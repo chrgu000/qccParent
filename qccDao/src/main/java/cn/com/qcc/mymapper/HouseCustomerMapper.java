@@ -247,6 +247,8 @@ public interface HouseCustomerMapper {
 	
 	/**查询导入房源库的信息**/
 	Housemodel searchAddToHouseModel(Long houseid);
+
+	
 	
 	
 

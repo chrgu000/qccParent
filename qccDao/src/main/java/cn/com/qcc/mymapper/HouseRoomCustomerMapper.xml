@@ -211,7 +211,7 @@
  	
  	
  	
- 		<!-- 根据房东ID查询出楼栋列表-->
+ 	<!-- 修改订单为已经支付状态-->
 	<select id="updateHousePayIsPay"  >
 			UPDATE housepay set housepay.paystate = 2 where housepay.housepayid in 
 				<foreach item="item" collection="idsList" separator="," open="("
@@ -219,6 +219,54 @@
 					#{item, jdbcType=VARCHAR}
 				</foreach> 
 			
+	</select>
+	
+	
+	<!-- 修改订单为已经删除状态-->
+	<select id="updateHousePayIsDelete"  >
+			UPDATE housepay set housepay.paystate = 3 where housepay.housepayid in 
+				<foreach item="item" collection="idsList" separator="," open="("
+					close=")" index="">
+					#{item, jdbcType=VARCHAR}
+				</foreach> 
+	</select>
+	
+	
+	
+	
+	<!-- 根据订单id查询其中一条租约-->
+	<select id="searchUserCentByHousePayIds" resultType="cn.com.qcc.pojo.Usercent" >
+			
+			SELECT * from usercent where usercentid in (
+			
+			
+			SELECT usercentid from payexpert where payexpertid in (
+			SELECT payexpertid from housepay 
+				
+			where housepay.housepayid in 
+			
+				<foreach item="item" collection="idsList" separator="," open="("
+					close=")" index="">
+					#{item, jdbcType=VARCHAR}
+				</foreach> 
+			
+			)
+			) 
+	</select>
+	
+	
+	
+	<!-- 统计已经支付的订单数据-->
+	<select id="counthousepayIsPay"  resultType="integer" >
+	
+		SELECT COUNT(1) from housepay 
+			
+			where housepay.paystate = 2 and housepayid in (
+				<foreach item="item" collection="idsList" separator="," open="("
+					close=")" index="">
+					#{item, jdbcType=VARCHAR}
+				</foreach> 
+			)
 	</select>
  	
 
