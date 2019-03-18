@@ -189,6 +189,13 @@ public class UserRoomController {
 	}
 	
 	
+	/**通过用户id查询到账单详情***/
+	@RequestMapping("/userNotCent")
+	@ResponseBody
+	public ResultMap userNotCent (Long userid  , Long usercentid) {
+		return userRoomService.userNotCent(userid ,usercentid);
+	}
+	
 	//同步通讯录
 	@ResponseBody
 	@RequestMapping("/syncmail/{userid}")

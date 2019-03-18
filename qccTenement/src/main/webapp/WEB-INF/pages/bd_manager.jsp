@@ -66,8 +66,9 @@
 				<select style="width: 100px; "onchange="getnextaddress(bd_3)" id="bd_3">
 				</select>
 				 
-				<select style="width: 100px; " id="bd_4">
-				</select>
+				<!-- <select style="width: 100px; " id="bd_4">
+				</select> -->
+				<div  id="bd_4"></div>
 				
 				<span id="current"></span>
 		</div>

@@ -39,9 +39,10 @@ public class BDController {
 	
 	@RequestMapping("/bdlogin/{type}")
 	public ResultMap login (String account , String word ,@PathVariable int type ) {
-		/** 	 **/
+		/** 	 
 		type = 2 ;
 		account = "qbd10021";
+		**/
 		
 		
 		
@@ -63,9 +64,9 @@ public class BDController {
 			String orgPassword = bdCustomer.getPassword();
 			// 现在密码
 			String passWord = IDUtils.getprivatePassword(word);
-			//if (CheckDataUtil.checkNotEqual(orgPassword, passWord)) {
-			//	return ResultMap.build(400, "密码错误");
-			//}
+			if (CheckDataUtil.checkNotEqual(orgPassword, passWord)) {
+				return ResultMap.build(400, "密码错误");
+			}
 		} else {
 			return ResultMap.build(400,"请求错误");
 		}
@@ -174,6 +175,10 @@ public class BDController {
 			String searchWhere ,@RequestParam(defaultValue="8")int pagesize ,
 			@RequestParam(defaultValue="1") int currentpage){
 		if (CheckDataUtil.checkNotEmpty(code)) {
+			
+			if (code.contains(","))
+				code = code.split(",")[0];
+			
 			if (code.startsWith("11") || code.startsWith("12") || code.startsWith("31") || code.startsWith("50")) {
 				code = code.substring(0, 2);
 			}else {

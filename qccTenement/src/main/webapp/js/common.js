@@ -91,12 +91,25 @@ function getnextaddress(attr) {
 		url : '/Tenement/area/getareabycode',
 		success : function(a) {
 			var obj = a.obj;
-			select.next().append('<option>请选择</option>');
-			$.each(obj, function(index, value) {
-				var option = '<option  value = '+value.code+'>'
-						+ value.name + '</option>'
-				select.next().append(option);
-			})
+			if (attr.id === 'bd_3') {
+				select.next().empty();
+				$.each(obj, function(index, value) {
+					var option = '<input style="width: 10px;margin-left: 10px;" name="bdCheckBox"' + 
+						'type="checkbox" value = '+value.code+'>'
+							+ value.name + '</>'
+					select.next().append(option);
+				})
+			}else {
+				
+				select.next().append('<option>请选择</option>');
+				$.each(obj, function(index, value) {
+					var option = '<option  value = '+value.code+'>'
+							+ value.name + '</option>'
+					select.next().append(option);
+				})
+			}
+			
+			
 		}
 	});
 	

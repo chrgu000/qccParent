@@ -23,4 +23,7 @@ public interface UserRoomService {
 	/**通过用户id查询 待支付的房源账单**/
 	ResultMap findhousebile(Long userid);
 
+	/**用户拒绝签约**/
+	ResultMap userNotCent(Long userid, Long usercentid);
+
 }

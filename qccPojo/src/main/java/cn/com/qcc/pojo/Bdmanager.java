@@ -36,6 +36,9 @@ public class Bdmanager {
     /** BD头像*/
     private String avatar;
 
+    /** */
+    private Integer level;
+
     public String getBdid() {
         return bdid;
     }
@@ -122,5 +125,13 @@ public class Bdmanager {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar == null ? null : avatar.trim();
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 }

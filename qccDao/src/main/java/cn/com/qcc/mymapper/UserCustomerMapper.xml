@@ -1231,7 +1231,8 @@
 			`profile`.signstate,
 			`profile`.real_name realname,
 			IFNULL(`user`.unionid,'')unionid ,
-			vipcount.account
+			vipcount.account ,
+			IFNULL(vipcount.houseaccount ,0) houseaccount
 		
 		FROM
 			vipcount

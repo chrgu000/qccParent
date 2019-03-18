@@ -14,4 +14,18 @@
   	<select id="getmaxareacode" resultType="cn.com.qcc.pojo.Area" parameterType="long">
   		SELECT MAX(code)code ,area.* from area where parentId =#{code}
   	</select>
+  	
+  	
+  	<!-- 根据城市名称获得code -->
+  	<select id="getAreaByParentId" resultType="cn.com.qcc.pojo.Area" >
+  		SELECT * from area where parentId = #{code}
+  	</select>
+  	
+  	<!-- 根据城市名称获得code -->
+  	<select id="searchAreaByCodeIds" resultType="cn.com.qcc.pojo.Area" >
+  		SELECT * from area where `code` in (
+
+			${code}
+			)
+  	</select>
 </mapper>

@@ -65,18 +65,28 @@ $(function () {
 		var searchcode ='';
 		var  c1 = $('#bd_1').val();
 		var c2 = $('#bd_2').val();
-		 var c3 = $('#bd_3').val();
-		 var c4 = $('#bd_4').val();
+		var c3 = $('#bd_3').val();
+		var c4 = '';
+		var level = 0 ;
+		  obj = document.getElementsByName("bdCheckBox");
+			for (k in obj) {
+				if (obj[k].checked)
+					c4 += obj[k].value + ",";
+			}
 		 var current = $('.currentSelect').val();
 		
 		 if (c1 !=null && c1!='请选择') {
 			 searchcode = c1;
+			 level = 1;
 		 } if (c2 !=null && c2!='请选择') {
 			 searchcode = c2;
+			 level = 2;
 		 }if (c3 !=null && c3!='请选择') {
 			 searchcode = c3;
-		 } if (c4 !=null && c4!='请选择') {
+			 level = 3;
+		 } if (c4 !='' && c4!='请选择') {
 			 searchcode = c4;
+			 level = 4;
 		 }if (current !=null && current!='') {
 			 searchcode = current;
 		 }
@@ -86,7 +96,7 @@ $(function () {
 		var userid= $('.bd_userid').val();
 		var realname = $('.bd_realname').val();
 		$.ajax({
-			data : {bdid:bdid ,telephone:telephone , realname:realname ,code:searchcode,
+			data : {bdid:bdid ,telephone:telephone , realname:realname ,code:searchcode, level:level,
 				userid:userid},
 			method : 'post',
 			url : '/Tenement/bd/save',
@@ -175,21 +185,167 @@ function buil_searchAddBD_list(data) {
 	});
 }
 
-function searchOneBd (bdid) {
-	getprovince('bd');
+function getlevel2() {
 	
+	alert(1);
+}
+
+function searchOneBd (bdid) {
 	$.ajax({
 		data : {bdid:bdid},
 		method : 'post',
 		url : '/Tenement/bd/searchOne',
 		success : function(data) {
-			 $('.bd_telephone').val(data.obj.telephone);
-			 $('.bd_realname').val(data.obj.realname);
-			 $('.bd_id').val(data.obj.bdid);
-			 $('.bd_userid').val(data.obj.userid);
-			 $('#bd_select div').empty();
-			 $('#bd_select').append('<div><span>当前选中：'+data.obj.address+'</span>' +
-					 '<input class="currentSelect" type="hidden"   value="'+data.obj.code+'"/></div>');
+			var bdmanager = data.obj.bdmanager;
+			var level1 = data.obj.level1;
+			var level4 = data.obj.level4;
+			var level2 = data.obj.level2;
+			var level3 = data.obj.level3;
+			var bd1= $('#bd_1').empty().append('<option>请选择</option>');
+			var bd2= $('#bd_2').empty().append('<option >请选择</option>');
+			var bd3= $('#bd_3').empty().append('<option>请选择</option>');
+			var bd4= $('#bd_4').empty();
+			$('.bd_telephone').val(bdmanager.telephone);
+			$('.bd_realname').val(bdmanager.realname);
+			$('.bd_id').val(bdmanager.bdid);
+			$('.bd_userid').val(bdmanager.userid);
+			
+			$.each(level1, function(index, value) {
+				var selected=''
+				if (value.level == -1) {
+					selected= 'selected';
+				}	
+				var option = '<option  value = '+value.code+'  '+selected+'   >'  
+					+ value.name + '</option>'
+					bd1.append(option);
+			})
+			
+			
+			$.each(level2, function(index, value) {
+				var selected=''
+				if (value.level == -1) {
+					selected= 'selected';
+				}	
+				var option = '<option  value = '+value.code+'  '+selected+'   >'  
+					+ value.name + '</option>'
+					bd2.append(option);
+			})
+			
+			$.each(level3, function(index, value) {
+				var selected=''
+				if (value.level == -1) {
+					selected= 'selected';
+				}	
+				var option = '<option  value = '+value.code+'  '+selected+'   >'  
+					+ value.name + '</option>'
+					bd3.append(option);
+			})
+			
+			$.each(level4, function(index, value) {
+				var option = '<input style="width: 10px;margin-left: 10px;" name="bdCheckBox"' + 
+				'type="checkbox" value = '+value.code+'   >'
+					+ value.name + '</>'
+				if (value.level == -1) {
+					 option = '<input style="width: 10px;margin-left: 10px;" name="bdCheckBox"' + 
+					'type="checkbox" value = '+value.code+'  checked=true >'
+						+ value.name + '</>'
+				}
+				
+				bd4.append(option);
+			})
+			
+			// 加载下一级地址
+			getLastAddress(bdmanager);
+			
+			
+			
 		}
 	});
+}
+
+
+function getLastAddress(bdmanager) {
+	
+	// 调出第四级
+	if (bdmanager.level == 3 ) {
+		$.ajax({
+			data : {
+				'code' : bdmanager.code
+			},
+			url : '/Tenement/area/getareabycode',
+			success : function(a) {
+				var obj = a.obj;
+				if (bdmanager.level == 3) {
+					var select = $('#bd_4').empty();;
+					$.each(obj, function(index, value) {
+						var option = '<input style="width: 10px;margin-left: 10px;" name="bdCheckBox"' + 
+							'type="checkbox" value = '+value.code+'>'
+								+ value.name + '</>'
+						select.next().append(option);
+					})
+				}
+			}
+		});
+	}
+	
+	// 调出第第三级
+	if (bdmanager.level == 2) {
+		$.ajax({
+			data : {
+				'code' : bdmanager.code
+			},
+			url : '/Tenement/area/getareabycode',
+			success : function(a) {
+				var obj = a.obj;
+				var select = $('#bd_3').empty().append('<option>请选择</option>');;
+				$.each(obj, function(index, value) {
+					var option = '<option  value = '+value.code+'     >'  
+						+ value.name + '</option>'
+						select.append(option);
+				})
+			}
+		});
+	}
+	
+	
+	// 调出第第二级
+	if (bdmanager.level == 1) {
+		$.ajax({
+			data : {
+				'code' : bdmanager.code
+			},
+			url : '/Tenement/area/getareabycode',
+			success : function(a) {
+				var obj = a.obj;
+				var select = $('#bd_2').empty().append('<option>请选择</option>');;
+				$.each(obj, function(index, value) {
+					var option = '<option  value = '+value.code+'     >'  
+						+ value.name + '</option>'
+						select.append(option);
+				})
+			}
+		});
+	}
+	
+	// 调出第第二级
+	if (bdmanager.level == 0) {
+		$.ajax({
+			data : {
+				'code' : 0
+			},
+			url : '/Tenement/area/getareabycode',
+			success : function(a) {
+				var obj = a.obj;
+				var select = $('#bd_1').empty().append('<option>请选择</option>');;
+				$.each(obj, function(index, value) {
+					var option = '<option  value = '+value.code+'     >'  
+						+ value.name + '</option>'
+						select.append(option);
+				})
+			}
+		});
+	}
+	
+	
+	
 }

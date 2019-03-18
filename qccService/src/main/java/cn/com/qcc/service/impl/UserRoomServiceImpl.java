@@ -12,8 +12,10 @@ import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.mapper.PaymodalMapper;
+import cn.com.qcc.mapper.UsercentMapper;
 import cn.com.qcc.mymapper.UserRoomCustomerMapper;
 import cn.com.qcc.pojo.Paymodal;
+import cn.com.qcc.pojo.Usercent;
 import cn.com.qcc.queryvo.HousepayCustomer;
 import cn.com.qcc.queryvo.PayexpertCustomer;
 import cn.com.qcc.queryvo.UserCentCustomer;
@@ -28,6 +30,8 @@ public class UserRoomServiceImpl implements UserRoomService {
 	UserRoomCustomerMapper userRoomCustomerMapper;
 	@Autowired
 	PaymodalMapper paymodalMapper;
+	@Autowired
+	UsercentMapper usercentMapper;
 
 	@Override
 	public UserRoomCustomer getLandOrManagerMess(Long telephone) {
@@ -210,6 +214,27 @@ public class UserRoomServiceImpl implements UserRoomService {
 		houseList = MeroUserCentAndExpertAddHousePay(houseList , expertList , payList );
 		
 		return ResultMap.IS_200(houseList);
+	}
+
+
+	@Override
+	public ResultMap userNotCent(Long userid, Long usercentid) {
+		if (CheckDataUtil.checkisEmpty(userid)
+				|| CheckDataUtil.checkisEmpty(usercentid)) {
+			return ResultMap.build(400, "缺少参数");
+		}
+		
+		Usercent usercent = usercentMapper.selectByPrimaryKey(usercentid);
+		
+		if (CheckDataUtil.checkisEmpty(usercent)
+				|| CheckDataUtil.checkNotEqual(userid, usercent.getUserid())
+				|| CheckDataUtil.checkisEqual(usercent.getCentstate(), 2)) {
+			return ResultMap.build(400,"该租约不可解约");
+		}
+		
+		usercent.setCentstate(4);
+		usercentMapper.updateByPrimaryKeySelective(usercent);
+		return ResultMap.build(200, "解约成功");
 	}
 
 }

@@ -1,5 +1,6 @@
 package cn.com.qcc.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -546,8 +547,15 @@ public class VillageServiceImpl implements VillageService {
 	/**根据code查询小区基本信息
 	 * @param code : 区域的code
 	 * **/
-	public List<VillageCustomer> getvillagebycode(Long code , String searchWhere,Long villageid) {
-		return villageCustomerMapper.getvillagebycode(code , searchWhere , villageid);
+	public List<VillageCustomer> getvillagebycode(String code , String searchWhere,Long villageid) {
+		List<VillageCustomer> list = new ArrayList<>();
+		if (CheckDataUtil.checkNotEmpty(code)
+				&& code.contains(",")) {
+			list = villageCustomerMapper.searchVillageInCode(code.split(",") , searchWhere);
+		} else {
+			 list = villageCustomerMapper.getvillagebycode(code , searchWhere , villageid);
+		}
+		return list ; 
 	}
 
 	/**

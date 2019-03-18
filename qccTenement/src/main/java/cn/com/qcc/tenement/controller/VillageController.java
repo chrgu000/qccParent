@@ -350,7 +350,7 @@ public class VillageController {
 	// 根据code查询小区基本信息
 	@ResponseBody
 	@RequestMapping("/tribe/getvillagebycode")
-	public ResultMap getvillagebycode(Long code ,String searchWhere , Long villageid) {
+	public ResultMap getvillagebycode(String code ,String searchWhere , Long villageid) {
 		List<VillageCustomer> villagelist = villageService.getvillagebycode(code , searchWhere , villageid);
 		return ResultMap.IS_200(villagelist);
 	}

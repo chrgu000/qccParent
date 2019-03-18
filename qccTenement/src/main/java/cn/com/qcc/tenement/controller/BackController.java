@@ -80,6 +80,15 @@ public class BackController{
 	@RequestMapping("/bd/save")
 	@ResponseBody
 	public ResultMap addBD(Bdmanager bdmanager ) {
+		
+		String code = bdmanager.getCode();
+		
+		if (CheckDataUtil.checkNotEmpty(code)
+				&& code.endsWith(",")) {
+			code = code.substring(0, code.length() -1);
+			bdmanager.setCode(code);
+		}
+		
 		return bdService.addOrUpdate(bdmanager);
 	}
 	

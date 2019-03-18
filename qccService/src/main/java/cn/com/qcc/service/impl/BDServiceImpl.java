@@ -2,6 +2,7 @@ package cn.com.qcc.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -22,8 +23,10 @@ import cn.com.qcc.mapper.BuildinglandlordMapper;
 import cn.com.qcc.mapper.LandlordMapper;
 import cn.com.qcc.mapper.ProfileMapper;
 import cn.com.qcc.mapper.UserMapper;
+import cn.com.qcc.mymapper.AreaCustomerMapper;
 import cn.com.qcc.mymapper.BdCustomerMapper;
 import cn.com.qcc.mymapper.UserCustomerMapper;
+import cn.com.qcc.pojo.Area;
 import cn.com.qcc.pojo.Bdmanager;
 import cn.com.qcc.pojo.BdmanagerExample;
 import cn.com.qcc.pojo.Brand;
@@ -56,6 +59,8 @@ public class BDServiceImpl implements BDService{
 	UserMapper userMapper;
 	@Autowired
 	BdCustomerMapper bdCustomerMapper;
+	@Autowired
+	AreaCustomerMapper areaCustomerMapper;
 	
 	@SuppressWarnings("static-access")
 	@Override
@@ -165,8 +170,99 @@ public class BDServiceImpl implements BDService{
 
 	@Override
 	public ResultMap findOne(String bdid) {
+		Map<String, Object> map = new HashMap<>();
 		BdManagerCustomer bdmanager =  bdCustomerMapper.findOne(bdid);
-		return ResultMap.IS_200(bdmanager);
+		// 构建地址
+		String codeIds  = bdmanager.getCode();
+		List<Area> level4 = new ArrayList<>();
+		List<Area> checklevel = new ArrayList<>();
+		List<Area> level3 = new ArrayList<>();
+		List<Area> level2 = new ArrayList<>();
+		List<Area> level1 = new ArrayList<>();
+		Integer level = bdmanager.getLevel();
+		String parentId =bdmanager.getCode();
+		
+		// 判断当前 是最后一级
+		if (level == 4) {
+			// 查询选中的区域
+			checklevel = areaCustomerMapper.searchAreaByCodeIds(codeIds);
+			// 获取选中的上级id
+			parentId = checklevel.get(0).getParentId().toString();
+			//获取所有的上级区域
+			level4 = areaCustomerMapper.getAreaByParentId(parentId);
+			for (Area level4area : level4) {
+				for (Area check : checklevel) {
+					if (check.getCode().longValue() == level4area.getCode().longValue()) {
+						// 吧level 设置为-1 表示选中
+						level4area.setLevel(-1);
+					}
+				}
+			}
+			// 吧level 重置为 3 查询下一级
+			level = 3 ;
+		}
+		if (level == 3 ) {
+			checklevel = areaCustomerMapper.searchAreaByCodeIds(parentId.toString());
+			parentId = checklevel.get(0).getParentId().toString();
+			//获取所有的上级区域
+			level3 = areaCustomerMapper.getAreaByParentId(parentId);
+			for (Area level4area : level3) {
+				for (Area check : checklevel) {
+					if (check.getCode().longValue() == level4area.getCode().longValue()) {
+						// 吧level 设置为-1 表示选中
+						level4area.setLevel(-1);
+					}
+				}
+			}
+			// 吧level 重置为 3 查询下一级
+			level = 2 ;
+		}
+		
+		if (level == 2) {
+			checklevel = areaCustomerMapper.searchAreaByCodeIds(parentId.toString());
+			parentId = checklevel.get(0).getParentId().toString();
+			//获取所有的上级区域
+			level2 = areaCustomerMapper.getAreaByParentId(parentId);
+			for (Area level4area : level2) {
+				for (Area check : checklevel) {
+					if (check.getCode().longValue() == level4area.getCode().longValue()) {
+						// 吧level 设置为-1 表示选中
+						level4area.setLevel(-1);
+					}
+				}
+			}
+			// 吧level 重置为 3 查询下一级
+			level = 1 ;
+		}
+		
+		
+		if (level == 1) {
+			checklevel = areaCustomerMapper.searchAreaByCodeIds(parentId.toString());
+			if (CheckDataUtil.checkNotEmpty(checklevel)) {
+				parentId = checklevel.get(0).getParentId().toString();
+			}
+			//获取所有的上级区域
+			level1 = areaCustomerMapper.getAreaByParentId(parentId);
+			for (Area level4area : level1) {
+				for (Area check : checklevel) {
+					if (check.getCode().longValue() == level4area.getCode().longValue()) {
+						// 吧level 设置为-1 表示选中
+						level4area.setLevel(-1);
+					}
+				}
+			}
+			// 吧level 重置为 3 查询下一级
+			level = 0 ;
+		}
+		
+		
+		
+		map.put("bdmanager", bdmanager);
+		map.put("level4", level4);
+		map.put("level3", level3);
+		map.put("level2", level2);
+		map.put("level1", level1);
+		return ResultMap.IS_200(map);
 	}
 
 	@Override

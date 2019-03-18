@@ -144,6 +144,7 @@
 	<!--根据用户id查询租约信息 -->
 	<select id="getUserCentsByUserId" parameterType="long" resultType="cn.com.qcc.queryvo.UserCentCustomer">
 				SELECT
+			usercent.centstate , 
 			usercent.usercentid ,
 			usercent.usercentnum ,
 			usercent.centtimes ,

@@ -1029,6 +1029,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	
 	
+	<!-- 根据关键字查询小区 -->
+	<select id="searchVillageInCode" resultType="cn.com.qcc.queryvo.VillageCustomer" >
+		SELECT
+			village.villageid ,
+			village.`code` ,
+			village.villagename  ,
+			area.`name` trading 
+		FROM
+			village
+		INNER JOIN area on area.`code` = village.`code`
+		WHERE 1=1 
+		AND village.`code` in 
+		<foreach item="item" collection="idsList" separator="," open="("
+			close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		
+		<if test="searchWhere !=null and  searchWhere!='' ">
+			AND village.`villagename` like  CONCAT('',#{searchWhere},'%')
+		</if>
+		
+		LIMIT 0 ,200
+	</select>
+	
+	
+	
+	
 	<!-- 小区编辑的查询 -->
 	<select id="villageEditSearch" resultType="cn.com.qcc.queryvo.VillageCustomer" >
 		SELECT

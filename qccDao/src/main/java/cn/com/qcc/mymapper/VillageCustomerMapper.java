@@ -118,13 +118,16 @@ public interface VillageCustomerMapper {
 	
 	
 	/**根据code和查询关键字查询小区**/
-	List<VillageCustomer> getvillagebycode(@Param("code")Long code, 
+	List<VillageCustomer> getvillagebycode(@Param("code")String code, 
 			@Param("searchWhere")String searchWhere , @Param("villageid")Long villageid);
 	
 	/**小区编辑的查询**/
 	VillageCustomer villageEditSearch(Long villageid);
 	
 	BuildingCustomer builEditSearch(Long buildingid);
+	
+	List<VillageCustomer> searchVillageInCode(@Param("idsList") String[] split, 
+			@Param("searchwhere")String searchWhere);
 
 	
 
