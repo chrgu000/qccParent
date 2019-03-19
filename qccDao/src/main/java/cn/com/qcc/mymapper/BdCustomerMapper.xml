@@ -77,7 +77,7 @@
    <select id="searchUserToLand" resultType="cn.com.qcc.queryvo.UserRoomCustomer">
   		SELECT
 				`profile`.user_id userid, 
-				`profile`.real_name realname, 
+				 IFNULL(  `profile`.real_name, `profile`.user_name) realname, 
 				`user`.telephone , 
 				 IFNULL(landlord.address,'')address ,
 				 IFNULL(landlord.brandname,'') brandname, 
@@ -91,8 +91,8 @@
 			INNER JOIN `user` on `user`.userid = `profile`.user_id
 			LEFT JOIN landlord ON `user`.userid = landlord.landuserid
 			LEFT JOIN area on area.`code` = landlord.`code`
-			WHERE
-				`profile`.signstate = 2
+			WHERE 1=1 
+				<!--  AND `profile`.signstate = 2  -->
 			AND `profile`.user_id NOT IN (
 				SELECT  landuserid
 				FROM

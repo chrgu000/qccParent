@@ -20,7 +20,9 @@ import cn.com.qcc.common.SendMessage;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mapper.BdmanagerMapper;
 import cn.com.qcc.mapper.BuildinglandlordMapper;
+import cn.com.qcc.mapper.LandlordManagerMapper;
 import cn.com.qcc.mapper.LandlordMapper;
+import cn.com.qcc.mapper.LandmanagerMapper;
 import cn.com.qcc.mapper.ProfileMapper;
 import cn.com.qcc.mapper.UserMapper;
 import cn.com.qcc.mymapper.AreaCustomerMapper;
@@ -33,6 +35,9 @@ import cn.com.qcc.pojo.Brand;
 import cn.com.qcc.pojo.Buildinglandlord;
 import cn.com.qcc.pojo.BuildinglandlordExample;
 import cn.com.qcc.pojo.Landlord;
+import cn.com.qcc.pojo.LandlordManager;
+import cn.com.qcc.pojo.LandlordManagerExample;
+import cn.com.qcc.pojo.LandmanagerExample;
 import cn.com.qcc.pojo.User;
 import cn.com.qcc.queryvo.BdManagerCustomer;
 import cn.com.qcc.queryvo.BuildingCustomer;
@@ -61,6 +66,8 @@ public class BDServiceImpl implements BDService{
 	BdCustomerMapper bdCustomerMapper;
 	@Autowired
 	AreaCustomerMapper areaCustomerMapper;
+	@Autowired
+	LandlordManagerMapper landmanagerMapper;
 	
 	@SuppressWarnings("static-access")
 	@Override
@@ -319,11 +326,11 @@ public class BDServiceImpl implements BDService{
 			return ResultMap.build(400, "选择区域");
 		}
 		
-		UserCustomer user = userCustomerMapper.searchUserSign(userid);
+		/*UserCustomer user = userCustomerMapper.searchUserSign(userid);
 		if (CheckDataUtil.checkisEmpty(user)
 				|| user.getSignstate() != 2) {
 			return ResultMap.build(400, "未实名用户");
-		}
+		}*/
 		
 		// 校验bd是否正常
 		Bdmanager bdmanager = getBdidByToken(BD_ACCTOKEN);
@@ -331,6 +338,17 @@ public class BDServiceImpl implements BDService{
 				|| bdmanager.getState() == 0) {
 			return ResultMap.build(400, "异常的BD账号");
 		}
+		
+		//判断是否是管理员
+		LandlordManagerExample example = new LandlordManagerExample();
+		LandlordManagerExample.Criteria criteria = example.createCriteria();
+		criteria.andManageruseridEqualTo(userid);
+		criteria.andStateEqualTo(2);
+		List<LandlordManager> selectByExample = landmanagerMapper.selectByExample(example);
+		if (CheckDataUtil.checkNotEmpty(selectByExample)) {
+			return ResultMap.build(400, "该用户是管理管理员不可添加");
+		}
+		
 		// 这里需要通知房东
 		User landDetail = userMapper.selectByPrimaryKey(userid);
 		String content ="";
