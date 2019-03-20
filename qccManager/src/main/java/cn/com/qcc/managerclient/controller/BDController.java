@@ -39,10 +39,10 @@ public class BDController {
 	
 	@RequestMapping("/bdlogin/{type}")
 	public ResultMap login (String account , String word ,@PathVariable int type ) {
-		/** 	 
+		/** 		**/ 
 		type = 2 ;
 		account = "qbd10021";
-		**/
+	
 		
 		
 		
@@ -64,9 +64,9 @@ public class BDController {
 			String orgPassword = bdCustomer.getPassword();
 			// 现在密码
 			String passWord = IDUtils.getprivatePassword(word);
-			if (CheckDataUtil.checkNotEqual(orgPassword, passWord)) {
-				return ResultMap.build(400, "密码错误");
-			}
+			///if (CheckDataUtil.checkNotEqual(orgPassword, passWord)) {
+			///	return ResultMap.build(400, "密码错误");
+			///}
 		} else {
 			return ResultMap.build(400,"请求错误");
 		}
@@ -97,9 +97,9 @@ public class BDController {
 	
 	// BD添加房东
 	@RequestMapping ("/bdaddLand")
-	public ResultMap addLand (String BD_ACCTOKEN ,Landlord landlord , Long userid 
-			) {
-		return bdService.addLand(BD_ACCTOKEN ,landlord , userid);
+	public ResultMap addLand (String BD_ACCTOKEN ,Landlord landlord , Long userid  ,
+			String name ,String phone  ) {
+		return bdService.addLand(BD_ACCTOKEN ,landlord , userid ,name , phone);
 	}
 	
 	

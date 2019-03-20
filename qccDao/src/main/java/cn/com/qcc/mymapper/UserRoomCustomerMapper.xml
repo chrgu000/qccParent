@@ -137,6 +137,7 @@
 			close=")" index="">
 			#{item, jdbcType=VARCHAR}
 		</foreach>
+		AND housepay.paystate in (1 ,2 ) 
 		ORDER BY housepay.create_time asc 
 	</select>
 	

@@ -78,6 +78,9 @@ public class WangYiCommon {
 	/**通知管理交租成功**/
 	public static final  String NOTIC_MANAGER_HOUSEPAY_SUCCESS ="9764356";
 	
+	/**房东或者管理员吹房租**/
+	public static final String LAND_MANGER_CUIFANGZU = "9614267";
+	
 	
 
 }

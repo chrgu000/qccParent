@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import WangYiUtil.WangYiCommon;
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SendMessage;
@@ -14,7 +16,9 @@ import cn.com.qcc.mapper.FinanceMapper;
 import cn.com.qcc.mapper.HousepayMapper;
 import cn.com.qcc.mapper.HousepersionMapper;
 import cn.com.qcc.mapper.MycentMapper;
+import cn.com.qcc.mapper.PayexpertMapper;
 import cn.com.qcc.mapper.UserMapper;
+import cn.com.qcc.mapper.UsercentMapper;
 import cn.com.qcc.mymapper.CentCustomerMapper;
 import cn.com.qcc.mymapper.UserCustomerMapper;
 import cn.com.qcc.pojo.Finance;
@@ -24,7 +28,9 @@ import cn.com.qcc.pojo.Housepersion;
 import cn.com.qcc.pojo.HousepersionExample;
 import cn.com.qcc.pojo.Mycent;
 import cn.com.qcc.pojo.MycentExample;
+import cn.com.qcc.pojo.Payexpert;
 import cn.com.qcc.pojo.User;
+import cn.com.qcc.pojo.Usercent;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.HouseVo;
@@ -50,6 +56,10 @@ public class CentServiceImpl implements CentService {
 	UserMapper userMapper;
 	@Autowired
 	MycentMapper mycentMapper;
+	@Autowired
+	PayexpertMapper payexpertMapper;
+	@Autowired
+	UsercentMapper usercentMapper;
 
 	/**
 	 *	根据传过来的IDS 手动收款
@@ -210,7 +220,8 @@ public class CentServiceImpl implements CentService {
 	public UserCentCustomer gethousepaybyid(Long housepayid) {
 		UserCentCustomer returnuser =  centCustomerMapper.gethousepaybyid(housepayid);
 		//如果是未支付计算逾期时间
-		if (returnuser.getPaystate() == 1 ) {
+		if ( CheckDataUtil.checkNotEmpty(returnuser)  
+				&&	returnuser.getPaystate() == 1 ) {
 			int needoutday = DateUtil.daysBetween(new Date(), returnuser.getNeedpaytime());
 			returnuser.setNeedoutday(needoutday);
 		}
@@ -226,9 +237,14 @@ public class CentServiceImpl implements CentService {
 	//通过账单ID查询出发送短信的租户信息
 	public UserCentCustomer messdetail(Long housepayid) {
 		UserCentCustomer usercent =  centCustomerMapper.messdetailrent(housepayid);
-		//这里查询房东信息
-		User user = userMapper.selectByPrimaryKey(usercent.getUserid());
-		usercent.setLandphone(user.getTelephone()+"");
+		
+		if (CheckDataUtil.checkNotEmpty(usercent)) {
+			//这里查询房东信息
+			User user = userMapper.selectByPrimaryKey(usercent.getUserid());
+			if (CheckDataUtil.checkNotEmpty(user)) 
+			usercent.setLandphone(user.getTelephone()+"");
+		}
+		
 		return usercent;
 	}
 
@@ -451,6 +467,51 @@ public class CentServiceImpl implements CentService {
 	 **/
 	public void deletemycent(Long mycentid) {
 		mycentMapper.deleteByPrimaryKey(mycentid);
+	}
+
+	/**房东催账**/
+	public ResultMap cuizhan(Long housepayid , Long userid) {
+		
+		if (CheckDataUtil.checkisEmpty(housepayid)
+				|| CheckDataUtil.checkisEmpty(userid)) {
+			return ResultMap.build(400,"请登录");
+		}
+		
+		Housepay housepay = housepayMapper.selectByPrimaryKey(housepayid);
+		
+		
+		if (CheckDataUtil.checkisEmpty(housepay)
+				|| CheckDataUtil.checkisEqual(housepay.getPaystate(), 2)) {
+			return ResultMap.build(400, "该账单不可催账");
+		}
+		
+		Payexpert  payexpert=payexpertMapper.selectByPrimaryKey(housepay.getPayexpertid());
+		
+		if (CheckDataUtil.checkisEmpty(payexpert)) {
+			return ResultMap.build(400, "未知分期");
+		}
+		
+		Usercent usercent = usercentMapper.selectByPrimaryKey(payexpert.getUsercentid());
+		
+		if (CheckDataUtil.checkisEmpty(usercent)
+				&& CheckDataUtil.checkNotEqual(usercent.getLanduserid(), userid)
+				&& CheckDataUtil.checkNotEqual(usercent.getManageruserid(), userid))
+				return ResultMap.build(400, "只有房东和相应管家可以催单");
+		
+		if (payexpert.getState() !=2) {
+			payexpert.setState(2);
+			payexpertMapper.updateByPrimaryKeySelective(payexpert);
+		}
+		
+		User selectByPrimaryKey = userMapper.selectByPrimaryKey(usercent.getUserid());
+		String modelId = WangYiCommon.LAND_MANGER_CUIFANGZU;
+		String phone = selectByPrimaryKey.getTelephone().toString();
+		String format = "yyyy年MM月dd日";
+		String content = payexpert.getPayexpertname() +"," +DateUtil.DateToStr(format, payexpert.getStart_time()) +
+			" 至  "+	DateUtil.DateToStr(format, payexpert.getEnd_time());
+		SendMessage.sendNoticMess(content, phone, modelId);
+		
+		return ResultMap.build(200, "催单成功,租户已经收到催单短信。请耐心等待");
 	}
 
 

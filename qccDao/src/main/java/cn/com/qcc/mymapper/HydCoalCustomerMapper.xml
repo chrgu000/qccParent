@@ -71,10 +71,10 @@
 						where housepay.paystate=1 and house.user_id  = #{userid}
 			       )
 			  ) 
-			  and building.buildingid in (
+			  <!-- and building.buildingid in (
 				SELECT DISTINCT buildingid from landbuilding where landbuilding.userid = #{userid}
 	             and landbuilding.state = 1)
-			ORDER BY village.villageid 
+			ORDER BY village.villageid  -->
   	</select>
   	
   	<!-- 查询之前是否配置过-->
@@ -188,7 +188,7 @@
 		LEFT JOIN (
 		SELECT `profile`.real_name , usercent.houseid from usercent
 			LEFT JOIN `profile` on usercent.userid = `profile`.user_id 
-		 where centtimes = 1 
+		 where centtimes = 1   AND usercent.centstate in (1,2 )
 		)usercent on usercent.houseid = historymeter.houseid 
 	 where historymeter.historymeterid = #{historymeterid} 
   	</select>

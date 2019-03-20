@@ -135,6 +135,16 @@ public class CentController {
 		return resultMap;
 	}
 	
+	// 房东催账
+	@RequestMapping("/cuizhan")
+	@ResponseBody
+	public ResultMap cuizhan (Long housepayid ,Long userid) {
+		
+		return centService.cuizhan(housepayid ,  userid);
+	}
+	
+	
+	
 	//营业报表 根据用户ID查询营业报表
 	@RequestMapping("/statement")
 	@ResponseBody

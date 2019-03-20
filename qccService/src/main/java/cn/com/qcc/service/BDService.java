@@ -37,7 +37,7 @@ public interface BDService {
 	List<UserRoomCustomer> searchUserToLand(String searchWhere);
 	
 	/**BD添加房东**/
-	ResultMap addLand(String BD_ACCTOKEN, Landlord landlord ,Long userid);
+	ResultMap addLand(String BD_ACCTOKEN, Landlord landlord ,Long userid ,String name ,String phone);
 
 	Bdmanager getBdidByToken(String BD_ACCTOKEN);
 

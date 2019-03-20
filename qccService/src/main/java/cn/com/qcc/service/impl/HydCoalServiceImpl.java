@@ -423,8 +423,15 @@ public class HydCoalServiceImpl implements HydCoalService{
 		housepay.setCurrentstate(1);                //当前账单
 		housepay.setFinanceid( Long.valueOf(historymeter.getFinanceid()) ); //设置类目ID
 		housepay.setHouseid(historymeter.getHouseid()); //设置房间ID
-		housepay.setPaystate(1);                    //当前未支付
-		housepay.setDescription("单价：" + unitprice);
+		housepay.setPaystate(1);
+		
+		String current = DateUtil.DateToStr("yyyy年MM月dd日", new Date());
+		
+		String descName = "开始读数:" + historymeter.getBeforecount() +" 截止读数:" 
+				+historymeter.getAftercount() + " 总计用量： " + count + " 单价: " + unitprice
+				+" 添加账单时间:" + current;
+		//当前未支付
+		housepay.setDescription( descName);
 		housepay.setCentprices(unitprice * count); //设置当前价格
 		housepay.setCreate_time(payexpert.getStart_time()); //租约开始时间就是交房租时间
 		housepayMapper.insertSelective(housepay);

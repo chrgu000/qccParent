@@ -187,5 +187,8 @@ public interface CentService {
 	 **/
 	void deletemycent(Long mycentid);
 
+	/**房东催账**/
+	ResultMap cuizhan(Long housepayid , Long userid);
+
 
 }

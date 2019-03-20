@@ -20,11 +20,12 @@ import cn.com.qcc.common.SendMessage;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mapper.BdmanagerMapper;
 import cn.com.qcc.mapper.BuildinglandlordMapper;
+import cn.com.qcc.mapper.InteconnMapper;
 import cn.com.qcc.mapper.LandlordManagerMapper;
 import cn.com.qcc.mapper.LandlordMapper;
-import cn.com.qcc.mapper.LandmanagerMapper;
 import cn.com.qcc.mapper.ProfileMapper;
 import cn.com.qcc.mapper.UserMapper;
+import cn.com.qcc.mapper.VipcountMapper;
 import cn.com.qcc.mymapper.AreaCustomerMapper;
 import cn.com.qcc.mymapper.BdCustomerMapper;
 import cn.com.qcc.mymapper.UserCustomerMapper;
@@ -34,11 +35,14 @@ import cn.com.qcc.pojo.BdmanagerExample;
 import cn.com.qcc.pojo.Brand;
 import cn.com.qcc.pojo.Buildinglandlord;
 import cn.com.qcc.pojo.BuildinglandlordExample;
+import cn.com.qcc.pojo.Inteconn;
 import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.pojo.LandlordManager;
 import cn.com.qcc.pojo.LandlordManagerExample;
-import cn.com.qcc.pojo.LandmanagerExample;
+import cn.com.qcc.pojo.Profile;
 import cn.com.qcc.pojo.User;
+import cn.com.qcc.pojo.UserExample;
+import cn.com.qcc.pojo.Vipcount;
 import cn.com.qcc.queryvo.BdManagerCustomer;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.UserCustomer;
@@ -68,6 +72,10 @@ public class BDServiceImpl implements BDService{
 	AreaCustomerMapper areaCustomerMapper;
 	@Autowired
 	LandlordManagerMapper landmanagerMapper;
+	@Autowired
+	VipcountMapper vipcountMapper;
+	@Autowired
+	InteconnMapper inteconnMapper;
 	
 	@SuppressWarnings("static-access")
 	@Override
@@ -319,7 +327,17 @@ public class BDServiceImpl implements BDService{
 	}
 
 	@Override
-	public ResultMap addLand(String BD_ACCTOKEN, Landlord landlord , Long userid) {
+	public ResultMap addLand(String BD_ACCTOKEN, Landlord landlord , Long userid ,
+			String uname , String uphone) {
+		
+		if (CheckDataUtil.checkisEmpty(userid)) {
+			ResultMap resultMap = createUser(uname ,uphone);
+			if (resultMap.getCode() !=200) {
+				return resultMap;
+			} else {
+				userid = Long.valueOf( resultMap.getObj().toString() ) ;
+			}
+		}
 		
 		if (CheckDataUtil.checkisEmpty(landlord.getAddress())
 				|| CheckDataUtil.checkisEmpty(landlord.getCode())) {
@@ -376,6 +394,105 @@ public class BDServiceImpl implements BDService{
 		landlordMapper.insertSelective(landlord);
 		SendMessage.sendNoticMess(content, phone, modelId);
 		return ResultMap.build(200, "添加成功" , landlord );
+	}
+
+	@SuppressWarnings("static-access")
+	private ResultMap createUser(String uname, String uphone) {
+		
+		// 先校验电话号码
+		if (CheckDataUtil.checkisEmpty(uname)
+				|| CheckDataUtil.checkisEmpty(uphone)) {
+			return ResultMap.build(400, "输入电话或者姓名");
+		}
+		Long telephone = null;
+		
+		try {
+			// 校验电话号码
+			uphone = uphone.replace(" ", "");
+			if (CheckDataUtil.checkNotEqual(uphone.length(), 11)) {
+				return ResultMap.build(400,"电话号码长度不对");
+			}
+			telephone = Long.valueOf(uphone);
+		} catch (Exception e) {
+		}
+		
+		if (CheckDataUtil.checkisEmpty(telephone)) {
+			return ResultMap.build(400, "电话号码格式错误");
+		}
+		
+		// 校验电话号码是否注册过
+		UserExample example = new UserExample();
+		UserExample.Criteria criteria = example.createCriteria();
+		criteria.andTelephoneEqualTo(telephone);
+		List<User> user = userMapper.selectByExample(example);
+		if (user.size() > 0 && !user.isEmpty()) {
+			return ResultMap.IS_200(user.get(0).getUserid());
+		}
+		// 说明用户没有注册 -- 走注册流程 ---
+		User inUserData = new User();
+		UUID uuid = UUID.randomUUID();
+		inUserData.setCreate_time(new Date());
+		inUserData.setUpdate_time(new Date());
+		inUserData.setPassword("4d76087378d5f71bd9f994668e342e92e7894d80");
+		inUserData.setUsertype("0");
+		inUserData.setAccestoken(String.valueOf(uuid));
+		inUserData.setUserstatus("1");
+		inUserData.setLatitude(22.0);
+		inUserData.setLongitude(114.0);
+		inUserData.setTelephone(telephone);
+		userMapper.insertSelective(inUserData);
+		
+		
+		Profile profile = new Profile();
+		profile.setCreate_time(new Date());
+		profile.setSign_time(new Date());
+		profile.setCode(4403L);
+		profile.setSignstate(1);
+		profile.setUser_name(uname);
+		profile.setReal_name(uname);
+		profile.setUser_id(inUserData.getUserid());
+		profile.setAvatar("http://www.hadoop.zzw777.com/d7b6b65a-5ee1-4d6f-9f18-5a6fbc589387");
+		profile.setSex("未知");
+		profileMapper.insertSelective(profile);
+		
+		
+		// 新用户赠送200次求租次数
+		Vipcount vipcount = new Vipcount();
+		vipcount.setUser_id(inUserData.getUserid());
+		vipcount.setBalance(0.0D);
+		vipcount.setHouseaccount(0.0);
+		vipcount.setCount(200);
+		vipcount.setCretime_time(new Date());
+		vipcount.setIs_vip(0);
+		vipcount.setAccount(0.0D);
+		vipcountMapper.insertSelective(vipcount);
+		// 新用户赠送50个金币
+		Inteconn inteconn = new Inteconn();
+		inteconn.setUserid(inUserData.getUserid());
+		inteconn.setCount(50L);
+		inteconn.setUpdate_time(new Date());
+		inteconn.setGrand(1);
+		inteconnMapper.insertSelective(inteconn);
+		
+		
+		try {
+			Map<String, Object> returnmap = WangYiUtil.getACCIDANDTOKEN(inUserData.getUserid(), "qcc_" + uname,
+					profile.getAvatar());
+			if (returnmap.get("code").equals(200)) {
+				String ssobj = returnmap.get("info").toString();
+				net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(ssobj);
+				WangYiPoJo wpojo = (WangYiPoJo) jsonobj.toBean(jsonobj, WangYiPoJo.class);
+				String acctoken = wpojo.getToken();
+				inUserData.setAcctoken(acctoken);
+				userMapper.updateByPrimaryKeySelective(inUserData);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		return ResultMap.IS_200(inUserData.getUserid());
 	}
 
 	@Override
