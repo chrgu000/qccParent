@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Finance;
@@ -24,6 +25,7 @@ import cn.com.qcc.queryvo.HouseVo;
 import cn.com.qcc.queryvo.UserCentCustomer;
 import cn.com.qcc.queryvo.UserCentVo;
 import cn.com.qcc.service.CentService;
+import cn.com.qcc.service.HouseRoomService;
 
 
 @Controller
@@ -32,6 +34,8 @@ public class CentController {
 	
 	@Autowired
 	CentService centService;
+	@Autowired
+	HouseRoomService houseRoomService;
 	
 	//手动确定收款
 	@RequestMapping("/autohousepay")
@@ -91,7 +95,13 @@ public class CentController {
 	@ResponseBody
 	public ResultMap housepersionlist (HouseVo houseVo,@RequestParam(defaultValue = "0") String currentpage,
 			@RequestParam(defaultValue = "8") int pagesize) {
+		
 		houseVo = houseVo == null ? new HouseVo() :houseVo; //非空校验
+		String inUserIds = houseRoomService.getInUserIds(houseVo.getUserid());
+		if (CheckDataUtil.checkisEmpty(inUserIds)) {
+			inUserIds="-1";
+		}
+		houseVo.setInUserIds(inUserIds);
 		PageQuery pagequery = new PageQuery();
 		int infoCount = centService.housepersionlistCount(houseVo);
 		pagequery.setPageParams(infoCount, pagesize, Integer.parseInt(currentpage));

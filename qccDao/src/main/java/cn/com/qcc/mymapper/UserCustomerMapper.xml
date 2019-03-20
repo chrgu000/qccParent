@@ -158,11 +158,12 @@
 	from house
 	LEFT JOIN building on house.buildingid  = building.buildingid
 	LEFT JOIN village on village.villageid = building.villageid
-	LEFT JOIN ( SELECT usercentnum ,usercent.houseid  from usercent 
+	INNER JOIN ( SELECT usercentnum ,usercent.houseid  from usercent 
 	where usercent.centstate in (1,2)
 	GROUP BY usercent.houseid ) usercent on usercent.houseid = house.houseid
 		LEFT JOIN housepersion on housepersion.usercentnum = usercent.usercentnum
 	where house.housestatus !='3' and house.houstatus = '1'
+	AND house.user_id in ( ${inUserIds} )
 	<if test="buildingCustomer !=null">
 		<if test="buildingCustomer.buildingid !=null">
 			and building.buildingid = #{buildingCustomer.buildingid}
@@ -183,11 +184,12 @@
 	from house
 	LEFT JOIN building on house.buildingid  = building.buildingid
 	LEFT JOIN village on village.villageid = building.villageid
-	LEFT JOIN ( SELECT usercentnum ,usercent.houseid  from usercent 
+	INNER JOIN ( SELECT usercentnum ,usercent.houseid  from usercent 
 	where usercent.centstate in (1,2)
 	GROUP BY usercent.houseid ) usercent on usercent.houseid = house.houseid
 		LEFT JOIN housepersion on housepersion.usercentnum = usercent.usercentnum
 	where house.housestatus !='3' and house.houstatus = '1'
+	AND house.user_id in ( ${inUserIds} )
 	<if test="buildingCustomer !=null">
 		<if test="buildingCustomer.buildingid !=null">
 			and building.buildingid = #{buildingCustomer.buildingid}

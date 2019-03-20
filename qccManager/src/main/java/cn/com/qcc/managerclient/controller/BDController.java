@@ -42,7 +42,7 @@ public class BDController {
 		/** 		**/ 
 		type = 2 ;
 		account = "qbd10021";
-	
+		
 		
 		
 		
@@ -64,9 +64,9 @@ public class BDController {
 			String orgPassword = bdCustomer.getPassword();
 			// 现在密码
 			String passWord = IDUtils.getprivatePassword(word);
-			///if (CheckDataUtil.checkNotEqual(orgPassword, passWord)) {
-			///	return ResultMap.build(400, "密码错误");
-			///}
+		//	if (CheckDataUtil.checkNotEqual(orgPassword, passWord)) {
+		//		return ResultMap.build(400, "密码错误");
+		//	}
 		} else {
 			return ResultMap.build(400,"请求错误");
 		}
