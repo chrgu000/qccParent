@@ -364,7 +364,7 @@ public class HouseController {
 	@RequestMapping(value = "/house/insertHouse2", produces = "application/json;charset=utf-8")
 	@ResponseBody
 	public ResultMap insertHouse2(HousetagCustomer housetag, Building building, Price price, String apartmentname,
-			House house, Village village, Long userid, String propertyname, String filePath, String brand) {
+			String batchhouse ,	House house, Village village, Long userid, String propertyname, String filePath, String brand) {
 
 		if (userid == null) {
 			return ResultMap.build(400, "请登录后在发布房源！");
@@ -378,8 +378,17 @@ public class HouseController {
 			return ResultMap.build(400,"检查发布类型");
 		}
 		house.setProperty_id(propertyId);
-		return houseService.publishsale(building, price, house, village, userid, housetag, propertyname, apartmentname,
-				brand);
+		
+		if (CheckDataUtil.checkisEmpty(batchhouse)) {
+			return houseService.publishsale(building, price, house, 
+					village, userid, housetag, propertyname, apartmentname,
+					brand);
+		}else {
+			return houseService.publishsaleBatch(building, price, house,  batchhouse , 
+					village, userid, housetag, propertyname, apartmentname,
+					brand);
+		}
+		
 
 	}
 
@@ -422,7 +431,7 @@ public class HouseController {
 	@RequestMapping(value = "/house/findHouseBySize")
 	@ResponseBody
 	public ResultMap findHouseBySize(String city, HouseVo houseVo, @RequestParam(defaultValue = "0") Integer currentpage,
-			HttpServletRequest request, @RequestParam(defaultValue = "7") int pagesize) {
+			HttpServletRequest request, @RequestParam(defaultValue = "40") int pagesize) {
 		// TDDTO city = "深圳";
 		Map<String, Object> map = new HashMap<>();
 		// 通过城市获取到code

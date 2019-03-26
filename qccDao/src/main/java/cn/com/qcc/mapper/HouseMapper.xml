@@ -35,6 +35,7 @@
     <result column="update_time" property="update_time" jdbcType="TIMESTAMP" />
     <result column="housecode" property="housecode" jdbcType="VARCHAR" />
     <result column="xcxpicture" property="xcxpicture" jdbcType="VARCHAR" />
+    <result column="renderings" property="renderings" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -99,7 +100,7 @@
     housetag_id, property_id, brandid, landlord, landlordtel, contacts, contactstel, 
     area, floor, price_id, paystyle, ages, turn, redecorat, underground, picture, description, 
     housestatus, houstatus, create_time, house_number, videourl, schedule, update_time, 
-    housecode, xcxpicture
+    housecode, xcxpicture, renderings
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.HouseExample" >
     select
@@ -132,7 +133,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.House" >
-    <selectKey  resultType="long"  order="AFTER"  keyProperty="houseid" >
+     <selectKey  resultType="long"  order="AFTER"  keyProperty="houseid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into house (houseid, tribeids, housetitle, 
@@ -145,8 +146,8 @@
       underground, picture, description, 
       housestatus, houstatus, create_time, 
       house_number, videourl, schedule, 
-      update_time, housecode, xcxpicture
-      )
+      update_time, housecode, xcxpicture, 
+      renderings)
     values (#{houseid,jdbcType=BIGINT}, #{tribeids,jdbcType=VARCHAR}, #{housetitle,jdbcType=VARCHAR}, 
       #{buildingid,jdbcType=BIGINT}, #{user_id,jdbcType=BIGINT}, #{user_identity,jdbcType=VARCHAR}, 
       #{apartment_id,jdbcType=INTEGER}, #{housetag_id,jdbcType=VARCHAR}, #{property_id,jdbcType=INTEGER}, 
@@ -157,11 +158,11 @@
       #{underground,jdbcType=VARCHAR}, #{picture,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{housestatus,jdbcType=CHAR}, #{houstatus,jdbcType=CHAR}, #{create_time,jdbcType=TIMESTAMP}, 
       #{house_number,jdbcType=VARCHAR}, #{videourl,jdbcType=VARCHAR}, #{schedule,jdbcType=INTEGER}, 
-      #{update_time,jdbcType=TIMESTAMP}, #{housecode,jdbcType=VARCHAR}, #{xcxpicture,jdbcType=VARCHAR}
-      )
+      #{update_time,jdbcType=TIMESTAMP}, #{housecode,jdbcType=VARCHAR}, #{xcxpicture,jdbcType=VARCHAR}, 
+      #{renderings,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.House" >
-    <selectKey  resultType="long"  order="AFTER"  keyProperty="houseid" >
+     <selectKey  resultType="long"  order="AFTER"  keyProperty="houseid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into house
@@ -265,6 +266,9 @@
       <if test="xcxpicture != null" >
         xcxpicture,
       </if>
+      <if test="renderings != null" >
+        renderings,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="houseid != null" >
@@ -365,6 +369,9 @@
       </if>
       <if test="xcxpicture != null" >
         #{xcxpicture,jdbcType=VARCHAR},
+      </if>
+      <if test="renderings != null" >
+        #{renderings,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -476,6 +483,9 @@
       <if test="record.xcxpicture != null" >
         xcxpicture = #{record.xcxpicture,jdbcType=VARCHAR},
       </if>
+      <if test="record.renderings != null" >
+        renderings = #{record.renderings,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -515,7 +525,8 @@
       schedule = #{record.schedule,jdbcType=INTEGER},
       update_time = #{record.update_time,jdbcType=TIMESTAMP},
       housecode = #{record.housecode,jdbcType=VARCHAR},
-      xcxpicture = #{record.xcxpicture,jdbcType=VARCHAR}
+      xcxpicture = #{record.xcxpicture,jdbcType=VARCHAR},
+      renderings = #{record.renderings,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -619,6 +630,9 @@
       <if test="xcxpicture != null" >
         xcxpicture = #{xcxpicture,jdbcType=VARCHAR},
       </if>
+      <if test="renderings != null" >
+        renderings = #{renderings,jdbcType=VARCHAR},
+      </if>
     </set>
     where houseid = #{houseid,jdbcType=BIGINT}
   </update>
@@ -655,7 +669,8 @@
       schedule = #{schedule,jdbcType=INTEGER},
       update_time = #{update_time,jdbcType=TIMESTAMP},
       housecode = #{housecode,jdbcType=VARCHAR},
-      xcxpicture = #{xcxpicture,jdbcType=VARCHAR}
+      xcxpicture = #{xcxpicture,jdbcType=VARCHAR},
+      renderings = #{renderings,jdbcType=VARCHAR}
     where houseid = #{houseid,jdbcType=BIGINT}
   </update>
 </mapper>

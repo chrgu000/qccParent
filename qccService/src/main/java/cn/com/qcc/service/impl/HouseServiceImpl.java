@@ -1916,7 +1916,180 @@ public class HouseServiceImpl implements HouseService {
 		
 		return houseSolrDao.findoldhouse(query);
 	}
+
+
+
+
+
+	@Override
+	public ResultMap publishsaleBatch(Building building, Price price, House house, String batchhouse, Village village,
+			Long userid, HousetagCustomer housetag, String propertyname, String apartmentname, String brand) {
+		// 检查小区
+		ResultMap check_village = checkvillage(village);
+		if (CheckDataUtil.checkNotEqual(check_village.getCode(), 200)) {return check_village;}
+		Long villageid = (Long)check_village.getObj();
+		// 检查楼栋
+		ResultMap check_building = checkBuilding(villageid , building);
+		if (CheckDataUtil.checkNotEqual(check_building.getCode(),200)) {return check_building;}
+		building = (Building)check_building.getObj();
+		house.setBuildingid(building.getBuildingid());
+		// 前台参数house的非空校验
+		ResultMap result_house = checkhouse(house);
+		if (CheckDataUtil.checkisEmpty(userid)) { return ResultMap.build(400,"先登录");}
+		if (CheckDataUtil.checkisEqual(result_house.getCode(), 400)){return result_house;}
+		// 判断房源是否是房源设置对应的参数
+		checkpropertynameData(house , housetag ,propertyname);
+		//判断户型是否存在设置参数
+		checkapartmentnameData(house,apartmentname);
+		//校验价格数据
+		ResultMap price_result = checkpriceData(house,price);
+		if (CheckDataUtil.checkNotEqual(price_result.getCode(), 200)) {return price_result;}
+		//校验品牌数据
+		checbrandData(userid ,building.getBuildingid() ,house);
+		
+		int  success = 0;
+		int  error = 0 ;
+		List<House> errorList = new ArrayList<>();
+		String sendData = "";
+		try {
+			String[] bartchs = batchhouse.split(",");
+			for (int i = 0; i < bartchs.length; i++) {
+				// 插入之前设置房间号码
+				Integer floor = Integer.parseInt(bartchs[i].split("-")[0]);
+				String housenub = bartchs[i].split("-")[1];
+				// 这里校验房间号是否重复
+				house.setHouse_number(housenub);
+				house.setFloor(floor);
+				House chekchouse = checkhousenum(house);
+				if (chekchouse == null) {
+					success++;
+					house.setFloor(floor);
+					String housenum = IDUtils.appendzero(house.getHouse_number() + "", 4);
+					String housecode = building.getBuildingcode() + housenum;
+					house.setHousecode(housecode);
+					house.setCreate_time(new Date());
+					house.setUpdate_time(new Date());
+					if (house.getPaystyle() == null || "".equals(house.getPaystyle())) {
+						// 前台没有传值给默认值
+						house.setPaystyle("");
+					}
+					// 房屋的状态 冻结0 未租1 已租2 默认1 3是移除 5待审核 4没有卖
+					Integer searchstate = systemstateMapper.selectByPrimaryKey(4).getDefaultstate();
+					house.setHousestatus(searchstate + "");
+					// 1为租的 2为卖的
+					house.setHoustatus("2");
+					// 设置用户ID
+					house.setUser_id(Long.valueOf(userid));
+					house.setXcxpicture("");
+					houseMapper.insert(house);
+					Long inserhouseid = house.getHouseid();
+					sendData = sendData + inserhouseid + "-";
+				//	preparatoryhouse( preparatory ,inserhouseid );
+					house.setHouseid(null);
+				}else {
+					House errorhouse = new House();
+					errorhouse.setFloor(house.getFloor());
+					errorhouse.setHouse_number(house.getHouse_number());
+					errorList.add(errorhouse);
+					error++;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResultMap.build(400, "参数错误");
+		}
+		//循环完成以后在加入用户id 和部落id
+		String message = "";
+		if (success > 0) {
+			message +="成功发布:" + success;
+			sendData = sendData.substring(0, sendData.length()-1);
+			String tribeid = "undefined";
+			if (CheckDataUtil.checkNotEmpty(housetag.getTribeid())) {
+				tribeid = housetag.getTribeid();
+			}
+			sendData = sendData +","+userid + "," + tribeid;
+			SendMessUtil.sendData(jmsTemplate, houseAddBatch, sendData);
+		}
+			
+		if (error > 0)
+			message += " 发布失败:"+error ;
+		return ResultMap.build(201, message,errorList);
+	}
 	
+	
+	/**
+	 * 
+	 * int  success = 0;
+		int  error = 0 ;
+		List<House> errorList = new ArrayList<>();
+		String sendData = "";
+		try {
+			String[] bartchs = batchhouse.split(",");
+			for (int i = 0; i < bartchs.length; i++) {
+				// 插入之前设置房间号码
+				Integer floor = Integer.parseInt(bartchs[i].split("-")[0]);
+				String housenub = bartchs[i].split("-")[1];
+				// 这里校验房间号是否重复
+				house.setHouse_number(housenub);
+				house.setFloor(floor);
+				House chekchouse = checkhousenum(house);
+				if (chekchouse == null) {
+					success++;
+					house.setFloor(floor);
+					String housenum = IDUtils.appendzero(house.getHouse_number() + "", 4);
+					String housecode = building.getBuildingcode() + housenum;
+					house.setHousecode(housecode);
+					house.setCreate_time(new Date());
+					house.setUpdate_time(new Date());
+					if (house.getPaystyle() == null || "".equals(house.getPaystyle())) {
+						// 前台没有传值给默认值
+						house.setPaystyle("");
+					}
+					// 房屋的状态 冻结0 未租1 已租2 默认1 3是移除 5待审核 4没有卖
+					Integer searchstate = systemstateMapper.selectByPrimaryKey(4).getDefaultstate();
+					house.setHousestatus(searchstate + "");
+					// 1为租的 2为卖的
+					house.setHoustatus("1");
+					// 设置用户ID
+					house.setUser_id(Long.valueOf(userid));
+					house.setXcxpicture("");
+					houseMapper.insert(house);
+					Long inserhouseid = house.getHouseid();
+					sendData = sendData + inserhouseid + "-";
+					preparatoryhouse( preparatory ,inserhouseid );
+					house.setHouseid(null);
+				}else {
+					House errorhouse = new House();
+					errorhouse.setFloor(house.getFloor());
+					errorhouse.setHouse_number(house.getHouse_number());
+					errorList.add(errorhouse);
+					error++;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResultMap.build(400, "参数错误");
+		}
+		//循环完成以后在加入用户id 和部落id
+		String message = "";
+		if (success > 0) {
+			message +="成功发布:" + success;
+			sendData = sendData.substring(0, sendData.length()-1);
+			String tribeid = "undefined";
+			if (CheckDataUtil.checkNotEmpty(housetag.getTribeid())) {
+				tribeid = housetag.getTribeid();
+			}
+			sendData = sendData +","+userid + "," + tribeid;
+			SendMessUtil.sendData(jmsTemplate, houseAddBatch, sendData);
+		}
+			
+		if (error > 0)
+			message += " 发布失败:"+error ;
+		return ResultMap.build(201, message,errorList);
+	 * 
+	 * 
+	 * 
+	 * **/
 
 	
 

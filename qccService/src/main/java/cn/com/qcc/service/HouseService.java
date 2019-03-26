@@ -408,6 +408,10 @@ public interface HouseService {
 			,AddressCustomer addressCustomer,PageQuery pagequery);
 	
 	
+	ResultMap publishsaleBatch(Building building, Price price, House house, String batchhouse, Village village,
+			Long userid, HousetagCustomer housetag, String propertyname, String apartmentname, String brand);
+	
+	
 
 	
 

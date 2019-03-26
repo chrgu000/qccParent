@@ -1067,4 +1067,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			WHERE
 				village.villageid = #{villageid}
 	</select>
+	
+	
+	
+	<!-- 查询一条小区攻略 -->
+	<select id="searchOneTrategy" resultType="cn.com.qcc.queryvo.HousestrategyCustomer" >
+		SELECT
+			villagetrategy.*,
+			village.villagename ,
+		  area.`name` trading 
+		FROM
+			villagetrategy
+		INNER JOIN village ON villagetrategy.villageid = village.villageid
+		INNER JOIN area ON village.`code` = area.`code`
+		WHERE
+			villagetrategy.trategyid = #{tragegyid}
+	</select>
 </mapper>

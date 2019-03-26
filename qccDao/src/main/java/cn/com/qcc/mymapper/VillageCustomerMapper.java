@@ -10,6 +10,7 @@ import cn.com.qcc.pojo.Village;
 import cn.com.qcc.queryvo.AddressCustomer;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
+import cn.com.qcc.queryvo.HousestrategyCustomer;
 import cn.com.qcc.queryvo.MetroCustomer;
 import cn.com.qcc.queryvo.SearchModal;
 import cn.com.qcc.queryvo.UserCustomer;
@@ -128,6 +129,9 @@ public interface VillageCustomerMapper {
 	
 	List<VillageCustomer> searchVillageInCode(@Param("idsList") String[] split, 
 			@Param("searchwhere")String searchWhere);
+
+	/**查询一条小区攻略**/
+	HousestrategyCustomer searchOneTrategy(Long housestrategyid);
 
 	
 

@@ -2294,6 +2294,76 @@ public class HouseExample {
             addCriterion("xcxpicture not between", value1, value2, "xcxpicture");
             return (Criteria) this;
         }
+
+        public Criteria andRenderingsIsNull() {
+            addCriterion("renderings is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRenderingsIsNotNull() {
+            addCriterion("renderings is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRenderingsEqualTo(String value) {
+            addCriterion("renderings =", value, "renderings");
+            return (Criteria) this;
+        }
+
+        public Criteria andRenderingsNotEqualTo(String value) {
+            addCriterion("renderings <>", value, "renderings");
+            return (Criteria) this;
+        }
+
+        public Criteria andRenderingsGreaterThan(String value) {
+            addCriterion("renderings >", value, "renderings");
+            return (Criteria) this;
+        }
+
+        public Criteria andRenderingsGreaterThanOrEqualTo(String value) {
+            addCriterion("renderings >=", value, "renderings");
+            return (Criteria) this;
+        }
+
+        public Criteria andRenderingsLessThan(String value) {
+            addCriterion("renderings <", value, "renderings");
+            return (Criteria) this;
+        }
+
+        public Criteria andRenderingsLessThanOrEqualTo(String value) {
+            addCriterion("renderings <=", value, "renderings");
+            return (Criteria) this;
+        }
+
+        public Criteria andRenderingsLike(String value) {
+            addCriterion("renderings like", value, "renderings");
+            return (Criteria) this;
+        }
+
+        public Criteria andRenderingsNotLike(String value) {
+            addCriterion("renderings not like", value, "renderings");
+            return (Criteria) this;
+        }
+
+        public Criteria andRenderingsIn(List<String> values) {
+            addCriterion("renderings in", values, "renderings");
+            return (Criteria) this;
+        }
+
+        public Criteria andRenderingsNotIn(List<String> values) {
+            addCriterion("renderings not in", values, "renderings");
+            return (Criteria) this;
+        }
+
+        public Criteria andRenderingsBetween(String value1, String value2) {
+            addCriterion("renderings between", value1, value2, "renderings");
+            return (Criteria) this;
+        }
+
+        public Criteria andRenderingsNotBetween(String value1, String value2) {
+            addCriterion("renderings not between", value1, value2, "renderings");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

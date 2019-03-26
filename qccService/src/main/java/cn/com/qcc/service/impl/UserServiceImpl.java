@@ -383,10 +383,10 @@ public class UserServiceImpl implements UserService {
 		vipcount.setIs_vip(0);
 		vipcount.setAccount(0.0D);
 		vipcountMapper.insertSelective(vipcount);
-		// 新用户赠送50个金币
+		// 新用户赠送100个金币
 		Inteconn inteconn = new Inteconn();
 		inteconn.setUserid(user.getUserid());
-		inteconn.setCount(50L);
+		inteconn.setCount(100L);
 		inteconn.setUpdate_time(new Date());
 		inteconn.setGrand(1);
 		inteconnMapper.insertSelective(inteconn);

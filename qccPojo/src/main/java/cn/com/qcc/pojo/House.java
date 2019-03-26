@@ -2,8 +2,6 @@ package cn.com.qcc.pojo;
 
 import java.util.Date;
 
-import cn.com.qcc.common.CheckDataUtil;
-
 public class House {
     /** 房屋id*/
     private Long houseid;
@@ -104,6 +102,9 @@ public class House {
     /** 房子二维码图片*/
     private String xcxpicture;
 
+    /** 户型图*/
+    private String renderings;
+
     public Long getHouseid() {
         return houseid;
     }
@@ -165,20 +166,7 @@ public class House {
     }
 
     public void setHousetag_id(String housetag_id) {
-    	
-    	String appendId = "";
-    	if (CheckDataUtil.checkNotEmaile(housetag_id)) {
-    		String [] ids = housetag_id.split(",");
-    		for (int i=0;i<ids.length;i++) {
-    			if (!appendId.contains(ids[i]) && CheckDataUtil.checkNotEmpty(ids[i])) {
-    				appendId+=ids[i]+",";
-    			}
-    		}
-    	}
-    	if (CheckDataUtil.checkNotEmpty(appendId)) {
-    		appendId = appendId.substring(0, appendId.length()-1);
-    	}
-        this.housetag_id = appendId;
+        this.housetag_id = housetag_id == null ? null : housetag_id.trim();
     }
 
     public Integer getProperty_id() {
@@ -379,5 +367,13 @@ public class House {
 
     public void setXcxpicture(String xcxpicture) {
         this.xcxpicture = xcxpicture == null ? null : xcxpicture.trim();
+    }
+
+    public String getRenderings() {
+        return renderings;
+    }
+
+    public void setRenderings(String renderings) {
+        this.renderings = renderings == null ? null : renderings.trim();
     }
 }
