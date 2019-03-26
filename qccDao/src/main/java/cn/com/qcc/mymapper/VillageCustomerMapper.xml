@@ -1071,7 +1071,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	
 	<!-- 查询一条小区攻略 -->
-	<select id="searchOneTrategy" resultType="cn.com.qcc.queryvo.HousestrategyCustomer" >
+	<select id="searchOneTrategy" resultType="cn.com.qcc.queryvo.TrategyCustomer" >
 		SELECT
 			villagetrategy.*,
 			village.villagename ,
@@ -1082,5 +1082,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		INNER JOIN area ON village.`code` = area.`code`
 		WHERE
 			villagetrategy.trategyid = #{tragegyid}
+	</select>
+	
+	<!-- 查询我的攻略列表 -->
+	<select id="searchTrageryList" resultType="cn.com.qcc.queryvo.TrategyCustomer" >
+				SELECT
+					villagetrategy.trategyid , 
+					villagetrategy.descname , 
+					villagetrategy.create_time,
+					village.villagename ,
+				  area.`name` trading 
+				FROM
+					villagetrategy
+				INNER JOIN village ON villagetrategy.villageid = village.villageid
+				INNER JOIN area ON village.`code` = area.`code`
+				WHERE
+					villagetrategy.userid = #{userid} 
+		ORDER BY villagetrategy.create_time desc 
+		
+	<if test="pagequery !=null "><!-- 分页条件 -->
+			limit #{pagequery.pagestart} , #{pagequery.pagesize}
+		</if>
+	</select>
+	
+	
+	<!-- 查询我的攻略列表 -->
+	<select id="searchListCount" resultType="integer" >
+				SELECT
+					 count(1)
+				FROM
+					villagetrategy
+				INNER JOIN village ON villagetrategy.villageid = village.villageid
+				INNER JOIN area ON village.`code` = area.`code`
+				WHERE
+					villagetrategy.userid = #{userid} 
 	</select>
 </mapper>

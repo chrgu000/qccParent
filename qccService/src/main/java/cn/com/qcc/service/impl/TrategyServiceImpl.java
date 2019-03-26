@@ -1,20 +1,22 @@
 package cn.com.qcc.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.com.qcc.common.CheckDataUtil;
+import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.mapper.VillagetrategyMapper;
 import cn.com.qcc.mymapper.VillageCustomerMapper;
 import cn.com.qcc.pojo.Villagetrategy;
-import cn.com.qcc.queryvo.HousestrategyCustomer;
-import cn.com.qcc.service.HousestrategyService;
+import cn.com.qcc.queryvo.TrategyCustomer;
+import cn.com.qcc.service.TrategyService;
 
 @Service
-public class HousestrategyServiceImpl implements HousestrategyService {
+public class TrategyServiceImpl implements TrategyService {
 
 	@Autowired
 	private VillagetrategyMapper trategyMapper;
@@ -45,7 +47,7 @@ public class HousestrategyServiceImpl implements HousestrategyService {
 		if(CheckDataUtil.checkisEmpty(housestrategyid)) {
 			return ResultMap.build(400, "选择一条攻略");
 		}
-		HousestrategyCustomer selectByPrimaryKey = villageCustomerMapper.searchOneTrategy(housestrategyid);
+		TrategyCustomer selectByPrimaryKey = villageCustomerMapper.searchOneTrategy(housestrategyid);
 		return ResultMap.IS_200(selectByPrimaryKey);
 	}
 
@@ -66,6 +68,17 @@ public class HousestrategyServiceImpl implements HousestrategyService {
 		trategyMapper.updateByPrimaryKeySelective(trategy);
 		
 		return ResultMap.build(200, "编辑成功");
+	}
+
+	@Override
+	public List<TrategyCustomer> searchList(Long userid, PageQuery pagequery) {
+		return villageCustomerMapper.searchTrageryList(userid , pagequery);
+	}
+
+	@Override
+	public int searchListCount(Long userid) {
+		// TODO Auto-generated method stub
+		return villageCustomerMapper.searchListCount(userid);
 	}
 
 }

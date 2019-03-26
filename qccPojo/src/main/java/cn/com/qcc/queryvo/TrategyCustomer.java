@@ -2,7 +2,7 @@ package cn.com.qcc.queryvo;
 
 import cn.com.qcc.pojo.Villagetrategy;
 
-public class HousestrategyCustomer extends Villagetrategy{
+public class TrategyCustomer extends Villagetrategy{
 	
 	private String villagename;
 	

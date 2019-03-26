@@ -141,7 +141,7 @@
 				AND building.identity like CONCAT('%',#{searchWhere},'%')
 			</if>
 			<if test="code !=null and code != ''"> 
-				AND building.code like CONCAT('',#{code},'%')
+				AND village.code like CONCAT('',#{code},'%')
 			</if>
 			<if test="villageid !=null and villageid != ''"> 
 				AND building.villageid  = #{villageid}
