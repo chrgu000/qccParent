@@ -56,12 +56,6 @@ public class QiuzuServiceImpl implements QiuzuService {
 	@Resource  Destination qiuzuSearch;
 	@Resource  Destination qiuzuChange;
 
-	// 查询所有的求租列表
-	/*public List<QiuzuCustomer> findQiuzuList(HouseVo houseVo) {
-		 List<QiuzuCustomer> qiuzulist = null;
-		 qiuzulist = qiuZuCustomerMapper.findQiuzuList(houseVo);
-		 return qiuzulist;
-	}*/
 	
 	// 封装求租的查询条件
 	private SolrQuery getqiuzulistQuery(Metro metro, QiuzuCustomer qiuzuCustomer, PageQuery pagequery) {

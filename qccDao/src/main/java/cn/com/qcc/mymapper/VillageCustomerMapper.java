@@ -137,6 +137,15 @@ public interface VillageCustomerMapper {
 	List<TrategyCustomer> searchTrageryList( @Param("userid") Long userid,@Param("pagequery") PageQuery pagequery);
 
 	int searchListCount(Long userid);
+	
+	/**根据小区id查询攻略列表**/
+	List<TrategyCustomer> searchTrageryByVillageId(Long villageid);
+	
+	/**查询小区顾问**/
+	List<UserCustomer> searchConsultant(Long communityid);
+	
+	/**查询经纪人对应的小区**/
+	List<VillageCustomer> searchVillageByConsultant(Long userid);
 
 	
 

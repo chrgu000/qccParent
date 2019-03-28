@@ -18,6 +18,7 @@ import cn.com.qcc.pojo.Area;
 import cn.com.qcc.pojo.Broker;
 import cn.com.qcc.pojo.Zan;
 import cn.com.qcc.queryvo.UserCustomer;
+import cn.com.qcc.queryvo.VillageCustomer;
 import cn.com.qcc.queryvo.ZanCustomer;
 import cn.com.qcc.service.FansService;
 import cn.com.qcc.service.HouseService;
@@ -25,6 +26,7 @@ import cn.com.qcc.service.InteService;
 import cn.com.qcc.service.MessagesService;
 import cn.com.qcc.service.QiuzuService;
 import cn.com.qcc.service.UserService;
+import cn.com.qcc.service.VillageService;
 import cn.com.qcc.service.ZanService;
 
 @Controller
@@ -46,6 +48,8 @@ public class FansController {
 	BrokerMapper brokerMapper;
 	@Autowired
 	InteService inteService;
+	@Autowired
+	VillageService villageService;
 	
 	// 进入赞的详情页面
 	@ResponseBody
@@ -127,6 +131,10 @@ public class FansController {
 		if (jiyin != "") {
 			jiyin = jiyin.substring(0,jiyin.length()-1);
 		}
+		
+		List<VillageCustomer> villageList = villageService.searchVillageByConsultant(followUserId);
+		
+		map.put("villageList",villageList );
 		map.put("xpxpicture",xpxpic );
 		map.put("jiyin", jiyin);
 		map.put("profile", profile);

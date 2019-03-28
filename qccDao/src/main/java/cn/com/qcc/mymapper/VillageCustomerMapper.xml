@@ -497,7 +497,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="searchWhere !=null and searchWhere !='' ">
 			and	building.`building` like CONCAT('%',#{searchWhere},'%')
 		</if>
-		LIMIT 0 , 50
 	</select>
 
 
@@ -1116,5 +1115,74 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				INNER JOIN area ON village.`code` = area.`code`
 				WHERE
 					villagetrategy.userid = #{userid} 
+	</select>
+	
+	
+	
+	
+	<!-- 根据小区id查询攻略列表-->
+	<select id="searchTrageryByVillageId" resultType="cn.com.qcc.queryvo.TrategyCustomer" >
+			SELECT
+					villagetrategy.* , 
+					village.villagename ,
+				  area.`name` trading  ,
+					`profile`.avatar ,
+						`profile`.user_name username 
+				FROM
+					villagetrategy
+				INNER JOIN village ON villagetrategy.villageid = village.villageid
+				INNER JOIN area ON village.`code` = area.`code`
+				LEFT JOIN `profile` on `profile`.user_id = villagetrategy.userid
+				WHERE
+					villagetrategy.villageid = #{villageid}
+		ORDER BY villagetrategy.create_time desc 
+	</select>
+	
+	
+	
+		<!-- 查询小区顾问-->
+	<select id="searchConsultant" resultType="cn.com.qcc.queryvo.UserCustomer" >
+						SELECT
+			`user`.userid  ,
+		   `profile`.avatar ,
+		  IFNULL(`profile`.real_name,`profile`.user_name) realname ,
+		   `user`.telephone 
+		FROM
+			`user`
+		LEFT JOIN `profile` ON `user`.userid = `profile`.user_id
+		WHERE
+			`user`.userid IN (
+				SELECT
+					userid
+				FROM
+					consultant
+				WHERE
+					villageid =  #{villageid}
+			)
+	</select>
+	
+	
+	
+	<!-- 查询经纪人对应小区-->
+	<select id="searchVillageByConsultant" resultType="cn.com.qcc.queryvo.VillageCustomer" >
+					SELECT
+					village.picture onepicture  , 
+					village.villageid ,
+					area.`name` trading ,
+					village.update_time ,
+					village.villagename 
+				FROM
+					village
+				LEFT JOIN area on area.`code` = village.`code` 
+				WHERE
+					villageid IN (
+						SELECT
+							villageid
+						FROM
+							consultant
+						WHERE
+							userid = #{userid}
+					)
+				ORDER BY village.update_time desc 
 	</select>
 </mapper>

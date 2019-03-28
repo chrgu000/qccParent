@@ -1,5 +1,6 @@
 package cn.com.qcc.tenement.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Villagetrategy;
@@ -56,8 +58,26 @@ public class TrategyController {
 		resultMap.put("trategyList", trategyList);
 		resultMap.put("pagequery", pagequery);
 		return ResultMap.IS_200(resultMap);
+	}
+	
+	
+	@RequestMapping ("/searchbyVillageid")
+	public ResultMap searchTrageryByVillageId (Long villageid) {
+		
+		List<TrategyCustomer> list = trategyService.searchTrageryByVillageId(villageid);
+		if (CheckDataUtil.checkisEmpty(list)) {
+			list = new ArrayList<>();
+		}
+		return ResultMap.IS_200(list);
 		
 	}
+	
+	
+	@RequestMapping("/delete")
+	public ResultMap delete (Long userid , Long trategyid) {
+		
+		return trategyService.delete(userid ,trategyid);
+	} 
 	
 	
 

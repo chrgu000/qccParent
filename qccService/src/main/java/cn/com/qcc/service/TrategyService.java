@@ -17,8 +17,15 @@ public interface TrategyService {
 
 	ResultMap update(Villagetrategy trategy);
 	
-	/****/
+	/**根据用户id
+	 *  查询攻略列表
+	 * **/
 	List<TrategyCustomer> searchList(Long userid, PageQuery pagequery);
 	int searchListCount(Long userid);
+	
+	List<TrategyCustomer> searchTrageryByVillageId(Long villageid);
+	
+	/**删除攻略**/
+	ResultMap delete(Long userid, Long trategyid);
 
 }

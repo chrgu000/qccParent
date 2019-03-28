@@ -46,6 +46,7 @@ import cn.com.qcc.pojo.Broker;
 import cn.com.qcc.pojo.Building;
 import cn.com.qcc.pojo.BuildingExample;
 import cn.com.qcc.pojo.Buildinglandlord;
+import cn.com.qcc.pojo.BuildinglandlordExample;
 import cn.com.qcc.pojo.Detaileaddress;
 import cn.com.qcc.pojo.DetaileaddressExample;
 import cn.com.qcc.pojo.House;
@@ -252,32 +253,43 @@ public class VillageServiceImpl implements VillageService {
 		}
 		Integer searchstate = systemstateMapper.selectByPrimaryKey(8).getDefaultstate();
 		building.setDetailid(Long.valueOf(detailid));
-		
+		System.out.println("==================" +  building.getBuildingid() + "==================传入的楼栋");
 		if (CheckDataUtil.checkisEmpty(building.getBuildingid())) {
 			building.setState(searchstate);
 			building.setUpdate_time(new Date());
 			building.setXcxpicture("");
 			buildingMapper.insertSelective(building);
-			
-			// 添加和房东的绑定关系
-			if (CheckDataUtil.checkNotEmpty(landuserid)) {
-				Buildinglandlord land = new Buildinglandlord();
-				land.setBuildingid(building.getBrandid());
-				land.setLandlordid(landuserid);
-				buildinglandlordMapper.insertSelective(land);
-			}
-			
 		} else {
 			building.setBdid(null);
 			building.setBuildingcode(null);
 			buildingMapper.updateByPrimaryKeySelective(building);
 		}
 		
-		
-		
 		// 添加楼栋成功需要发送模板消息
 		String sendData = building.getBuildingid() + "";
 		SendMessUtil.sendData(jmsTemplate, builAdd, sendData);
+		
+		
+		// 添加和房东的绑定关系
+		if (CheckDataUtil.checkNotEmpty(landuserid)) {
+			
+			/// 判断该楼栋是否绑过房东
+			BuildinglandlordExample example = new BuildinglandlordExample();
+			BuildinglandlordExample.Criteria criteria = example.createCriteria();
+			criteria.andBuildingidEqualTo(building.getBuildingid());
+			List<Buildinglandlord> selectByExample = buildinglandlordMapper.selectByExample(example);
+			if (CheckDataUtil.checkNotEmpty(selectByExample)) {
+				return ResultMap.build(200, "该楼栋已经绑定了房东");
+			}
+			Buildinglandlord land = new Buildinglandlord();
+			land.setBuildingid(building.getBuildingid());
+			land.setLandlordid(landuserid);
+			buildinglandlordMapper.insertSelective(land);
+			return ResultMap.build(200, "恭喜你该楼栋成功绑定了房东");
+		}
+		
+		
+		
 		return ResultMap.build(200, "操作成功");
 	}
 
@@ -1024,7 +1036,6 @@ public class VillageServiceImpl implements VillageService {
 
 	@Override
 	public int searchBuildingbyVillageidCount(Long villageid) {
-		// TODO Auto-generated method stub
 		return villageCustomerMapper.searchBuildingbyVillageidCount( villageid);
 	}
 
@@ -1238,6 +1249,22 @@ public class VillageServiceImpl implements VillageService {
 	@Override
 	public BuildingCustomer builEditSearch(Long buildingid) {
 		return villageCustomerMapper.builEditSearch(buildingid);
+	}
+
+	@Override
+	public List<UserCustomer> searchConsultant(Long communityid) {
+		List<UserCustomer> users = villageCustomerMapper.searchConsultant(communityid);
+		if (CheckDataUtil.checkisEmpty(users)) {
+			return new ArrayList<>();
+		}
+		
+		return users;
+	}
+
+	@Override
+	public List<VillageCustomer> searchVillageByConsultant(Long userid) {
+		// TODO Auto-generated method stub
+		return villageCustomerMapper.searchVillageByConsultant(userid);
 	}
 
 	

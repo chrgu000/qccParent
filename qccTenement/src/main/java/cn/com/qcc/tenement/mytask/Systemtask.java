@@ -191,78 +191,7 @@ public class Systemtask {
 	}
 	
 	
-	/**
-	 * 每个月底执行一次楼栋统计数据
-	 * @throws Exception 
-	 * ***/ 
-	public void tongjiloudong () throws Exception {
-		String filePath = request.getSession().getServletContext().getRealPath("/")+"upload/hisexcle/";
-		filePath = filePath.replace("/Tenement", "");
-		String filePrefix = DateUtil.DateToStr("yyyy-MM-dd", new Date());
-		filePrefix = filePrefix + "统计发布楼栋";
-		int flushRows = 100;
-		List<UserCustomer> buildingCustomers = villageService.censusbuilding("");
-		for (UserCustomer user : buildingCustomers) {
-			user.setNowlinknout(user.getBcount() - user.getNowlinkcount());
-			user.setNowlandnout(user.getBcount() - user.getNowlandcount());
-			user.setLinknout(user.getTcount() - user.getLinkcount());
-			user.setLandnout(user.getTcount() - user.getLandcount());
-		}
-		List<String> fieldCodes = getbuildinguser_fieldCodes();
-		List<String> fieldNames = getbuildinguser_fieldNames();
-		ExcelExportSXXSSF excelExportSXXSSF = ExcelExportSXXSSF.start(filePath, "/", filePrefix, fieldNames,
-				fieldCodes, flushRows);
-		excelExportSXXSSF.writeDatasByObject(buildingCustomers);
-		String webpath = excelExportSXXSSF.exportFile();
-		String returnpath = "https://www.zzw777.com/upload/hisexcle"+webpath;
-		
-		Historyexcle historyexcle = new Historyexcle();
-		historyexcle.setUserid(10000003L);
-		historyexcle.setDescname(filePrefix);
-		historyexcle.setHistoryexcleurl(returnpath);
-		historyexcle.setUpdate_time(new Date());
-		accessService.excleurladd(historyexcle);
-	}
 	
-	
-	
-	
-	
-	private List<String> getbuildinguser_fieldCodes() {
-		List<String> filedCodes = new ArrayList<String>();
-		filedCodes.add("userid");
-		filedCodes.add("user_name");
-		filedCodes.add("telephone");
-		filedCodes.add("bcount");
-		filedCodes.add("nowlinkcount");
-		filedCodes.add("nowlinknout");
-		filedCodes.add("nowlandcount");
-		filedCodes.add("nowlandnout");
-		filedCodes.add("tcount");
-		filedCodes.add("linkcount");
-		filedCodes.add("linknout");
-		filedCodes.add("landcount");
-		filedCodes.add("landnout");
-		return filedCodes;
-	}
-
-	private List<String> getbuildinguser_fieldNames() {
-		List<String> fieldNames = new ArrayList<String>();
-		fieldNames.add("用户ID");
-		fieldNames.add("用户昵称");
-		fieldNames.add("电话号码");
-		fieldNames.add("本月总数");
-		fieldNames.add("本月有联系电话");
-		fieldNames.add("本月无联系电话");
-		fieldNames.add("本月有房东电话");
-		fieldNames.add("本月无房东电话");
-		fieldNames.add("总计");
-		fieldNames.add("总计有联系电话");
-		fieldNames.add("总计无联系电话");
-		fieldNames.add("总计有房东电话");
-		fieldNames.add("总计无房东电话");
-		return fieldNames;
-	}
 	
 	
 	

@@ -1726,6 +1726,7 @@
 		SELECT 
 			house.houseid ,
 			house.houseTitle , 
+			building.villageid ,
 			house.picture ,
 		    price.prices ,
 	        apartment.apartmentName ,

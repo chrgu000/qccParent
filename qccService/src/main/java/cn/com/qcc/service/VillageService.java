@@ -247,6 +247,12 @@ public interface VillageService {
 	/**楼栋编辑的查询**/
 	BuildingCustomer builEditSearch(Long buildingid);
 	
+	/**查询小区顾问**/
+	List<UserCustomer> searchConsultant(Long communityid);
+	
+	/**查询顾问对应的小区**/
+	List<VillageCustomer> searchVillageByConsultant(Long userid);
+	
 	
 	
 	

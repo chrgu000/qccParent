@@ -532,6 +532,10 @@ public class HouseServiceImpl implements HouseService {
 		}
 		
 		
+		/// 处理多余的错误的 标签
+		house.setHousetag_id( setHouseTargeId (house.getHousetag_id())  );
+		
+		
 	}
 	//校验楼栋
 	private ResultMap checkBuilding(Long villageid, Building building) {
@@ -741,7 +745,6 @@ public class HouseServiceImpl implements HouseService {
 		if (CheckDataUtil.checkNotEqual(price_result.getCode(), 200)) {return price_result;}
 		//校验品牌数据
 		checbrandData(userid ,building.getBuildingid() ,house);
-		
 		if (!"".equals(house.getHouseid()) && house.getHouseid() != null) {
 			house.setUpdate_time(new Date());
 			houseMapper.updateByPrimaryKeySelective(house);
@@ -2090,7 +2093,25 @@ public class HouseServiceImpl implements HouseService {
 	 * 
 	 * 
 	 * **/
-
+	
+	/***处理标签的ID**/
+	public String setHouseTargeId(String housetargid) {
+		
+		String returnId = "" ;
+		if (CheckDataUtil.checkNotEmpty(housetargid)) {
+			String[] split = housetargid.split(",");
+			for (int i=0;i<split.length;i++) {
+				if (!returnId.contains(split[i])  && CheckDataUtil.checkNotEmpty(split[i])) {
+					returnId += split[i] + ",";
+				}
+			}
+		}
+		if (returnId.endsWith(",")) {
+			returnId = returnId.substring(0, returnId.length() - 1);
+		}
+		return returnId;
+		
+	}
 	
 
 }

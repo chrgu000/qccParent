@@ -81,4 +81,25 @@ public class TrategyServiceImpl implements TrategyService {
 		return villageCustomerMapper.searchListCount(userid);
 	}
 
+	@Override
+	public List<TrategyCustomer> searchTrageryByVillageId(Long villageid) {
+		
+		
+		return villageCustomerMapper.searchTrageryByVillageId(villageid);
+	}
+
+	@Override
+	public ResultMap delete(Long userid, Long trategyid) {
+		Villagetrategy trategy = trategyMapper.selectByPrimaryKey(trategyid);
+		
+		if (CheckDataUtil.checkisEmpty(trategy)
+				|| CheckDataUtil.checkNotEqual(trategy.getUserid(), userid)) {
+			return ResultMap.build(400, "无此攻略");
+		}
+		
+		trategyMapper.deleteByPrimaryKey(trategyid);
+		
+		return ResultMap.build(200,"删除成功");
+	}
+
 }

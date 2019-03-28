@@ -126,6 +126,7 @@ public class VillageController {
 	@ResponseBody
 	public ResultMap updateorsavebuild(Village village, Building building, 
 			Detaileaddress detaileaddress,String brand ,Long landuserid) {
+		System.out.println("发布楼栋======编辑收到 房东ID "  + landuserid);
 		ResultMap result = villageService.savebuild(village, building, detaileaddress,brand  ,landuserid);
 		return result;
 	}
@@ -229,12 +230,17 @@ public class VillageController {
 		housepagequery.setPageParams(infocount, pagesize, currentpage);
 		// 截取地址
 		suplitDetails(houseList);
+		
+		// 查询小区顾问
+		List<UserCustomer> users = villageService.searchConsultant(communityid);
+		
 		map.put("count", browerCustomer.getBcount());
 		map.put("buildingList", buildingList);
 		map.put("surplus", surplus);
 		map.put("houseList", houseList);
 		map.put("nearvillage", houseList);
     	map.put("rentpicture", rentpicture);
+    	map.put("users", users);
     	map.put("housepagequery", housepagequery);
     	map.put("builpagequery", builpagequery);
     	villageDetail.setUserid(userid);

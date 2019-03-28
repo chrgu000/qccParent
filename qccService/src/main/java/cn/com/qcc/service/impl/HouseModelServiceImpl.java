@@ -16,11 +16,14 @@ import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mapper.BrokerMapper;
+import cn.com.qcc.mapper.ConsultantMapper;
 import cn.com.qcc.mapper.HousemodelMapper;
 import cn.com.qcc.mapper.HousetagMapper;
 import cn.com.qcc.mess.util.SolrPageUtil;
 import cn.com.qcc.mymapper.HouseCustomerMapper;
 import cn.com.qcc.pojo.Broker;
+import cn.com.qcc.pojo.Consultant;
+import cn.com.qcc.pojo.ConsultantExample;
 import cn.com.qcc.pojo.Housemodel;
 import cn.com.qcc.pojo.HousemodelExample;
 import cn.com.qcc.pojo.Housetag;
@@ -45,6 +48,8 @@ public class HouseModelServiceImpl implements HouseModelService {
 	HousemodelMapper housemodelMapper;
 	@Autowired
 	private HousetagMapper housetagMapper;
+	@Autowired
+	private ConsultantMapper consultantMapper;
 	
 	public ResultMap selectAddToHouseModel(Long houseid , Long userid) {
 		
@@ -63,6 +68,10 @@ public class HouseModelServiceImpl implements HouseModelService {
 		
 		// 第三步查询需要导入的数据
 		Housemodel houseModel = houseCustomerMapper.searchAddToHouseModel(houseid);
+		
+		// 第四步 建立用户和顾问之间的关系
+		createConsultant(houseModel.getVillageid() , userid);
+		
 		
 		if (CheckDataUtil.checkisEmpty(houseModel)) 
 			return ResultMap.build(400,"找不到该房源");
@@ -87,6 +96,26 @@ public class HouseModelServiceImpl implements HouseModelService {
 		return houseModelSolrDao.AddToHouseModel(houseModel);
 	}
 	
+	private void createConsultant(Long villageid, Long userid) {
+		if (CheckDataUtil.checkNotEmpty(villageid)
+				&& CheckDataUtil.checkNotEmpty(userid)) {
+			ConsultantExample example = new ConsultantExample();
+			ConsultantExample.Criteria criteria = example.createCriteria();
+			criteria.andUseridEqualTo(userid);
+			criteria.andVillageidEqualTo(villageid);
+			List<Consultant> list = consultantMapper.selectByExample(example );
+			
+			if (CheckDataUtil.checkNotEmpty(list)) {
+				Consultant consultant= new Consultant();
+				consultant.setUserid(userid);
+				consultant.setVillageid(villageid);
+				consultantMapper.insertSelective(consultant);
+			}
+			
+		}
+		
+	}
+
 	/**
 	 * 每年 最大1000亿  导入房源库  超出 这个 数目系统数据混乱
 	 * 获取redis自增主键 年月日   2019 +  1000 * 10000 * 10000 

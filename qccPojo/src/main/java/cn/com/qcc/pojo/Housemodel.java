@@ -10,6 +10,7 @@ public class Housemodel {
 	private String latitude;
 	private String longitude ;
 	private String onepicture;
+	private Long villageid ;
 	
 	
 	
@@ -18,7 +19,15 @@ public class Housemodel {
 	
 	
 	
-    public String getOnepicture() {
+    public Long getVillageid() {
+		return villageid;
+	}
+
+	public void setVillageid(Long villageid) {
+		this.villageid = villageid;
+	}
+
+	public String getOnepicture() {
 		return onepicture;
 	}
 
