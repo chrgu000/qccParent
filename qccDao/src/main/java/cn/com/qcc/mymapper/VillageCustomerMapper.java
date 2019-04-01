@@ -128,7 +128,7 @@ public interface VillageCustomerMapper {
 	BuildingCustomer builEditSearch(Long buildingid);
 	
 	List<VillageCustomer> searchVillageInCode(@Param("idsList") String[] split, 
-			@Param("searchwhere")String searchWhere);
+			@Param("searchWhere")String searchWhere);
 
 	/**查询一条小区攻略**/
 	TrategyCustomer searchOneTrategy(Long housestrategyid);

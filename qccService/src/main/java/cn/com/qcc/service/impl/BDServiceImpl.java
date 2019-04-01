@@ -89,6 +89,7 @@ public class BDServiceImpl implements BDService{
 		String bdId = "";
 		// 登录安全码
 		String securitytoken = UUID.randomUUID().toString();
+		bdmanager.setSecuritytoken(securitytoken);
 		// 网易云token
 		String acctoken = "";
 		if (CheckDataUtil.checkisEmpty(bdmanager.getRealname())
@@ -133,7 +134,7 @@ public class BDServiceImpl implements BDService{
 				bdmanager.setIsedit(0);
 				bdmanager.setUpate_time(new Date());
 				bdmanager.setAcctoken(acctoken);
-				bdmanager.setSecuritytoken(securitytoken);
+				
 				bdmanagerMapper.insertSelective(bdmanager);
 				
 				// 如果 添加成功发送手机
@@ -377,14 +378,19 @@ public class BDServiceImpl implements BDService{
 		Landlord searchlandlord = landlordMapper.selectByPrimaryKey(userid);
 		if (CheckDataUtil.checkNotEmpty(searchlandlord)) {
 			String oldBdid = searchlandlord.getBdid();
+			
+			if (CheckDataUtil.checkNotEmpty(oldBdid)) {
+				if (CheckDataUtil.checkNotEqual(oldBdid, bdmanager.getBdid())) {
+					return ResultMap.build(400, "该房东的BD:" + oldBdid);
+				}
+			}
+			
 			landlord.setLanduserid(userid);
 			landlord.setLandstate(2);
 			landlord.setBdid(bdmanager.getBdid());
 			landlord.setUpdate_time(new Date());
 			landlordMapper.updateByPrimaryKeySelective(landlord);
-			if (CheckDataUtil.checkNotEqual(oldBdid, bdmanager.getBdid())) {
-				SendMessage.sendNoticMess(content, phone, modelId);
-			}
+		
 			return ResultMap.build(200, "编辑成功" , landlord );
 		}
 		landlord.setLanduserid(userid);

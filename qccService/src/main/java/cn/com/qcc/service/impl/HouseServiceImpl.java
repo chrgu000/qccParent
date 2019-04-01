@@ -71,7 +71,6 @@ import cn.com.qcc.queryvo.AddressCustomer;
 import cn.com.qcc.queryvo.ApartmentCustomer;
 import cn.com.qcc.queryvo.ArticleDetailCustomer;
 import cn.com.qcc.queryvo.BrandCustomer;
-import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.FurnitureCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.HouseOrderCustomer;
@@ -396,9 +395,10 @@ public class HouseServiceImpl implements HouseService {
 		building = (Building)check_building.getObj();
 		house.setBuildingid(building.getBuildingid());
 		// 前台参数house的非空校验
-		ResultMap result_house = checkhouse(house);
+		ResultMap result_house = checkhouse(house,building.getBuildingcode());
 		if (CheckDataUtil.checkisEmpty(userid)) { return ResultMap.build(400,"先登录");}
 		if (CheckDataUtil.checkNotEqual(result_house.getCode(), 200L)) { return result_house; }
+		house = (House)result_house.getObj();
 		// 判断房源是否是房源设置对应的参数
 		checkpropertynameData(house , housetag ,propertyname);
 		//判断户型是否存在设置参数
@@ -421,10 +421,6 @@ public class HouseServiceImpl implements HouseService {
 			sendData = house.getHouseid()+"-update-"+tribeid+"-"+userid;
 			message = "编辑成功";
 		} else {
-			// 插入之前设置房间号码
-			String housenum = IDUtils.appendzero(house.getHouse_number() + "", 4);
-			String housecode = building.getBuildingcode() + housenum;
-			house.setHousecode(housecode);
 			house.setCreate_time(new Date());
 			house.setUpdate_time(new Date());
 			if (CheckDataUtil.checkisEmpty(house.getPaystyle())) {
@@ -461,7 +457,6 @@ public class HouseServiceImpl implements HouseService {
 		if (CheckDataUtil.checkNotEmpty(search_brand)) {
 			house.setBrandid(null);
 		}
-		
 	}
 	private ResultMap checkpriceData(House house, Price price) {
 		if (CheckDataUtil.checkNotEmpty(price)) {
@@ -599,9 +594,9 @@ public class HouseServiceImpl implements HouseService {
 	 * 200正常 。如果需要房源根据200判断如果不需要房号根据400判断
 	 * 
 	 * **/
-	private ResultMap checkhouse(House house) {
+	private ResultMap checkhouse(House house,String buildingcode) {
 		if (CheckDataUtil.checkisEmpty(house.getHouse_number())) {
-			return ResultMap.build(201, "输入房号");
+			return ResultMap.build(201, "输入房号"  );
 		}
 		if (CheckDataUtil.checkisEqual(house.getBrandid(), -1L)) {
 			house.setBrandid(null);
@@ -651,15 +646,12 @@ public class HouseServiceImpl implements HouseService {
 		if (CheckDataUtil.checkisEmpty(house.getDescription())) {
 			house.setDescription("");
 		}
-		/*if (CheckDataUtil.checkisEmpty(house.getHousetag_id())) {
-			return ResultMap.build(400, "输入标签");
-		}*/
 		// 这里校验房间号是否重复
-		House chekchouse = checkhousenum(house);
-		if (CheckDataUtil.checkNotEmpty(chekchouse)) {
-			return ResultMap.build(201, "房号重复");
+		house = checkhousenum(house ,buildingcode);
+		if (CheckDataUtil.checkisEmpty(house)) {
+			return ResultMap.build(201, "房号重复" );
 		}
-		return ResultMap.IS_200();
+		return ResultMap.IS_200(house );
 	}
 
 	/**
@@ -733,9 +725,10 @@ public class HouseServiceImpl implements HouseService {
 		building = (Building)check_building.getObj();
 		house.setBuildingid(building.getBuildingid());
 		// 前台参数house的非空校验
-		ResultMap result_house = checkhouse(house);
+		ResultMap result_house = checkhouse(house , building.getBuildingcode());
 		if (CheckDataUtil.checkisEmpty(userid)) { return ResultMap.build(400,"先登录");}
 		if (CheckDataUtil.checkNotEqual(result_house.getCode(), 200L)) { return result_house; }
+		house = (House)result_house.getObj();
 		// 判断房源是否是房源设置对应的参数
 		checkpropertynameData(house , housetag ,propertyname);
 		//判断户型是否存在设置参数
@@ -749,10 +742,6 @@ public class HouseServiceImpl implements HouseService {
 			house.setUpdate_time(new Date());
 			houseMapper.updateByPrimaryKeySelective(house);
 		} else {
-			// 插入之前设置房间号码
-			String housenum = IDUtils.appendzero(house.getHouse_number() + "", 4);
-			String housecode = building.getBuildingcode() + housenum;
-			house.setHousecode(housecode);
 			house.setCreate_time(new Date());
 			house.setUpdate_time(new Date());
 			if (house.getPaystyle() == null || "".equals(house.getPaystyle())) {
@@ -776,7 +765,12 @@ public class HouseServiceImpl implements HouseService {
 	}
 
 	//
-	private House checkhousenum(House house) {
+	private House checkhousenum(House house,String buildingcode) {
+		
+		String housenum = IDUtils.appendzero(house.getHouse_number() + "", 4);
+		String housecode = buildingcode + housenum;
+		house.setHousecode(housecode);
+		
 		HouseExample example = new HouseExample();
 		HouseExample.Criteria criteria = example.createCriteria();
 		// 如果是更新操作过滤房号
@@ -785,12 +779,26 @@ public class HouseServiceImpl implements HouseService {
 		}
 		criteria.andHouse_numberEqualTo(house.getHouse_number());
 		criteria.andBuildingidEqualTo(house.getBuildingid());
+		criteria.andProperty_idEqualTo(house.getProperty_id());
 		criteria.andHousestatusNotEqualTo("3");
 		List<House> houses = houseMapper.selectByExample(example);
+		House update = null;
 		if (houses.size() > 0 && !houses.isEmpty()) {
-			return houses.get(0);
+			update = houses.get(0);
+			// 判断是否包含了property 
+			for (House check:houses) {
+				if (CheckDataUtil.checkisEqual(house.getProperty_id(), check.getProperty_id())) {
+					return null;
+				}
+			}
 		}
-		return null;
+		
+		if (CheckDataUtil.checkNotEmpty(update)) {
+			// 设置通用数据
+			house.setArea(update.getArea());
+			house.setHousecode(update.getHousecode());
+		}
+		return house;
 	}
 
 	/**
@@ -1635,7 +1643,7 @@ public class HouseServiceImpl implements HouseService {
 		building = (Building)check_building.getObj();
 		house.setBuildingid(building.getBuildingid());
 		// 前台参数house的非空校验
-		ResultMap result_house = checkhouse(house);
+		ResultMap result_house = checkhouseWithNotNubBer(house);
 		if (CheckDataUtil.checkisEqual(result_house.getCode(), 400)){return result_house;}
 		// 判断房源是否是房源设置对应的参数
 		checkpropertynameData(house , housetag ,propertyname);
@@ -1660,36 +1668,32 @@ public class HouseServiceImpl implements HouseService {
 				// 这里校验房间号是否重复
 				house.setHouse_number(housenub);
 				house.setFloor(floor);
-				House chekchouse = checkhousenum(house);
-				if (chekchouse == null) {
+				House inhouse = checkhousenum(house,building.getBuildingcode());
+				if (inhouse != null) {
 					success++;
-					house.setFloor(floor);
-					String housenum = IDUtils.appendzero(house.getHouse_number() + "", 4);
-					String housecode = building.getBuildingcode() + housenum;
-					house.setHousecode(housecode);
-					house.setCreate_time(new Date());
-					house.setUpdate_time(new Date());
-					if (house.getPaystyle() == null || "".equals(house.getPaystyle())) {
+					inhouse.setCreate_time(new Date());
+					inhouse.setUpdate_time(new Date());
+					if (inhouse.getPaystyle() == null || "".equals(inhouse.getPaystyle())) {
 						// 前台没有传值给默认值
-						house.setPaystyle("");
+						inhouse.setPaystyle("");
 					}
 					// 房屋的状态 冻结0 未租1 已租2 默认1 3是移除 5待审核 4没有卖
 					Integer searchstate = systemstateMapper.selectByPrimaryKey(4).getDefaultstate();
-					house.setHousestatus(searchstate + "");
+					inhouse.setHousestatus(searchstate + "");
 					// 1为租的 2为卖的
-					house.setHoustatus("1");
+					inhouse.setHoustatus("1");
 					// 设置用户ID
-					house.setUser_id(Long.valueOf(userid));
-					house.setXcxpicture("");
-					houseMapper.insert(house);
+					inhouse.setUser_id(Long.valueOf(userid));
+					inhouse.setXcxpicture("");
+					houseMapper.insert(inhouse);
 					Long inserhouseid = house.getHouseid();
 					sendData = sendData + inserhouseid + "-";
 					preparatoryhouse( preparatory ,inserhouseid );
-					house.setHouseid(null);
+					inhouse.setHouseid(null);
 				}else {
 					House errorhouse = new House();
-					errorhouse.setFloor(house.getFloor());
-					errorhouse.setHouse_number(house.getHouse_number());
+					errorhouse.setFloor(floor);
+					errorhouse.setHouse_number(housenub);
 					errorList.add(errorhouse);
 					error++;
 				}
@@ -1716,6 +1720,63 @@ public class HouseServiceImpl implements HouseService {
 		return ResultMap.build(201, message,errorList);
 	}
 	
+	private ResultMap checkhouseWithNotNubBer(House house) {
+		if (CheckDataUtil.checkisEqual(house.getBrandid(), -1L)) {
+			house.setBrandid(null);
+		}
+		if (CheckDataUtil.checkisEmpty(house.getSchedule())) {
+			house.setSchedule(2);
+		}
+		if (CheckDataUtil.checkisEmpty(house)) {
+			return ResultMap.build(400, "房源数据不能为空");
+		}
+		if (CheckDataUtil.checkisEmpty(house.getPicture())) {
+			return ResultMap.build(400, "未知图片");
+		}
+		if (CheckDataUtil.checkisEmpty(house.getRedecorat())) {
+			return ResultMap.build(400, "选择装修类型");
+		}
+		if (CheckDataUtil.checkisEmpty(house.getArea())) {
+			return ResultMap.build(400, "请输入面积");
+		}
+		if (CheckDataUtil.checkisEmpty(house.getHousetitle())) {
+			house.setHousetitle("");
+		}
+		if (CheckDataUtil.checkisEmpty(house.getUser_identity())) {
+			return ResultMap.build(400, "参数不全");
+		}
+		if (CheckDataUtil.checkisEmpty(house.getContacts())) {
+			house.setContacts("");
+		}
+		if (CheckDataUtil.checkisEmpty(house.getContactstel())) {
+			house.setContactstel("");
+		}
+		if(CheckDataUtil.checkisEmpty(house.getLandlord())) {
+			house.setLandlord("");
+		}
+		if (CheckDataUtil.checkisEmpty(house.getLandlordtel())){
+			house.setLandlordtel("");
+		}
+		if (CheckDataUtil.checkisEmpty(house.getAges())) {
+			house.setAges("");
+		}
+		if (CheckDataUtil.checkisEmpty(house.getTurn())) {
+			house.setTurn("");
+		}
+		if (CheckDataUtil.checkisEmpty(house.getUnderground())) {
+			house.setUnderground("");
+		}
+		if (CheckDataUtil.checkisEmpty(house.getDescription())) {
+			house.setDescription("");
+		}
+		
+		return ResultMap.IS_200();
+	}
+
+
+
+
+
 	// 设置房源佣金规则
 	public void preparatoryhouse(String preparatory ,long houseid ) {
 		 try {
@@ -1937,7 +1998,7 @@ public class HouseServiceImpl implements HouseService {
 		building = (Building)check_building.getObj();
 		house.setBuildingid(building.getBuildingid());
 		// 前台参数house的非空校验
-		ResultMap result_house = checkhouse(house);
+		ResultMap result_house = checkhouseWithNotNubBer(house );
 		if (CheckDataUtil.checkisEmpty(userid)) { return ResultMap.build(400,"先登录");}
 		if (CheckDataUtil.checkisEqual(result_house.getCode(), 400)){return result_house;}
 		// 判断房源是否是房源设置对应的参数
@@ -1963,36 +2024,32 @@ public class HouseServiceImpl implements HouseService {
 				// 这里校验房间号是否重复
 				house.setHouse_number(housenub);
 				house.setFloor(floor);
-				House chekchouse = checkhousenum(house);
-				if (chekchouse == null) {
+				House inhouse = checkhousenum(house , building.getBuildingcode());
+				if (inhouse != null) {
 					success++;
-					house.setFloor(floor);
-					String housenum = IDUtils.appendzero(house.getHouse_number() + "", 4);
-					String housecode = building.getBuildingcode() + housenum;
-					house.setHousecode(housecode);
-					house.setCreate_time(new Date());
-					house.setUpdate_time(new Date());
-					if (house.getPaystyle() == null || "".equals(house.getPaystyle())) {
+					inhouse.setCreate_time(new Date());
+					inhouse.setUpdate_time(new Date());
+					if (inhouse.getPaystyle() == null || "".equals(inhouse.getPaystyle())) {
 						// 前台没有传值给默认值
 						house.setPaystyle("");
 					}
 					// 房屋的状态 冻结0 未租1 已租2 默认1 3是移除 5待审核 4没有卖
 					Integer searchstate = systemstateMapper.selectByPrimaryKey(4).getDefaultstate();
-					house.setHousestatus(searchstate + "");
+					inhouse.setHousestatus(searchstate + "");
 					// 1为租的 2为卖的
-					house.setHoustatus("2");
+					inhouse.setHoustatus("2");
 					// 设置用户ID
-					house.setUser_id(Long.valueOf(userid));
-					house.setXcxpicture("");
-					houseMapper.insert(house);
+					inhouse.setUser_id(Long.valueOf(userid));
+					inhouse.setXcxpicture("");
+					houseMapper.insert(inhouse);
 					Long inserhouseid = house.getHouseid();
 					sendData = sendData + inserhouseid + "-";
 				//	preparatoryhouse( preparatory ,inserhouseid );
 					house.setHouseid(null);
 				}else {
 					House errorhouse = new House();
-					errorhouse.setFloor(house.getFloor());
-					errorhouse.setHouse_number(house.getHouse_number());
+					errorhouse.setFloor(floor);
+					errorhouse.setHouse_number(housenub);
 					errorList.add(errorhouse);
 					error++;
 				}
@@ -2020,79 +2077,7 @@ public class HouseServiceImpl implements HouseService {
 	}
 	
 	
-	/**
-	 * 
-	 * int  success = 0;
-		int  error = 0 ;
-		List<House> errorList = new ArrayList<>();
-		String sendData = "";
-		try {
-			String[] bartchs = batchhouse.split(",");
-			for (int i = 0; i < bartchs.length; i++) {
-				// 插入之前设置房间号码
-				Integer floor = Integer.parseInt(bartchs[i].split("-")[0]);
-				String housenub = bartchs[i].split("-")[1];
-				// 这里校验房间号是否重复
-				house.setHouse_number(housenub);
-				house.setFloor(floor);
-				House chekchouse = checkhousenum(house);
-				if (chekchouse == null) {
-					success++;
-					house.setFloor(floor);
-					String housenum = IDUtils.appendzero(house.getHouse_number() + "", 4);
-					String housecode = building.getBuildingcode() + housenum;
-					house.setHousecode(housecode);
-					house.setCreate_time(new Date());
-					house.setUpdate_time(new Date());
-					if (house.getPaystyle() == null || "".equals(house.getPaystyle())) {
-						// 前台没有传值给默认值
-						house.setPaystyle("");
-					}
-					// 房屋的状态 冻结0 未租1 已租2 默认1 3是移除 5待审核 4没有卖
-					Integer searchstate = systemstateMapper.selectByPrimaryKey(4).getDefaultstate();
-					house.setHousestatus(searchstate + "");
-					// 1为租的 2为卖的
-					house.setHoustatus("1");
-					// 设置用户ID
-					house.setUser_id(Long.valueOf(userid));
-					house.setXcxpicture("");
-					houseMapper.insert(house);
-					Long inserhouseid = house.getHouseid();
-					sendData = sendData + inserhouseid + "-";
-					preparatoryhouse( preparatory ,inserhouseid );
-					house.setHouseid(null);
-				}else {
-					House errorhouse = new House();
-					errorhouse.setFloor(house.getFloor());
-					errorhouse.setHouse_number(house.getHouse_number());
-					errorList.add(errorhouse);
-					error++;
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResultMap.build(400, "参数错误");
-		}
-		//循环完成以后在加入用户id 和部落id
-		String message = "";
-		if (success > 0) {
-			message +="成功发布:" + success;
-			sendData = sendData.substring(0, sendData.length()-1);
-			String tribeid = "undefined";
-			if (CheckDataUtil.checkNotEmpty(housetag.getTribeid())) {
-				tribeid = housetag.getTribeid();
-			}
-			sendData = sendData +","+userid + "," + tribeid;
-			SendMessUtil.sendData(jmsTemplate, houseAddBatch, sendData);
-		}
-			
-		if (error > 0)
-			message += " 发布失败:"+error ;
-		return ResultMap.build(201, message,errorList);
-	 * 
-	 * 
-	 * 
-	 * **/
+	
 	
 	/***处理标签的ID**/
 	public String setHouseTargeId(String housetargid) {

@@ -9,15 +9,6 @@ public class Landlord {
     /** BD 对应账号*/
     private String bdid;
 
-    /** 身份证号*/
-    private String identity;
-
-    /** 身份证照片*/
-    private String idpictures;
-
-    /** 房东姓名*/
-    private String realname;
-
     /** 1-申请房东，2-通过 ,3不通过 */
     private Integer landstate;
 
@@ -62,30 +53,6 @@ public class Landlord {
 
     public void setBdid(String bdid) {
         this.bdid = bdid == null ? null : bdid.trim();
-    }
-
-    public String getIdentity() {
-        return identity;
-    }
-
-    public void setIdentity(String identity) {
-        this.identity = identity == null ? null : identity.trim();
-    }
-
-    public String getIdpictures() {
-        return idpictures;
-    }
-
-    public void setIdpictures(String idpictures) {
-        this.idpictures = idpictures == null ? null : idpictures.trim();
-    }
-
-    public String getRealname() {
-        return realname;
-    }
-
-    public void setRealname(String realname) {
-        this.realname = realname == null ? null : realname.trim();
     }
 
     public Integer getLandstate() {

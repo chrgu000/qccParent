@@ -69,6 +69,7 @@ public class BuildingCustomer extends Building{
 	private String apartmentname;
 	
 	
+	
 	private String paystyle;
 	
 	public String getLikecode() {

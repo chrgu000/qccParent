@@ -1,11 +1,8 @@
 package cn.com.qcc.mymapper;
 
 import java.util.List;
-
 import org.apache.ibatis.annotations.Param;
-
 import cn.com.qcc.common.PageQuery;
-import cn.com.qcc.pojo.Bdmanager;
 import cn.com.qcc.pojo.Brand;
 import cn.com.qcc.queryvo.BdManagerCustomer;
 import cn.com.qcc.queryvo.BuildingCustomer;

@@ -515,6 +515,11 @@ function refurbishdate(param ,currentpage){
 	if (param === 'versionid') {
 		getAllverion() ;
 	}
+	
+	//房东数据
+	if (param = 'landuserid'){
+		getlandlordbystate(currentpage);
+	}
 	//地铁的回调
 	if (param === 'metroid') {
 		getmetrolist(currentpage);

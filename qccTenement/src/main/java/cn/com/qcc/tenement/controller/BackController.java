@@ -29,6 +29,7 @@ import cn.com.qcc.pojo.Access;
 import cn.com.qcc.pojo.Bdmanager;
 import cn.com.qcc.pojo.Commoninte;
 import cn.com.qcc.pojo.Historyexcle;
+import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.pojo.Percent;
 import cn.com.qcc.pojo.Percenttype;
 import cn.com.qcc.pojo.Role;
@@ -1235,6 +1236,26 @@ public class BackController{
 	public ResultMap deleterole (Long userroleid) {
 		return accessService.deleterole(userroleid);
 	}
+	
+	
+	
+	/**  编辑 房东 的基本信息 **/
+	@RequestMapping("/back/updateland")
+	@ResponseBody
+	public ResultMap updateland (Landlord landlord) {
+		return accessService.updateland(landlord);
+	}
+	
+	
+	
+	/**  删除房东 **/
+	@RequestMapping("/back/deletelandlord")
+	@ResponseBody
+	public ResultMap deletelandlord (Long landuserid) {
+		
+		return accessService.deletelandlord(landuserid);
+	}
+	
 	
     
 }

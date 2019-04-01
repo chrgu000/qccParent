@@ -285,7 +285,7 @@ public class VillageServiceImpl implements VillageService {
 			land.setBuildingid(building.getBuildingid());
 			land.setLandlordid(landuserid);
 			buildinglandlordMapper.insertSelective(land);
-			return ResultMap.build(200, "恭喜你该楼栋成功绑定了房东");
+			return ResultMap.build(200, "绑定成功！！");
 		}
 		
 		

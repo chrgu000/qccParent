@@ -11,19 +11,20 @@
 	         房东状态 ：
 		<select style="width: 110px; margin-top: 15px;"onchange="getlandlordbystate(1)" id="select_land">
 		    <option value="">全部</option>
-			<option value="3">未通过</option>
-			<option value="4">子账号</option>
-			<option value="2">房东</option>
+			<option value="0">禁用</option>
 			<option value="1">申请</option>
+			<option value="2">通过</option>
+			<option value="3">不通过</option>
 		</select>
 
 		<table id="table " class = "table	table-hover ">
 			<tr>
-				<td  >用户主键</td>
-				<td >真实姓名</td>
-				<td >申请时间</td>
-				<td  >账号类型</td>
-				<td  >详情信息</td>
+				<td  >房东主键</td>
+				<td >房东姓名</td>
+				<td >入驻时间</td>
+				<td >BD 账号</td>
+				<td >BD 姓名</td>
+				<td >状态</td>
 				<td >操作</td>
 			</tr>
 			<tbody  id="landlord_examine_tbody" >
@@ -46,20 +47,61 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel">详细资料</h4>
+                <h4 class="modal-title" id="myModalLabel">房东详细资料   (禁用/删除房东清空对应的 管理员)</h4>
             </div>
             <div class="modal-body">
-            		<label class="access_label" for="name">证件号码：</label>
-						<span class="landlord_identity"> </span> <br>
-					<label class="access_label" for="name">区域地址：</label>
-						<span class="landlord_address"> </span> <br>
-            		<label for="name">相关图片:</label>
-            		<div class="landlord_idpictures">
-            		</div>
-					
+            	
+            	<input class="land_userid" type="hidden">
+            	
+            	证件号码：	
+            	<input type="text" class=" form-control land_identity" 
+            	style="width:200px; display: inline-block;" readonly="readonly"> <br>
+            	
+            	房东电话：	
+            	<input type="text" class=" form-control land_landphone " 
+            	style="width:200px; display: inline-block;" readonly="readonly" > <br>
+            	
+            	房东姓名：	
+            	<input type="text" class=" form-control land_landname " 
+            	style="width:200px; display: inline-block;" readonly="readonly" > <br>
+            	
+            	
+            	房东区域：	
+            	<input type="text" class=" form-control land_address " 
+            	style="width:200px; display: inline-block;" > <br>
+            	
+            	
+            	联系人名：	
+            	<input type="text" class=" form-control land_linkman" 
+            	style="width:200px; display: inline-block;" > <br>
+            	
+            	
+            	联系电话：	
+            	<input type="text" class=" form-control land_linkphone " 
+            	style="width:200px; display: inline-block;" > <br>
+            
+            
+				品牌名称：	
+            	<input type="text" class=" form-control land_brandname " 
+            	style="width:200px; display: inline-block;" > <br>	
+            	
+            	执照编号：	
+            	<input type="text" class=" form-control land_businessnum " 
+            	style="width:200px; display: inline-block;" > <br>	
+            	
+            	公司名称：	
+            	<input type="text" class=" form-control land_corporate " 
+            	style="width:200px; display: inline-block;" > <br>	
+            	
+            	 <div style="margin-top: 10px;margin-left: 3px;" >
+			  	 房东状态：<select   id = "land_landstate"   name="numUnit" class="form-control metro_byname"
+			  	  style="width:200px; display: inline-block;"></select>
+			     </div>
 			   					
             </div>
             <div class="modal-footer">
+           <button type="button" class="btn btn-danger delete_land">删除</button>
+           <button id="update_landlord" type="button" class="btn btn-primary ">更新</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
         </div>

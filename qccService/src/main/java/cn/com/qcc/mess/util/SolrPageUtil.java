@@ -334,7 +334,7 @@ public class SolrPageUtil {
 				query.add("fq", "likecode:"+villageCustomer.getLikecode()+"*");
 			}
 			if (CheckDataUtil.checkNotEmpty(villageCustomer.getKeyword())) {
-				query.add("fq", "keyword:*"+villageCustomer.getKeyword()+"*");
+				query.add("fq", "(keyword:*"+villageCustomer.getKeyword()+"*  or  villagename:*"+villageCustomer.getKeyword()+"*)");
 			}
 			if (CheckDataUtil.checkNotEmpty(villageCustomer.getVillagename())) {
 				query.add("fq", "villagename:*"+villageCustomer.getVillagename()+"*");

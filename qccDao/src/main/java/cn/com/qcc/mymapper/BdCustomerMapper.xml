@@ -157,12 +157,16 @@
 				building.building ,
 				village.villagename ,
 				area.`name` trading ,
-				building.buildingid 
-			
+				building.buildingid ,
+				village.code ,
+			  IFNULL(brand.brandid,'-1')brandid ,
+				IFNULL(brand.brand,'无品牌') brand,
+				village.villageid
 			FROM
 				building
 			INNER  JOIN village on village.villageid = building.villageid 
 			INNER JOIN area on area.`code` = village.`code` 
+			LEFT JOIN brand on brand.brandid = building.brandid
 			
 			where building.buildingid  in (
 			
@@ -174,14 +178,13 @@
   
   
   
-   <select id="bdlandeditsearch" resultType="cn.com.qcc.queryvo.UserRoomCustomer"
-   	>
+   <select id="bdlandeditsearch" resultType="cn.com.qcc.queryvo.UserRoomCustomer" 	>
   		SELECT
 			landuserid userid  ,
 			landlord.`code` ,
 			IFNULL(landlord.brandname,'')brandname , 
 			IFNULL(landlord.corporate,'') corporate ,
-			IFNULL(landlord.idpictures,'') idpictures ,
+			IFNULL(`profile`.idpictures,'') idpictures ,
 			IFNULL(landlord.businessnum,'')businessnum ,
 			IFNULL(landlord.address,'') address ,
 			`user`.telephone ,

@@ -159,15 +159,7 @@ public class UserServiceImpl implements UserService {
 		if (telephone == null) {
 			return ResultMap.build(400, "检查你的手机号");
 		}
-		if (landlord.getIdentity() == null || "".equals(landlord.getIdentity())) {
-			return ResultMap.build(400, "身份证号码不能为空");
-		}
-		if (landlord.getRealname() == null || "".equals(landlord.getRealname())) {
-			return ResultMap.build(400, "请输入真实姓名");
-		}
-		if (landlord.getIdpictures() == null || "".equals(landlord.getIdpictures())) {
-			return ResultMap.build(400, "请输入身份证照片");
-		}
+	
 		User user = GetUserByTelephone(telephone);
 		if (user == null) {
 			return ResultMap.build(400, "请先成为我们的用户");

@@ -5,6 +5,7 @@ import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Access;
 import cn.com.qcc.pojo.Commoninte;
 import cn.com.qcc.pojo.Historyexcle;
+import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.pojo.Percent;
 import cn.com.qcc.pojo.Percenttype;
 import cn.com.qcc.pojo.Role;
@@ -275,6 +276,12 @@ public interface AccessService {
 
 	
 	List<VillageCustomer> getLikeVillage(String likename);
+
+	/**后台修改房东基本信息*/
+	ResultMap updateland(Landlord landlord);
+
+
+	ResultMap deletelandlord(Long landuserid);
 
 	
 	

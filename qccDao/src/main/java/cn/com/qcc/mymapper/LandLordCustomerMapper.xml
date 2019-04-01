@@ -3,12 +3,23 @@
 <mapper namespace="cn.com.qcc.mymapper.LandLordCustomerMapper" >
 
 	<select id="landloadsearch" resultType="cn.com.qcc.queryvo.LandlordCustomer">
-			SELECT landlord.landuserid userid , identity , idpictures , realname , landstate , 
-			area.`name` address ,update_time   
-		    from 
-			landlord 
-		    LEFT JOIN area on landlord.`code` = area.`code`
-		    where 1=1 
+			SELECT
+				landlord.landuserid userid,
+				`profile`.identity ,
+				`profile`.idpictures,
+				IFNULL(`profile`.real_name,'') realname,
+				landstate,
+				area.`name` address,
+				update_time ,
+				IFNULL(bdmanager.bdid,'') bdid,
+				IFNULL(bdmanager.realname,'') bdname 
+			FROM
+				landlord
+			LEFT JOIN bdmanager ON landlord.bdid = bdmanager.bdid
+			LEFT JOIN area ON landlord.`code` = area.`code`
+			LEFT JOIN `profile` on `profile`.user_id = landlord.landuserid
+			WHERE
+				1 = 1
 		     <if test="landstate !=null and landstate !='' ">
 		    	AND  landlord.landstate  = #{landstate}
 		    </if>
@@ -31,12 +42,29 @@
 	
 	<!-- 查询房东的信息 -->
 	<select id="landloadsearchdetail" resultType="cn.com.qcc.queryvo.LandlordCustomer">
-			SELECT landlord.landuserid userid , identity , idpictures , realname , landstate , 
-			area.`name` address ,update_time   
-		    from 
-			landlord 
-		    LEFT JOIN area on landlord.`code` = area.`code`
-		    where landlord.landuserid = #{userid}
+			SELECT
+				landlord.landuserid userid,
+				IFNULL(`profile`.identity,'')identity,
+				`user`.telephone , 
+				IFNULL(`profile`.real_name,'')realname,
+				IFNULL(landlord.address,'')address ,
+				IFNULL(landlord.brandname,'')brandname , 
+				IFNULL(landlord.corporate,'')corporate,
+				IFNULL(landlord.businessnum,'')businessnum  , 
+				IFNULL(landlord.linkman,'')linkman,
+                IFNULL(landlord.linkphone,'')linkphone,
+				IFNULL(landlord.businesspicture,'') businesspicture , 
+				landlord.landstate , 
+				area.`name` cityaddress,
+				landlord.update_time 
+			FROM
+				landlord
+			LEFT JOIN area ON landlord.`code` = area.`code`
+			LEFT JOIN bdmanager on bdmanager.bdid = landlord.bdid 
+			LEFT JOIN `user` on user.userid = landlord.landuserid
+			LEFT JOIN `profile` on `profile`.user_id = `user`.userid
+			WHERE
+				landlord.landuserid = #{userid}
 	</select>
 	
 	<!--房东查询管理员的列表 -->

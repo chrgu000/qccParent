@@ -12,10 +12,58 @@ $(function () {
 		}
 		
 	});
+	
+	$('.delete_land').click(function () {
+		var descname =	$('.land_landname').val();
+		if (descname == '') {
+			descname ='房东';
+		}
+		var userid = $('.land_userid').val();
+		// 封装提示的主干
+		var tip = '[ '+ userid +'=='+ descname+']';
+		$('.delete_tip').text(tip);
+		//如果没有分页参数自定义一个
+		var currentpage = $('.land_currentpage').val();
+		//设置参数名称
+		var param = 'landuserid';
+		//执行删除的URL链接
+		var deleteurl = '/Tenement/back/deletelandlord';
+		commondelete(param,userid,deleteurl,currentpage) ;
+	});
+	
+	
+	$('#update_landlord').click(function () {
+		var address = $('.land_address').val();
+		var brandname = $('.land_brandname').val();
+		var corporate = $('.land_corporate').val();
+		var businessnum = $('.land_businessnum').val();
+		var linkman = $('.land_linkman').val();
+		var linkphone = $('.land_linkphone').val();
+		var landstate = $('#land_landstate').val();
+		var userid = $('.land_userid').val();
+		var currentpage = $('.land_currentpage').val();
+		$.ajax({
+			data : {address :address ,brandname:brandname , 
+				corporate:corporate ,  businessnum:businessnum ,landuserid:userid ,
+				linkman:linkman ,linkphone:linkphone ,landstate:landstate},
+			url : '/Tenement/back/updateland',
+			method:'POST',
+			success : function(data) {
+				data = checkaccessexist(data);
+				if (data.code == 200) {
+					$('#show_idpicture').modal('hide');
+					getlandlordbystate(currentpage);
+				} else {
+					data.msg;
+				}
+			}
+		})
+	});
 });
 
 // 获取所有房东信息
 function getlandlordbystate(currentpage) {
+	$('#show_idpicture').modal('hide');
 	var landstate = $('#select_land').val();
 	$.ajax({
 		data : {landstate :landstate ,pagesize:7 , currentpage:currentpage },
@@ -33,6 +81,7 @@ function getlandlordbystate(currentpage) {
 		}
 	})
 }
+var stateword = ['禁用' , '申请'  ,'通过' , '不通过'];
 // 加载查询到的房东数据
 function build_landlord_list(data) {
 	var item  = data.obj.landlist;
@@ -44,18 +93,9 @@ function build_landlord_list(data) {
 			var state = value.landstate;
 			var typeword = '';
 			var setword = '';
-			if (state == 1 || state == 3) {
-				typeword = state == 1 ? '申请房东': '不通过'       // '\,\''
-				setword = state == 1 ? '<button style="margin-right:10px;width:70px;" onclick=examineland('+value.userid+ '\,\''+2+'\') class="btn btn-large btn-primary" data-toggle="modal" > 通过 </button>' +
-				          '<button style="width:70px;" onclick=examineland('+value.userid+ '\,\''+3+'\') class="btn btn-large btn-primary" data-toggle="modal" > 不通过 </button>' : '';
-			}
-			if (state == 2 || state==4) {
-				typeword = state == 2 ? '房东':'子账号';
-				//setword = state == 2 ?   '<button style="width:70px;" onclick=examineland('+value.userid+ '\,\''+5+'\') class="btn btn-large btn-primary" data-toggle="modal" > 移出 </button>' :'';
-			}
 			var time = setTime(value.update_time);
 			var body = '<tr><td>'+value.userid+'</td><td>'+value.realname+'</td>'
-			+'<td>'+time+'</td><td>'+typeword+'</td> <td><button onclick=show_idpicture('+value.userid+') class="btn btn-large btn-primary serach_id_pitures" > 浏览 </button></td><td>'+setword+'</td></tr>';
+			+'<td>'+time+'</td><td>'+value.bdid+'</td> <td>'+value.bdname+'</td><td>'+stateword[state]+'</td><td><button onclick=show_idpicture('+value.userid+') class="btn btn-large btn-primary serach_id_pitures" > 浏览 </button></td><td>'+setword+'</td></tr>';
 			form.append(body);
 		});	
 		var currentpage =  data.obj.pagequery.currentpage ;
@@ -91,6 +131,11 @@ function examineland (userid ,state) {
 		}
 	});*/
 }
+
+
+
+
+
 // 获取更多信息
 function show_idpicture(userid){
 	$('#show_idpicture').modal('show');
@@ -99,19 +144,25 @@ function show_idpicture(userid){
 		url : '/Tenement/landloadsearchdetail' , 
 		success : function (data) {
 			if (data.code == 200) {
-				$('.landlord_identity').text(data.obj.identity);
-				$('.landlord_address').text(data.obj.address);
-				var picture = data.obj.idpictures;
-				var divpic = $('.landlord_idpictures').empty();
-				if (picture != '') {
-					var str = picture.split(",");
-					$.each(str,function (index,value) {
-						var image = '<img style="height: 250px; width:500px; " alt="" src="'+value+'">';
-						divpic.append(image);
-					})
-				}else {
-					divpic.append('<span>暂无</span>');
-				}
+				$('.land_userid').val(data.obj.userid);
+				$('.land_identity').val(data.obj.identity);
+				$('.land_address').val(data.obj.address);
+				$('.land_brandname').val(data.obj.brandname);
+				$('.land_corporate').val(data.obj.corporate);
+				$('.land_businessnum').val(data.obj.businessnum);
+				$('.land_linkman').val(data.obj.linkman);
+				$('.land_linkphone').val(data.obj.linkphone);
+				$('.land_landname').val(data.obj.realname);
+				$('.land_landphone').val(data.obj.telephone);
+				
+				var selectState = $('#land_landstate').empty();
+				$.each( stateword ,function (index ,value) {
+					var option = '<option value='+index+' > '+value+' </option>'
+					selectState.append(option);
+					if (index == data.obj.landstate) {
+						selectState.find("option:contains('"+value+"')").attr("selected",true);	
+					}
+				}) ;
 			}
 		}
 	});

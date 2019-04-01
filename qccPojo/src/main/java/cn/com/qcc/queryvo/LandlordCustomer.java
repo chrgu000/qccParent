@@ -6,13 +6,28 @@ public class LandlordCustomer extends Landlord {
 	
 	private Long userid ;
 	
+	private String bdname;
 	
 	private Long telephone;
 	
+	private String realname;
 	
+	
+	public String getRealname() {
+		return realname;
+	}
 
-	
-	
+	public void setRealname(String realname) {
+		this.realname = realname;
+	}
+
+	public String getBdname() {
+		return bdname;
+	}
+
+	public void setBdname(String bdname) {
+		this.bdname = bdname;
+	}
 
 	public Long getTelephone() {
 		return telephone;

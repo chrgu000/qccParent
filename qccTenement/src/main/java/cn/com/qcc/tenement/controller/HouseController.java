@@ -746,7 +746,7 @@ public class HouseController {
 		Map<String, Object> map = new HashMap<>();
 		// 查询二手房的详情的操作
 		HouseCustomer houseCustomer = houseService.findHouseDetails(houseid , type,userid);
-
+		System.out.println(houseCustomer.getVillageid());
 		// 同小区房源
 		PageQuery villagepagequery = new PageQuery();
 		villagepagequery.setCurrentpage(currentpage);

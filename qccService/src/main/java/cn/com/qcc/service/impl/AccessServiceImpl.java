@@ -19,9 +19,11 @@ import cn.com.qcc.mapper.ArticledetailMapper;
 import cn.com.qcc.mapper.ArticletypeMapper;
 import cn.com.qcc.mapper.BrandMapper;
 import cn.com.qcc.mapper.BuildingMapper;
+import cn.com.qcc.mapper.BuildinglandlordMapper;
 import cn.com.qcc.mapper.CommoninteMapper;
 import cn.com.qcc.mapper.HistoryexcleMapper;
 import cn.com.qcc.mapper.HouseMapper;
+import cn.com.qcc.mapper.LandlordManagerMapper;
 import cn.com.qcc.mapper.LandlordMapper;
 import cn.com.qcc.mapper.ManageUserMapper;
 import cn.com.qcc.mapper.PercentMapper;
@@ -38,8 +40,11 @@ import cn.com.qcc.pojo.Access;
 import cn.com.qcc.pojo.AccessExample;
 import cn.com.qcc.pojo.Building;
 import cn.com.qcc.pojo.BuildingExample;
+import cn.com.qcc.pojo.BuildinglandlordExample;
 import cn.com.qcc.pojo.Commoninte;
 import cn.com.qcc.pojo.Historyexcle;
+import cn.com.qcc.pojo.Landlord;
+import cn.com.qcc.pojo.LandlordManagerExample;
 import cn.com.qcc.pojo.ManageUser;
 import cn.com.qcc.pojo.ManageUserExample;
 import cn.com.qcc.pojo.Percent;
@@ -81,6 +86,8 @@ public class AccessServiceImpl implements AccessService {
 	@Autowired HouseMapper houseMapper;
 	@Autowired VillageMapper villageMapper;
 	@Autowired HttpServletRequest request;
+	@Autowired LandlordManagerMapper landlordManagerMapper;
+	@Autowired BuildinglandlordMapper buildinglandlordMapper;
 	/**获取所有权限的集合
 	 * @param currentpage : 分页参数当前页面
 	 * @param pagesize    : 每页查询的数量
@@ -757,6 +764,38 @@ public class AccessServiceImpl implements AccessService {
 	@Override
 	public List< VillageCustomer > getLikeVillage(String likename) {
 		return accessMapper.getLikeVillage(likename);
+	}
+
+	@Override
+	public ResultMap updateland(Landlord landlord) {
+		try {
+			landlordMapper.updateByPrimaryKeySelective(landlord);
+			return ResultMap.IS_200();
+		} catch (Exception e) {
+			// TODO: handle exception
+			return ResultMap.build(400,"编辑失败");
+		}
+	
+	}
+
+	@Override
+	public ResultMap deletelandlord(Long landuserid) {
+		
+		// 1,第一步 删除 房东表
+		landlordMapper.deleteByPrimaryKey(landuserid) ;
+		
+		// 2, 删除管理员表
+		LandlordManagerExample example = new LandlordManagerExample();
+		LandlordManagerExample.Criteria criteria = example.createCriteria();
+		criteria.andLanduseridEqualTo(landuserid);
+		landlordManagerMapper.deleteByExample(example);
+		
+		// 3,释放楼栋
+		BuildinglandlordExample example2 = new BuildinglandlordExample();
+		BuildinglandlordExample.Criteria criteria2 = example2.createCriteria();
+		criteria2.andLandlordidEqualTo(landuserid);
+		buildinglandlordMapper.deleteByExample(example2);
+		return ResultMap.IS_200();
 	}
 
 
