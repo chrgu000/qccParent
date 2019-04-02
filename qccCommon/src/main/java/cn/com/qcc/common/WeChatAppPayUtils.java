@@ -22,10 +22,9 @@ import weixin.util.MD5;
 
 public class WeChatAppPayUtils {
 	
-	public static final String APPID = "wx5721254e1aeb368f";
+	
 
 
-    public final String APPSECRET = "5508cbdb4ea774bc930a4b0b6e513344";
 
     //商户号
     public static final String MCH_ID = "1509961881";

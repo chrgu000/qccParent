@@ -15,7 +15,6 @@ import cn.com.qcc.pojo.Village;
 import cn.com.qcc.queryvo.AddressCustomer;
 import cn.com.qcc.queryvo.ApartmentCustomer;
 import cn.com.qcc.queryvo.BrandCustomer;
-import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.FurnitureCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.HouseOrderCustomer;

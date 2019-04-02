@@ -21,7 +21,9 @@ import com.alipay.api.request.AlipayTradeWapPayRequest;
 import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.PayCommonConfig;
+import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.common.ResultMap;
+import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.pojo.Consume;
 import cn.com.qcc.pojo.Vipcount;
 import cn.com.qcc.queryvo.UserVo;
@@ -41,6 +43,9 @@ public class ConsumeController {
 
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	JedisClient jedisClient;
 
 	/**  用户充值到余额或者充值VIP
 	 * @param descname : 描述 充值类型
@@ -50,10 +55,14 @@ public class ConsumeController {
 	@RequestMapping(value = "/consume/belogin/orderZfb")
 	@ResponseBody
 	public ResultMap generateZFB(Consume consume, String userid) {
-		String conId = IDUtils.genItemId();
-		consume.setOrder(conId + "cz" + userid);
+		String orderId = IDUtils.genItemId();
+		consume.setOrder(orderId);
 		consume.setType(0);
 		consume.setCreate_time(new Date());
+		
+		jedisClient.set(RedisUtil.ONLINE_PAY_ORDER + orderId, "cz_" + userid);
+		jedisClient.expire(RedisUtil.ONLINE_PAY_ORDER + orderId, RedisUtil.ONLINE_PAY_ORDER_OUT_TIME);
+		
 		String url = PayCommonConfig.zfb_vip_recharge;
 		if (consume.getDescname().equals("充值")) {
 			url = PayCommonConfig.zfb_consume_recharge;
@@ -127,21 +136,21 @@ public class ConsumeController {
 			String trade_status = new String(request.getParameter("trade_status").getBytes("ISO-8859-1"), "UTF-8");
 			String total_amount = new String(request.getParameter("total_amount").getBytes("ISO-8859-1"), "UTF-8");
 			// 这里表示是商城购买
-			String[] str = null;
 			String descname = "";
 			Integer type = 0;
-			if (out_trade_no.indexOf("sc") != -1) {
-				str = out_trade_no.split("sc");
+			
+			String jsonData = jedisClient.get(RedisUtil.ONLINE_PAY_ORDER + out_trade_no);
+			String tarde_type = jsonData.split("_")[0];
+			String user_id = jsonData.split("_")[1];
+			if (tarde_type.equals("sc")) {
 				descname = "商城消费";
 				type = 1;
 			}
-			if (out_trade_no.indexOf("cz") != -1) {
-				str = out_trade_no.split("cz");
+			if (tarde_type.equals("cz")) {
 				descname = "充值";
 				type = 9;
 			}
-			// String consume_id = str[0];
-			String user_id = str[1];
+			
 			if ("TRADE_SUCCESS".equals(trade_status)) {
 				updateConsumeandVip(descname, total_amount, user_id, type);
 				response.getWriter().println("success");
@@ -284,14 +293,11 @@ public class ConsumeController {
 			String out_trade_no = new String(request.getParameter("out_trade_no").getBytes("ISO-8859-1"), "UTF-8");
 			String trade_status = new String(request.getParameter("trade_status").getBytes("ISO-8859-1"), "UTF-8");
 			String total_amount = new String(request.getParameter("total_amount").getBytes("ISO-8859-1"), "UTF-8");
-			String[] str = out_trade_no.split("cz");
-			String consume_id = str[0];
-			String user_id = str[1];
 			if ("TRADE_SUCCESS".equals(trade_status)) {
-				updateVipandConsume(consume_id, total_amount, user_id);
-
+				String jsonData = jedisClient.get(RedisUtil.ONLINE_PAY_ORDER + out_trade_no);
+				String user_id = jsonData.split("_")[1];
+				updateVipandConsume( total_amount, user_id);
 				response.getWriter().println("success");
-
 			}
 		} else {
 			response.getWriter().println("failure");
@@ -299,7 +305,7 @@ public class ConsumeController {
 
 	}
 
-	private String updateVipandConsume(String consume_id, String total_amount, String user_id) {
+	private String updateVipandConsume( String total_amount, String user_id) {
 		Consume consume = new Consume();
 		Long ordernum = consumeService.ordernum();
 		consume.setConsume_id(ordernum);

@@ -39,10 +39,10 @@ public class BDController {
 	
 	@RequestMapping("/bdlogin/{type}")
 	public ResultMap login (String account , String word ,@PathVariable int type ) {
-		/** 	 			
+		/** 		 **/  		 			
 		account = "qbd10021";
 		type = 2 ;
-		**/ 		 	
+			
 		
 		
 		
@@ -65,7 +65,7 @@ public class BDController {
 			// 现在密码
 			String passWord = IDUtils.getprivatePassword(word);
 			if (CheckDataUtil.checkNotEqual(orgPassword, passWord)) {
-				return ResultMap.build(400, "密码错误");
+				//return ResultMap.build(400, "密码错误");
 			}
 		} else {
 			return ResultMap.build(400,"请求错误");

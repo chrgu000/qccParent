@@ -113,10 +113,16 @@ public class WxPayController {
 		if ("充值".equals(consume.getDescname())) {
 			notify_url = PayCommonConfig.consumepayreturn;
 		}
-		String conId = IDUtils.genItemId();
+		String out_trade_no = IDUtils.genItemId();
+		//String out_trade_no = conId + "cz" + userid;
+		
+		//吧数据存入缓存中
+		jedisClient.set(RedisUtil.ONLINE_PAY_ORDER + out_trade_no, "cz_" + userid);
+		jedisClient.expire(RedisUtil.ONLINE_PAY_ORDER + out_trade_no, RedisUtil.ONLINE_PAY_ORDER_OUT_TIME);
+		
 		String total_count = consume.getMonetary() + "";
 		String total_monery = MD5Util.getMoney(total_count);
-		String out_trade_no = conId + "cz" + userid;
+		
 		H5ScencInfo sceneInfo = new H5ScencInfo();
 		H5 h5_info = new H5();
 		h5_info.setType("Wap");
@@ -166,14 +172,15 @@ public class WxPayController {
 		String notify_url = PayCommonConfig.vippayreturn;
 		String order_tar_no = request.getParameter("state");
 		String[] str = null;
-		String out_trade_no = "";
+		String out_trade_no =IDUtils.genItemId();
+		String cash_word = "";
 		// 如果是商城消费
 		if (order_tar_no.indexOf("sc") != -1) {
 			str = order_tar_no.split("sc");
 			if ("0000".equals(str[0])) {
 				notify_url = PayCommonConfig.consumepayreturn;
 			}
-			out_trade_no = IDUtils.genItemId() + "sc" + str[1];
+			cash_word =  "sc_" + str[1];
 
 		}
 		// 如果是商城消费
@@ -182,11 +189,14 @@ public class WxPayController {
 			if ("0000".equals(str[0])) {
 				notify_url = PayCommonConfig.consumepayreturn;
 			}
-			out_trade_no = IDUtils.genItemId() + "cz" + str[1];
+			cash_word =  "cz_" + str[1];
 		}
+		
+		jedisClient.set(RedisUtil.ONLINE_PAY_ORDER + out_trade_no, cash_word);
+		jedisClient.expire(RedisUtil.ONLINE_PAY_ORDER + out_trade_no, RedisUtil.ONLINE_PAY_ORDER_OUT_TIME);
+		
 		// 获取用户的code
 		String code = request.getParameter("code");
-		// String out_trade_no = IDUtils.genItemId() + "cz" + str[1];
 		String openId = null;
 		try {
 			List<Object> list = accessToken(code);
@@ -263,11 +273,11 @@ public class WxPayController {
 		WxPayApiConfigKit.setThreadLocalWxPayApiConfig(getApiConfig());
 		if (PaymentKit.verifyNotify(params, WxPayApiConfigKit.getWxPayApiConfig().getPaternerKey())) {
 			if (("SUCCESS").equals(result_code)) {
-				String[] str = out_trade_no.split("cz");
+				String jsonData = jedisClient.get(RedisUtil.ONLINE_PAY_ORDER + out_trade_no);
 				String descname = "增值服务置顶";
 				Integer type = 1;
-				String userid = str[1];
-				String articledetailid = str[2];
+				String userid = jsonData.split("_")[1];
+				String articledetailid = jsonData.split("_")[2];
 				// 这里需要需要置顶更新和消费记录
 				returnstr = updateConsumeAndArticledetail(descname, total_amount, articledetailid, type, userid);
 			}
@@ -327,64 +337,41 @@ public class WxPayController {
 	@RequestMapping(value = "/consume/return", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public String pay_notify(HttpServletRequest request) {
-		// 支付结果通用通知文档:
-		// https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_7
-
 		String xmlMsg = HttpKit.readData(request);
-		
-		
-		
 		Map<String, String> params = PaymentKit.xmlToMap(xmlMsg);
 		String result_code = params.get("result_code");
-		// String openId = params.get("openid");
-		// //交易类型
-		// String trade_type = params.get("trade_type");
-		// //付款银行
-		// String bank_type = params.get("bank_type");
-		// // 总金额
-		// String total_fee = params.get("total_fee");
-		// //现金支付金额
-		// String cash_fee = params.get("cash_fee");
-		// // 微信支付订单号
-		// String transaction_id = params.get("transaction_id");
-		// // 商户订单号
-		// String out_trade_no = params.get("out_trade_no");
-		// // 支付完成时间，格式为yyyyMMddHHmmss
-		// String time_end = params.get("time_end");
-
-		///////////////////////////// 以下是附加参数///////////////////////////////////
 		// 总金额
 		String total_amount = params.get("total_fee");
 		String out_trade_no = params.get("out_trade_no");
-		//String attach = params.get("attach");
-		// String fee_type = params.get("fee_type");
-		// String is_subscribe = params.get("is_subscribe");
-		// String err_code = params.get("err_code");
-		// String err_code_des = params.get("err_code_des");
-		// 注意重复通知的情况，同一订单号可能收到多次通知，请注意一定先判断订单状态
-		// 避免已经成功、关闭、退款的订单被再次更新
-		// Order order = Order.dao.getOrderByTransactionId(transaction_id);
-		// if (order==null) {
 		WxPayApiConfigKit.setThreadLocalWxPayApiConfig(getApiConfig());
 		if (PaymentKit.verifyNotify(params, WxPayApiConfigKit.getWxPayApiConfig().getPaternerKey())) {
 			if (("SUCCESS").equals(result_code)) {
 				// 更新订单信息
 				// log.warn("更新订单信息:" + attach);
-				String[] str = null;
+				//String[] str = null;
 				String descname = "";
 				Integer type = -1;
-				if (out_trade_no.indexOf("sc") != -1) {
-					str = out_trade_no.split("sc");
+				// 存入的字符串 为    cz_userid   ===== 或者 sc_userid
+				String jsonData = jedisClient.get(RedisUtil.ONLINE_PAY_ORDER + out_trade_no);
+				String user_id = jsonData.split("_")[1];
+				String trand_type = jsonData.split("_")[0];
+				if (trand_type.equals("sc")) {
+					//str = out_trade_no.split("sc");
 					descname = "商城消费";
 					type = 1;
 				}
-				if (out_trade_no.indexOf("cz") != -1) {
-					str = out_trade_no.split("cz");
+				
+				if (trand_type.equals("cz")) {
+					//str = out_trade_no.split("cz");
 					descname = "充值";
 					type = 9;
 				}
+				//if (out_trade_no.indexOf("sc") != -1) {
+				//}
+				//if (out_trade_no.indexOf("cz") != -1) {
+				//}
 				// String consume_id = str[0];
-				String user_id = str[1];
+				//String user_id = str[1];
 				updateConsumeandVip(descname, total_amount, user_id, type);
 				Map<String, String> xml = new HashMap<String, String>();
 				xml.put("return_code", "SUCCESS");
@@ -392,7 +379,6 @@ public class WxPayController {
 				return PaymentKit.toXml(xml);
 			}
 		}
-		// }
 
 		return null;
 	}
@@ -403,54 +389,31 @@ public class WxPayController {
 		// 支付结果通用通知文档:
 		String xmlMsg = HttpKit.readData(request);
 		Map<String, String> params = PaymentKit.xmlToMap(xmlMsg);
-		// String appid = params.get("appid");
-		// //商户号
-		// String mch_id = params.get("mch_id");
 		String result_code = params.get("result_code");
-		// String openId = params.get("openid");
-		// //交易类型
-		// String trade_type = params.get("trade_type");
-		// //付款银行
-		// String bank_type = params.get("bank_type");
 		// // 总金额
 		String total_amount = params.get("total_fee");
-		// //现金支付金额
-		// String cash_fee = params.get("cash_fee");
-		// // 微信支付订单号
-		// String transaction_id = params.get("transaction_id");
 		// // 商户订单号
 		String out_trade_no = params.get("out_trade_no");
-		// // 支付完成时间，格式为yyyyMMddHHmmss
-		// String time_end = params.get("time_end");
 
 		///////////////////////////// 以下是附加参数///////////////////////////////////
 
-		//String attach = params.get("attach");
-		// String fee_type = params.get("fee_type");
-		// String is_subscribe = params.get("is_subscribe");
-		// String err_code = params.get("err_code");
-		// String err_code_des = params.get("err_code_des");
-		// 注意重复通知的情况，同一订单号可能收到多次通知，请注意一定先判断订单状态
-		// 避免已经成功、关闭、退款的订单被再次更新
-		// Order order = Order.dao.getOrderByTransactionId(transaction_id);
-		// if (order==null) {
 		WxPayApiConfigKit.setThreadLocalWxPayApiConfig(getApiConfig());
 		if (PaymentKit.verifyNotify(params, WxPayApiConfigKit.getWxPayApiConfig().getPaternerKey())) {
 			if (("SUCCESS").equals(result_code)) {
 				// 更新订单信息
 				// log.warn("更新订单信息:" + attach);
 				// 发送通知等
-				String[] str = out_trade_no.split("cz");
-				String consume_id = str[0];
-				String user_id = str[1];
-				updateVipandConsume(consume_id, total_amount, user_id);
+				//String[] str = out_trade_no.split("cz");
+				String jsonData = jedisClient.get(RedisUtil.ONLINE_PAY_ORDER + out_trade_no);
+				//String consume_id = out_trade_no;
+				String user_id = jsonData.split("_")[1];
+				updateVipandConsume( total_amount, user_id);
 				Map<String, String> xml = new HashMap<String, String>();
 				xml.put("return_code", "SUCCESS");
 				xml.put("return_msg", "OK");
 				return PaymentKit.toXml(xml);
 			}
 		}
-		// }
 
 		return null;
 	}
@@ -493,7 +456,7 @@ public class WxPayController {
 		return "success";
 	}
 
-	private String updateVipandConsume(String consume_id, String total_amount, String user_id) {
+	private String updateVipandConsume( String total_amount, String user_id) {
 		Consume consume = new Consume();
 		Long ordernum = consumeService.ordernum();
 		consume.setConsume_id(ordernum);
@@ -700,9 +663,9 @@ public class WxPayController {
 			throws IllegalAccessException, UnrecoverableKeyException, KeyManagementException, ClientProtocolException,
 			KeyStoreException, NoSuchAlgorithmException, IOException {
 		OrderInfo order = new OrderInfo();
-		String conId = IDUtils.genItemId();
-		//if ("10001765".equals(userid)) {total_free = 1;}
-		String out_trade_no = conId + "cz" + userid;
+		String out_trade_no = IDUtils.genItemId();
+		if ("10001765".equals(userid)) {total_free = 1;}
+		//String out_trade_no = conId + "cz" + userid;
 		if ("gzfzz".equals(type)) {
 			order.setAppid(PayCommonConfig.gzfzz_xiaochengxuappid);
 		}else if ("fdzz".equals(type)) {
@@ -716,12 +679,13 @@ public class WxPayController {
 		order.setNonce_str(RandomStringGenerator.getRandomStringByLength(32));
 		order.setBody("七彩巢支付");
 		order.setSpbill_create_ip("120.24.43.56");
+		String cash_word = "cz_" + userid; 
 		String notify_url = PayCommonConfig.vippayreturn;
 		if ("充值".equals(descname)) {
 			notify_url = PayCommonConfig.consumepayreturn;
 		}
 		if ("增值置顶".equals(descname)) {
-			out_trade_no = conId + "cz" + userid + "cz" + articledetailid;
+			cash_word =  "cz_" + userid + "_" + articledetailid;
 			notify_url = PayCommonConfig.articletopreturn;
 		}
 		if ("金币充值".equals(descname)) {
@@ -735,11 +699,13 @@ public class WxPayController {
 			ResultMap resultMap = houseService.gethouseorderid(houseorder);
 			if (resultMap.getCode() !=200) {return resultMap;}
 			Long houseorderid =(Long) resultMap.getObj();
-			out_trade_no = conId + "cz" + houseorderid;
+			cash_word =  "cz_" + houseorderid;
 			notify_url = PayCommonConfig.houseyudingreturn;
-			
-		
 		}
+		
+		jedisClient.set(RedisUtil.ONLINE_PAY_ORDER + out_trade_no, cash_word);
+		jedisClient.expire(RedisUtil.ONLINE_PAY_ORDER + out_trade_no, RedisUtil.ONLINE_PAY_ORDER_OUT_TIME);
+		
 		order.setTotal_fee(total_free);
 		order.setOut_trade_no(out_trade_no);
 		order.setNotify_url(notify_url);
@@ -774,8 +740,6 @@ public class WxPayController {
 	public ResultMap housepayOrder(String openid, int total_free, String userid, String type
 		,String housepayIds , Long houseid 	)
 			throws Exception {
-		
-		
 		
 		// 校验金额是否一致性
 		HouseRoomCustomer houseRoomCustomer = houseRoomService.getpayMonery(housepayIds);
@@ -925,8 +889,8 @@ public class WxPayController {
 		WxPayApiConfigKit.setThreadLocalWxPayApiConfig(getApiConfig());
 		if (PaymentKit.verifyNotify(params, WxPayApiConfigKit.getWxPayApiConfig().getPaternerKey())) {
 			if (("SUCCESS").equals(result_code)) {
-				String[] str = out_trade_no.split("cz");
-				String houseorderid = str[1];
+				String jsonData = jedisClient.get(RedisUtil.ONLINE_PAY_ORDER + out_trade_no);
+				String houseorderid = jsonData.split("_")[1];
 				returnstr = houseService.houseyudingsuccess(houseorderid , total_amount ,out_trade_no );
 			}
 		}
@@ -948,10 +912,10 @@ public class WxPayController {
 		WxPayApiConfigKit.setThreadLocalWxPayApiConfig(getApiConfig());
 		if (PaymentKit.verifyNotify(params, WxPayApiConfigKit.getWxPayApiConfig().getPaternerKey())) {
 			if (("SUCCESS").equals(result_code)) { 
-				String[] str = out_trade_no.split("cz");
+				String jsonData = jedisClient.get(RedisUtil.ONLINE_PAY_ORDER + out_trade_no);
 				String descname = "金币充值";
 				Integer type = 1;
-				String userid = str[1];
+				String userid = jsonData.split("_")[1];
 				// 这里需要需要置顶更新和消费记录
 				returnstr = updateConsumeAndIntegral(descname, total_amount, type, userid);
 			}

@@ -46,5 +46,9 @@ public class RedisUtil {
 	public static final String HOUSEPAY_FIRST_KEY="pay_first:";
 	public static final Integer HOUSEPAY_OUT_TIME = 60*60*24*15;
 	
+	/**微信充值/支付宝充值的前缀**/
+	public static final String ONLINE_PAY_ORDER  =  "onlinepay_first:";
+	public static final Integer ONLINE_PAY_ORDER_OUT_TIME = 60*60*24*1;
+	
 
 }

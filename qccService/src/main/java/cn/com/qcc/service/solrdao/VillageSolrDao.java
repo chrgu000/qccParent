@@ -13,10 +13,8 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.stereotype.Service;
-
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.IDUtils;
-import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.SearchResult;
 import cn.com.qcc.queryvo.VillageCustomer;
 

@@ -3,6 +3,15 @@ package cn.com.qcc.common;
 
 public class PayCommonConfig {
 	
+	/**七彩巢房东端app 对应的 APPID**/
+	public static final String LAND_APPID = "wx5721254e1aeb368f";
+	
+	/**七彩巢用户端app 对应的 APPID**/
+	public static final String USER_APPID = "wx3bb942ba8c1e7923";
+	
+	/**七彩巢房东端app 对应的 AppSecret **/
+	public static final String LAND_AppSecret = "5508cbdb4ea774bc930a4b0b6e513344";
+	
 	
 	/**支付宝余额充值成功的回调页面**/ 
 	public static final String zfb_paysuccess_returnpage = "https://www.zzw777.com/pages/balance.html";	
