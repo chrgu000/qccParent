@@ -79,9 +79,6 @@ public class QiuzuServiceImpl implements QiuzuService {
 	
 
 
-	/*public int findQiuzuListCount(HouseVo houseVo) {
-		return qiuZuCustomerMapper.findQiuzuListCount(houseVo);
-	}*/
 
 	/***求租详情
 	 * @param qiuzuid : 求租主键

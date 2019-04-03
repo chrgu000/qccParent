@@ -13,6 +13,7 @@ import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Appversion;
 import cn.com.qcc.service.AppUpdatesService;
+import cn.com.qcc.service.BrowseService;
 
 /**app自动更新的controller**/
 @Controller
@@ -20,6 +21,8 @@ public class AppUdateController {
 	
 	@Autowired
 	AppUpdatesService appUpdatesService;
+	
+	
 	
 	//上传一个版本号
 	@RequestMapping("/app/versionadd")

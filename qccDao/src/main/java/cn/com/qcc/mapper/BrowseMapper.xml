@@ -319,4 +319,12 @@
 		LEFT JOIN `profile` ON browse.userid = `profile`.user_id
 		where browse.followUserId = #{userid} and userid != #{userid} order by browse.b_time desc
 	</select>
+	
+	
+	<!-- 根据type查询最近 7 天的浏览量的id  -->
+	<select id="searchIdnearTenDays" resultType="long">
+		select browse.otherid from browse  where DATE_SUB(CURDATE(), INTERVAL 8 DAY ) 
+		<![CDATA[ <= date(b_time)]]>   
+			and type = #{type}
+	</select>
 </mapper>

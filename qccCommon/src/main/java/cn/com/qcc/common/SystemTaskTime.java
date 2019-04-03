@@ -20,6 +20,10 @@ public class SystemTaskTime {
 	/**每个 周六  凌晨 2:10   删除临时文件夹里面的数据  **/
 	public static final String delete_uploadpic = "0 10 2 ? * SAT";	
 	
+	
+	/**每个 周六  凌晨 5:10   同步求租的浏览量  **/
+	public static final String sysc_qiuzu = "0 10 5 ? * SAT";	
+	
 	/**
 	 * 每天晚上  凌晨  4:30  执行 , 生成对应的二维码图片
 	 * **/

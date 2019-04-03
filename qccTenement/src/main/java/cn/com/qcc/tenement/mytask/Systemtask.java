@@ -27,6 +27,7 @@ import cn.com.qcc.pojo.VillageExample;
 import cn.com.qcc.pojo.Vipcount;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.service.AccessService;
+import cn.com.qcc.service.BrowseService;
 import cn.com.qcc.service.HouseService;
 import cn.com.qcc.service.InteService;
 import cn.com.qcc.service.UserService;
@@ -48,6 +49,8 @@ public class Systemtask {
 	@Autowired JedisClient jedisClient;
 	@Autowired AccessService accessService;
 	@Autowired UserCustomerMapper userCustomerMapper;
+	@Autowired BrowseService browseService;
+	
 	
 	/**临时文件夹的路劲**/
 	private static final String batchpicure_path = "/root/cents/batchpicure";
@@ -141,6 +144,7 @@ public class Systemtask {
 	 * 定时任务每天晚上 1点执行一次,
 	 * 查询相隔 10天的金币收益做相加到总收益中
 	 * **/
+	@SuppressWarnings("unused")
 	@Scheduled(cron=SystemTaskTime.addlucre) 
 	public void addlurce () {
 		System.out.println("进入定时任务three");
@@ -205,5 +209,33 @@ public class Systemtask {
 				}
 			}
 		}
+	}
+	
+	
+	
+	/**每个 周六  凌晨 5:10   同步求租的浏览量
+	1 ------>房源
+	2 ------>求租
+	3 ------>求购
+	4 ------>小区
+	5 ------>楼栋
+	6 ------>部落找物品
+	7 ------>部落找人
+	8 ------>部落提问
+	9------>部落
+	10 ----签到
+	11-----留言
+	**/ 
+	@Scheduled(cron=SystemTaskTime.sysc_qiuzu) 
+	public void sysc_qiuzu () {
+       List<Long> qiuzuIds = browseService.searchIdnearTenDays(2);
+       if (CheckDataUtil.checkNotEmpty(qiuzuIds)) {
+    	   /// 只需要清空对应的缓存就可以
+    	   for (Long id : qiuzuIds) {
+    		   System.out.println(id);
+    		   jedisClient.expire(RedisUtil.QIUZU_FIRST_KEY + id, 0);
+    	   }
+       }
+       
 	}
 }

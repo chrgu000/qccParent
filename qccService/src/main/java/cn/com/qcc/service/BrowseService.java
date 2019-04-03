@@ -51,6 +51,10 @@ public interface BrowseService {
 	 * **/ 
 	void updatestate(Browse browse);
 	
+	
+	/**根据  type 查询最近 10天的浏览量 信息**/
+	List<Long> searchIdnearTenDays(int type);
+	
 
 	
 

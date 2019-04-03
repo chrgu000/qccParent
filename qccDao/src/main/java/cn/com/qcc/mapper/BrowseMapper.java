@@ -42,4 +42,7 @@ public interface BrowseMapper {
 	List<BrowerCustomer> mybrowList( HouseVo houseVo);
 	//我的访客的数目
 	int findmyBrowListCount(HouseVo houseVo);
+	
+	/**根据type 类型 查询最近10天的id**/
+	List<Long> searchIdnearTenDays(int type);
 }

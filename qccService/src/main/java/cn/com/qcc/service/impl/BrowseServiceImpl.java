@@ -227,6 +227,12 @@ public class BrowseServiceImpl implements BrowseService {
 		}
 	}
 
+	@Override
+	public List<Long> searchIdnearTenDays(int type) {
+		// TODO Auto-generated method stub
+		return browseMapper.searchIdnearTenDays(type);
+	}
+
 	
 
 }
