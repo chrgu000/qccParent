@@ -25,8 +25,9 @@ public interface HouseRoomCustomerMapper {
 	UserCentCustomer searchCentHouseMess(Long userCentId);
 	
 	/**获取房东的区域范围**/
-	List<BuildingCustomer> getlandareaname(BuildingCustomer buildingCustomer);
-	List<BuildingCustomer> getlandbuildingname(BuildingCustomer buildingCustomer);
+	List<BuildingCustomer> getlandareaname(@Param ("idsList") String[] codes);
+	List<BuildingCustomer> getlandbuildingname(@Param ("code") String code ,
+			@Param ("idsList") String[] codes);
 	
 	/**根据订单id的集合查询需要支付的金额总和**/
 	HouseRoomCustomer getpayMonery(@Param ("idsList")String[] split);
@@ -42,6 +43,12 @@ public interface HouseRoomCustomerMapper {
 	
 	/**统计已经支付的订单数量**/
 	int counthousepayIsPay(  @Param ("idsList")  String[] split);
+	
+	/**根据用户id查询街道的 集合code**/
+	String []  searchTradingList(@Param ("inUserIds")  String inUserIds);
+	
+	/**根据用户id查询楼栋id的集合**/
+	String[] searchBuildingids(  @Param ("inUserIds") String inUserIds);
 	
 	
 

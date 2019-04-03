@@ -2,8 +2,6 @@ package cn.com.qcc.pojo;
 
 import java.util.Date;
 
-import cn.com.qcc.common.CheckDataUtil;
-
 public class Articledetail {
     /** 发布物品详情的id*/
     private Long articledetailid;
@@ -47,13 +45,14 @@ public class Articledetail {
     /** 创建时间*/
     private Date update_time;
 
+    /** 视频的地址*/
+    private String videourl;
+
     public Long getArticledetailid() {
         return articledetailid;
     }
 
     public void setArticledetailid(Long articledetailid) {
-    	if (CheckDataUtil.checkisEmpty(articledetailid)) 
-    		articledetailid = -1L;
         this.articledetailid = articledetailid;
     }
 
@@ -86,8 +85,6 @@ public class Articledetail {
     }
 
     public void setArticletypeid(Integer articletypeid) {
-    	if (CheckDataUtil.checkisEmpty(articletypeid)) 
-    		articletypeid = 0 ;
         this.articletypeid = articletypeid;
     }
 
@@ -161,5 +158,13 @@ public class Articledetail {
 
     public void setUpdate_time(Date update_time) {
         this.update_time = update_time;
+    }
+
+    public String getVideourl() {
+        return videourl;
+    }
+
+    public void setVideourl(String videourl) {
+        this.videourl = videourl == null ? null : videourl.trim();
     }
 }

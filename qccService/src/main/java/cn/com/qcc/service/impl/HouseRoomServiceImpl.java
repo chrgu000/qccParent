@@ -855,9 +855,18 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 	 * 根据房东ID 查询出对应的区域分组
 	 **/
 	public List<BuildingCustomer> getlandareaname(BuildingCustomer buildingCustomer) {
-
-		List<BuildingCustomer> landareaname = houseRoomCustomerMapper.getlandareaname(buildingCustomer);
-
+		// 如果是房东查询所有 
+		String inUserIds = getInUserIds(buildingCustomer.getUserid());
+		
+		// 根据userid 查询相应的街道code集合
+		String [] codes = houseRoomCustomerMapper.searchTradingList(inUserIds);
+		
+		if (CheckDataUtil.checkisEmpty(codes)) {
+			return new ArrayList<>();
+		}
+		
+		// 在根据codes集合查询区域
+		List<BuildingCustomer> landareaname = houseRoomCustomerMapper.getlandareaname(codes);
 		return landareaname;
 	}
 
@@ -865,7 +874,19 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 	 * 根据房东ID查询房东房源对应的楼栋
 	 */
 	public List<BuildingCustomer> getlandbuildingname(BuildingCustomer buildingCustomer) {
-		List<BuildingCustomer> buils = houseRoomCustomerMapper.getlandbuildingname(buildingCustomer);
+		
+		// 如果是房东查询所有 
+		String inUserIds = getInUserIds(buildingCustomer.getUserid());
+		
+		// 根据用户id查询楼栋id集合
+		String [] buildingids = houseRoomCustomerMapper.searchBuildingids(inUserIds);
+		
+		if (CheckDataUtil.checkisEmpty(buildingids)) {
+			return new ArrayList<>();
+		}
+		
+		List<BuildingCustomer> buils = houseRoomCustomerMapper.getlandbuildingname(buildingCustomer.getCode()
+				,buildingids);
 		String strbuil = "";
 		for (BuildingCustomer buil : buils) {
 			strbuil = buil.getDetailes();

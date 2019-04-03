@@ -588,6 +588,7 @@
 								`profile`.avatar,
 								articledetail.picture onepicture,
 								articledetail.picture,
+								articledetail.videourl,
 								area.`name` trading,
 								detaileaddress.*,
 								articletype.typename ,
@@ -624,6 +625,7 @@
 						`profile`.avatar,
 						articledetail.picture onepicture,
 						articledetail.picture,
+						articledetail.videourl,
 						area.`name` trading,
 						detaileaddress.* ,
 			      articletype.typename ,
@@ -894,7 +896,9 @@
 				`profile`.user_name username ,
 				`profile`.user_id userid ,
 				1 articletypeid ,
-				 house.tribeids
+				 house.tribeids,
+				 house.videourl 
+				 
 			FROM
 				house
 			LEFT JOIN `user` on house.user_id= `user`.userid
@@ -921,7 +925,8 @@
 				`profile`.user_name username ,
 				`profile`.user_id userid , 
 				2 articletypeid ,
-				'' tribeids
+				'' tribeids ,
+				'' videourl
 			FROM
 				qiuzu
 			LEFT JOIN `user` on qiuzu.user_id = `user`.userid
@@ -945,7 +950,8 @@
 				`profile`.user_name username ,
 				`profile`.user_id userid ,
 				articledetail.articletypeid ,
-				articledetail.tribeids
+				articledetail.tribeids,
+				articledetail.videourl
 			FROM  articledetail
 			LEFT JOIN `user` on articledetail.userid = `user`.userid
 		    LEFT JOIN `profile` on `profile`.user_id = `user`.userid

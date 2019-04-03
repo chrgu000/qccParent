@@ -16,6 +16,7 @@
     <result column="topday" property="topday" jdbcType="INTEGER" />
     <result column="topprices" property="topprices" jdbcType="INTEGER" />
     <result column="update_time" property="update_time" jdbcType="TIMESTAMP" />
+    <result column="videourl" property="videourl" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -77,7 +78,7 @@
   </sql>
   <sql id="Base_Column_List" >
     articledetailid, userid, state, onetypeid, articletypeid, picture, tribeids, detailid, 
-    code, title, description, topday, topprices, update_time
+    code, title, description, topday, topprices, update_time, videourl
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.ArticledetailExample" >
     select
@@ -111,19 +112,21 @@
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Articledetail" >
   
-  <selectKey  resultType="long"  order="AFTER"  keyProperty="articledetailid" >
+   <selectKey  resultType="long"  order="AFTER"  keyProperty="articledetailid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into articledetail (articledetailid, userid, state, 
       onetypeid, articletypeid, picture, 
       tribeids, detailid, code, 
       title, description, topday, 
-      topprices, update_time)
+      topprices, update_time, videourl
+      )
     values (#{articledetailid,jdbcType=BIGINT}, #{userid,jdbcType=BIGINT}, #{state,jdbcType=INTEGER}, 
       #{onetypeid,jdbcType=BIGINT}, #{articletypeid,jdbcType=INTEGER}, #{picture,jdbcType=VARCHAR}, 
       #{tribeids,jdbcType=VARCHAR}, #{detailid,jdbcType=BIGINT}, #{code,jdbcType=BIGINT}, 
       #{title,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{topday,jdbcType=INTEGER}, 
-      #{topprices,jdbcType=INTEGER}, #{update_time,jdbcType=TIMESTAMP})
+      #{topprices,jdbcType=INTEGER}, #{update_time,jdbcType=TIMESTAMP}, #{videourl,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Articledetail" >
   
@@ -174,6 +177,9 @@
       <if test="update_time != null" >
         update_time,
       </if>
+      <if test="videourl != null" >
+        videourl,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="articledetailid != null" >
@@ -217,6 +223,9 @@
       </if>
       <if test="update_time != null" >
         #{update_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="videourl != null" >
+        #{videourl,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -271,6 +280,9 @@
       <if test="record.update_time != null" >
         update_time = #{record.update_time,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.videourl != null" >
+        videourl = #{record.videourl,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -291,7 +303,8 @@
       description = #{record.description,jdbcType=VARCHAR},
       topday = #{record.topday,jdbcType=INTEGER},
       topprices = #{record.topprices,jdbcType=INTEGER},
-      update_time = #{record.update_time,jdbcType=TIMESTAMP}
+      update_time = #{record.update_time,jdbcType=TIMESTAMP},
+      videourl = #{record.videourl,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -338,6 +351,9 @@
       <if test="update_time != null" >
         update_time = #{update_time,jdbcType=TIMESTAMP},
       </if>
+      <if test="videourl != null" >
+        videourl = #{videourl,jdbcType=VARCHAR},
+      </if>
     </set>
     where articledetailid = #{articledetailid,jdbcType=BIGINT}
   </update>
@@ -355,7 +371,8 @@
       description = #{description,jdbcType=VARCHAR},
       topday = #{topday,jdbcType=INTEGER},
       topprices = #{topprices,jdbcType=INTEGER},
-      update_time = #{update_time,jdbcType=TIMESTAMP}
+      update_time = #{update_time,jdbcType=TIMESTAMP},
+      videourl = #{videourl,jdbcType=VARCHAR}
     where articledetailid = #{articledetailid,jdbcType=BIGINT}
   </update>
 </mapper>

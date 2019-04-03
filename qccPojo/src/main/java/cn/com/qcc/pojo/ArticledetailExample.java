@@ -984,6 +984,76 @@ public class ArticledetailExample {
             addCriterion("update_time not between", value1, value2, "update_time");
             return (Criteria) this;
         }
+
+        public Criteria andVideourlIsNull() {
+            addCriterion("videourl is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVideourlIsNotNull() {
+            addCriterion("videourl is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVideourlEqualTo(String value) {
+            addCriterion("videourl =", value, "videourl");
+            return (Criteria) this;
+        }
+
+        public Criteria andVideourlNotEqualTo(String value) {
+            addCriterion("videourl <>", value, "videourl");
+            return (Criteria) this;
+        }
+
+        public Criteria andVideourlGreaterThan(String value) {
+            addCriterion("videourl >", value, "videourl");
+            return (Criteria) this;
+        }
+
+        public Criteria andVideourlGreaterThanOrEqualTo(String value) {
+            addCriterion("videourl >=", value, "videourl");
+            return (Criteria) this;
+        }
+
+        public Criteria andVideourlLessThan(String value) {
+            addCriterion("videourl <", value, "videourl");
+            return (Criteria) this;
+        }
+
+        public Criteria andVideourlLessThanOrEqualTo(String value) {
+            addCriterion("videourl <=", value, "videourl");
+            return (Criteria) this;
+        }
+
+        public Criteria andVideourlLike(String value) {
+            addCriterion("videourl like", value, "videourl");
+            return (Criteria) this;
+        }
+
+        public Criteria andVideourlNotLike(String value) {
+            addCriterion("videourl not like", value, "videourl");
+            return (Criteria) this;
+        }
+
+        public Criteria andVideourlIn(List<String> values) {
+            addCriterion("videourl in", values, "videourl");
+            return (Criteria) this;
+        }
+
+        public Criteria andVideourlNotIn(List<String> values) {
+            addCriterion("videourl not in", values, "videourl");
+            return (Criteria) this;
+        }
+
+        public Criteria andVideourlBetween(String value1, String value2) {
+            addCriterion("videourl between", value1, value2, "videourl");
+            return (Criteria) this;
+        }
+
+        public Criteria andVideourlNotBetween(String value1, String value2) {
+            addCriterion("videourl not between", value1, value2, "videourl");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

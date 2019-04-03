@@ -12,7 +12,21 @@ public class LandlordCustomer extends Landlord {
 	
 	private String realname;
 	
+	private String identity;
 	
+	
+	
+	
+	
+	
+	public String getIdentity() {
+		return identity;
+	}
+
+	public void setIdentity(String identity) {
+		this.identity = identity;
+	}
+
 	public String getRealname() {
 		return realname;
 	}

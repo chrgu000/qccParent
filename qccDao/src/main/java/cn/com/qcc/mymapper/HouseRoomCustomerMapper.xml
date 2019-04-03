@@ -147,29 +147,38 @@
 	<!-- 根据房东ID查询出对应区域分组-->
 	<select id="getlandareaname" parameterType="cn.com.qcc.queryvo.BuildingCustomer"
 		resultType="cn.com.qcc.queryvo.BuildingCustomer">
-		SELECT area.`code` ,area.`name` trading from area where area.`code` in (
-			SELECT area.parentId from area where area.`code` in (
-		SELECT  DISTINCT village.`code`  from house LEFT JOIN building on house.buildingid = building.buildingid
-			LEFT JOIN village on building.villageid = village.villageid 
-		where house.user_id = #{userid} and village.`code` is not null 
-		and house.housestatus !='3'
-		) 
-		)
+				SELECT  area.`code`,  area.`name` trading
+					FROM  area
+				WHERE
+			area.`code` IN (
+				SELECT area.parentId  FROM
+					area
+				WHERE
+					area.`code` IN 
+					<foreach item="item" collection="idsList" separator="," open="("
+						close=")" index="">
+						#{item, jdbcType=VARCHAR}
+				    </foreach> 
+			)
 	</select>
 	
 	
 	
 	<!-- 根据房东ID查询出楼栋列表-->
-	<select id="getlandbuildingname" parameterType="cn.com.qcc.queryvo.BuildingCustomer"
+	<select id="getlandbuildingname" 
 		resultType="cn.com.qcc.queryvo.BuildingCustomer">
 				SELECT building.building ,village.villagename ,building.buildingid,
 			detaileaddress.detailes
 		 from building 
 			INNER JOIN village on building.villageid = village.villageid
-			and building.buildingid in (
-			SELECT DISTINCT house.buildingid from house where house.user_id = #{userid}
-			and house.housestatus !='3'
-		)
+			and building.buildingid in 
+			
+			<foreach item="item" collection="idsList" separator="," open="("
+					close=")" index="">
+					#{item, jdbcType=VARCHAR}
+			</foreach> 
+			
+			
 		<if test="code != null and code !=''">
 			 and village.`code` like  CONCAT('',#{code},'%')
 		</if>
@@ -270,6 +279,45 @@
 	</select>
  	
 
+
+
+	<!-- 查询用户管理的区域的集合-->
+	<select id="searchTradingList"  resultType="string" >
+		SELECT DISTINCT *  from (
+		
+		SELECT 
+							village.`code`
+						FROM
+							house
+						LEFT JOIN building ON house.buildingid = building.buildingid
+						LEFT JOIN village ON building.villageid = village.villageid
+						WHERE
+							house.user_id in ( ${inUserIds} ) and village.`code` is not null 
+						AND house.housestatus != '3'
+		UNION 
+		SELECT village.`code`  from  buildinglandlord 
+			LEFT JOIN building on buildinglandlord.buildingid = building.buildingid
+			LEFT JOIN village on building.villageid = village.villageid
+			INNER JOIN landlord on buildinglandlord.landlordid = landlord.landuserid
+		  WHERE buildinglandlord.landlordid in ( ${inUserIds} ) AND landlord.landstate = 2  
+		  )a
+	</select>
+	
+	
+	
+	<!-- 根据用户id查询楼栋id的集合-->
+	<select id="searchBuildingids"  resultType="string" >
+		
+		SELECT DISTINCT * from (
+		
+		SELECT DISTINCT house.buildingid from house where house.user_id in ( ${inUserIds} )
+					and house.housestatus !='3'
+		UNION
+		SELECT buildinglandlord.buildingid from buildinglandlord 
+		INNER JOIN landlord on buildinglandlord.landlordid = landlord.landuserid
+			where buildinglandlord.landlordid in ( ${inUserIds} ) AND landlord.landstate = 2  
+		) a
+	</select>
 
   
 </mapper>

@@ -43,6 +43,7 @@ public class TribeSolrDao {
 			document.addField("userid", articelDeail.getUserid());
 			document.addField("propertyname", articelDeail.getTypename());
 			document.addField("username", articelDeail.getUsername());
+			document.addField("videourl", articelDeail.getVideourl());
 			document.addField("avatar", articelDeail.getAvatar());
 			document.addField("prices", articelDeail.getPrices());
 			// 经纬度
@@ -159,6 +160,7 @@ public class TribeSolrDao {
 			document.addField("username", articelDeail.getUsername());
 			document.addField("avatar", articelDeail.getAvatar());
 			document.addField("prices", articelDeail.getPrices());
+			document.addField("videourl", articelDeail.getVideourl());
 			// 经纬度
 			String latlng = (articelDeail.getLatitude() == null ? "12" : articelDeail.getLatitude()) + ","
 					+ (articelDeail.getLongitude() == null ? "114" : articelDeail.getLongitude());
@@ -253,6 +255,7 @@ public class TribeSolrDao {
 				detailCustomer.setUsername((String) solrDocument.get("username"));
 				detailCustomer.setAvatar((String) solrDocument.get("avatar"));
 				detailCustomer.setTitle((String) solrDocument.get("housetitle"));
+				detailCustomer.setVideourl((String) solrDocument.get("videourl"));
 				// 距离
 				detailCustomer.setJuli(IDUtils.doubletoint((double) solrDocument.get("juli"), 1000));
 				detailCustomer.setTribepicture((String) solrDocument.get("tribepicture"));

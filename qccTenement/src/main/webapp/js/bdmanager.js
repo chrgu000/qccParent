@@ -112,7 +112,7 @@ var bdState = ['禁用' , '正常'];
 var showState = ['恢复' , '冻结'];
 
 var isEditState = ['只读' , '编辑'];
-var showEditState = ['可编辑' ,'仅可读'];
+var showEditState = ['仅可读 ' ,'可编辑'];
 function listbd () {
 	var form = $('#bd_body');
 	$.ajax({

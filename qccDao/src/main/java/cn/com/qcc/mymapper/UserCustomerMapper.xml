@@ -531,7 +531,7 @@
 		SELECT userid from userconn where followuserid = #{userid} and state = 4
 		) and `profile`.user_name like CONCAT('%',#{user_name},'%') or
 		`user`.telephone like CONCAT('%',#{user_name},'%')
-		limit 0 , 10
+		limit 0 , 100
 	</select>
 
 

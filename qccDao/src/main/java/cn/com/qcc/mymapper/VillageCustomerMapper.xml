@@ -13,7 +13,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<include refid="cn.com.qcc.mymapper.SearchWhere.query_village_where" />
 		<!-- 地区的查询条件 -->
 		<include refid="cn.com.qcc.mymapper.SearchWhere.query_area_where" />
-		LIMIT 0 , 20
+		LIMIT 0 , 300
 	</select>
 
 	<!-- 查询小区下面的楼栋 -->

@@ -562,6 +562,9 @@ public class TribeServiceImpl implements TribeService {
 		//区域的地址
 		if (CheckDataUtil.checkisEmpty(articledetail.getCode())) 
 			{articledetail.setCode(0L);}
+		// 视频地址
+		if (CheckDataUtil.checkisEmpty(articledetail.getVideourl())) 
+			{ articledetail.setVideourl("");}
 		// 置顶价格
 		if (CheckDataUtil.checkisEmpty(articledetail.getTopprices())) 
 			{ articledetail.setTopprices(0);  }
@@ -574,7 +577,7 @@ public class TribeServiceImpl implements TribeService {
 		// 输入的标题
 		if (CheckDataUtil.checkisEmpty(articledetail.getTitle())) 
 			{ return ResultMap.build(400, "请输入标题"); }
-		if (type != 7 && type !=6 && type !=8 && type !=11) 
+		if (type != 7 && type !=6 && type !=8 && type !=11 && type !=10 ) 
 			{ return ResultMap.build(400, "type类型不对，请检查你发布的类型!"); }
 			// 如果是增值服务
 			if (CheckDataUtil.checkisEqual(11, type)) {
@@ -1410,6 +1413,9 @@ public class TribeServiceImpl implements TribeService {
 				}
 				if (CheckDataUtil.checkisEqual(detail.getArticletypeid(), 8)) {
 					tabName = "【问答】";
+				}
+				if (CheckDataUtil.checkisEqual(detail.getArticletypeid(), 9)) {
+					tabName = "【视频】";
 				}
 				detail.setTabName(tabName);
 			}
