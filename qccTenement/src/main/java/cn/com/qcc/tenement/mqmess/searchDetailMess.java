@@ -3,11 +3,9 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import cn.com.qcc.common.JsonUtils;
-import cn.com.qcc.common.RedisUtil;
+
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mymapper.TribeCustomerMapper;
-import cn.com.qcc.queryvo.ArticleDetailCustomer;
 import cn.com.qcc.service.BrowseService;
 
 
@@ -19,10 +17,6 @@ public class searchDetailMess implements MessageListener{
 	
 	@Autowired
 	private BrowseService browseService;
-	@Autowired
-	private TribeCustomerMapper tribeCustomerMapper;
-	@Autowired
-	private JedisClient jedisClient;
 	
 	public void onMessage(Message message) {
 		try {
@@ -37,10 +31,6 @@ public class searchDetailMess implements MessageListener{
 			// 添加浏览量
 			browseService.addBrowse(articedetailid, userid, type);
 			
-			// 同步缓存
-			ArticleDetailCustomer articleDetailCustomer = tribeCustomerMapper.thingdetail(articedetailid);
-			jedisClient.set(RedisUtil.ARTICLEDETAIL_FIRST_KEY+articedetailid, JsonUtils.objectToJson(articleDetailCustomer));
-			jedisClient.expire(RedisUtil.ARTICLEDETAIL_FIRST_KEY+articedetailid , RedisUtil.ARTICLEDETAIL_OUT_TIME);
 		} catch (Exception e) {
 			// 这里是发生未知异常
 			e.printStackTrace();

@@ -5,11 +5,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.jms.Destination;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -31,16 +27,14 @@ import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SimpleUpload;
 import cn.com.qcc.mapper.MycentMapper;
-import cn.com.qcc.mess.util.SendMessUtil;
 import cn.com.qcc.pojo.Mycent;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({ "resource", "unchecked", "static-access"  ,"deprecation"})
 @Controller
 public class UpLoadController {
 	
 	@Autowired
 	MycentMapper mycentMapper;
-	@Resource  Destination deletepicture;
 	@Autowired JmsTemplate jmsTemplate;
 	private final static String batchloadpath = "/root/cents/batchpicure/";
 	private final static String qnweb_path = "http://www.hadoop.zzw777.com/";
@@ -99,6 +93,7 @@ public class UpLoadController {
 	
 	
 	
+	
 	@ResponseBody
     @RequestMapping(value="/orcPictureUpload", method=RequestMethod.POST)
     public ResultMap orcPictureUpload(@RequestParam MultipartFile orcPicture) {
@@ -151,9 +146,6 @@ public class UpLoadController {
 				Map<String, Object> resultMap = new HashMap<>();
 				resultMap.put("returnPath", returnPath);
 				resultMap.put("orcPath", data);
-				// 发放删除本地图片的消息
-				SendMessUtil.sendData(jmsTemplate, deletepicture, batchloadpath + key);
-			
 				return ResultMap.build(200, "上传成功" , resultMap);
 			} else {
 				return ResultMap.build(400, "文件格式错误");

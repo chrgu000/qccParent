@@ -1,8 +1,6 @@
 package cn.com.qcc.tenement.controller;
 import java.io.IOException;
 
-import javax.annotation.Resource;
-import javax.jms.Destination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Controller;
@@ -17,11 +15,9 @@ import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SimpleUpload;
 import cn.com.qcc.common.WaterMarkUtils;
-import cn.com.qcc.mess.util.SendMessUtil;
 @Controller
 public class PictureController {
 	
-	@Resource  Destination deletepicture;
 	@Autowired JmsTemplate jmsTemplate;
 	
 	private final static String qnweb_path = "http://www.hadoop.zzw777.com/";
@@ -78,7 +74,6 @@ public class PictureController {
     @RequestMapping(value="/batchpicure", method=RequestMethod.POST)
     public ResultMap uploadImg(@RequestParam MultipartFile [] images) {
 		String  returnpath = "" ;
-		String sendData = "" ;
 		if (images.length == 0 ) {
 			return ResultMap.build(400,"选择图片");
 		}
@@ -92,7 +87,6 @@ public class PictureController {
 	        String key = IDUtils.genItemId()+ ".png";
 	        // 2 , 本上传的文件以新文件名的形式保存在本地服务器[加水印]
 	        String filePath = WaterMarkUtils.addWaterMark(image, key);
-	        sendData += filePath +"-" ;
 	        // 3 , 上传到七牛云服务器
 	        SimpleUpload.upload(filePath, key);
 	       //发出消息通知后台删除本地图片
@@ -100,10 +94,6 @@ public class PictureController {
 			returnpath += imagepath + "-";
 		}
 		
-		// 发放删除本地图片的消息
-		if (CheckDataUtil.checkNotEmpty(sendData)) {
-			SendMessUtil.sendData(jmsTemplate, deletepicture, sendData);
-		}
 		
 		returnpath = returnpath.substring(0, returnpath.length()-1);
 		return ResultMap.IS_200(returnpath);

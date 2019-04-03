@@ -118,10 +118,6 @@
 		<constructor-arg value="userUpdate" />
 	</bean>  
 	
-	<!-- NO.16 删除本地图片 -->
-	<bean id="deletepicture" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="deletepicture" />
-	</bean>  
 	
 	<!-- NO.17 楼栋编辑 -->
 	<bean id="builUpdate" class="org.apache.activemq.command.ActiveMQQueue">

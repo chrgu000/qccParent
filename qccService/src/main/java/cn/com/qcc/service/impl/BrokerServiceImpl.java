@@ -59,6 +59,7 @@ public class BrokerServiceImpl implements BrokerService{
 	/**
 	 * 实名认证
 	 * **/
+	@SuppressWarnings("unchecked")
 	public ResultMap brokeruser(Profile profile,String orcPath) {
 		//校验用户是否实名过
 		UserCustomer userCustomer = userCustomerMapper.getcommonusermess(profile.getUser_id());

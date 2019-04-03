@@ -1,5 +1,5 @@
 package cn.com.qcc.tenement.mytask;
-import java.util.ArrayList;
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -7,12 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import cn.com.qcc.common.CheckDataUtil;
-import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.PayCommonConfig;
 import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.common.SendMessage;
 import cn.com.qcc.common.SystemTaskTime;
-import cn.com.qcc.detailcommon.ExcelExportSXXSSF;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mapper.BuildingMapper;
 import cn.com.qcc.mapper.HouseMapper;
@@ -21,7 +19,6 @@ import cn.com.qcc.mapper.VipcountMapper;
 import cn.com.qcc.mymapper.UserCustomerMapper;
 import cn.com.qcc.pojo.Building;
 import cn.com.qcc.pojo.BuildingExample;
-import cn.com.qcc.pojo.Historyexcle;
 import cn.com.qcc.pojo.House;
 import cn.com.qcc.pojo.HouseExample;
 import cn.com.qcc.pojo.Lucre;
@@ -51,6 +48,9 @@ public class Systemtask {
 	@Autowired JedisClient jedisClient;
 	@Autowired AccessService accessService;
 	@Autowired UserCustomerMapper userCustomerMapper;
+	
+	/**临时文件夹的路劲**/
+	private static final String batchpicure_path = "/root/cents/batchpicure";
 	
 	
 	/*
@@ -192,8 +192,18 @@ public class Systemtask {
 	
 	
 	
-	
-	
-	
-
+	// 每个周六晚上 2点10分删除临时文件夹里面的数据
+	@Scheduled(cron=SystemTaskTime.delete_uploadpic) 
+	public void deleteupload_picture () {
+        File file = new File(batchpicure_path);
+        File[] tempList = file.listFiles();
+        for(File f:tempList){					//遍历File[]数组
+			if(!f.isDirectory()) {
+				System.out.println(f.getName());
+				if (!f.getName().endsWith("txt")){
+					f.delete();
+				}
+			}
+		}
+	}
 }

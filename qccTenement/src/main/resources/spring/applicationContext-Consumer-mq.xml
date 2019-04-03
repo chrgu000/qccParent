@@ -156,13 +156,6 @@
 	
 	
 	
-	<!-- 上传图片后删除本地图片  ==== NO.16 删除本地图片-->
-	<bean id="deletepictureMess" class="cn.com.qcc.tenement.mqmess.PictureDeleteMess"/>
-	<bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-		<property name="connectionFactory" ref="connectionFactory" />
-		<property name="destination" ref="deletepicture" />
-		<property name="messageListener" ref="deletepictureMess" />
-	</bean> 
 	
 	
 	<!-- 后台编辑楼栋后更新索引库  ====  NO.17 楼栋编辑 -->

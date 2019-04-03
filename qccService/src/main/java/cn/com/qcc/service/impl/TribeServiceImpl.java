@@ -717,7 +717,7 @@ public class TribeServiceImpl implements TribeService {
 				
 		articleDetailCustomer = tribeCustomerMapper.thingdetail(articedetailid);
 		if (CheckDataUtil.checkisEmpty(articleDetailCustomer)) { return articleDetailCustomer;}
-		if (CheckDataUtil.checkisEmpty(articleDetailCustomer.getTribeids())){
+		if (CheckDataUtil.checkNotEmpty(articleDetailCustomer.getTribeids())){
 			String tribeid = articleDetailCustomer.getTribeids().split(",")[0];
 			Tribe tribe =  tribeMapper.selectByPrimaryKey(Long.valueOf(tribeid));
 			if (CheckDataUtil.checkNotEmpty(tribe)) {
@@ -1172,7 +1172,6 @@ public class TribeServiceImpl implements TribeService {
 
 	@Override
 	public Integer myjointribeCount(Long userid) {
-		// TODO Auto-generated method stub
 		return tribeCustomerMapper.myjointribeCount(userid);
 	}
 
@@ -1203,8 +1202,8 @@ public class TribeServiceImpl implements TribeService {
 		// 分布式模式使用分组，并返回分组数量
 		//query.setParam("group.ngroups", "true");
 		SolrPageUtil.juliquery(query, "", addressCustomer);
-		query.add("fq", "tribeids:[1 TO *]");
-		query.add("fq", "articletypeid:(6 or 7 or 8 or 1 )");
+		//query.add("fq", "tribeids:[1 TO *]");
+		query.add("fq", "articletypeid:(6 or 7 or 8 or 1 or 10 )");
 		SolrPageUtil.setStartAndEnd(pagequery, query);
 		// 执行搜索，返回response对象
 		query.addSort("update_time",ORDER.desc);

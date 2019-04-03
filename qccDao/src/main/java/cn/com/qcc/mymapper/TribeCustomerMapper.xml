@@ -283,6 +283,7 @@
 					articledetail.picture picture,
 					articledetail.description,
 					articledetail.tribeids,
+					articledetail.videourl,
 		      releasetable.* 
 					from  articledetail
 					LEFT JOIN articletype on articletype.onetypeid = articledetail.onetypeid

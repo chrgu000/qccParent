@@ -1,5 +1,6 @@
 package cn.com.qcc.tenement.controller;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,6 +109,27 @@ public class TestToken {
 		}
 		**/
 	
+	
+	public static void main(String[] args) {
+		String path = "d://test";
+		boolean flag = false;
+        File file = new File(path);
+        File[] tempList = file.listFiles();
+
+        for(File f:tempList){					//遍历File[]数组
+			if(!f.isDirectory()) {
+				System.out.println(f.getName());
+				if (!f.getName().endsWith("txt")){
+					f.delete();
+				}
+				
+			}
+				
+		}
+
+        return;
+	
+	}
 	
 	
 			

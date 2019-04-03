@@ -20,7 +20,7 @@ public class RedisUtil {
 	
 	/**物品发布相关**/
 	public static final String  ARTICLEDETAIL_FIRST_KEY="articledetail:";
-	public static final Integer ARTICLEDETAIL_OUT_TIME = 60*60*24*15;
+	public static final Integer ARTICLEDETAIL_OUT_TIME = 60*60*24*1;
 	
 	/**
 	 * 导入房源库id自增主键

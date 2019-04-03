@@ -11,15 +11,19 @@ package cn.com.qcc.common;
  * 
  * 		 "0 10,44 14 ? 3 WED"三月的每周三的14：10和14：44触发	
  * 		 "0 10 2 ? * THU" 每周三的2点10触发
+ * 		 0 0 0 * * 
  * 
  * **/
 
 public class SystemTaskTime {
 	
+	/**每个 周六  凌晨 2:10   删除临时文件夹里面的数据  **/
+	public static final String delete_uploadpic = "0 10 2 ? * SAT";	
+	
 	/**
-	 * 每天晚上凌晨4点执行 , 生成对应的二维码图片
+	 * 每天晚上  凌晨  4:30  执行 , 生成对应的二维码图片
 	 * **/
-	public static final String build_xpxpicture = "0 0 4 * * ?";
+	public static final String build_xpxpicture = "0 30 4 * * ?";
 	
 	/**
 	 * 每天晚上凌晨4
