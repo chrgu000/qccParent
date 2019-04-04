@@ -18,7 +18,6 @@ import cn.com.qcc.queryvo.VillageCustomer;
 import cn.com.qcc.queryvo.VillageeVo;
 
 public interface VillageCustomerMapper {
-
 	// 地区下面的小区
 	List<VillageCustomer> findAllVillage(VillageeVo villageeVo);
 

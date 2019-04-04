@@ -1,4 +1,5 @@
 package cn.com.qcc.tenement.mytask;
+
 import java.io.File;
 import java.util.Date;
 import java.util.List;
@@ -7,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import cn.com.qcc.common.CheckDataUtil;
+import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.PayCommonConfig;
 import cn.com.qcc.common.RedisUtil;
+import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SendMessage;
 import cn.com.qcc.common.SystemTaskTime;
 import cn.com.qcc.detailcommon.JedisClient;
@@ -36,54 +39,64 @@ import weixin.util.XiaoChengXuCodeUtil;
 
 @Component
 public class Systemtask {
-	
-	@Autowired UserService userService; 
-	@Autowired VillageService villageService;
-	@Autowired HouseService houseService;
-	@Autowired HttpServletRequest request;
-	@Autowired HouseMapper houseMapper;
-	@Autowired BuildingMapper buildingMapper;
-	@Autowired VillageMapper villageMapper;
-	@Autowired InteService inteService;
-	@Autowired VipcountMapper vipcountMapper;
-	@Autowired JedisClient jedisClient;
-	@Autowired AccessService accessService;
-	@Autowired UserCustomerMapper userCustomerMapper;
-	@Autowired BrowseService browseService;
-	
-	
-	/**临时文件夹的路劲**/
+
+	@Autowired
+	UserService userService;
+	@Autowired
+	VillageService villageService;
+	@Autowired
+	HouseService houseService;
+	@Autowired
+	HttpServletRequest request;
+	@Autowired
+	HouseMapper houseMapper;
+	@Autowired
+	BuildingMapper buildingMapper;
+	@Autowired
+	VillageMapper villageMapper;
+	@Autowired
+	InteService inteService;
+	@Autowired
+	VipcountMapper vipcountMapper;
+	@Autowired
+	JedisClient jedisClient;
+	@Autowired
+	AccessService accessService;
+	@Autowired
+	UserCustomerMapper userCustomerMapper;
+	@Autowired
+	BrowseService browseService;
+
+	/** 临时文件夹的路劲 **/
 	private static final String batchpicure_path = "/root/cents/batchpicure";
-	
-	
+
 	/*
 	 * 如果房源长时间没有更新，每个周五晚上3点10分自动下架
-	 * */
-	@Scheduled(cron=SystemTaskTime.house_undercarriage) 
+	 */
+	@Scheduled(cron = SystemTaskTime.house_undercarriage)
 	public void house_undercarriage() {
 		System.out.println("进入定时任务one");
-		String [] houseids = houseService.search7daysnotupdate();
+		String[] houseids = houseService.search7daysnotupdate();
 		List<UserCustomer> users = houseService.search7daysnotupdateuser();
-		for (UserCustomer user :users) {
+		for (UserCustomer user : users) {
 			String content = "尊敬的用户,系统检测到您的";
-			content += user.getBcount() +"套房源长期没有更新,已经自动下架。如需上架请点击https://www.zzw777.com!";
+			content += user.getBcount() + "套房源长期没有更新,已经自动下架。如需上架请点击https://www.zzw777.com!";
 			SendMessage.houseundercarriage(user.getTelephone(), content, request);
 		}
-		houseService.update7dayundercarriage (houseids);
+		houseService.update7dayundercarriage(houseids);
 	}
-	
-	
+
 	/*
 	 * 定时任务 每天晚上生成小程序二维码
-	 * */
-	@Scheduled(cron=SystemTaskTime.build_xpxpicture) 
+	 */
+	@Scheduled(cron = SystemTaskTime.build_xpxpicture)
 	public void buildxpxPictures() {
 		System.out.println("进入定时任务two");
 		// 生成房源的二维码吗
 		HouseExample example = new HouseExample();
 		HouseExample.Criteria criteria = example.createCriteria();
 		criteria.andXcxpictureEqualTo("");
-		List<House> houseList  = houseMapper.selectByExample(example);
+		List<House> houseList = houseMapper.selectByExample(example);
 		if (!houseList.isEmpty() && houseList.size() > 0) {
 			for (House house : houseList) {
 				// 生成小程序二维码图片
@@ -91,17 +104,17 @@ public class Systemtask {
 				String xcxpicture_gzf = XiaoChengXuCodeUtil.make_gzf_xcxqcode(house.getHouseid(), "housedetail");
 				house.setXcxpicture(xcxpicture_qcc + "," + xcxpicture_gzf);
 				houseMapper.updateByPrimaryKey(house);
-				
-				//置空缓存
+
+				// 置空缓存
 				try {
-					jedisClient.del(RedisUtil.HOUSE_FIRST_KEY+house.getHouseid());
+					jedisClient.del(RedisUtil.HOUSE_FIRST_KEY + house.getHouseid());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				
+
 			}
 		}
-		
+
 		// 生成楼栋的二维码
 		BuildingExample buildingExample = new BuildingExample();
 		BuildingExample.Criteria builcri = buildingExample.createCriteria();
@@ -111,26 +124,26 @@ public class Systemtask {
 			for (Building building : builList) {
 				String xcxpic_qcc = XiaoChengXuCodeUtil.make_qcc_xcxqcode(building.getBuildingid(), "buildingdetail");
 				String xcxpic_gzf = XiaoChengXuCodeUtil.make_gzf_xcxqcode(building.getBuildingid(), "buildingdetail");
-				building.setXcxpicture(xcxpic_qcc + "," +xcxpic_gzf);
+				building.setXcxpicture(xcxpic_qcc + "," + xcxpic_gzf);
 				buildingMapper.updateByPrimaryKeySelective(building);
-				
-				//置空缓存
+
+				// 置空缓存
 				try {
-					jedisClient.del(RedisUtil.BUIL_FIRST_KEY+building.getBuildingid());
+					jedisClient.del(RedisUtil.BUIL_FIRST_KEY + building.getBuildingid());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		
+
 		// 生成小区的二维码
 		VillageExample villageExample = new VillageExample();
 		VillageExample.Criteria villcri = villageExample.createCriteria();
 		villcri.andXcxpictureEqualTo("");
 		List<Village> villList = villageMapper.selectByExample(villageExample);
 		if (!villList.isEmpty() && villList.size() > 0) {
-			for (Village village: villList) {
-				//设置小区二维码图片
+			for (Village village : villList) {
+				// 设置小区二维码图片
 				String xcxpicture_qcc = XiaoChengXuCodeUtil.make_qcc_xcxqcode(village.getVillageid(), "villagedetail");
 				String xcxpicture_gzf = XiaoChengXuCodeUtil.make_gzf_xcxqcode(village.getVillageid(), "villagedetail");
 				village.setXcxpicture(xcxpicture_qcc + "," + xcxpicture_gzf);
@@ -138,20 +151,18 @@ public class Systemtask {
 			}
 		}
 	}
-	
-	
+
 	/**
-	 * 定时任务每天晚上 1点执行一次,
-	 * 查询相隔 10天的金币收益做相加到总收益中
-	 * **/
+	 * 定时任务每天晚上 1点执行一次, 查询相隔 10天的金币收益做相加到总收益中
+	 **/
 	@SuppressWarnings("unused")
-	@Scheduled(cron=SystemTaskTime.addlucre) 
-	public void addlurce () {
+	@Scheduled(cron = SystemTaskTime.addlucre)
+	public void addlurce() {
 		System.out.println("进入定时任务three");
 		int daycount = PayCommonConfig.lurce_day_count;
-		List<Lucre> lucreList =  inteService.searchNeedAddLurceByTime (daycount);
+		List<Lucre> lucreList = inteService.searchNeedAddLurceByTime(daycount);
 		// 如果数据存在
-		if (! lucreList.isEmpty() && lucreList.size() > 0 ) {
+		if (!lucreList.isEmpty() && lucreList.size() > 0) {
 			for (Lucre lurce : lucreList) {
 				double updateaccount = lurce.getAccount();
 				// 查询用户钱包做加法运算
@@ -161,22 +172,20 @@ public class Systemtask {
 				updateuser.setAccount(totalaccount);
 				// 同步数据库
 				vipcountMapper.updateByPrimaryKey(updateuser);
-				
+
 				// 发送短信提醒用户收益到账
 				String telephone = lurce.getDescname();
-				String content =updateaccount +","+totalaccount;
+				String content = updateaccount + "," + totalaccount;
 			}
 		}
-		
-		//吧对应的数据更新为已经收益的状态
+
+		// 吧对应的数据更新为已经收益的状态
 		inteService.updateLurceIsAddByTime(daycount);
 	}
-	
-	
-	
+
 	// 每天11点执行一次
-	@Scheduled(cron=SystemTaskTime.every_day_04) 
-	public void every_day_04 () {
+	@Scheduled(cron = SystemTaskTime.every_day_04)
+	public void every_day_04() {
 		List<Vipcount> vipList = userCustomerMapper.selectNotVip();
 		if (CheckDataUtil.checkNotEmpty(vipList)) {
 			for (Vipcount vip : vipList) {
@@ -190,52 +199,95 @@ public class Systemtask {
 				vip.setPassword("");
 				vipcountMapper.insertSelective(vip);
 			}
-			
+
 		}
 	}
-	
-	
-	
+
 	// 每个周六晚上 2点10分删除临时文件夹里面的数据
-	@Scheduled(cron=SystemTaskTime.delete_uploadpic) 
-	public void deleteupload_picture () {
-        File file = new File(batchpicure_path);
-        File[] tempList = file.listFiles();
-        for(File f:tempList){					//遍历File[]数组
-			if(!f.isDirectory()) {
+	@Scheduled(cron = SystemTaskTime.delete_uploadpic)
+	public void deleteupload_picture() {
+		File file = new File(batchpicure_path);
+		File[] tempList = file.listFiles();
+		for (File f : tempList) { // 遍历File[]数组
+			if (!f.isDirectory()) {
 				System.out.println(f.getName());
-				if (!f.getName().endsWith("txt")){
+				if (!f.getName().endsWith("txt")) {
 					f.delete();
 				}
 			}
 		}
 	}
-	
-	
-	
-	/**每个 周六  凌晨 5:10   同步求租的浏览量
-	1 ------>房源
-	2 ------>求租
-	3 ------>求购
-	4 ------>小区
-	5 ------>楼栋
-	6 ------>部落找物品
-	7 ------>部落找人
-	8 ------>部落提问
-	9------>部落
-	10 ----签到
-	11-----留言
-	**/ 
-	@Scheduled(cron=SystemTaskTime.sysc_qiuzu) 
-	public void sysc_qiuzu () {
-       List<Long> qiuzuIds = browseService.searchIdnearTenDays(2);
-       if (CheckDataUtil.checkNotEmpty(qiuzuIds)) {
-    	   /// 只需要清空对应的缓存就可以
-    	   for (Long id : qiuzuIds) {
-    		   System.out.println(id);
-    		   jedisClient.expire(RedisUtil.QIUZU_FIRST_KEY + id, 0);
-    	   }
-       }
-       
+
+	/**
+	 * 每个 周六 凌晨 5:10 同步求租的浏览量 1 ------>房源 2 ------>求租 3 ------>求购 4 ------>小区 5
+	 * ------>楼栋 6 ------>部落找物品 7 ------>部落找人 8 ------>部落提问 9------>部落 10 ----签到
+	 * 11-----留言
+	 **/
+	@Scheduled(cron = SystemTaskTime.sysc_qiuzu)
+	public void sysc_qiuzu() {
+		List<Long> qiuzuIds = browseService.searchIdnearTenDays(2);
+		if (CheckDataUtil.checkNotEmpty(qiuzuIds)) {
+			/// 只需要清空对应的缓存就可以
+			for (Long id : qiuzuIds) {
+				System.out.println(id);
+				jedisClient.expire(RedisUtil.QIUZU_FIRST_KEY + id, 0);
+			}
+		}
+
 	}
+
+	@Scheduled(cron = SystemTaskTime.sysc_buil)
+	public void sysc_buil() {
+		List<Long> qiuzuIds = browseService.searchIdnearTenDays(5);
+		if (CheckDataUtil.checkNotEmpty(qiuzuIds)) {
+			/// 只需要清空对应的缓存就可以
+			for (Long id : qiuzuIds) {
+				System.out.println(id);
+				jedisClient.expire(RedisUtil.BUIL_FIRST_KEY + id, 0);
+			}
+		}
+
+	}
+
+	@Scheduled(cron = SystemTaskTime.sysc_tribe)
+	public void sysc_tribe() {
+		List<Long> qiuzuIds = browseService.searchIdnearTenDays(9);
+		if (CheckDataUtil.checkNotEmpty(qiuzuIds)) {
+			/// 只需要清空对应的缓存就可以
+			for (Long id : qiuzuIds) {
+				System.out.println(id);
+				jedisClient.expire(RedisUtil.TRIBE_FIRST_KEY + id, 0);
+			}
+		}
+
+	}
+
+	@Scheduled(cron=SystemTaskTime.sysc_house)
+	public void sysc_house() {
+		int start = 0 ;
+		int end = 0 ;
+		String jsonData = jedisClient.get("house_sysc_start_end:");
+		if (CheckDataUtil.checkNotEmpty(jsonData)) {
+			String[] split = jsonData.split("-");
+			try {
+				start = Integer.valueOf( split[0] );
+				end =   Integer.valueOf( split[1] );
+			} catch (Exception e) {
+				e.printStackTrace();
+				end = 20000;
+			}
+		} else {
+			end = 20000;
+		}
+		PageQuery pagequery = new PageQuery();
+		pagequery.setPagestart(start);
+		pagequery.setPageend(end);
+		String value =( start+20000 ) +"-" + (end + 20000);
+		ResultMap resultMap = houseService.searchAllHouseToSolr(pagequery);
+		if (resultMap.getCode() == 400) {
+			value = "0-20000";
+		}
+		jedisClient.set("house_sysc_start_end:", value);
+	}
+	
 }

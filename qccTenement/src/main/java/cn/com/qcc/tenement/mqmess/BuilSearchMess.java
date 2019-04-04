@@ -3,13 +3,7 @@ package cn.com.qcc.tenement.mqmess;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import cn.com.qcc.common.JsonUtils;
-import cn.com.qcc.common.RedisUtil;
-import cn.com.qcc.detailcommon.JedisClient;
-import cn.com.qcc.mymapper.VillageCustomerMapper;
-import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.service.BrowseService;
 
 
@@ -22,11 +16,6 @@ public class BuilSearchMess implements MessageListener{
 	
 	@Autowired
 	private BrowseService browseService;
-	@Autowired
-	private VillageCustomerMapper villageCustomerMapper;
-	@Autowired
-	private JedisClient jedisClient;
-	
 	public void onMessage(Message message) {
 		try {
 			// 47094-10001765-5 || 其实这里的type 可以写死的。每一种类型都是固定的
@@ -40,14 +29,6 @@ public class BuilSearchMess implements MessageListener{
 			//处理浏览量
 			browseService.addBrowse(buildingid, userid, type);
 			
-			//同步缓存
-			BuildingCustomer buildingCustomer = villageCustomerMapper.searchbuildingbyid(buildingid);
-			try {
-				jedisClient.set(RedisUtil.BUIL_FIRST_KEY+buildingid, JsonUtils.objectToJson(buildingCustomer));
-				jedisClient.expire(RedisUtil.BUIL_FIRST_KEY+buildingid, RedisUtil.BUIL_TIME_OUT);
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
 		} catch (Exception e) {
 			// 这里是发生未知异常
 			e.printStackTrace();

@@ -3,14 +3,7 @@ package cn.com.qcc.tenement.mqmess;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
-import cn.com.qcc.common.JsonUtils;
-import cn.com.qcc.common.RedisUtil;
-import cn.com.qcc.detailcommon.JedisClient;
-import cn.com.qcc.mymapper.TribeCustomerMapper;
-import cn.com.qcc.queryvo.TribeCustomer;
 import cn.com.qcc.service.BrowseService;
 
 
@@ -21,11 +14,7 @@ import cn.com.qcc.service.BrowseService;
 public class TribeSearchMess implements MessageListener{
 	
 	@Autowired
-    private TribeCustomerMapper tribeCustomerMapper;
-	@Autowired
 	private BrowseService browseService;
-	@Autowired
-	private JedisClient jedisClient;
 	public void onMessage(Message message) {
 		try {//  tribeid +"-" + userid+"-" + type;
 			TextMessage textMessage = (TextMessage)message;
@@ -38,14 +27,6 @@ public class TribeSearchMess implements MessageListener{
 			System.out.println("部落查询收到消息："+text);
 			//先处理浏览
 			browseService.addBrowse(Long.valueOf(tribeid), userid, type);
-			//同步缓存
-			TribeCustomer customer = tribeCustomerMapper.getTribetailbyid(Integer.parseInt(tribeid) , type);
-			try {
-				jedisClient.set(RedisUtil.TRIBE_FIRST_KEY+tribeid, JsonUtils.objectToJson(customer));
-				jedisClient.expire(RedisUtil.TRIBE_FIRST_KEY+tribeid, RedisUtil.TRIBE_OUT_TIME);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		} catch (Exception e) {
 			// 这里是发生未知异常
 			e.printStackTrace();

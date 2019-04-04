@@ -24,6 +24,12 @@ public class SystemTaskTime {
 	/**每个 周六  凌晨 5:10   同步求租的浏览量  **/
 	public static final String sysc_qiuzu = "0 10 5 ? * SAT";	
 	
+	/**每个 周六  凌晨 5:30   同步求租的浏览量  **/
+	public static final String sysc_buil = "0 30 5 ? * SAT";
+	
+	/**每个 周六  凌晨 5:30   同步部落的浏览量  **/
+	public static final String sysc_tribe = "0 50 5 ? * SAT";
+	
 	/**
 	 * 每天晚上  凌晨  4:30  执行 , 生成对应的二维码图片
 	 * **/
@@ -52,6 +58,12 @@ public class SystemTaskTime {
 	public static final String house_undercarriage = "0 10 3 ? * SAT";	
 	
 	public static final String MONTH_END_22 = "0 0 22 LAST * ?";
+
+	/**同步房源 到索引库 每天早上6点   **/
+	public static final String sysc_house = "0 0 6 * * ?";
+
+
+	
 	
 
 }

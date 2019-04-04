@@ -8,7 +8,7 @@ public class RedisUtil {
 	
 	/**房源相关**/
 	public static final String  HOUSE_FIRST_KEY= "housedetail:";
-	public static final Integer HOUSE_OUT_TIME = 60*60*24*15;
+	public static final Integer HOUSE_OUT_TIME = 60*60*24*1;
 	
 	/**楼栋详情**/
 	public static final String  BUIL_FIRST_KEY = "buildingdetail:";
