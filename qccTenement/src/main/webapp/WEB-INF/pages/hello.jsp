@@ -6,9 +6,8 @@
   <script type="text/javascript" src="/Tenement/js/jquery-1.11.1.min.js"></script>
 </head>
 <body>
-<form name="Form2" action="/Tenement/orcPictureUpload" method="post"  enctype="multipart/form-data">
-<input type="file" name="orcPicture">
-<input type="text" name="user_id">
+<form name="Form2" action="/Tenement/videoUpload" method="post"  enctype="multipart/form-data">
+<input type="file" name="content">
 <input type="submit" value="upload"/>
 </form>
 	<button id="button">JXMP</button>

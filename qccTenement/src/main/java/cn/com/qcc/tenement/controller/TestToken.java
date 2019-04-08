@@ -1,8 +1,14 @@
 package cn.com.qcc.tenement.controller;
 
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.com.qcc.common.ResultMap;
+import cn.com.qcc.detailcommon.AccountMgr;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.detailcommon.TemplateData;
 import cn.com.qcc.detailcommon.WX_TemplateMsgUtil;
@@ -110,26 +117,11 @@ public class TestToken {
 		**/
 	
 	
-	public static void main(String[] args) {
-		String path = "d://test";
-		boolean flag = false;
-        File file = new File(path);
-        File[] tempList = file.listFiles();
-
-        for(File f:tempList){					//遍历File[]数组
-			if(!f.isDirectory()) {
-				System.out.println(f.getName());
-				if (!f.getName().endsWith("txt")){
-					f.delete();
-				}
-				
-			}
-				
-		}
-
-        return;
 	
-	}
+
+	
+	
+
 	
 	
 			

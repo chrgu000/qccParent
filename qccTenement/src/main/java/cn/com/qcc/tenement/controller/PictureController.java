@@ -1,5 +1,9 @@
 package cn.com.qcc.tenement.controller;
+import java.io.File;
 import java.io.IOException;
+
+import javax.annotation.Resource;
+import javax.jms.Destination;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
@@ -15,13 +19,16 @@ import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SimpleUpload;
 import cn.com.qcc.common.WaterMarkUtils;
+import cn.com.qcc.detailcommon.AccountMgr;
+import cn.com.qcc.mess.util.SendMessUtil;
 @Controller
 public class PictureController {
 	
 	@Autowired JmsTemplate jmsTemplate;
+	@Resource  Destination vedioUpload;
 	
 	private final static String qnweb_path = "http://www.hadoop.zzw777.com/";
-	private final static String qview_path = "http://www.video.zzw777.com/";
+	
 	
 	//视频的最大大小20M
 	private final static int VIDEO_MAX_SIZE =  1024 * 1000 * 20 ;
@@ -37,7 +44,6 @@ public class PictureController {
 	@RequestMapping(value = "/testupload")
 	@ResponseBody
 	public ResultMap uploadPicture(@RequestParam MultipartFile image) throws IllegalStateException, IOException {
-		//byte [] bype = WaterMarkUtils.addWaterMark(image,uplodpath,  waterMarkContent, markContentColor, font);
                 
 		return ResultMap.build(200, null, null);
 	}
@@ -64,9 +70,17 @@ public class PictureController {
 		// 设置上传的key
 		String key = IDUtils.genItemId() + lastName;
 		// 上传到远程服务器
-		SimpleUpload.vedioUpload(content, key);
+		//SimpleUpload.vedioUpload(content, key);
+		String filePath = AccountMgr.LOCAL_UPLOAD_PATH + key;
+		File file = new File(filePath);
+		try {
+			content.transferTo(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		SendMessUtil.sendData(jmsTemplate, vedioUpload, key);
 		// 设置返回的路径
-		String returPath  = qview_path + key ;
+		String returPath  = AccountMgr.qview_path + key ;
 		return ResultMap.build(200, "视频上传成功 !!"  ,returPath);
 	}
 	

@@ -21,6 +21,7 @@ import cn.com.qcc.common.JsonUtils;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.common.ResultMap;
+import cn.com.qcc.detailcommon.AccountMgr;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mapper.ArticledetailMapper;
 import cn.com.qcc.mapper.ArticletypeMapper;
@@ -611,6 +612,13 @@ public class TribeServiceImpl implements TribeService {
 		// 未支付状态
 		articledetail.setState(2);
 		articledetail.setUpdate_time(new Date());
+		
+		if (CheckDataUtil.checkNotEmpty(articledetail.getVideourl())) {
+			String videourl = articledetail.getVideourl().replace(AccountMgr.qview_path,
+					AccountMgr.qyunview_path);
+			articledetail.setVideourl(videourl);
+		}
+		
 		articledetailMapper.insertSelective(articledetail);
 		
 		// 返回插入的主键
@@ -1086,6 +1094,8 @@ public class TribeServiceImpl implements TribeService {
 		Articledetail articledetail = new Articledetail();
 		articledetail.setState(1);
 		articledetail.setArticledetailid(articledetailid);articledetail.setTopday(topday);
+		
+		
 		articledetailMapper.updateByPrimaryKeySelective(articledetail);
 		return ResultMap.build(200, "置顶成功");
 	}
@@ -1143,7 +1153,12 @@ public class TribeServiceImpl implements TribeService {
 		if (articledetail == null) {return ResultMap.build(400, "该物品不存在");}
 		if (!articledetail.getUserid().equals(userid)) {return ResultMap.build(400, "不能移除别的东西");}
 		articledetail.setState(3);//移除
+		
 		articledetailMapper.updateByPrimaryKeySelective(articledetail);
+		ArticleDetailCustomer delete = new ArticleDetailCustomer();
+		delete.setArticledetailid(articledetailid);
+		delete.setArticletypeid(articledetail.getArticletypeid());
+		tribeSolrDao.oneDetailDeleteFromSolr(delete);
 		return ResultMap.build(200, "移除成功");
 	}
 
@@ -1444,6 +1459,21 @@ public class TribeServiceImpl implements TribeService {
 	public int myfocusCount(Long userid) {
 		// TODO Auto-generated method stub
 		return tribeCustomerMapper.myfocusCount(userid);
+	}
+
+	@Override
+	public List<DetailCustomer> mydetails(Long userid, Integer type, PageQuery pagequery) {
+		int infoCount = tribeCustomerMapper.detailSearchToTribeCount(userid ,type);
+		pagequery.setPageParams(infoCount, pagequery.getPagesize(), pagequery.getCurrentpage());
+		List<DetailCustomer> detailList = tribeCustomerMapper.mydetails(userid ,
+				type,pagequery , null);
+		return detailList;
+	}
+
+	@Override
+	public DetailCustomer detailEditSearch(Long articledetailid) {
+		// TODO Auto-generated method stub
+		return tribeCustomerMapper.detailEditSearch(articledetailid);
 	}
 
 

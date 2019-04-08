@@ -861,6 +861,7 @@
 					LEFT JOIN articletype on articledetail.onetypeid = articletype.onetypeid
 					LEFT JOIN releasetable on releasetable.articledetailid = articledetail.articledetailid 
 					where articledetail.articletypeid = #{type} 
+					AND articledetail.state !=3
 					<if test="userid !=null"> and articledetail.userid = #{userid} </if>
 					<if test="detailid !=null"> and articledetail.articledetailid =#{detailid}</if>
 					GROUP BY articledetail.articledetailid
@@ -875,6 +876,7 @@
 						articledetail
 					where articledetail.articletypeid = #{type} 
 					and articledetail.userid = #{userid}
+					AND articledetail.state !=3
 	</select>
 	
 	
@@ -959,7 +961,7 @@
 		    LEFT JOIN releasetable on releasetable.articledetailid = articledetail.articledetailid
 			WHERE  articledetail.userid in
 			  (SELECT followUserId from fans where fans.userId = #{userid})
-			  And articledetail.state in (1)
+			  AND articledetail.state !=3
 		) ss
 						
 		ORDER BY ss.update_time desc 
@@ -1034,5 +1036,52 @@
 			#{item, jdbcType=VARCHAR}
 		</foreach>
 				
+	</select>
+	
+	
+	
+		<!-- 根据部落的ids查询部落信息 -->
+	<select id="detailEditSearch" resultType="cn.com.qcc.queryvo.DetailCustomer">
+			SELECT
+				articledetailid ,
+				IFNULL(picture,'')picture , 
+				title ,
+				articledetail.update_time ,
+				description ,
+				IFNULL(videourl,'') videourl,
+				articledetail.onetypeid ,
+				articledetail.articletypeid ,
+				articletype.typename
+			FROM
+				articledetail
+			INNER JOIN articletype ON articledetail.onetypeid = articletype.onetypeid
+			WHERE
+				articledetailid = #{articledetailid}
+	</select>
+	
+	
+	
+	
+	<select id="mydetails" resultType="cn.com.qcc.queryvo.DetailCustomer" >
+				SELECT
+					  articledetail.articledetailid detailid , 
+					  articledetail.title , 
+					  articledetail.picture onepicture ,
+					  IFNULL(MIN(releasetable.prices),'') prices ,
+					  '' pricestype , 
+                      articletype.typename apartmentname ,
+                      IFNULL(articledetail.videourl ,'')videourl
+					FROM
+						articledetail
+					LEFT JOIN articletype on articledetail.onetypeid = articletype.onetypeid
+					LEFT JOIN releasetable on releasetable.articledetailid = articledetail.articledetailid 
+					where articledetail.articletypeid = #{type} 
+					AND articledetail.state !=3
+					and articledetail.userid = #{userid} 
+					GROUP BY articledetail.articledetailid
+					ORDER BY articledetail.update_time desc 
+				<if test="pagequery !=null ">
+			        limit #{pagequery.pagestart} , #{pagequery.pagesize}
+	           </if>  
 	</select>
 </mapper>

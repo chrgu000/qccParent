@@ -1,19 +1,13 @@
 package cn.com.qcc.queryvo;
 
 import cn.com.qcc.common.CheckDataUtil;
+import cn.com.qcc.pojo.Articledetail;
 
 /**封装返回挂到部落 的 基本数据**/
-public class DetailCustomer {
+public class DetailCustomer extends Articledetail {
 	
 	
 	// 挂到部落--- > 图片  id  户型   articledetailid 类型id  价格  价格类型  
-	
-	// 详情id
-	private Long detailid;
-	
-	// 类型id
-	private Integer articletypeid ;
-	
 	// 面积
 	private String area;
 	
@@ -26,8 +20,6 @@ public class DetailCustomer {
 	// 价格单位
 	private String pricetype;
 	
-	// 如果标题是空  trading ---> title;
-	private String title;
 	
 	// 街道
 	private String trading;
@@ -42,6 +34,8 @@ public class DetailCustomer {
 	private String classification;
 	
 	
+	
+
 	public String getClassification() {
 		return classification;
 	}
@@ -50,13 +44,6 @@ public class DetailCustomer {
 		this.classification = classification;
 	}
 
-	public Integer getArticletypeid() {
-		return articletypeid;
-	}
-
-	public void setArticletypeid(Integer articletypeid) {
-		this.articletypeid = articletypeid;
-	}
 
 	public String getApartmentname() {
 		return apartmentname;
@@ -87,13 +74,6 @@ public class DetailCustomer {
 		this.onepicture = onepicture;
 	}
 
-	public Long getDetailid() {
-		return detailid;
-	}
-
-	public void setDetailid(Long detailid) {
-		this.detailid = detailid;
-	}
 
 	
 	
@@ -124,17 +104,6 @@ public class DetailCustomer {
 		this.pricetype = pricetype;
 	}
 
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		
-		if (CheckDataUtil.checkisEmpty(title)) 
-			{ title = trading;}
-		
-		this.title = title;
-	}
 
 	public Integer getProperty_id() {
 		return property_id;

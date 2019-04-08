@@ -36,6 +36,11 @@ public class SystemTaskTime {
 	public static final String build_xpxpicture = "0 30 4 * * ?";
 	
 	/**
+	 * 每天晚上  凌晨  2:30  执行 , 同步 小区 楼栋 房源的视频
+	 * **/
+	public static final String sync_vedio = "0 30 2 * * ?";
+	
+	/**
 	 * 每天晚上凌晨4
 	 * **/
 	public static final String every_day_04 = "0 0 4 * * ?";
@@ -47,7 +52,7 @@ public class SystemTaskTime {
 	public static final String addlucre = "0 0 1 * * ?";
 	
 	//每隔5秒钟执行一次  
-	public static final String fivesecond = "0/5 * * * * ? ";	
+	public static final String fivesecond = "0/50 * * * * ? ";	
 	
 	//每隔10分钟执行一次
 	public static final String minutes_10  = "10 0/10 * * * ? ";	

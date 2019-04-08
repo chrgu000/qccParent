@@ -202,4 +202,13 @@
 		<property name="destination" ref="userPayHouseAccount" />
 		<property name="messageListener" ref="userPayHouseAccountMess" />
 	</bean> 
+	
+	
+		<!-- 上传视频接收到模板消息   NO.23 上传视频接收到模板消息   -->
+	<bean id="vedioUploadMess" class="cn.com.qcc.tenement.mqmess.VedioUploadMess"/>
+	<bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="vedioUpload" />
+		<property name="messageListener" ref="vedioUploadMess" />
+	</bean> 
 </beans>

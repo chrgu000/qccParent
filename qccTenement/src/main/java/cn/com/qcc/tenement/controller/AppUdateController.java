@@ -8,12 +8,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Appversion;
 import cn.com.qcc.service.AppUpdatesService;
-import cn.com.qcc.service.BrowseService;
 
 /**app自动更新的controller**/
 @Controller

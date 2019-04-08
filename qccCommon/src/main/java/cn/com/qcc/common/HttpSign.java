@@ -36,12 +36,12 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.springframework.web.multipart.MultipartFile;
 
+import cn.com.qcc.detailcommon.AccountMgr;
+
 @SuppressWarnings("deprecation")
 public class HttpSign {
 
 	private final static String qnweb_path = "http://www.hadoop.zzw777.com/";
-	private final static String batchloadpath = "/root/cents/batchpicure/";
-	// private final static String batchloadpath = "D://";
 
 	@SuppressWarnings({ "static-access", "unchecked" })
 	public static boolean checkuserrealmessage(String realname, String idcard) {
@@ -237,7 +237,7 @@ public class HttpSign {
 				SimpleUpload.doUpload(first, key);
 				// 设置返回的路径
 				returnPath += qnweb_path + key;
-				uploadFile = new File(batchloadpath + key);
+				uploadFile = new File(AccountMgr.LOCAL_UPLOAD_PATH + key);
 				first.transferTo(uploadFile);
 			} else {
 				return ResultMap.build(400, "文件格式错误");
@@ -293,7 +293,7 @@ public class HttpSign {
 			Map<String, Object> resultMap = (Map<String, Object>) dataMap;
 			resultMap.put("firstPath", returnPath);
 			resultMap.put("secondPath", secondPath);
-			resultMap.put("filePath", batchloadpath + key);
+			resultMap.put("filePath", AccountMgr.LOCAL_UPLOAD_PATH + key);
 			System.out.println(resultMap);
 			message = (String) map.get("message");
 

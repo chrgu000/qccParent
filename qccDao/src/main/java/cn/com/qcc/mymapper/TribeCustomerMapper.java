@@ -150,6 +150,14 @@ public interface TribeCustomerMapper {
 	
 	/**根据部落的ids查询部落信息**/
 	List<Tribe> searchtribebyids( @Param("idsList")List<String> tribids);
+	
+	/**查询我的发布**/
+	List<DetailCustomer> mydetails( @Param("userid")Long userid, 
+			@Param("type")Integer type, 
+			@Param("pagequery")PageQuery pagequery, Object object);
+	
+	
+	DetailCustomer detailEditSearch(Long articledetailid);
 		
 	
 	

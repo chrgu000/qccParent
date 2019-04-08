@@ -32,8 +32,8 @@ public class BuilAddMess implements MessageListener{
 			// 拿到TEXT 需要休眠一会儿。等待数据库提交事务
 			Thread.sleep(500);
 			// 2同步索引库
-			List<BuildingCustomer> buil =  villageCustomerMapper.addbuildngtosolr(buildingid, null);
-			builSolrDao.AllBuildingToSolr(buil);
+			BuildingCustomer buil =  villageCustomerMapper.oneBuildToSolr(buildingid);
+			builSolrDao.oneBuildToSolr(buil);
 		} catch (Exception e) {
 			// 这里是发生未知异常
 			e.printStackTrace();

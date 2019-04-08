@@ -212,6 +212,12 @@ public interface TribeService {
 	/**查询我关注的**/
 	List<ArticleDetailCustomer> myfocus(Long userid, PageQuery pagequery ,Integer articletypeid);
 	int myfocusCount(Long userid);
+	
+	/**查询我的发布列表**/
+	List<DetailCustomer> mydetails(Long userid, Integer type, PageQuery pagequery);
+	
+	/**编辑查询**/
+	DetailCustomer detailEditSearch(Long articledetailid);
 
 	
 

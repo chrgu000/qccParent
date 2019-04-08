@@ -88,6 +88,33 @@ public class SimpleUpload {
 			}
 		}
 	}
+	
+	
+	
+	/**
+	 * 上传
+	 * 
+	 * @param filePath : 文件的路径
+	 * @param key  : 上传到七牛云后的名称
+	 * @param bucketName ： 上传空间
+	 */
+	@SuppressWarnings("unused")
+	public static void viedupload(String filePath, String key) {
+		try {
+			// 调用put方法上传
+			Response res = uploadManager.put(filePath, key, getUpToken(AccountMgr.VIDEO, key));
+			// 打印返回的信息
+		} catch (QiniuException e) {
+			Response r = e.response;
+			// 请求失败时打印的异常的信息
+			try {
+				// 响应的文本信息
+				System.out.println(r.bodyString());
+			} catch (QiniuException qe) {
+				// ignore
+			}
+		}
+	}
 
 	/**
 	 * 主函数：程序入口，测试功能

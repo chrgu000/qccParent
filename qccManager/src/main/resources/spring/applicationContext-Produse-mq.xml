@@ -150,4 +150,10 @@
 		<constructor-arg value="userPayHouseAccount" />
 	</bean>  
 	
+	
+		<!-- NO.23 上传视频发送模板消息 -->
+	<bean id="vedioUpload" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="vedioUpload" />
+	</bean>  
+	
 </beans>

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
+import cn.com.qcc.detailcommon.AccountMgr;
 import cn.com.qcc.pojo.Villagetrategy;
 import cn.com.qcc.queryvo.TrategyCustomer;
 import cn.com.qcc.service.TrategyService;
@@ -31,6 +32,11 @@ public class TrategyController {
 	
 	@RequestMapping("/add")
 	public ResultMap addHousestrategy(Villagetrategy trategy) {
+		if (CheckDataUtil.checkNotEmpty(trategy.getStrategyvedio())) {
+			String vedioUrl = trategy.getStrategyvedio().replace(AccountMgr.qview_path, 
+					AccountMgr.qyunview_path);
+			trategy.setStrategyvedio(vedioUrl);
+		}
 		return trategyService.addHousestrategy (trategy) ;
 	}
 	
@@ -42,6 +48,11 @@ public class TrategyController {
 	
 	@RequestMapping("/update")
 	public ResultMap update (Villagetrategy trategy) {
+		if (CheckDataUtil.checkNotEmpty(trategy.getStrategyvedio())) {
+			String vedioUrl = trategy.getStrategyvedio().replace(AccountMgr.qview_path, 
+					AccountMgr.qyunview_path);
+			trategy.setStrategyvedio(vedioUrl);
+		}
 		return trategyService.update (trategy) ;
 	}
 	

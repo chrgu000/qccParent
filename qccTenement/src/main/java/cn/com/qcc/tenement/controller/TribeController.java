@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
+import cn.com.qcc.detailcommon.AccountMgr;
 import cn.com.qcc.pojo.Articledetail;
 import cn.com.qcc.pojo.Articletype;
 import cn.com.qcc.pojo.Browse;
@@ -87,6 +88,36 @@ public class TribeController {
 		map.put("detailList",detailList);
 		return ResultMap.IS_200(map);
 	}
+	
+	
+	// 查询我的发布挂到鱼塘
+	@RequestMapping("/tribe/mydetails/{type}")
+	@ResponseBody
+	public ResultMap mydetails(Long userid ,@PathVariable Integer type,
+			@RequestParam(defaultValue="1") Integer currentpage , @RequestParam(defaultValue="8")Integer pagesize) {
+		PageQuery pagequery = new PageQuery();
+		pagequery.setCurrentpage(currentpage);
+		pagequery.setPagesize(pagesize);
+		List<DetailCustomer> detailList = tribeService.mydetails(userid , type , pagequery); 
+		Map<String, Object> map = new HashMap<>();
+		map.put("pagequery", pagequery);
+		map.put("detailList",detailList);
+		return ResultMap.IS_200(map);
+	}
+	
+	// 查询我的发布挂到鱼塘
+	@RequestMapping("/tribe/detailEditSearch")
+	@ResponseBody
+	public ResultMap detailEditSearch(Long articledetailid) {
+		DetailCustomer detail = tribeService.detailEditSearch(articledetailid);
+		return ResultMap.IS_200(detail);
+	}
+	
+	
+	
+	
+	
+	
 	
 	//搜索框根据name查询部落
 	@RequestMapping("/tribe/searchLike")
@@ -262,6 +293,13 @@ public class TribeController {
 	public ResultMap pushtribedetail(@PathVariable Integer type,  Articledetail articledetail,Long tribeid,
 		@RequestParam(defaultValue="")String codeids, @RequestParam(defaultValue="1")Integer count ,@RequestParam(defaultValue="0") Double prices,
 		Detaileaddress detaileaddress ) {
+		
+		if (CheckDataUtil.checkNotEmpty(articledetail.getVideourl())) {
+			String videourl = articledetail.getVideourl().replace(AccountMgr.qview_path,
+					AccountMgr.qyunview_path);
+			articledetail.setVideourl(videourl);
+		}
+		
 		if (CheckDataUtil.checkNotEmpty(tribeid)) 
 			{ articledetail.setTribeids(tribeid+"");}
 		ResultMap resultMap = tribeService.pushtribedetail(type,  articledetail, detaileaddress
@@ -526,6 +564,12 @@ public class TribeController {
 	@RequestMapping("/tribe/updatemyarticledetail")
 	@ResponseBody
 	public ResultMap updatemyarticledetail(Articledetail articledetail ,Detaileaddress detaileaddress) {
+		if (CheckDataUtil.checkNotEmpty(articledetail.getVideourl())) {
+			String videourl = articledetail.getVideourl().replace(AccountMgr.qview_path,
+					AccountMgr.qyunview_path);
+			articledetail.setVideourl(videourl);
+		}
+		
 		ResultMap resultMap =tribeService.updatemyarticledetail(articledetail ,detaileaddress);
 		return resultMap;
 	} 

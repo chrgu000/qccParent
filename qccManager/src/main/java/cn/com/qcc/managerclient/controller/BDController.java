@@ -39,12 +39,6 @@ public class BDController {
 	
 	@RequestMapping("/bdlogin/{type}")
 	public ResultMap login (String account , String word ,@PathVariable int type ) {
-		/** 					
-		account = "qbd10021";
-		type = 2 ;
-			 **/  		 
-		
-		
 		
 		// 通过手机号或者账号查询
 		BdManagerCustomer bdCustomer = bdService.searchBDByPhoneOrId(account);

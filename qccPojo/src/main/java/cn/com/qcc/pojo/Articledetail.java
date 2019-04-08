@@ -2,6 +2,8 @@ package cn.com.qcc.pojo;
 
 import java.util.Date;
 
+import cn.com.qcc.common.CheckDataUtil;
+
 public class Articledetail {
     /** 发布物品详情的id*/
     private Long articledetailid;

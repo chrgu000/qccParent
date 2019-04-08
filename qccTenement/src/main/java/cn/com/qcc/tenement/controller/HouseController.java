@@ -19,6 +19,7 @@ import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SendMessage;
+import cn.com.qcc.detailcommon.AccountMgr;
 import cn.com.qcc.pojo.Area;
 import cn.com.qcc.pojo.Browse;
 import cn.com.qcc.pojo.Building;
@@ -283,7 +284,14 @@ public class HouseController {
 	public ResultMap insertHouse(HousetagCustomer housetag, Building building, Price price, String apartmentname,
 			House house, String preparatory, String batchhouse, Area area,  Village village, Long userid,
 			String propertyname, String filePath, String brand) {
-
+		
+		if (CheckDataUtil.checkNotEmpty(house.getVideourl())) {
+			String videoUrl = house.getVideourl().replace(AccountMgr.qview_path,
+					AccountMgr.qyunview_path);
+			house.setVideourl(videoUrl);
+		}
+		
+		
 		// 设置房间类型的关联 -别墅 -二手房 - 写字楼等等
 		Integer propertyId = propertyService.selectIDbyPropertyName(propertyname);
 		if (CheckDataUtil.checkisEmpty(propertyId)) {
@@ -366,6 +374,13 @@ public class HouseController {
 	public ResultMap insertHouse2(HousetagCustomer housetag, Building building, Price price, String apartmentname,
 			String batchhouse ,	House house, Village village, Long userid, String propertyname, String filePath, String brand) {
 
+		if (CheckDataUtil.checkNotEmpty(house.getVideourl())) {
+			String videoUrl = house.getVideourl().replace(AccountMgr.qview_path,
+					AccountMgr.qyunview_path);
+			house.setVideourl(videoUrl);
+		}
+		
+		
 		if (userid == null) {
 			return ResultMap.build(400, "请登录后在发布房源！");
 		}

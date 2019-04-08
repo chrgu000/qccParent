@@ -14,6 +14,7 @@ import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SendMessage;
 import cn.com.qcc.common.SystemTaskTime;
+import cn.com.qcc.detailcommon.AccountMgr;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mapper.BuildingMapper;
 import cn.com.qcc.mapper.HouseMapper;
@@ -67,8 +68,6 @@ public class Systemtask {
 	@Autowired
 	BrowseService browseService;
 
-	/** 临时文件夹的路劲 **/
-	private static final String batchpicure_path = "/root/cents/batchpicure";
 
 	/*
 	 * 如果房源长时间没有更新，每个周五晚上3点10分自动下架
@@ -206,7 +205,8 @@ public class Systemtask {
 	// 每个周六晚上 2点10分删除临时文件夹里面的数据
 	@Scheduled(cron = SystemTaskTime.delete_uploadpic)
 	public void deleteupload_picture() {
-		File file = new File(batchpicure_path);
+		System.out.println("进入删除文件方法");
+		File file = new File(AccountMgr.LOCAL_UPLOAD_PATH);
 		File[] tempList = file.listFiles();
 		for (File f : tempList) { // 遍历File[]数组
 			if (!f.isDirectory()) {

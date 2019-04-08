@@ -10,4 +10,11 @@ public class AccountMgr {
 	public static final String return_path = "http://www.hadoop.zzw777.com/";
 
 	public static final String VIDEO = "video";
+	
+	/**本地临时上传目录的位置**/
+	public static final String LOCAL_UPLOAD_PATH = "/root/apache-tomcat-7.0.79/webapps/fileUpload/";
+	
+	public static final String qview_path ="https://www.zzw777.com/fileUpload/";
+	
+	public static final String qyunview_path ="http://www.video.zzw777.com/";
 }

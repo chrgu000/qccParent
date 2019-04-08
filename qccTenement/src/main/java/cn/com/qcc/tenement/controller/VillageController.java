@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
+import cn.com.qcc.detailcommon.AccountMgr;
 import cn.com.qcc.pojo.Browse;
 import cn.com.qcc.pojo.Building;
 import cn.com.qcc.pojo.Detaileaddress;
@@ -117,6 +118,13 @@ public class VillageController {
 	@RequestMapping("/comm/updateorsavecomm")
 	@ResponseBody
 	public ResultMap addorupdateCommunity(Village village, Detaileaddress detaileaddress) {
+		
+		if (CheckDataUtil.checkNotEmpty(village.getVideourl())) {
+			String viedoUrl = village.getVideourl().replace(AccountMgr.qview_path,
+					AccountMgr.qyunview_path);
+			village.setVideourl(viedoUrl);
+		}
+		
 		ResultMap result = villageService.saveVillage(village, detaileaddress);
 		return result;
 	}
@@ -126,7 +134,11 @@ public class VillageController {
 	@ResponseBody
 	public ResultMap updateorsavebuild(Village village, Building building, 
 			Detaileaddress detaileaddress,String brand ,Long landuserid) {
-		System.out.println("发布楼栋======编辑收到 房东ID "  + landuserid);
+		if (CheckDataUtil.checkNotEmpty(building.getVideourl())) {
+			String viedoUrl = building.getVideourl().replace(AccountMgr.qview_path,
+					AccountMgr.qyunview_path);
+			building.setVideourl(viedoUrl);
+		}
 		ResultMap result = villageService.savebuild(village, building, detaileaddress,brand  ,landuserid);
 		return result;
 	}

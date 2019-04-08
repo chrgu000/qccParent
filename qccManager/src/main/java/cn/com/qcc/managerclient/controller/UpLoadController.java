@@ -26,6 +26,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SimpleUpload;
+import cn.com.qcc.detailcommon.AccountMgr;
 import cn.com.qcc.mapper.MycentMapper;
 import cn.com.qcc.pojo.Mycent;
 
@@ -36,7 +37,6 @@ public class UpLoadController {
 	@Autowired
 	MycentMapper mycentMapper;
 	@Autowired JmsTemplate jmsTemplate;
-	private final static String batchloadpath = "/root/cents/batchpicure/";
 	private final static String qnweb_path = "http://www.hadoop.zzw777.com/";
 	/*
 	 * 上传身份证之内的审核
@@ -115,7 +115,7 @@ public class UpLoadController {
 				SimpleUpload.doUpload(orcPicture, key);
 				// 设置返回的路径
 				returnPath += qnweb_path + key;
-				uploadFile = new File(batchloadpath + key);
+				uploadFile = new File(AccountMgr.LOCAL_UPLOAD_PATH + key);
 				orcPicture.transferTo(uploadFile);
 				
 				System.out.println("七牛云上传路径:" + returnPath);
