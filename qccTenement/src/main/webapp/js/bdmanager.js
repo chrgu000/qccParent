@@ -101,7 +101,7 @@ $(function () {
 			method : 'post',
 			url : '/Tenement/bd/save',
 			success : function(data) {
-				alert(data.msg);
+				data = checkaccessexist(data);
 				$('#bd_add_update').modal('hide');
 				listbd ();
 			}
@@ -138,6 +138,7 @@ function changestate(bdid) {
 		method : 'post',
 		url : '/Tenement/bd/changeState',
 		success : function(data) {
+			data = checkaccessexist(data);
 			listbd ();
 		}
 	});
@@ -149,6 +150,7 @@ function changeEditstate(bdid) {
 		method : 'post',
 		url : '/Tenement/bd/changeEditstate',
 		success : function(data) {
+			data = checkaccessexist(data);
 			listbd ();
 		}
 	});

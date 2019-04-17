@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.jpay.ext.kit.HttpKit;
 import com.jpay.ext.kit.PaymentKit;
@@ -30,11 +31,13 @@ import cn.com.qcc.service.InteService;
 import cn.com.qcc.service.ScanuserService;
 import cn.com.qcc.service.UserService;
 import cn.com.qcc.service.VipCountService;
+import cn.com.qcc.service.WeChatMessageService;
 import net.sf.json.JSONObject;
 import weixin.util.MD5Util;
 import weixin.util.ReplyTextMessage;
 import weixin.util.RequestTextMessage;
 import weixin.util.SignUtil;
+import weixin.util.WeChatMessage;
 
 @Controller
 public class CrazyServlet extends HttpServlet {
@@ -49,8 +52,22 @@ public class CrazyServlet extends HttpServlet {
 	VipCountService vipCountService;
 	@Autowired
 	VipcountMapper vipcountMapper;
+	@Autowired
+	WeChatMessageService weChatMessageService;
 
 	private static final long serialVersionUID = 5021188348833856475L;
+	
+	
+	@RequestMapping("/weixin/mess/home")
+	@ResponseBody
+	public String home(WeChatMessage weChatMessage)
+			 {
+		System.out.println("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{");
+		String ss =  weChatMessageService.checkSignature(weChatMessage);
+		
+		System.out.println(ss);
+		return ss;
+	}
 
 	@RequestMapping("/crazyservlet")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)

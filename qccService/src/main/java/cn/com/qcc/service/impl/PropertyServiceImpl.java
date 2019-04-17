@@ -49,7 +49,6 @@ public class PropertyServiceImpl implements PropertyService {
 		PropertyExample.Criteria criteria = example.createCriteria();
 		if (propertyname != null && !"".equals(propertyname)) {
 			criteria.andPropertynameEqualTo(propertyname);
-			// criteria.andPropertytypeEqualTo("租");
 		}
 		List<Property> list = propertyMapper.selectByExample(example);
 		if (!list.isEmpty() && list.size() > 0) {

@@ -41,8 +41,6 @@ public class BuilUpdateMess implements MessageListener {
 			// 清空楼栋缓存
 			jedisClient.del(RedisUtil.BUIL_FIRST_KEY + buildingid);
 			
-			//同步小区小区索引库
-			villageService.onevillagetosolr(buildingCustomer.getVillageid());
 		} catch (JMSException e) {
 			e.printStackTrace();
 		}

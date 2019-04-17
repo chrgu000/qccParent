@@ -644,6 +644,66 @@ public class BargainExample {
             addCriterion("endtime not between", value1, value2, "endtime");
             return (Criteria) this;
         }
+
+        public Criteria andDaycountIsNull() {
+            addCriterion("daycount is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDaycountIsNotNull() {
+            addCriterion("daycount is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDaycountEqualTo(Integer value) {
+            addCriterion("daycount =", value, "daycount");
+            return (Criteria) this;
+        }
+
+        public Criteria andDaycountNotEqualTo(Integer value) {
+            addCriterion("daycount <>", value, "daycount");
+            return (Criteria) this;
+        }
+
+        public Criteria andDaycountGreaterThan(Integer value) {
+            addCriterion("daycount >", value, "daycount");
+            return (Criteria) this;
+        }
+
+        public Criteria andDaycountGreaterThanOrEqualTo(Integer value) {
+            addCriterion("daycount >=", value, "daycount");
+            return (Criteria) this;
+        }
+
+        public Criteria andDaycountLessThan(Integer value) {
+            addCriterion("daycount <", value, "daycount");
+            return (Criteria) this;
+        }
+
+        public Criteria andDaycountLessThanOrEqualTo(Integer value) {
+            addCriterion("daycount <=", value, "daycount");
+            return (Criteria) this;
+        }
+
+        public Criteria andDaycountIn(List<Integer> values) {
+            addCriterion("daycount in", values, "daycount");
+            return (Criteria) this;
+        }
+
+        public Criteria andDaycountNotIn(List<Integer> values) {
+            addCriterion("daycount not in", values, "daycount");
+            return (Criteria) this;
+        }
+
+        public Criteria andDaycountBetween(Integer value1, Integer value2) {
+            addCriterion("daycount between", value1, value2, "daycount");
+            return (Criteria) this;
+        }
+
+        public Criteria andDaycountNotBetween(Integer value1, Integer value2) {
+            addCriterion("daycount not between", value1, value2, "daycount");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

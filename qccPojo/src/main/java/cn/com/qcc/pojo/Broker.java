@@ -27,6 +27,9 @@ public class Broker {
     /** 入驻时间*/
     private Date update_time;
 
+    /** 0-专职 1-兼职*/
+    private Integer type;
+
     public Long getUserid() {
         return userid;
     }
@@ -89,5 +92,13 @@ public class Broker {
 
     public void setUpdate_time(Date update_time) {
         this.update_time = update_time;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

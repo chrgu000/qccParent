@@ -3,6 +3,7 @@ package cn.com.qcc.mymapper;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
+import cn.com.qcc.pojo.Houseorder;
 import cn.com.qcc.pojo.Usercent;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HouseRoomCustomer;
@@ -49,6 +50,12 @@ public interface HouseRoomCustomerMapper {
 	
 	/**根据用户id查询楼栋id的集合**/
 	String[] searchBuildingids(  @Param ("inUserIds") String inUserIds);
+	
+	
+	Houseorder getHouseOrderIsPay( @Param ("houseid")  Long houseid, @Param ("userid")  Long userid);
+	
+	/**查询租金**/
+	double searchCentPay(@Param ("ids")String payIds);
 	
 	
 

@@ -27,4 +27,5 @@ public interface UsercentMapper {
     int updateByPrimaryKeySelective(Usercent record);
 
     int updateByPrimaryKey(Usercent record);
+
 }

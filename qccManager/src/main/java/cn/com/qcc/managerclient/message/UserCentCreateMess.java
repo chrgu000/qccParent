@@ -7,11 +7,15 @@ import javax.jms.TextMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import WangYiUtil.WangYiCommon;
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.SendMessage;
 import cn.com.qcc.mapper.HouseMapper;
+import cn.com.qcc.mymapper.HouseCustomerMapper;
 import cn.com.qcc.mymapper.HouseRoomCustomerMapper;
 import cn.com.qcc.pojo.House;
+import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.UserCentCustomer;
+import cn.com.qcc.service.solrdao.HouseSolrDao;
 
 
 /**
@@ -27,8 +31,13 @@ public class UserCentCreateMess implements MessageListener {
 	HouseMapper houseMapper;
 	@Autowired
 	HouseRoomCustomerMapper houseRoomCustomerMapper;
+	@Autowired
+	HouseCustomerMapper houseCustomerMapper;
+	@Autowired
+	HouseSolrDao houseSolrDao;
 
 	public void onMessage(Message message) {
+		
 		try {
 			TextMessage textMessage = (TextMessage)message;
 			Long userCentId = Long.valueOf(  (String)textMessage.getText() );
@@ -37,10 +46,10 @@ public class UserCentCreateMess implements MessageListener {
 			Thread.sleep(5000);
 			
 			UserCentCustomer userCentCustomer =  houseRoomCustomerMapper.searchCentHouseMess(userCentId);
-			
+			Long houseid = userCentCustomer.getHouseid();
 			// 1-设置房源为已经租的状态
 			House update = new House();
-			update.setHouseid(userCentCustomer.getHouseid());
+			update.setHouseid(houseid);
 			update.setHousestatus("2");
 			houseMapper.updateByPrimaryKeySelective(update);
 			
@@ -50,9 +59,16 @@ public class UserCentCreateMess implements MessageListener {
 			// 小区  +楼栋 +房号
 			String content = userCentCustomer.getVillagename() +"-" + userCentCustomer.getBuilding()
 			+ "-" + userCentCustomer.getHouse_number() + "(号房)";
-			
 			//发送通知类短息
 			SendMessage.sendNoticMess(content, phone, modelId);
+			
+			
+			// 3,这里还需要同步索引库
+			HouseCustomer houseCustomer = houseCustomerMapper.searchoneHouseToSolr(houseid);
+			if (CheckDataUtil.checkNotEmpty(houseCustomer)) {
+				houseSolrDao.AddOneHouseToSolr(houseCustomer);
+			}
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();

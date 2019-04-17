@@ -3,6 +3,11 @@ package cn.com.qcc.common;
 
 public class PayCommonConfig {
 	
+	/**本地临时上传目录的位置**/
+	public static final String LOCAL_UPLOAD_PATH = "/root/apache-tomcat-7.0.79/webapps/fileUpload/";
+	/**测试环境临时文件保存的路径**/
+	//public static final String LOCAL_UPLOAD_PATH = "d://hello/";
+	
 	/**七彩巢房东端app 对应的 APPID**/
 	public static final String LAND_APPID = "wx5721254e1aeb368f";
 	
@@ -153,4 +158,16 @@ public class PayCommonConfig {
 	
 	/**交房租支付成功回调**/
 	public static final String housepaySuccess = "https://www.zzw777.com/Tenement/housepay/success";
+	
+	
+	/**七彩巢 小程序支付成功的模板id**/
+	public static final String QCC_PAY_SUCCESS_TEMID = "F63LKrBZJaOtsasW9WQNlNKe_MY3IJdapUudCa0FmaM";
+	
+	/**房源预定成功 通知管理员处理**/
+	public static final String HOUSE_YUDING_SUCCESS_NOTIC_MANAGER = "9634415";
+	/**房源预定成功 通知租户**/
+	public static final String HOUSE_YUDING_SUCCESS_NOTIC_USER = "9714561";
+	
+	/**七牛云返回的域名**/
+	public final static String HADOOP_WEB_RETURN_PAHT = "http://www.hadoop.zzw777.com/";
 }

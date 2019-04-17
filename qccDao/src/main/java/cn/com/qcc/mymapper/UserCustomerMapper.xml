@@ -1102,6 +1102,9 @@
 	<!-- 查询我的收益列表 -->
 	<select id="mylurnce" resultType="cn.com.qcc.pojo.Lucre" parameterType="cn.com.qcc.queryvo.UserVo">
 		SELECT * from lucre where lucre.userid = #{userid} 
+		<if test="type !=null ">
+			AND lucre.type = #{type}
+		</if>
 		
 		ORDER BY lucre.update_time desc 
 		<if test="pagequery !=null ">
@@ -1110,6 +1113,9 @@
 	</select>
 	<select id="mylurnceCount" resultType="integer" parameterType="cn.com.qcc.queryvo.UserVo">
 		SELECT count(1) from lucre where lucre.userid = #{userid}  
+		<if test="type !=null ">
+			AND lucre.type = #{type}
+		</if>
 		
 	</select>
 	

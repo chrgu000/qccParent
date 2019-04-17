@@ -23,7 +23,7 @@ public interface HouseRoomService {
 	 * 进行退房操作
 	 * @param houseid  : houseid
 	 **/
-	ResultMap roomout(Long houseid);
+	ResultMap roomout(Long houseid , Long userid);
 	
 	/**
 	 * 根据房源ID 和userid 发起退房操作 退房结账
@@ -45,7 +45,7 @@ public interface HouseRoomService {
 	 * @param islinecent  :yes 表示线上合同
 	 * @param othermore :更多合同补充
 	 **/
-	public ResultMap usercent(Usercent usercent, Mycent mycent, HttpServletRequest request, String othermore,
+	public ResultMap createusercent(Usercent usercent, Mycent mycent, HttpServletRequest request, String othermore,
 			String payid, String paycentid, String pricestype, String othermoreid1, String othermoreid2,
 			String islinecent);
 	

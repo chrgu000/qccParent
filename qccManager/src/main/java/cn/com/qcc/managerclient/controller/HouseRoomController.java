@@ -79,7 +79,7 @@ public class HouseRoomController {
 	public ResultMap usercent(Usercent usercent,Mycent mycent,HttpServletRequest request,
 			String othermore,String payid,String paycentid,String othermoreid1,String othermoreid2,
 		String pricestype,String islinecent) {
-		ResultMap resultMap = houseRoomService.usercent(usercent, mycent, request, othermore,  payid, paycentid, pricestype,othermoreid1,othermoreid2,islinecent);
+		ResultMap resultMap = houseRoomService.createusercent(usercent, mycent, request, othermore,  payid, paycentid, pricestype,othermoreid1,othermoreid2,islinecent);
 		return resultMap;
 	}
 	
@@ -170,8 +170,8 @@ public class HouseRoomController {
 	//进行退房
 	@RequestMapping ("/roomout")
 	@ResponseBody
-	public ResultMap roomout (Long houseid) {
-		ResultMap resultMap = houseRoomService.roomout(houseid);
+	public ResultMap roomout (Long houseid ,Long userid) {
+		ResultMap resultMap = houseRoomService.roomout(houseid , userid);
 		return resultMap;
 	}
 

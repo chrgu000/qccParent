@@ -21,6 +21,7 @@ import cn.com.qcc.mapper.BrandMapper;
 import cn.com.qcc.mapper.BuildingMapper;
 import cn.com.qcc.mapper.BuildinglandlordMapper;
 import cn.com.qcc.mapper.CommoninteMapper;
+import cn.com.qcc.mapper.DefaultpercentMapper;
 import cn.com.qcc.mapper.HistoryexcleMapper;
 import cn.com.qcc.mapper.HouseMapper;
 import cn.com.qcc.mapper.LandlordManagerMapper;
@@ -42,6 +43,7 @@ import cn.com.qcc.pojo.Building;
 import cn.com.qcc.pojo.BuildingExample;
 import cn.com.qcc.pojo.BuildinglandlordExample;
 import cn.com.qcc.pojo.Commoninte;
+import cn.com.qcc.pojo.Defaultpercent;
 import cn.com.qcc.pojo.Historyexcle;
 import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.pojo.LandlordManagerExample;
@@ -88,6 +90,7 @@ public class AccessServiceImpl implements AccessService {
 	@Autowired HttpServletRequest request;
 	@Autowired LandlordManagerMapper landlordManagerMapper;
 	@Autowired BuildinglandlordMapper buildinglandlordMapper;
+	@Autowired DefaultpercentMapper defaultpercentMapper;
 	/**获取所有权限的集合
 	 * @param currentpage : 分页参数当前页面
 	 * @param pagesize    : 每页查询的数量
@@ -685,11 +688,11 @@ public class AccessServiceImpl implements AccessService {
 					String[]picture = detail.getPicture().split(",");
 					for (int i=0;i<picture.length;i++) {
 						// 第一步把图片 下载到本地
-						String singelname=AccountMgr.return_path +  IDUtils.onepicName(picture[i]);
-						String downpath = SimpleUpload.downLoad(singelname);
+						String singelname=AccountMgr.return_path +  IDUtils.getFileOrgName(picture[i]);
+						String downpath = SimpleUpload.loadFileByFileUrl(singelname);
 						// 加水印
 						File file = new File(downpath);
-						String tarImgPath = IDUtils.onepicName(picture[i]);
+						String tarImgPath = IDUtils.getFileOrgName(picture[i]);
 						String shuiyinpath = WaterMarkUtils.addWaterMark(file, tarImgPath);
 						// 移除七牛云的照片
 						SimpleUpload.deleteimage(picture[i]);
@@ -796,6 +799,23 @@ public class AccessServiceImpl implements AccessService {
 		criteria2.andLandlordidEqualTo(landuserid);
 		buildinglandlordMapper.deleteByExample(example2);
 		return ResultMap.IS_200();
+	}
+
+	@Override
+	public ResultMap defaultPercentList() {
+		// TODO Auto-generated method stub
+		return ResultMap.IS_200(defaultpercentMapper.selectByExample(null));
+	}
+
+	@Override
+	public ResultMap onedefaultPercent(int id) {
+		// TODO Auto-generated method stub
+		return ResultMap.IS_200(defaultpercentMapper.selectByPrimaryKey(id));
+	}
+
+	@Override
+	public void updatefaultPercent(Defaultpercent defaultPercent) {
+		defaultpercentMapper.updateByPrimaryKeySelective(defaultPercent);
 	}
 
 

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import WangYiUtil.WangYiUtil;
 import cn.com.qcc.common.CheckDataUtil;
+import cn.com.qcc.common.DefaultPercent;
 import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
@@ -28,6 +29,7 @@ import cn.com.qcc.detailcommon.Sha1;
 import cn.com.qcc.pojo.Access;
 import cn.com.qcc.pojo.Bdmanager;
 import cn.com.qcc.pojo.Commoninte;
+import cn.com.qcc.pojo.Defaultpercent;
 import cn.com.qcc.pojo.Historyexcle;
 import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.pojo.Percent;
@@ -1252,9 +1254,41 @@ public class BackController{
 	@RequestMapping("/back/deletelandlord")
 	@ResponseBody
 	public ResultMap deletelandlord (Long landuserid) {
-		
 		return accessService.deletelandlord(landuserid);
 	}
+	
+	
+	
+	/**  查询所有房东金币百分比 **/
+	@RequestMapping("/back/defaultPercentList")
+	@ResponseBody
+	public ResultMap defaultPercentList ( ) {
+		return accessService.defaultPercentList();
+	}
+	
+	
+	/**  查询所有房东金币百分比 **/
+	@RequestMapping("/back/onedefaultPercent")
+	@ResponseBody
+	public ResultMap onedefaultPercent (int id ) {
+		return accessService.onedefaultPercent(id);
+	}
+	
+	
+	/**  查询所有房东金币百分比 **/
+	@RequestMapping("/back/updatefaultPercent")
+	@ResponseBody
+	public ResultMap updatefaultPercent (Defaultpercent defaultPercent) {
+		
+		if (defaultPercent.getCentnum() > 1
+				|| defaultPercent.getCentnum() < 0) {
+			return ResultMap.build(400, "必须在 0 -  1  之间");
+		}
+		
+		 accessService.updatefaultPercent(defaultPercent);
+		 return ResultMap.IS_200();
+	}
+	
 	
 	
     

@@ -4,6 +4,7 @@ import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Access;
 import cn.com.qcc.pojo.Commoninte;
+import cn.com.qcc.pojo.Defaultpercent;
 import cn.com.qcc.pojo.Historyexcle;
 import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.pojo.Percent;
@@ -282,6 +283,15 @@ public interface AccessService {
 
 
 	ResultMap deletelandlord(Long landuserid);
+
+
+	ResultMap defaultPercentList();
+
+
+	ResultMap onedefaultPercent(int id);
+
+
+	void updatefaultPercent(Defaultpercent defaultPercent);
 
 	
 	

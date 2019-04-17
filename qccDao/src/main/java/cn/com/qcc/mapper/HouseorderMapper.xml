@@ -18,6 +18,9 @@
     <result column="daycount" property="daycount" jdbcType="INTEGER" />
     <result column="ordertime" property="ordertime" jdbcType="TIMESTAMP" />
     <result column="endtime" property="endtime" jdbcType="TIMESTAMP" />
+    <result column="brokeruserid" property="brokeruserid" jdbcType="BIGINT" />
+    <result column="centpercentnum" property="centpercentnum" jdbcType="DOUBLE" />
+    <result column="landpercentnum" property="landpercentnum" jdbcType="DOUBLE" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -79,7 +82,8 @@
   </sql>
   <sql id="Base_Column_List" >
     houseorderid, barginid, userid, houseid, reservations, reservationstel, mesage, prices, 
-    paystate, refundmess, weixinorder, buystate, sallstate, daycount, ordertime, endtime
+    paystate, refundmess, weixinorder, buystate, sallstate, daycount, ordertime, endtime, 
+    brokeruserid, centpercentnum, landpercentnum
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.HouseorderExample" >
     select
@@ -121,13 +125,15 @@
       mesage, prices, paystate, 
       refundmess, weixinorder, buystate, 
       sallstate, daycount, ordertime, 
-      endtime)
+      endtime, brokeruserid, centpercentnum, 
+      landpercentnum)
     values (#{houseorderid,jdbcType=BIGINT}, #{barginid,jdbcType=BIGINT}, #{userid,jdbcType=BIGINT}, 
       #{houseid,jdbcType=BIGINT}, #{reservations,jdbcType=VARCHAR}, #{reservationstel,jdbcType=VARCHAR}, 
       #{mesage,jdbcType=VARCHAR}, #{prices,jdbcType=DOUBLE}, #{paystate,jdbcType=INTEGER}, 
       #{refundmess,jdbcType=VARCHAR}, #{weixinorder,jdbcType=VARCHAR}, #{buystate,jdbcType=INTEGER}, 
       #{sallstate,jdbcType=INTEGER}, #{daycount,jdbcType=INTEGER}, #{ordertime,jdbcType=TIMESTAMP}, 
-      #{endtime,jdbcType=TIMESTAMP})
+      #{endtime,jdbcType=TIMESTAMP}, #{brokeruserid,jdbcType=BIGINT}, #{centpercentnum,jdbcType=DOUBLE}, 
+      #{landpercentnum,jdbcType=DOUBLE})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Houseorder" >
   
@@ -184,6 +190,15 @@
       <if test="endtime != null" >
         endtime,
       </if>
+      <if test="brokeruserid != null" >
+        brokeruserid,
+      </if>
+      <if test="centpercentnum != null" >
+        centpercentnum,
+      </if>
+      <if test="landpercentnum != null" >
+        landpercentnum,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="houseorderid != null" >
@@ -233,6 +248,15 @@
       </if>
       <if test="endtime != null" >
         #{endtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="brokeruserid != null" >
+        #{brokeruserid,jdbcType=BIGINT},
+      </if>
+      <if test="centpercentnum != null" >
+        #{centpercentnum,jdbcType=DOUBLE},
+      </if>
+      <if test="landpercentnum != null" >
+        #{landpercentnum,jdbcType=DOUBLE},
       </if>
     </trim>
   </insert>
@@ -293,6 +317,15 @@
       <if test="record.endtime != null" >
         endtime = #{record.endtime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.brokeruserid != null" >
+        brokeruserid = #{record.brokeruserid,jdbcType=BIGINT},
+      </if>
+      <if test="record.centpercentnum != null" >
+        centpercentnum = #{record.centpercentnum,jdbcType=DOUBLE},
+      </if>
+      <if test="record.landpercentnum != null" >
+        landpercentnum = #{record.landpercentnum,jdbcType=DOUBLE},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -315,7 +348,10 @@
       sallstate = #{record.sallstate,jdbcType=INTEGER},
       daycount = #{record.daycount,jdbcType=INTEGER},
       ordertime = #{record.ordertime,jdbcType=TIMESTAMP},
-      endtime = #{record.endtime,jdbcType=TIMESTAMP}
+      endtime = #{record.endtime,jdbcType=TIMESTAMP},
+      brokeruserid = #{record.brokeruserid,jdbcType=BIGINT},
+      centpercentnum = #{record.centpercentnum,jdbcType=DOUBLE},
+      landpercentnum = #{record.landpercentnum,jdbcType=DOUBLE}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -368,6 +404,15 @@
       <if test="endtime != null" >
         endtime = #{endtime,jdbcType=TIMESTAMP},
       </if>
+      <if test="brokeruserid != null" >
+        brokeruserid = #{brokeruserid,jdbcType=BIGINT},
+      </if>
+      <if test="centpercentnum != null" >
+        centpercentnum = #{centpercentnum,jdbcType=DOUBLE},
+      </if>
+      <if test="landpercentnum != null" >
+        landpercentnum = #{landpercentnum,jdbcType=DOUBLE},
+      </if>
     </set>
     where houseorderid = #{houseorderid,jdbcType=BIGINT}
   </update>
@@ -387,7 +432,10 @@
       sallstate = #{sallstate,jdbcType=INTEGER},
       daycount = #{daycount,jdbcType=INTEGER},
       ordertime = #{ordertime,jdbcType=TIMESTAMP},
-      endtime = #{endtime,jdbcType=TIMESTAMP}
+      endtime = #{endtime,jdbcType=TIMESTAMP},
+      brokeruserid = #{brokeruserid,jdbcType=BIGINT},
+      centpercentnum = #{centpercentnum,jdbcType=DOUBLE},
+      landpercentnum = #{landpercentnum,jdbcType=DOUBLE}
     where houseorderid = #{houseorderid,jdbcType=BIGINT}
   </update>
 </mapper>

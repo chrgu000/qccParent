@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.jms.Destination;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import cn.com.qcc.common.JsonUtils;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.common.ResultMap;
-import cn.com.qcc.common.SendMessage;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mapper.ApartmentMapper;
 import cn.com.qcc.mapper.BargainMapper;
@@ -104,12 +102,12 @@ public class HouseServiceImpl implements HouseService {
 	@Autowired private  BrandMapper brandMapper;
 	@Autowired private  HousetagMapper housetagMapper;
 	@Autowired private  HouseorderMapper houseorderMapper;
-	@Autowired private  HttpServletRequest request;
 	@Autowired private  PreparatoryMapper preparatoryMapper;
 	@Resource  Destination houseAddOrUpdate;
 	@Resource  Destination houseAddBatch;
 	@Resource  Destination updateHouseByBuildingid;
 	@Resource  Destination updateHousestates;
+	@Resource  Destination houseyudingSuccess;
 	@Resource  Destination houseSaleAddOrUpdate;
 	@Resource  Destination houseSearch;
 	@Autowired JmsTemplate jmsTemplate;
@@ -1399,6 +1397,7 @@ public class HouseServiceImpl implements HouseService {
 	 * 根据预订信息 下预订单
 	 * **/ 
 	public ResultMap gethouseorderid(Houseorder houseorder) {
+		
 		// 第一步先查询房源的状态 [必须是可租的房子]
 		House house = houseMapper.selectByPrimaryKey(houseorder.getHouseid());
 		if (CheckDataUtil.checkisEmpty(house)
@@ -1409,7 +1408,7 @@ public class HouseServiceImpl implements HouseService {
 		
 		
 		// 第二步判断房子是否正常砍价中 [没有在或者砍价活动结束]
-		Bargain bargain = houseCustomerMapper.getNewBargin(houseorder.getHouseid() , 1);
+		Bargain bargain = houseCustomerMapper.getNewBargin(houseorder.getHouseid() , 1 , null);
 		if (CheckDataUtil.checkNotEmpty(bargain)) {
 			// 判断当前时间和截止时间的差距
 			Long current = new Date().getTime()-1000*60*10;
@@ -1421,6 +1420,24 @@ public class HouseServiceImpl implements HouseService {
 				}
 			}
 		}
+		
+		double centpercentnum = 0 ;
+		double landpercentnum = 0 ;
+		int daycount = 0 ;
+		Long preparatoryid = houseorder.getPreparatoryid();
+		if (CheckDataUtil.checkNotEmpty(preparatoryid)) {
+			Preparatory prepar = preparatoryMapper.selectByPrimaryKey(preparatoryid);
+			if (CheckDataUtil.checkNotEmpty(prepar)) {
+				centpercentnum =prepar.getCentpercentnum();
+				landpercentnum = prepar.getLandpercentnum();
+				daycount = prepar.getDaycount();
+			}
+		}
+		
+		houseorder.setCentpercentnum(centpercentnum);
+		houseorder.setLandpercentnum(landpercentnum);
+		houseorder.setDaycount(daycount);
+		
 		
 		// 如果有订单ID
 		if (CheckDataUtil.checkNotEmpty(houseorder.getHouseorderid())) {
@@ -1436,7 +1453,7 @@ public class HouseServiceImpl implements HouseService {
 		criteria.andHouseidEqualTo(houseorder.getHouseid());
 		criteria.andUseridEqualTo(houseorder.getUserid());
 		criteria.andPaystateEqualTo(2);
-		criteria.andBarginidIsNull();
+		criteria.andDaycountEqualTo(daycount);
 		List<Houseorder> orders = houseorderMapper.selectByExample(example);
 		if (!orders.isEmpty() && orders.size() > 0) {
 			// 这里表示用户点击的还是同一个房源需要做修改操作
@@ -1445,6 +1462,12 @@ public class HouseServiceImpl implements HouseService {
 			search.setReservations(houseorder.getReservations());
 			search.setReservationstel(houseorder.getReservationstel());
 			search.setPrices(houseorder.getPrices());
+			if (CheckDataUtil.checkNotEmpty(houseorder.getBrokeruserid())) {
+				search.setBrokeruserid(houseorder.getBrokeruserid());
+			}
+			search.setCentpercentnum(centpercentnum);
+			search.setLandpercentnum(landpercentnum);
+			search.setEndtime(houseorder.getEndtime());
 			Long current = new Date().getTime();
 			Long pass = search.getOrdertime().getTime();
 			if (current - pass >= 3600000) {
@@ -1469,10 +1492,15 @@ public class HouseServiceImpl implements HouseService {
 	 * @param total_amount : 总金额
 	 * @param weixinorder : 微信商户订单号
 	 * **/
-	public String houseyudingsuccess(String houseorderid, String total_amount, String weixinorder) {
+	public String houseyudingsuccess( String total_amount, String out_trade_no) {
+		
+		String jsonData = jedisClient.get(RedisUtil.ONLINE_PAY_ORDER + out_trade_no);
+		String houseorderid = jsonData.split("_")[1];
+		// "cz_" + houseorderid +"_" + openid + "_" + formid+"_"+type; ;
+		
+		
 		// TODO Auto-generated method stub
-		Houseorder search = //new HouseOrderCustomer();
-				houseorderMapper.selectByPrimaryKey(Long.valueOf(houseorderid));
+		Houseorder search = houseorderMapper.selectByPrimaryKey(Long.valueOf(houseorderid));
 		// 设置为支付成功
 		search.setPaystate(1);
 		// 设置成交金额
@@ -1480,21 +1508,15 @@ public class HouseServiceImpl implements HouseService {
 		// 追踪订单时候
 		search.setOrdertime(new Date());
 		// 设置商户订单号。退款时候需要用到
-		search.setWeixinorder(weixinorder);
+		search.setWeixinorder(out_trade_no);
 		houseorderMapper.updateByPrimaryKeySelective(search);
 
-		// 发送短信给租客提醒预定成功
-		SendMessage.sendHouseOrder(search.getReservationstel(), request);
-		// 发送短信给房东提醒有人预定
-		
-		// 发送公众号模板消息
 		
 
-		// 设置房子为已经预定状态
-		House updatehouse = new House();
-		updatehouse.setHousestatus("6");
-		updatehouse.setHouseid(search.getHouseid());
-		houseMapper.updateByPrimaryKeySelective(updatehouse);
+		
+		
+		SendMessUtil.sendData(jmsTemplate, houseyudingSuccess, jsonData);
+		
 		return "success";
 	}
 

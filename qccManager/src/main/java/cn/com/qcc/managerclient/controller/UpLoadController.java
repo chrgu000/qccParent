@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import cn.com.qcc.common.IDUtils;
+import cn.com.qcc.common.PayCommonConfig;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SimpleUpload;
 import cn.com.qcc.detailcommon.AccountMgr;
@@ -115,7 +116,7 @@ public class UpLoadController {
 				SimpleUpload.doUpload(orcPicture, key);
 				// 设置返回的路径
 				returnPath += qnweb_path + key;
-				uploadFile = new File(AccountMgr.LOCAL_UPLOAD_PATH + key);
+				uploadFile = new File(PayCommonConfig.LOCAL_UPLOAD_PATH + key);
 				orcPicture.transferTo(uploadFile);
 				
 				System.out.println("七牛云上传路径:" + returnPath);

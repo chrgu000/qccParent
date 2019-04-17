@@ -5,20 +5,26 @@
 	<!-- 根据查询条件查询房态图 -->	
  	<select id="roompattern" resultType="cn.com.qcc.queryvo.HouseRoomCustomer" parameterType="cn.com.qcc.queryvo.HouseVo">
  			SELECT 
+				CASE
+					WHEN houseorder.username is not NULL then houseorder.username
+					WHEN `profile`.real_name is not null then `profile`.real_name
+					WHEN house.house_number is not null then house.house_number
+				END
+				as realname ,
 				house.houseid ,
 				IFNULL(house.floor,1)floor ,
+				IFNULL(houseorder.prices,0)centprices ,
 				house.housestatus ,
 				house.buildingid ,
 				house.house_number ,
 				house.update_time ,
 				IFNULL(housepay.usercentnum,'')usercentnum ,
-				IFNULL(`user`.telephone,'')telephone ,
-				IFNULL(`profile`.real_name,house.house_number)realname ,
+				IFNULL(`user`.telephone,houseorder.telephone)telephone ,
 				housepay.end_time cententtime ,
 				IFNULL(area.`name`,'') trading ,
 				IFNULL(village.villagename,'') villagename ,
 				IFNULL(building.building,'')building , 
-				ifnull(housepay.usercentid , -1) usercentid,
+				IFNULL(housepay.usercentid , -1) usercentid,
 		    	IFNULL(eventcount.totalcount,0)  housecount ,
 		    	housepay.needpaytime
 		 from house
@@ -51,6 +57,20 @@
 				AND house.housestatus NOT IN (3)
 				GROUP BY house.buildingid
 		  )eventcount on eventcount.buildingid = building.buildingid
+		  
+		  LEFT JOIN (
+				SELECT
+				houseorder.reservations username,
+				`user`.telephone,
+				houseorder.prices ,
+				houseorder.houseid 
+			FROM
+				houseorder
+			INNER JOIN `user` ON `user`.userid = houseorder.userid
+			WHERE
+				 paystate IN (1, 4)
+			) houseorder on houseorder.houseid = house.houseid 
+		  
 		  where house.user_id in (  ${inUserIds} )  and house.housestatus !='3'
 		<!-- 这里封装房源的查询条件 --> 
  	 	<include refid="cn.com.qcc.mymapper.SearchWhere.query_roomparrent_where"></include>
@@ -317,6 +337,28 @@
 		INNER JOIN landlord on buildinglandlord.landlordid = landlord.landuserid
 			where buildinglandlord.landlordid in ( ${inUserIds} ) AND landlord.landstate = 2  
 		) a
+	</select>
+	
+	
+	
+	<!-- 根据用户id查询楼栋id的集合-->
+	<select id="getHouseOrderIsPay"  resultType="cn.com.qcc.pojo.Houseorder" >
+		SELECT
+			*
+		FROM
+			houseorder
+		WHERE
+			houseorder.userid = #{userid} 
+			AND houseorder.houseid = #{houseid}
+		  AND houseorder.paystate IN (1, 4)
+	</select>
+	
+	
+		<!-- 根据用户id查询楼栋id的集合-->
+	<select id="searchCentPay"  resultType="double" >
+		SELECT centprices from housepay where housepayid in (
+			${ids}
+		) and financeid = 29
 	</select>
 
   

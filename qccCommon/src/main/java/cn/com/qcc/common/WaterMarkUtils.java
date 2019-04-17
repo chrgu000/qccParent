@@ -65,7 +65,7 @@ public class WaterMarkUtils {
             
             g.dispose();  
             // 输出图片  
-            key = AccountMgr.LOCAL_UPLOAD_PATH + key;
+            key = PayCommonConfig.LOCAL_UPLOAD_PATH + key;
             FileOutputStream outImgStream = new FileOutputStream(key);  
             ImageIO.write(bufImg, "jpg", outImgStream);
             outImgStream.flush();  
@@ -157,7 +157,7 @@ public class WaterMarkUtils {
             g.drawString("", x, y);  //画出水印
             g.dispose();  
             // 输出图片  
-            key = AccountMgr.LOCAL_UPLOAD_PATH + key;
+            key = PayCommonConfig.LOCAL_UPLOAD_PATH + key;
             FileOutputStream outImgStream = new FileOutputStream(key);  
             ImageIO.write(bufImg, "jpg", outImgStream);
             outImgStream.flush();  

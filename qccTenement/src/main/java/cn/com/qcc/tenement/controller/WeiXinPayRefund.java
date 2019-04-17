@@ -1,5 +1,8 @@
 package cn.com.qcc.tenement.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import cn.com.qcc.common.CentFileSend;
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.ParamUtil;
 import cn.com.qcc.common.ResultMap;
+import cn.com.qcc.mapper.UsercentMapper;
+import cn.com.qcc.pojo.Usercent;
+import cn.com.qcc.pojo.UsercentExample;
 import cn.com.qcc.queryvo.HouseOrderCustomer;
 import cn.com.qcc.service.HouseService;
 
@@ -22,6 +29,8 @@ public class WeiXinPayRefund {
 
 	@Autowired
 	private HouseService houseService;
+	@Autowired
+	private UsercentMapper usercentMapper;
 
 	/**
 	 * 预定房源退款操作
@@ -54,10 +63,20 @@ public class WeiXinPayRefund {
 						return ResultMap.build(400, "订单退款超时");
 					}
 				}
+				
+				// 判断是否有租约关系
+				List<Usercent> usercents = checkHaseCent(houseorder.getUserid() , houseorder.getHouseid());
+				if (CheckDataUtil.checkNotEmpty(usercents)) {
+					return ResultMap.build(400, "当前房源有待处理租约");
+				}
+				
+				
 				// 退款金额
 				String account = houseorder.getPrices() * 100 + "";
+				account = account.substring(0, account.lastIndexOf("."));
 				// 退款订单号
 				String outTradeNo = houseorder.getWeixinorder();
+				System.out.println(account + "=============" + outTradeNo); 
 				// 通过参数请求形成 xml 数据
 				String xmlparam = ParamUtil.getRefundParam(account, outTradeNo);
 				// 执行证书请求 和 xml 数据执行证书请求
@@ -77,6 +96,19 @@ public class WeiXinPayRefund {
 		} else {
 			return ResultMap.build(400, "错误的订单状态");
 		}
+	}
+
+	private List<Usercent> checkHaseCent(Long userid, Long houseid) {
+		UsercentExample example = new UsercentExample();
+		UsercentExample.Criteria criteria = example.createCriteria();
+		criteria.andUsercentidEqualTo(userid);
+		criteria.andHouseidEqualTo(houseid);
+		List<Integer> values = new ArrayList<>();
+		values.add(1);
+		values.add(2);
+		criteria.andCentstateIn(values );
+		List<Usercent> list = usercentMapper.selectByExample(example);
+		return list;
 	}
 
 	

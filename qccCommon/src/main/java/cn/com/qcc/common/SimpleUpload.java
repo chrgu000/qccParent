@@ -1,11 +1,15 @@
 package cn.com.qcc.common;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.UUID;
 
@@ -31,7 +35,6 @@ public class SimpleUpload {
 	// zone2华南 zone0华东
 	static Configuration cfg = new Configuration(Zone.zone0());
 	static UploadManager uploadManager = new UploadManager(cfg);
-	static String downloadpath = "d://qiniubeifen//" ;
 	static String URL = "http://";
 	
 	
@@ -115,6 +118,38 @@ public class SimpleUpload {
 			}
 		}
 	}
+	
+	/**
+	 * 文件的下载    下载后的文件 和原始文件同一个文件名称
+	 * @param 文件的超链接 
+	 * ***/
+	public static String loadFileByFileUrl(String filePath) {
+		try {
+			String orgnaFileName =  IDUtils.getFileOrgName(filePath) ; 
+			URL petUnitUrl = new URL(filePath);
+			HttpURLConnection conn = (HttpURLConnection) petUnitUrl.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setConnectTimeout(10 * 1000);
+			BufferedInputStream biss = new BufferedInputStream(conn.getInputStream());
+			OutputStream outputStream = new FileOutputStream(new File(PayCommonConfig.LOCAL_UPLOAD_PATH + orgnaFileName));
+			int lens;
+			byte[] arrs = new byte[1024];
+			while ((lens = biss.read(arrs)) != -1) {
+				outputStream.write(arrs, 0, lens);
+				outputStream.flush();
+			}
+			outputStream.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return "";
+
+	}
+	
+	
+	
+	
 
 	/**
 	 * 主函数：程序入口，测试功能
@@ -145,9 +180,9 @@ public class SimpleUpload {
 	 * @param url : 图片的完整路径比如： http://www.hadoop.zzw777.com/123456.jpg
 	 * @param filepath : 下载的目录
 	 * **/
-	public static String downLoad(String url) {
+	public static String downLoad2(String url) {
 		OkHttpClient client = new OkHttpClient();
-		String picName = IDUtils.onepicName(url);
+		String picName = IDUtils.getFileOrgName(url);
 		Request req = new Request.Builder().url(url).build();
 		okhttp3.Response resp = null;
 		try {
@@ -156,12 +191,12 @@ public class SimpleUpload {
 				ResponseBody body = resp.body();
 				InputStream is = body.byteStream();
 				byte[] data = readInputStream(is);
-				File imgFile = new File(downloadpath+ picName);
+				File imgFile = new File(PayCommonConfig.LOCAL_UPLOAD_PATH+ picName);
 				FileOutputStream fops = new FileOutputStream(imgFile);
 				fops.write(data);
 				fops.close();
 				
-				return downloadpath + picName;
+				return   picName;
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -189,7 +224,7 @@ public class SimpleUpload {
 	 *@param url : 图片的完整路径
 	 * **/
 	public  static void deleteimage(String url) {
-		url = IDUtils.onepicName(url);
+		url = IDUtils.getFileOrgName(url);
         BucketManager bucketMgr = new BucketManager(auth, cfg);
         try {
 			bucketMgr.delete(AccountMgr.qcc_bucketName, url);

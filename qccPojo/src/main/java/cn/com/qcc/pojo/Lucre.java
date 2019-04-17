@@ -9,7 +9,7 @@ public class Lucre {
     /** 收益描述*/
     private String descname;
 
-    /** 1-正常,2-非正常,3-已添加到总额,4-移除*/
+    /** 1-正常,2-非正常,3-已添加到总收益*/
     private Integer state;
 
     /** 收益金额*/
@@ -17,6 +17,9 @@ public class Lucre {
 
     /** 收益人ID*/
     private Long userid;
+
+    /** 0-收益 1-佣金*/
+    private Integer type;
 
     /** 收益时间*/
     private Date update_time;
@@ -59,6 +62,14 @@ public class Lucre {
 
     public void setUserid(Long userid) {
         this.userid = userid;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     public Date getUpdate_time() {

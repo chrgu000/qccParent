@@ -14,6 +14,7 @@ import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.mapper.BargainMapper;
 import cn.com.qcc.mapper.BargaindetailMapper;
 import cn.com.qcc.mapper.CommoninteMapper;
+import cn.com.qcc.mapper.DefaultpercentMapper;
 import cn.com.qcc.mapper.HouseMapper;
 import cn.com.qcc.mapper.HouseorderMapper;
 import cn.com.qcc.mapper.PreparatoryMapper;
@@ -27,6 +28,7 @@ import cn.com.qcc.pojo.BargaindetailExample;
 import cn.com.qcc.pojo.Commoninte;
 import cn.com.qcc.pojo.House;
 import cn.com.qcc.pojo.Houseorder;
+import cn.com.qcc.pojo.HouseorderExample;
 import cn.com.qcc.pojo.Preparatory;
 import cn.com.qcc.pojo.Price;
 import cn.com.qcc.pojo.Profile;
@@ -59,6 +61,8 @@ public class BargainServiceImpl implements BargainService{
 	CommoninteMapper commoninteMapper;
 	@Autowired
 	ProfileMapper profileMapper;
+	@Autowired
+	DefaultpercentMapper defaultpercentMapper;
 	@Override
 	public ResultMap doBargin(Long preparatoryid, Long userid,
 			Integer type , Long otherid,String tel , String name) {
@@ -79,6 +83,8 @@ public class BargainServiceImpl implements BargainService{
 			}
 			// 第二步判断房源的预定信息 [获取最新的一条预定信息]
 			Houseorder order = houseCustomerMapper.getHouseNotPayOrder(otherid);
+			
+			
 			if (CheckDataUtil.checkNotEmpty(order) ) {
 				// 只要不是没有支付状态。就需要判断是不是三天后的时间 [因为正常的逻辑走该房源应该是租的状态]
 				if (order.getUserid().longValue() != userid.longValue()) {
@@ -92,13 +98,41 @@ public class BargainServiceImpl implements BargainService{
 				}
 			}
 			// 第三步判断是否有其他人在砍价
-			Bargain bargain = houseCustomerMapper.getNewBargin(otherid,type);
+			Long barginid = null;
+			// 第四步计算砍价金额
+			Preparatory prepartory = preparatoryMapper.selectByPrimaryKey(preparatoryid);
+			Price price = priceMapper.selectByPrimaryKey( house.getPrice_id());
+			
+			// 房东付佣金百分比
+			double cent = 0;
+			// 租客付佣金百分比
+			double usercent = 0 ;
+			// 这里是砍价的金额
+			double totalprice = 0;
+			int daycount = 0;
+			
+			/***   1 , 计算订单的金额   [房东佣金 + 租客佣金的 20 % ]
+			 * 订单的金额         [订单金额是：(租客佣金百分比 +房东佣金百分比 ) * 租金  ]
+			 * 如果都是 0 则为房租价格的一半 。默认为 房租价格
+			 * ***/   
+			double orderprice = 0;
+			if (CheckDataUtil.checkNotEmpty(prepartory)) {
+				cent = prepartory.getLandpercentnum();
+				usercent = prepartory.getCentpercentnum();
+				daycount = prepartory.getDaycount();
+				orderprice = price.getPrices() * ( cent + usercent );
+			}
+			if (orderprice == 0) {
+				orderprice = price.getPrices() * defaultpercentMapper.centNumIsZeroDingjinGet();
+			}
+			Bargain bargain = houseCustomerMapper.getNewBargin(otherid,type ,daycount);
 			if (CheckDataUtil.checkNotEmpty(bargain)) {
 				Long current = new Date().getTime();
 				Long endTime = bargain.getEndtime().getTime();
 				if (current.longValue() < endTime.longValue()) {
 					if (bargain.getUserid().longValue() == userid.longValue()) {
-						return ResultMap.build(200,"你已经发起了砍价",bargain.getBarginid());
+						/*return ResultMap.build(200,"你已经发起了砍价",bargain.getBarginid());*/
+						barginid = bargain.getBarginid() ;
 					}else {
 						return ResultMap.build(400, "你来晚了，有人已经发起了砍价");
 					}
@@ -106,46 +140,39 @@ public class BargainServiceImpl implements BargainService{
 			}
 			
 			
-			// 第四步计算砍价金额
-			Preparatory prepartory = preparatoryMapper.selectByPrimaryKey(preparatoryid);
-			Price price = priceMapper.selectByPrimaryKey( house.getPrice_id());
-			double cent = 0;
-			double totalprice = 0;
-			int daycount = 0;
-			double orderprice = 0;
-			if (CheckDataUtil.checkNotEmpty(prepartory)) {
-				cent = prepartory.getLandpercentnum();
-				daycount = prepartory.getDaycount();
-				orderprice = price.getPrices() * (
-						prepartory.getCentpercentnum() + prepartory.getLandpercentnum()
-				);
-			}
 			
-			if (orderprice == 0) {
-				orderprice = price.getPrices() * 0.5;
-			}
+			
+			
 			
 			// 没有设置佣金的情况下
-			if (cent <= 0) {
-				totalprice = price.getPrices() * 0.05 * 0.2;
-			}else {
-				totalprice = price.getPrices() * cent * 0.4;
+			if (cent == 0) {
+				cent = defaultpercentMapper.centNumIsZeroNetGet() ; 
 			}
+			// 计算砍价的金额  [租金 * 佣金和 * 20]
+			totalprice = price.getPrices() 
+					* (cent + usercent) 
+					* defaultpercentMapper.canJiaNum();
 			// 计算砍价金额
-			Bargain inserBargin = new Bargain();
-			inserBargin.setType(1);
-			if (CheckDataUtil.checkNotEmpty(preparatoryid)) {
-				inserBargin.setPreparatoryid(preparatoryid);
+			if (CheckDataUtil.checkisEmpty(barginid)) {
+				Bargain inserBargin = new Bargain();
+				inserBargin.setType(1);
+				if (CheckDataUtil.checkNotEmpty(preparatoryid)) {
+					inserBargin.setPreparatoryid(preparatoryid);
+				}
+				inserBargin.setUserid(userid);
+				inserBargin.setDaycount(daycount);
+				inserBargin.setOtherid(otherid);
+				inserBargin.setLessbalance(totalprice);
+				inserBargin.setTotalbanalce(totalprice);
+				Date start = new Date();
+				Date end = IDUtils.getNextDay(start);
+				inserBargin.setStarttime(start);
+				inserBargin.setEndtime(end);
+				bargainMapper.insertSelective(inserBargin);
+				barginid = inserBargin.getBarginid();
+				
 			}
-			inserBargin.setUserid(userid);
-			inserBargin.setOtherid(otherid);
-			inserBargin.setLessbalance(totalprice);
-			inserBargin.setTotalbanalce(totalprice);
-			Date start = new Date();
-			Date end = IDUtils.getNextDay(start);
-			inserBargin.setStarttime(start);
-			inserBargin.setEndtime(end);
-			bargainMapper.insertSelective(inserBargin);
+			
 			
 			UserCustomer userCustomer = userCustomerMapper.getUserAndProfileByUserid(userid);
 			if (CheckDataUtil.checkisEmpty(tel)) {
@@ -153,6 +180,20 @@ public class BargainServiceImpl implements BargainService{
 			}
 			if (CheckDataUtil.checkisEmpty(name)) {
 				name = userCustomer.getRealname()==null?"":userCustomer.getRealname();
+			}
+			
+			
+			// 第五步把砍价的id绑定到用户订单
+			HouseorderExample example = new HouseorderExample();
+			HouseorderExample.Criteria criteria = example.createCriteria();
+			criteria.andHouseidEqualTo(otherid);
+			criteria.andUseridEqualTo(userid);
+			criteria.andPaystateEqualTo(2);
+			criteria.andDaycountEqualTo(daycount);
+			Long orderId = null;
+			List<Houseorder> orders = houseorderMapper.selectByExample(example);
+			if (CheckDataUtil.checkNotEmpty(orders)) {
+				orderId = orders.get(0).getHouseorderid();
 			}
 			// 第五步创建预订单
 			Houseorder orderIn = new Houseorder();
@@ -169,9 +210,14 @@ public class BargainServiceImpl implements BargainService{
 			orderIn.setReservations(name);
 			orderIn.setPrices(orderprice);
 			orderIn.setDaycount(daycount);
-			orderIn.setBarginid(inserBargin.getBarginid());
-			houseorderMapper.insertSelective(orderIn);
-			return ResultMap.build(200, "发起成功" ,inserBargin.getBarginid());
+			orderIn.setBarginid(barginid);
+			if (CheckDataUtil.checkNotEmpty(orderId)) {
+				orderIn.setHouseorderid(orderId);
+				houseorderMapper.updateByPrimaryKeySelective(orderIn);
+			} else {
+				houseorderMapper.insertSelective(orderIn);
+			}
+			return ResultMap.build(200, "发起成功" ,barginid);
 		} else {
 			return ResultMap.build(400, "参数错误");
 		}

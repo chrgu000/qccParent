@@ -1,4 +1,4 @@
-package cn.com.qcc.tenement.controller;
+ package cn.com.qcc.tenement.controller;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -33,6 +33,7 @@ import WangYiUtil.WangYiPoJo;
 import WangYiUtil.WangYiUtil;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.PageQuery;
+import cn.com.qcc.common.ReferralCode;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SendMessage;
 import cn.com.qcc.detailcommon.Sha1;
@@ -88,6 +89,20 @@ public class UserController {
 	InteService inteService;
 	@Autowired
 	CheckCodeService checkCodeService;
+	
+	/**
+	 * 校验用户是否符合提现规格
+	 * */
+	@RequestMapping("/user/serialCode")
+	@ResponseBody
+	public ResultMap serialCode(Long userid ) {
+		if (CheckDataUtil.checkisEmpty(userid)) {
+			return ResultMap.build(400, "未知用户");
+		}
+		Map<String, Object> map  = new HashMap<>();
+		map.put("serialCode", ReferralCode.toSerialCode(userid));
+		return ResultMap.IS_200(map);
+	}
 	
 	
 	/**
@@ -191,7 +206,7 @@ public class UserController {
 	@SuppressWarnings("static-access")
 	@RequestMapping(value = "/user/loginByMessage")
 	@ResponseBody
-	public ResultMap userLogin(HttpSession session, Long telephone, String unionid, String openname,String tel_code,
+	public ResultMap userLogin(HttpSession session, Long telephone,  String openname,String tel_code,
 	@RequestParam(defaultValue="0")Double latitude , String city ,
 	@RequestParam(defaultValue="0")Double longitude ,	
 	String openavatar, Long userid, HttpServletResponse response, String obj ,HttpServletRequest request) throws Exception {
@@ -247,6 +262,7 @@ public class UserController {
 			map.put("accessToken", uuid);
 			map.put("lat", user.getLatitude());
 			map.put("userId", userId);
+			map.put("serialCode", ReferralCode.toSerialCode(userId));
 			map.put("log", user.getLongitude());
 			SendMessage.passwordrelive(telephone, request);
 			// 这里是网易云TOKEN验证
@@ -325,6 +341,7 @@ public class UserController {
 			// 登录成功后user存入session
 			map.put("accessToken", uuid);
 			map.put("lat", user.getLatitude());
+			map.put("serialCode", ReferralCode.toSerialCode(user.getUserid()));
 			map.put("log", user.getLongitude());
 			// 这里是插入求租
 			if (!"".equals(obj) && obj != null) {

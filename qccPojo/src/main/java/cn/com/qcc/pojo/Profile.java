@@ -2,14 +2,12 @@ package cn.com.qcc.pojo;
 
 import java.util.Date;
 
-
 public class Profile {
     /** */
     private Long profileid;
 
     /** 对应用户表中的id字段*/
     private Long user_id;
-    
 
     /** 微信提现账号的唯一标识*/
     private String unionid;
@@ -58,11 +56,11 @@ public class Profile {
 
     /** 最后一次实名时间*/
     private Date sign_time;
-    
-    
 
-   
-	public Long getProfileid() {
+    /** 用户海报*/
+    private String userPostImage;
+
+    public Long getProfileid() {
         return profileid;
     }
 
@@ -204,5 +202,13 @@ public class Profile {
 
     public void setSign_time(Date sign_time) {
         this.sign_time = sign_time;
+    }
+
+    public String getUserPostImage() {
+        return userPostImage;
+    }
+
+    public void setUserPostImage(String userPostImage) {
+        this.userPostImage = userPostImage == null ? null : userPostImage.trim();
     }
 }

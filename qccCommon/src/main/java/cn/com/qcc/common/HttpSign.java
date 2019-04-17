@@ -237,7 +237,7 @@ public class HttpSign {
 				SimpleUpload.doUpload(first, key);
 				// 设置返回的路径
 				returnPath += qnweb_path + key;
-				uploadFile = new File(AccountMgr.LOCAL_UPLOAD_PATH + key);
+				uploadFile = new File(PayCommonConfig.LOCAL_UPLOAD_PATH + key);
 				first.transferTo(uploadFile);
 			} else {
 				return ResultMap.build(400, "文件格式错误");
@@ -293,7 +293,7 @@ public class HttpSign {
 			Map<String, Object> resultMap = (Map<String, Object>) dataMap;
 			resultMap.put("firstPath", returnPath);
 			resultMap.put("secondPath", secondPath);
-			resultMap.put("filePath", AccountMgr.LOCAL_UPLOAD_PATH + key);
+			resultMap.put("filePath", PayCommonConfig.LOCAL_UPLOAD_PATH + key);
 			System.out.println(resultMap);
 			message = (String) map.get("message");
 

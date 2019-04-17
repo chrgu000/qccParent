@@ -856,7 +856,7 @@ public class UserServiceImpl implements UserService {
 		}
 		// 查询用户的电话号码，判断是否修改手机号码
 		User user = userMapper.selectByPrimaryKey(userCustomer.getUserid());
-		Profile profile = getprofile(userCustomer);
+		Profile profile = getprofile(userCustomer.getUserid());
 		if (CheckDataUtil.checkisEmpty(profile) 
 				||CheckDataUtil.checkisEmpty(user) ) {
 			return ResultMap.build(400, "你修改的账号不存在");
@@ -936,10 +936,10 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
-	private Profile getprofile(UserCustomer userCustomer) {
+	public Profile getprofile(Long userid ) {
 		ProfileExample example = new ProfileExample();
 		ProfileExample.Criteria criteria = example.createCriteria();
-		criteria.andUser_idEqualTo(userCustomer.getUserid());
+		criteria.andUser_idEqualTo(userid);
 		List<Profile> profi = profileMapper.selectByExample(example);
 		if (profi.size() > 0 && !profi.isEmpty()) {
 			return profi.get(0);
@@ -1022,6 +1022,7 @@ public class UserServiceImpl implements UserService {
 		descname = "队员" + telp + descname;
 		lurce.setDescname(descname);
 		lurce.setState(1); // 1为正常
+		lurce.setType(0); // 0 -收益 1-佣金
 		lurce.setUserid(invite.getUserid());
 		lucreMapper.insertSelective(lurce);
 	}
@@ -1525,6 +1526,24 @@ public class UserServiceImpl implements UserService {
 		
 		return details;
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

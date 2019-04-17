@@ -30,6 +30,9 @@ public class Bargain {
     /** */
     private Date endtime;
 
+    /** 判断砍价对应的房租对应的佣金*/
+    private Integer daycount;
+
     public Long getBarginid() {
         return barginid;
     }
@@ -100,5 +103,13 @@ public class Bargain {
 
     public void setEndtime(Date endtime) {
         this.endtime = endtime;
+    }
+
+    public Integer getDaycount() {
+        return daycount;
+    }
+
+    public void setDaycount(Integer daycount) {
+        this.daycount = daycount;
     }
 }

@@ -664,6 +664,66 @@ public class VipcountExample {
             addCriterion("password not between", value1, value2, "password");
             return (Criteria) this;
         }
+
+        public Criteria andCommissionIsNull() {
+            addCriterion("commission is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommissionIsNotNull() {
+            addCriterion("commission is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommissionEqualTo(Double value) {
+            addCriterion("commission =", value, "commission");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommissionNotEqualTo(Double value) {
+            addCriterion("commission <>", value, "commission");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommissionGreaterThan(Double value) {
+            addCriterion("commission >", value, "commission");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommissionGreaterThanOrEqualTo(Double value) {
+            addCriterion("commission >=", value, "commission");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommissionLessThan(Double value) {
+            addCriterion("commission <", value, "commission");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommissionLessThanOrEqualTo(Double value) {
+            addCriterion("commission <=", value, "commission");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommissionIn(List<Double> values) {
+            addCriterion("commission in", values, "commission");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommissionNotIn(List<Double> values) {
+            addCriterion("commission not in", values, "commission");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommissionBetween(Double value1, Double value2) {
+            addCriterion("commission between", value1, value2, "commission");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommissionNotBetween(Double value1, Double value2) {
+            addCriterion("commission not between", value1, value2, "commission");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -28,6 +28,37 @@ public class VipCountCustomer extends Vipcount {
 	 
 	 private Date update_time;
 	 
+	 
+	 private double monthmissaccount ;
+	 
+	 private double totalmissaccount;
+	 
+	 private double todaymissaccount;
+	 
+
+	public double getMonthmissaccount() {
+		return monthmissaccount;
+	}
+
+	public void setMonthmissaccount(double monthmissaccount) {
+		this.monthmissaccount = monthmissaccount;
+	}
+
+	public double getTotalmissaccount() {
+		return totalmissaccount;
+	}
+
+	public void setTotalmissaccount(double totalmissaccount) {
+		this.totalmissaccount = totalmissaccount;
+	}
+
+	public double getTodaymissaccount() {
+		return todaymissaccount;
+	}
+
+	public void setTodaymissaccount(double todaymissaccount) {
+		this.todaymissaccount = todaymissaccount;
+	}
 
 	public double getMonthaccount() {
 		return monthaccount;

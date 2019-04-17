@@ -1284,6 +1284,76 @@ public class ProfileExample {
             addCriterion("sign_time not between", value1, value2, "sign_time");
             return (Criteria) this;
         }
+
+        public Criteria andUserPostImageIsNull() {
+            addCriterion("userPostImage is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserPostImageIsNotNull() {
+            addCriterion("userPostImage is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserPostImageEqualTo(String value) {
+            addCriterion("userPostImage =", value, "userPostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserPostImageNotEqualTo(String value) {
+            addCriterion("userPostImage <>", value, "userPostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserPostImageGreaterThan(String value) {
+            addCriterion("userPostImage >", value, "userPostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserPostImageGreaterThanOrEqualTo(String value) {
+            addCriterion("userPostImage >=", value, "userPostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserPostImageLessThan(String value) {
+            addCriterion("userPostImage <", value, "userPostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserPostImageLessThanOrEqualTo(String value) {
+            addCriterion("userPostImage <=", value, "userPostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserPostImageLike(String value) {
+            addCriterion("userPostImage like", value, "userPostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserPostImageNotLike(String value) {
+            addCriterion("userPostImage not like", value, "userPostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserPostImageIn(List<String> values) {
+            addCriterion("userPostImage in", values, "userPostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserPostImageNotIn(List<String> values) {
+            addCriterion("userPostImage not in", values, "userPostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserPostImageBetween(String value1, String value2) {
+            addCriterion("userPostImage between", value1, value2, "userPostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserPostImageNotBetween(String value1, String value2) {
+            addCriterion("userPostImage not between", value1, value2, "userPostImage");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

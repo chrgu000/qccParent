@@ -29,13 +29,18 @@ import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.XwpfTUtil;
 import cn.com.qcc.detailcommon.JedisClient;
+import cn.com.qcc.mapper.BargainMapper;
+import cn.com.qcc.mapper.BrokerMapper;
+import cn.com.qcc.mapper.DefaultpercentMapper;
 import cn.com.qcc.mapper.FurnitureMapper;
 import cn.com.qcc.mapper.HistorycentMapper;
 import cn.com.qcc.mapper.HouseMapper;
+import cn.com.qcc.mapper.HouseorderMapper;
 import cn.com.qcc.mapper.HousepayMapper;
 import cn.com.qcc.mapper.HousepaydetailMapper;
 import cn.com.qcc.mapper.LandlordManagerMapper;
 import cn.com.qcc.mapper.LandlordMapper;
+import cn.com.qcc.mapper.LucreMapper;
 import cn.com.qcc.mapper.MycentMapper;
 import cn.com.qcc.mapper.PayexpertMapper;
 import cn.com.qcc.mapper.PaymodalMapper;
@@ -48,14 +53,17 @@ import cn.com.qcc.mymapper.HouseCustomerMapper;
 import cn.com.qcc.mymapper.HouseRoomCustomerMapper;
 import cn.com.qcc.mymapper.UserCustomerMapper;
 import cn.com.qcc.mymapper.UserRoomCustomerMapper;
+import cn.com.qcc.pojo.Bargain;
+import cn.com.qcc.pojo.Broker;
 import cn.com.qcc.pojo.Furniture;
 import cn.com.qcc.pojo.Historycent;
-import cn.com.qcc.pojo.House;
+import cn.com.qcc.pojo.Houseorder;
 import cn.com.qcc.pojo.Housepay;
 import cn.com.qcc.pojo.Housepaydetail;
 import cn.com.qcc.pojo.Landlord;
 import cn.com.qcc.pojo.LandlordManager;
 import cn.com.qcc.pojo.LandlordManagerExample;
+import cn.com.qcc.pojo.Lucre;
 import cn.com.qcc.pojo.Mycent;
 import cn.com.qcc.pojo.Payexpert;
 import cn.com.qcc.pojo.Paymodal;
@@ -122,7 +130,13 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 	@Resource  
 	Destination userPayHouseAccount;
 	@Autowired
-	UserCustomerMapper userCustomerMapper2;
+	BargainMapper bargainMapper;
+	@Autowired
+	HouseorderMapper houseorderMapper;
+	@Autowired BrokerMapper brokerMapper;
+	@Autowired LucreMapper lucreMapper;
+	@Resource  Destination roomOut;
+	@Autowired DefaultpercentMapper defaultpercentMapper;
 	/** 查询房态图 **/
 	public List<HouseRoomCustomer> roompattern(HouseVo houseVo) {
 
@@ -466,6 +480,12 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 
 	// 这里只生成房屋押金。
 	private List<Payexpert> CreatePayExpert(Usercent usercent, String paycentid, String pricestype, Integer num) {
+		
+		Long houseid = usercent.getHouseid();
+		
+		// 查询houseorder
+		Houseorder houseorder  = getHouseOrderIsPay(houseid , usercent.getUserid());
+		
 		Long rentmodalid = usercent.getRentmodalid();
 		String[] str = null;
 		if (pricestype != null && !"".equals(pricestype)) {
@@ -563,7 +583,7 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 				payexpertMapper.insertSelective(payexpert);
 				// 在生产分期账单
 				housepay.setPayexpertid(payexpert.getPayexpertid());
-				housepay.setHouseid(usercent.getHouseid());
+				housepay.setHouseid(houseid);
 				// 这里设置需要交房租时间
 				housepay.setPaystate(1);// 未支付状态
 				housepay.setCurrentstate(1);// 当前租期
@@ -582,6 +602,44 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 							}
 						}
 					}
+					
+					/** 这里计算优惠金额 
+					 * 35  砍价优惠
+					 * 36  房源订金
+					 * 37 租客付佣金
+					 * ***/
+					if (CheckDataUtil.checkNotEmpty(houseorder)) {
+						// 房源订金
+						housepay.setCentprices(0-houseorder.getPrices());
+						housepay.setFinanceid(36L);
+						housepayMapper.insertSelective(housepay);
+						housepay.setHousepayid(null);
+						
+						// 租客付佣金
+						if (houseorder.getCentpercentnum() >  0 ) {
+							housepay.setCentprices(houseorder.getCentpercentnum() * centprices );
+							housepay.setFinanceid(37L);
+							housepayMapper.insertSelective(housepay);
+							housepay.setHousepayid(null);
+						}
+						
+						// 查询砍价的金额
+						if (CheckDataUtil.checkNotEmpty(houseorder.getBarginid())) {
+							Bargain bargin =  bargainMapper.selectByPrimaryKey(houseorder.getBarginid());
+							double kanjia  = bargin.getTotalbanalce() - bargin.getLessbalance();
+							if (kanjia > 0)  {
+								housepay.setCentprices( 0-kanjia);
+								housepay.setFinanceid(35L);
+								housepayMapper.insertSelective(housepay);
+								housepay.setHousepayid(null);
+							}
+							
+						}
+						
+					}
+					
+					
+					
 					// 只有第一次签约加入房屋押金
 					if (num == 1) {
 						// 首期需要额外加入 房屋押金 id [30] [只在首期加入]
@@ -612,6 +670,14 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 		return null;
 	}
 
+	private Houseorder getHouseOrderIsPay(Long houseid , Long userid) {
+		if (CheckDataUtil.checkisEmpty(houseid)
+				|| CheckDataUtil.checkisEmpty(userid)) {
+			return null; 
+		}
+		return houseRoomCustomerMapper.getHouseOrderIsPay(houseid , userid);
+	}
+
 	/**
 	 * 租客登记时候必须要填写的资料.
 	 * 
@@ -636,7 +702,7 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 	 * @param islinecent
 	 *            : yes 表示线上合同
 	 **/
-	public ResultMap usercent(Usercent usercent, Mycent mycent, HttpServletRequest request, String othermore,
+	public ResultMap createusercent(Usercent usercent, Mycent mycent, HttpServletRequest request, String othermore,
 			String payid, String paycentid, String pricestype, String othermoreid1, String othermoreid2,
 			String islinecent) {
 
@@ -784,21 +850,37 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 	 * @param houseid
 	 *            : houseid
 	 **/
-	public ResultMap roomout(Long houseid) {
+	public ResultMap roomout(Long houseid , Long userid) {
 		if (houseid == null) {
 			return ResultMap.build(300, "选择房子");
 		}
+		
+		// 校验数据
+		UsercentExample example = new UsercentExample();
+		UsercentExample.Criteria criteria = example.createCriteria();
+		criteria.andHouseidEqualTo(houseid);
+		List<Integer> values = new ArrayList<>();
+		values.add(1);
+		values.add(2);
+		criteria.andCentstateIn(values);
+		List<Usercent> centList = usercentMapper.selectByExample(example);
+		if (CheckDataUtil.checkisEmpty(centList)) {
+			return ResultMap.build(400, "当前房源无须退房,没有相关租约!!");
+		}
+		Usercent cent = centList.get(0);
+		
+		if (CheckDataUtil.checkNotEqual(cent.getManageruserid(), userid)
+				&& CheckDataUtil.checkNotEqual(cent.getLanduserid(), userid)) {
+			return ResultMap.build(400, "只有房东和管理员才可以退房");
+		}
+		
 		// 第一步当前租约改为历史租约
 		houseCustomerMapper.usercentbehistory(houseid);
 		// 第二步设置 房子账单为历史账单
 		houseCustomerMapper.housepaybehistory(houseid);
-		// 设置房子为可以租状态
-		House house = new House();
-		house.setHouseid(houseid);
-		house.setHousestatus("1");
-		house.setUpdate_time(new Date());
-		house.setCreate_time(new Date());
-		houseMapper.updateByPrimaryKeySelective(house);
+		// 第三步发送退房的模板消息
+		String sendData = houseid + "-" + cent.getUsercentnum() ; 
+		SendMessUtil.sendData(jmsTemplate, roomOut, sendData);
 		return ResultMap.build(200, "操作成功");
 	}
 
@@ -919,11 +1001,66 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 		criteria.andUsercentnumEqualTo(house.getUsercentnum());
 		criteria.andCentstateEqualTo(1);
 		List<Usercent> list =  usercentMapper.selectByExample(example);
+		
+		// 房东需要减去的佣金
+		double deleteMonery =0;
+		// 需要加的订金
+		double orderPrcies = 0 ;
+		// 是否是第一次签约 
 		if (CheckDataUtil.checkNotEmpty(list)) {
+			// 如果是第一次签约
 			Usercent updateCent = list.get(0);
 			updateCent.setCentstate(2);
 			usercentMapper.updateByPrimaryKeySelective(updateCent);
+			// 查询houseorder
+			Houseorder houseorder  = getHouseOrderIsPay(house.getHouseid() , house.getUserid());
+			if (CheckDataUtil.checkNotEmpty(houseorder)) {
+				double landNum = 0 ; // 房东付佣金
+				double centNum = 0 ; // 租客付佣金
+				// 查询租金
+				double centPrices =  houseRoomCustomerMapper.searchCentPay(house.getPayIds());
+				// 如果房东付佣金 不存在时候 
+				if(CheckDataUtil.checkisEmpty(houseorder.getLandpercentnum()  )
+						|| houseorder.getLandpercentnum() == 0) {
+					landNum = defaultpercentMapper.centNumIsZeroNetGet() ;
+				}else {
+					landNum = houseorder.getLandpercentnum();
+				}
+				// 判断租客付佣金
+				if (CheckDataUtil.checkNotEmpty(houseorder.getCentpercentnum())) {
+					centNum = houseorder.getCentpercentnum();
+				}
+				
+				// 房东最终减去的佣金钱 是   租客付佣金 + 房东付佣金
+				deleteMonery = centPrices *  landNum  + centPrices * centNum; 
+				// 计算分享者的佣金
+				Long brokeruserid = houseorder.getBrokeruserid();
+				if (CheckDataUtil.checkNotEmpty(brokeruserid)) {
+					double brokerMonery = getBrokerMoner(brokeruserid , deleteMonery );
+					
+					// 计算经纪人佣金
+					if (brokerMonery > 0) {
+						Lucre record = new Lucre();
+						record.setAccount(brokerMonery); // 佣金金额
+						record.setDescname("收到佣金");  // 描述
+						record.setState(1); //  1-正常,2-非正常,3-已添加到佣金
+						record.setType(1); // 0-收益 1-佣金
+						record.setUpdate_time(new Date());
+						record.setUserid(brokeruserid);
+						lucreMapper.insertSelective(record );
+					}
+				}
+				orderPrcies = houseorder.getPrices();
+				// 修改预订单位已经入住状态
+				houseorder.setPaystate(5);
+				houseorderMapper.updateByPrimaryKey(houseorder);
+				
+				
+			}
+			
 		}
+		
+		
 		
 		// 2 - 插入交租记录表
 		// 获取到订单的列表
@@ -958,9 +1095,15 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 		insertData.setManageruserid(house.getManageruserid());
 		housepaydetailMapper.insertSelective(insertData);
 
+		
+		
+		
+		
 		// 3- 给房东钱包加入金额
 		Vipcount vipaccount = vipcountMapper.selectByPrimaryKey(house.getLanduserid());
-		vipaccount.setHouseaccount( vipaccount.getHouseaccount() + house.getCentprices()   );
+		// 房东最终入账 为 租客交的金额 +订金 - 经纪人和平台分摊的钱
+		vipaccount.setHouseaccount( vipaccount.getHouseaccount() +
+				house.getCentprices() -deleteMonery + orderPrcies  );
 		vipcountMapper.updateByPrimaryKeySelective(vipaccount);
 		
 		// 4 - 修改订单为已支付
@@ -973,6 +1116,26 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 				
 
 		return "success";
+	}
+	
+	/**
+	 * brokeruserid : 经纪人
+	 * yongjin      : 总计的佣金
+	 * **/
+	private double getBrokerMoner(Long brokeruserid, double yongjin ) {
+		// 这个是比例
+		Broker broker = brokerMapper.selectByPrimaryKey(brokeruserid);
+		if (CheckDataUtil.checkNotEmpty(broker)) {
+			// 专职
+			if (broker.getType() == 0) {
+			 	return yongjin * defaultpercentMapper.zhuanzhiNum();
+			}
+			// 兼职
+			if (broker.getType() == 1) {
+				return yongjin * defaultpercentMapper.jianzhiNum();
+			}
+		}
+		return 0;
 	}
 
 	@Override

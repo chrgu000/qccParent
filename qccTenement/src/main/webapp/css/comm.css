@@ -38,7 +38,7 @@
 #livingset {
 	display: none;
 }
-#update_picture_domain , #landlord_examine , #parerrule , #bdmanager{
+#update_picture_domain , #landlord_examine , #parerrule , #bdmanager ,#defaultPercent{
 	display: none;
 }
 #suggess {

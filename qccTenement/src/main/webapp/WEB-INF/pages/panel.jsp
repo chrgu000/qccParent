@@ -324,6 +324,17 @@
 	</div>
 	
 	
+	<!--管理房东佣金-->
+	<div id="defaultPercent">
+		<div class="panel panel-default">
+			<div class="panel-heading">房东佣金管理</div>
+			<div class="panel-body">
+				<jsp:include page="defaultPercent.jsp"/>
+			</div>
+		</div>
+	</div>
+	
+	
 	<!--aPP版本管理-->
 	<div id="app_update">
 		<div class="panel panel-default">

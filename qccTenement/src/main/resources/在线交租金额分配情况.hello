@@ -1,0 +1,29 @@
+
+
+	比如 ：centPrices (租金) = 1000 ; usernum(租客付佣金百分比) = 0.4; landnum (房东付佣金) = 0.8 ;
+		  经纪人收取 80% 费用   orderPrices (订金) + 
+		  
+	经纪人收入 : inUserPrices (收取租客的佣金)  + inLandPrices (收取房东的佣金) 
+	最多可以砍价的金额 : canJiaPrces1 + canJiaPrces2 
+	
+     --- 租户交用户百分比
+          租户多交的金额  = 房租金额 * 租户佣金百分比
+     outHousePrices = centPrices * usernum  (1000*0.4) 400
+     
+     outHousePrices ：分配
+     	inUserPrices =  outHousePrices * 0.8 = 320;
+     	canJiaPrces1 =  outHousePrices * 0.2 = 80 ;
+     	
+     -- 房东佣金百分比 
+     outLandPrices = centPrices * landnum = 800;
+     outLandPrices : 分配
+     	inLandPrices = outLandPrices * 0.8 = 640 ;
+     	canJiaPrces2 = outLandPrices * 0.2 = 160 ;
+     ---------如果房东付佣金是 0 
+     	outLandPrices = centPrices * 0.05 = 50 ;
+     	inLandPrices = outLandPrices * 0.8 = 640 ;
+     	canJiaPrces2 = outLandPrices * 0.2 = 160 ;
+     	
+     -- 计算订金 
+              情况1 : centPrices * (usernum + lannum) = 1200
+       

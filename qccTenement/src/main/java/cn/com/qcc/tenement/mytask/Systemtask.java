@@ -1,5 +1,4 @@
 package cn.com.qcc.tenement.mytask;
-
 import java.io.File;
 import java.util.Date;
 import java.util.List;
@@ -13,27 +12,29 @@ import cn.com.qcc.common.PayCommonConfig;
 import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SendMessage;
+import cn.com.qcc.common.SimpleUpload;
 import cn.com.qcc.common.SystemTaskTime;
-import cn.com.qcc.detailcommon.AccountMgr;
 import cn.com.qcc.detailcommon.JedisClient;
+import cn.com.qcc.mapper.BrokerMapper;
 import cn.com.qcc.mapper.BuildingMapper;
 import cn.com.qcc.mapper.HouseMapper;
 import cn.com.qcc.mapper.VillageMapper;
 import cn.com.qcc.mapper.VipcountMapper;
+import cn.com.qcc.mymapper.BackImageCustoermMapper;
 import cn.com.qcc.mymapper.UserCustomerMapper;
+import cn.com.qcc.pojo.Broker;
 import cn.com.qcc.pojo.Building;
-import cn.com.qcc.pojo.BuildingExample;
 import cn.com.qcc.pojo.House;
-import cn.com.qcc.pojo.HouseExample;
 import cn.com.qcc.pojo.Lucre;
 import cn.com.qcc.pojo.Village;
-import cn.com.qcc.pojo.VillageExample;
 import cn.com.qcc.pojo.Vipcount;
+import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.UserCustomer;
 import cn.com.qcc.service.AccessService;
 import cn.com.qcc.service.BrowseService;
 import cn.com.qcc.service.HouseService;
 import cn.com.qcc.service.InteService;
+import cn.com.qcc.service.PosterCreateService;
 import cn.com.qcc.service.UserService;
 import cn.com.qcc.service.VillageService;
 import weixin.util.XiaoChengXuCodeUtil;
@@ -67,6 +68,12 @@ public class Systemtask {
 	UserCustomerMapper userCustomerMapper;
 	@Autowired
 	BrowseService browseService;
+	@Autowired
+	BackImageCustoermMapper backImageCustoermMapper;
+	@Autowired
+	BrokerMapper brokerMapper;
+	@Autowired
+	PosterCreateService posterCreateService;
 
 
 	/*
@@ -88,25 +95,37 @@ public class Systemtask {
 	/*
 	 * 定时任务 每天晚上生成小程序二维码
 	 */
-	@Scheduled(cron = SystemTaskTime.build_xpxpicture)
+	@Scheduled( cron = SystemTaskTime.build_xpxpicture)
 	public void buildxpxPictures() {
-		System.out.println("进入定时任务two");
+		
+		System.out.println("====================生成普通二维码执行任务===========================");
+		// 经纪人生成普通二维码
+		List<Broker> brokerList = backImageCustoermMapper.searchBrokerCreatePost();
+		if (CheckDataUtil.checkNotEmpty(brokerList)) {
+			for (Broker broker : brokerList) {
+				// 生成小程序图片
+				String xcxpicture = getCreateXPXpicture (broker.getUserid() , "brokerdetail") ;
+				broker.setXcxpicture(xcxpicture);
+				brokerMapper.updateByPrimaryKeySelective(broker);
+			}
+		}
+		
+		
 		// 生成房源的二维码吗
-		HouseExample example = new HouseExample();
-		HouseExample.Criteria criteria = example.createCriteria();
-		criteria.andXcxpictureEqualTo("");
-		List<House> houseList = houseMapper.selectByExample(example);
-		if (!houseList.isEmpty() && houseList.size() > 0) {
+		List<House> houseList = backImageCustoermMapper.searchHouseCommonCreate();
+		if (CheckDataUtil.checkNotEmpty(houseList)) {
 			for (House house : houseList) {
-				// 生成小程序二维码图片
-				String xcxpicture_qcc = XiaoChengXuCodeUtil.make_qcc_xcxqcode(house.getHouseid(), "housedetail");
-				String xcxpicture_gzf = XiaoChengXuCodeUtil.make_gzf_xcxqcode(house.getHouseid(), "housedetail");
-				house.setXcxpicture(xcxpicture_qcc + "," + xcxpicture_gzf);
+				// 生成小程序图片
+				String detailName = "housedetail";
+				if (house.getProperty_id() == 4 || house.getProperty_id() == 7 ) {
+					detailName = "otherdetail";
+				}
+				String xcxpicture = getCreateXPXpicture (house.getHouseid() ,detailName) ;
+				house.setXcxpicture(xcxpicture);
 				houseMapper.updateByPrimaryKey(house);
-
 				// 置空缓存
 				try {
-					jedisClient.del(RedisUtil.HOUSE_FIRST_KEY + house.getHouseid());
+					jedisClient.expire(RedisUtil.HOUSE_FIRST_KEY + house.getHouseid() , 0);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -115,20 +134,16 @@ public class Systemtask {
 		}
 
 		// 生成楼栋的二维码
-		BuildingExample buildingExample = new BuildingExample();
-		BuildingExample.Criteria builcri = buildingExample.createCriteria();
-		builcri.andXcxpictureEqualTo("");
-		List<Building> builList = buildingMapper.selectByExample(buildingExample);
-		if (!builList.isEmpty() && builList.size() > 0) {
+		List<Building> builList = backImageCustoermMapper.searchbuilCommonCreate();
+		if (CheckDataUtil.checkNotEmpty(builList)) {
 			for (Building building : builList) {
-				String xcxpic_qcc = XiaoChengXuCodeUtil.make_qcc_xcxqcode(building.getBuildingid(), "buildingdetail");
-				String xcxpic_gzf = XiaoChengXuCodeUtil.make_gzf_xcxqcode(building.getBuildingid(), "buildingdetail");
-				building.setXcxpicture(xcxpic_qcc + "," + xcxpic_gzf);
+				// 生成小程序图片
+				String xcxpicture = getCreateXPXpicture (building.getBuildingid() , "buildingdetail") ;
+				building.setXcxpicture(xcxpicture);
 				buildingMapper.updateByPrimaryKeySelective(building);
-
 				// 置空缓存
 				try {
-					jedisClient.del(RedisUtil.BUIL_FIRST_KEY + building.getBuildingid());
+					jedisClient.expire(RedisUtil.BUIL_FIRST_KEY + building.getBuildingid(),0);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -136,19 +151,31 @@ public class Systemtask {
 		}
 
 		// 生成小区的二维码
-		VillageExample villageExample = new VillageExample();
-		VillageExample.Criteria villcri = villageExample.createCriteria();
-		villcri.andXcxpictureEqualTo("");
-		List<Village> villList = villageMapper.selectByExample(villageExample);
+		List<Village> villList = backImageCustoermMapper.searchvillCommonCreate();
 		if (!villList.isEmpty() && villList.size() > 0) {
 			for (Village village : villList) {
 				// 设置小区二维码图片
-				String xcxpicture_qcc = XiaoChengXuCodeUtil.make_qcc_xcxqcode(village.getVillageid(), "villagedetail");
-				String xcxpicture_gzf = XiaoChengXuCodeUtil.make_gzf_xcxqcode(village.getVillageid(), "villagedetail");
-				village.setXcxpicture(xcxpicture_qcc + "," + xcxpicture_gzf);
+				String xcxpicture = getCreateXPXpicture (village.getVillageid() , "villagedetail") ;
+				village.setXcxpicture(xcxpicture);
 				villageMapper.updateByPrimaryKeySelective(village);
 			}
 		}
+		
+		System.out.println("====================生成二维码完成===========================");
+	}
+
+	private String getCreateXPXpicture(Long id, String descName) {
+		// 生成小程序二维码图片
+		String uploadFilePath = PayCommonConfig.LOCAL_UPLOAD_PATH;
+		String qccPostUrlName = XiaoChengXuCodeUtil.make_qcc_xcxqcode(id, descName);
+		String gzfPostUrlName = XiaoChengXuCodeUtil.make_gzf_xcxqcode(id, descName);
+		// 上传到七牛云
+		SimpleUpload.upload(uploadFilePath +  qccPostUrlName, qccPostUrlName);
+		SimpleUpload.upload(uploadFilePath +  gzfPostUrlName, gzfPostUrlName);
+		String xcxpicture = PayCommonConfig.HADOOP_WEB_RETURN_PAHT + qccPostUrlName +","
+				+PayCommonConfig.HADOOP_WEB_RETURN_PAHT + gzfPostUrlName;
+		System.out.println(xcxpicture);
+		return xcxpicture ;
 	}
 
 	/**
@@ -159,6 +186,8 @@ public class Systemtask {
 	public void addlurce() {
 		System.out.println("进入定时任务three");
 		int daycount = PayCommonConfig.lurce_day_count;
+		
+		// 这里是统计收益的
 		List<Lucre> lucreList = inteService.searchNeedAddLurceByTime(daycount);
 		// 如果数据存在
 		if (!lucreList.isEmpty() && lucreList.size() > 0) {
@@ -171,7 +200,6 @@ public class Systemtask {
 				updateuser.setAccount(totalaccount);
 				// 同步数据库
 				vipcountMapper.updateByPrimaryKey(updateuser);
-
 				// 发送短信提醒用户收益到账
 				String telephone = lurce.getDescname();
 				String content = updateaccount + "," + totalaccount;
@@ -206,7 +234,7 @@ public class Systemtask {
 	@Scheduled(cron = SystemTaskTime.delete_uploadpic)
 	public void deleteupload_picture() {
 		System.out.println("进入删除文件方法");
-		File file = new File(AccountMgr.LOCAL_UPLOAD_PATH);
+		File file = new File(PayCommonConfig.LOCAL_UPLOAD_PATH);
 		File[] tempList = file.listFiles();
 		for (File f : tempList) { // 遍历File[]数组
 			if (!f.isDirectory()) {
@@ -262,6 +290,8 @@ public class Systemtask {
 
 	}
 
+	
+	/**同步房源索引库***/
 	@Scheduled(cron=SystemTaskTime.sysc_house)
 	public void sysc_house() {
 		int start = 0 ;
@@ -289,5 +319,98 @@ public class Systemtask {
 		}
 		jedisClient.set("house_sysc_start_end:", value);
 	}
+	
+	
+	/**同步楼栋索引库***/
+	@Scheduled(cron=SystemTaskTime.sysc_building)
+	public void sysc_building() {
+		int start = 0 ;
+		int end = 0 ;
+		String jsonData = jedisClient.get("buil_sysc_start_end:");
+		if (CheckDataUtil.checkNotEmpty(jsonData)) {
+			String[] split = jsonData.split("-");
+			try {
+				start = Integer.valueOf( split[0] );
+				end =   Integer.valueOf( split[1] );
+			} catch (Exception e) {
+				e.printStackTrace();
+				end = 20000;
+			}
+		} else {
+			end = 20000;
+		}
+		PageQuery pagequery = new PageQuery();
+		pagequery.setPagestart(start);
+		pagequery.setPageend(end);
+		String value =( start+20000 ) +"-" + (end + 20000);
+		ResultMap resultMap = villageService.addbuildngtosolr(null , pagequery);
+		if (resultMap.getCode() !=200) {
+			value = "0-20000";
+		}
+		jedisClient.set("buil_sysc_start_end:", value);
+	}
+	
+	
+	/**同步小区索引库***/
+	@Scheduled(cron=SystemTaskTime.sysc_village)
+	public void sysc_village() {
+		int start = 0 ;
+		int end = 0 ;
+		String jsonData = jedisClient.get("vill_sysc_start_end:");
+		if (CheckDataUtil.checkNotEmpty(jsonData)) {
+			String[] split = jsonData.split("-");
+			try {
+				start = Integer.valueOf( split[0] );
+				end =   Integer.valueOf( split[1] );
+			} catch (Exception e) {
+				e.printStackTrace();
+				end = 20000;
+			}
+		} else {
+			end = 20000;
+		}
+		PageQuery pagequery = new PageQuery();
+		pagequery.setPagestart(start);
+		pagequery.setPageend(end);
+		String value =( start+20000 ) +"-" + (end + 20000);
+		ResultMap resultMap =  villageService.addvillagetosolr(pagequery);
+		if (resultMap.getCode() !=200) {
+			value = "0-20000";
+		}
+		jedisClient.set("vill_sysc_start_end:", value);
+	}
+	
+	
+	
+	/**同步房源海报**/
+	@Scheduled(cron = SystemTaskTime.buil_PostImage)
+	public void  sysc_haibao () {
+		List<HouseCustomer> houselist = backImageCustoermMapper.searchHouseHaibaoCommonCreate();
+		if (CheckDataUtil.checkNotEmpty(houselist)) {
+			for (HouseCustomer house : houselist) {
+				String prices = house.getPrices() + house.getPricetype();
+				String apartmentname = house.getApartmentname();
+				String onePicture = house.getPicture().split(",")[0];
+				String detailName = "housedetail";
+				if (house.getProperty_id() == 4 || house.getProperty_id() == 7 ) {
+					detailName = "otherdetail";
+				}
+				posterCreateService.createHousePoster(prices, apartmentname, 
+						onePicture, house.getHouseid() ,detailName);
+				
+				// 置空缓存
+				try {
+					jedisClient.expire(RedisUtil.HOUSE_FIRST_KEY + house.getHouseid() , 0);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+			}
+			
+			
+		}
+		
+	}
+	
 	
 }

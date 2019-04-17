@@ -17,8 +17,64 @@ package cn.com.qcc.common;
 
 public class SystemTaskTime {
 	
-	/**每个 周六  凌晨 2:10   删除临时文件夹里面的数据  **/
-	public static final String delete_uploadpic = "0 10 2 ? * SAT";	
+	/**每天  凌晨 0:10   删除临时文件夹里面的数据  **/
+	public static final String delete_uploadpic = "0 10 0 * * ?";
+	
+	/**  * 每天晚上  凌晨  0:30  执行 , 同步 小区 楼栋 房源的视频  * **/
+	public static final String sync_vedio = "0 30 0 * * ?";
+	
+	/**  每天晚上  凌晨    1:50        执行 , 生成对应的二维码图片  **/
+	public static final String build_xpxpicture = "0 10 1 * * ?";
+	
+	/**同步房源 到索引库  2:10        **/
+	public static final String sysc_house = "0 10 2 * * ?";
+	
+	/**同步房源 到索引库  2:20   **/
+	public static final String sysc_building = "0 20 2 * * ?";
+	
+	/**同步房源 到索引库  2:30   **/
+	public static final String sysc_village = "0 30 2 * * ?";
+	
+	
+	/**生成海报二维码 3:00   **/
+	public static final String buil_PostImage = "0 0 3 * * ?";
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**  * 每天晚上凌晨  6:00  * **/
+	public static final String every_day_04 = "0 0 6 * * ?";
+	
+	
+	
+	
+	
+	//每隔5秒钟执行一次  
+	public static final String fivesecond = "0/5 * * * * ? ";	
+	
+	//每隔10分钟执行一次
+	public static final String minutes_10  = "10 0/10 * * * ? ";	
+	
+
+	
+	public static final String MONTH_END_22 = "0 0 22 LAST * ?";
+
+	
+	
+	
+	
 	
 	
 	/**每个 周六  凌晨 5:10   同步求租的浏览量  **/
@@ -29,45 +85,14 @@ public class SystemTaskTime {
 	
 	/**每个 周六  凌晨 5:30   同步部落的浏览量  **/
 	public static final String sysc_tribe = "0 50 5 ? * SAT";
-	
-	/**
-	 * 每天晚上  凌晨  4:30  执行 , 生成对应的二维码图片
-	 * **/
-	public static final String build_xpxpicture = "0 30 4 * * ?";
-	
-	/**
-	 * 每天晚上  凌晨  2:30  执行 , 同步 小区 楼栋 房源的视频
-	 * **/
-	public static final String sync_vedio = "0 30 2 * * ?";
-	
-	/**
-	 * 每天晚上凌晨4
-	 * **/
-	public static final String every_day_04 = "0 0 4 * * ?";
-	
-	
-	/**
-	 * 每天晚上凌晨1点执行 , 吧对应的收益加入到用户的总收益中提供提现操作
-	 * **/
-	public static final String addlucre = "0 0 1 * * ?";
-	
-	//每隔5秒钟执行一次  
-	public static final String fivesecond = "0/50 * * * * ? ";	
-	
-	//每隔10分钟执行一次
-	public static final String minutes_10  = "10 0/10 * * * ? ";	
-	
-	/**
-	 * 如果房源长时间没有更新自动下架 [每个周六凌晨3点10分]
-	 * **/
-	public static final String house_undercarriage = "0 10 3 ? * SAT";	
-	
-	public static final String MONTH_END_22 = "0 0 22 LAST * ?";
-
-	/**同步房源 到索引库 每天早上6点   **/
-	public static final String sysc_house = "0 0 6 * * ?";
 
 
+
+	/**  * 每天晚上凌晨 23:00  点执行 , 吧对应的收益加入到用户的总收益中提供提现操作 * **/
+	public static final String addlucre = "0 0 23 * * ?";
+	
+	/**  23:30  ***/
+	public static final String house_undercarriage = "0 30 23 ? * SAT";	
 	
 	
 

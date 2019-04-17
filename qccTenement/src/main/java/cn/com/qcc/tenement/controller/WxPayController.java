@@ -26,6 +26,7 @@ import cn.com.qcc.service.ConsumeService;
 import cn.com.qcc.service.HouseRoomService;
 import cn.com.qcc.service.HouseService;
 import cn.com.qcc.service.InteService;
+import cn.com.qcc.service.SmallRoutineService;
 import cn.com.qcc.service.TribeService;
 import cn.com.qcc.service.UserService;
 import cn.com.qcc.service.VipCountService;
@@ -90,7 +91,8 @@ public class WxPayController {
 	HouseRoomService houseRoomService;
 	@Autowired
 	JedisClient jedisClient;
-	
+	@Autowired
+	SmallRoutineService smallRoutine;
 
 	public static WxPayApiConfig getApiConfig() {
 		return WxPayApiConfig.New().setAppId(PayCommonConfig.qcc_gzhappid).
@@ -659,7 +661,7 @@ public class WxPayController {
 	@RequestMapping("/user/createorder")
 	@ResponseBody
 	public ResultMap createorder(String openid, int total_free, String descname, String userid, String articledetailid,String type
-			,Houseorder houseorder)
+			,Houseorder houseorder , String formid)
 			throws IllegalAccessException, UnrecoverableKeyException, KeyManagementException, ClientProtocolException,
 			KeyStoreException, NoSuchAlgorithmException, IOException {
 		OrderInfo order = new OrderInfo();
@@ -672,6 +674,7 @@ public class WxPayController {
 			order.setAppid(PayCommonConfig.fdzz_xiaochengxuappid);
 		}
 		else {
+			type = "qcc";
 			order.setAppid(PayCommonConfig.qcc_xiaochengxuappid);
 		}
 		
@@ -693,13 +696,14 @@ public class WxPayController {
 		} 
 		if ("房源预订".equals(descname)) {
 			//total_free = 1;
+			System.out.println(houseorder.getBrokeruserid() + "-------" + houseorder.getPreparatoryid());
 			// 先需要往数据库插入一条记录或者是更新一条记录
 			houseorder.setPrices(Double.valueOf(total_free ) / 100);
 			if (houseorder.getDaycount() == 0) {houseorder.setDaycount(1800);}
 			ResultMap resultMap = houseService.gethouseorderid(houseorder);
 			if (resultMap.getCode() !=200) {return resultMap;}
 			Long houseorderid =(Long) resultMap.getObj();
-			cash_word =  "cz_" + houseorderid;
+			cash_word =  "cz_" + houseorderid +"_" + openid + "_" + formid+"_"+type;
 			notify_url = PayCommonConfig.houseyudingreturn;
 		}
 		
@@ -889,9 +893,8 @@ public class WxPayController {
 		WxPayApiConfigKit.setThreadLocalWxPayApiConfig(getApiConfig());
 		if (PaymentKit.verifyNotify(params, WxPayApiConfigKit.getWxPayApiConfig().getPaternerKey())) {
 			if (("SUCCESS").equals(result_code)) {
-				String jsonData = jedisClient.get(RedisUtil.ONLINE_PAY_ORDER + out_trade_no);
-				String houseorderid = jsonData.split("_")[1];
-				returnstr = houseService.houseyudingsuccess(houseorderid , total_amount ,out_trade_no );
+				
+				returnstr = houseService.houseyudingsuccess( total_amount ,out_trade_no );
 			}
 		}
 		return returnstr;
@@ -916,7 +919,9 @@ public class WxPayController {
 				String descname = "金币充值";
 				Integer type = 1;
 				String userid = jsonData.split("_")[1];
-				// 这里需要需要置顶更新和消费记录
+
+
+				
 				returnstr = updateConsumeAndIntegral(descname, total_amount, type, userid);
 			}
 		}

@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.PageQuery;
+import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SendMessage;
+import cn.com.qcc.common.SimpleUpload;
 import cn.com.qcc.detailcommon.AccountMgr;
+import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.pojo.Area;
 import cn.com.qcc.pojo.Browse;
 import cn.com.qcc.pojo.Building;
@@ -46,6 +49,7 @@ import cn.com.qcc.service.BuyService;
 import cn.com.qcc.service.HouseService;
 import cn.com.qcc.service.HousertargService;
 import cn.com.qcc.service.InteService;
+import cn.com.qcc.service.PosterCreateService;
 import cn.com.qcc.service.PropertyService;
 import cn.com.qcc.service.QiuzuService;
 import cn.com.qcc.service.TribeService;
@@ -66,6 +70,8 @@ public class HouseController {
 	@Autowired UserService userService;
 	@Autowired InteService inteService;
 	@Autowired HousertargService housertargService;
+	@Autowired PosterCreateService posterCreateService;
+	@Autowired JedisClient jedisClient;
 
 	// 房源一键导入索引库
 	@RequestMapping("/house/addtosolr")
@@ -75,6 +81,41 @@ public class HouseController {
 		pagequery.setPagestart(start);
 		pagequery.setPageend(end);
 		return houseService.searchAllHouseToSolr(pagequery);
+	}
+	
+	
+	// 创建房源海报
+	@RequestMapping("/house/createHousePost")
+	@ResponseBody
+	public ResultMap createHousePost(Long houseid ) {
+		HouseCustomer house =  posterCreateService.searchHousePostMess(houseid);
+		if (CheckDataUtil.checkisEmpty(house)) {
+			return ResultMap.build(400, "房子不存在");
+		}
+		String prices = house.getPrices() + house.getPricetype();
+		String apartmentname = house.getApartmentname();
+		String onePicture = house.getPicture().split(",")[0];
+		String detailName = "housedetail";
+		if (house.getProperty_id() == 4 || house.getProperty_id() == 7 ) {
+			detailName = "otherdetail";
+		}
+		
+		
+		String pic = posterCreateService.createHousePoster(prices, apartmentname,
+				onePicture, houseid, detailName) ; 
+		
+		// 删除云海报
+		if (CheckDataUtil.checkNotEmpty(house.getHousePostImage())) {
+			SimpleUpload.deleteimage(house.getHousePostImage());
+		}
+		// 置空缓存
+		try {
+			jedisClient.expire(RedisUtil.HOUSE_FIRST_KEY + house.getHouseid() , 0);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return ResultMap.IS_200(pic);
 		
 	}
 

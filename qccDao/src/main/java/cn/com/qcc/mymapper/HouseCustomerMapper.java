@@ -238,7 +238,8 @@ public interface HouseCustomerMapper {
 
 	Houseorder getHouseNotPayOrder(Long otherid);
 	
-	Bargain getNewBargin(@Param("otherid")Long otherid, @Param("type")Integer type);
+	Bargain getNewBargin(@Param("otherid")Long otherid, @Param("type")Integer type
+			,@Param("daycount") Integer daycount);
 	
 	/**查询砍价相关**/
 	BargainCustomer bargainDetailList(Long barginid);

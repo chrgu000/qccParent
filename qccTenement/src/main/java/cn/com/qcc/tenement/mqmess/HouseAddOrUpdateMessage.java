@@ -1,5 +1,4 @@
 package cn.com.qcc.tenement.mqmess;
-import java.util.List;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
@@ -8,12 +7,8 @@ import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mymapper.HouseCustomerMapper;
-import cn.com.qcc.mymapper.VillageCustomerMapper;
-import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.service.InteService;
-import cn.com.qcc.service.VillageService;
-import cn.com.qcc.service.solrdao.BuilSolrDao;
 import cn.com.qcc.service.solrdao.HouseSolrDao;
 
 
@@ -34,12 +29,6 @@ public class HouseAddOrUpdateMessage implements MessageListener{
 	private HouseSolrDao houseSolrDao;
 	@Autowired
 	private JedisClient jedisClient;
-	@Autowired
-	private VillageCustomerMapper villageCustomerMapper;
-	@Autowired
-	private BuilSolrDao builSolrDao;
-	@Autowired
-	private VillageService villageService;
 	
 	public void onMessage(Message message) {
 		try {
@@ -66,22 +55,11 @@ public class HouseAddOrUpdateMessage implements MessageListener{
 			}
 			
 			// 同步房源索引库
-			Long buildingid = null;
 			HouseCustomer houseCustomer = houseCustomerMapper.searchoneHouseToSolr(houseid);
 			if (CheckDataUtil.checkNotEmpty(houseCustomer)) {
-				buildingid = houseCustomer.getBuildingid();
 				houseSolrDao.AddOneHouseToSolr(houseCustomer);
 			}
 			
-			
-			//同步楼栋索引库
-			if (CheckDataUtil.checkNotEmpty(buildingid)) {
-				List<BuildingCustomer> buils = villageCustomerMapper.addbuildngtosolr(buildingid, null);
-				builSolrDao.AllBuildingToSolr(buils);
-			}
-			
-			// 同步小区索引库
-			villageService.onevillagetosolr(houseCustomer.getVillageid());
 		} catch (Exception e) {
 			// 这里是发生未知异常
 			e.printStackTrace();

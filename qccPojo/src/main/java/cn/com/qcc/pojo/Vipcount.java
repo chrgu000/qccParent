@@ -30,6 +30,9 @@ public class Vipcount {
     /** 提现*/
     private String password;
 
+    /** 佣金*/
+    private Double commission;
+
     public Long getUser_id() {
         return user_id;
     }
@@ -100,5 +103,13 @@ public class Vipcount {
 
     public void setPassword(String password) {
         this.password = password == null ? null : password.trim();
+    }
+
+    public Double getCommission() {
+        return commission;
+    }
+
+    public void setCommission(Double commission) {
+        this.commission = commission;
     }
 }

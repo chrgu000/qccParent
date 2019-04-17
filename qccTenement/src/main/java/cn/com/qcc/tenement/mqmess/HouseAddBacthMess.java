@@ -46,7 +46,6 @@ public class HouseAddBacthMess implements MessageListener{
 			System.out.println("批量发布房源收到消息：" + text);
 			// 这里做积分加处理
 			inteService.managebranch(11L, userid, Long.valueOf( houseids.split("-")[0]) );
-			Long buildingid = null;
 			String [] houseid = houseids.split("-");
 			for (int i =0;i<houseid.length;i++) {
 				if (CheckDataUtil.checkNotEmpty(tribeid)) {
@@ -55,19 +54,10 @@ public class HouseAddBacthMess implements MessageListener{
 				// 同步索引库
 				HouseCustomer houseCustomer = houseCustomerMapper.searchoneHouseToSolr(Long.valueOf(houseid[i]));
 				if (CheckDataUtil.checkNotEmpty(houseCustomer)) {
-					buildingid = houseCustomer.getBuildingid();
 					houseSolrDao.AddOneHouseToSolr(houseCustomer);
 				}
 				
 			}
-			
-		    //  同步楼栋索引库
-			if (CheckDataUtil.checkNotEmpty(buildingid)) {
-				List<BuildingCustomer> buildingCustomers = villageCustomerMapper.addbuildngtosolr(buildingid, null);
-				builSolrDao.AllBuildingToSolr(buildingCustomers);
-			}
-			
-			
 			
 		} catch (Exception e) {
 			// 这里是发生未知异常

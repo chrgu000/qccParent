@@ -6,9 +6,6 @@ public class House {
     /** 房屋id*/
     private Long houseid;
 
-    /** 部落id的集合*/
-    private String tribeids;
-
     /** 房屋标题*/
     private String housetitle;
 
@@ -105,20 +102,18 @@ public class House {
     /** 户型图*/
     private String renderings;
 
+    /** 房源海报图片*/
+    private String housePostImage;
+
+    /** 部落id的集合*/
+    private String tribeids;
+
     public Long getHouseid() {
         return houseid;
     }
 
     public void setHouseid(Long houseid) {
         this.houseid = houseid;
-    }
-
-    public String getTribeids() {
-        return tribeids;
-    }
-
-    public void setTribeids(String tribeids) {
-        this.tribeids = tribeids == null ? null : tribeids.trim();
     }
 
     public String getHousetitle() {
@@ -375,5 +370,21 @@ public class House {
 
     public void setRenderings(String renderings) {
         this.renderings = renderings == null ? null : renderings.trim();
+    }
+
+    public String getHousePostImage() {
+        return housePostImage;
+    }
+
+    public void setHousePostImage(String housePostImage) {
+        this.housePostImage = housePostImage == null ? null : housePostImage.trim();
+    }
+
+    public String getTribeids() {
+        return tribeids;
+    }
+
+    public void setTribeids(String tribeids) {
+        this.tribeids = tribeids == null ? null : tribeids.trim();
     }
 }

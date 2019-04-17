@@ -4,6 +4,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
+import cn.com.qcc.common.PayCommonConfig;
 import cn.com.qcc.common.SimpleUpload;
 import cn.com.qcc.detailcommon.AccountMgr;
 
@@ -16,12 +17,13 @@ public class VedioUploadMess implements MessageListener  {
 			TextMessage textMessage = (TextMessage)message;
 			String fileName =  (String)textMessage.getText() ;
 			// 拿到TEXT 需要休眠一会儿。等待数据库提交事务
-			Thread.sleep(1000);
+			Thread.sleep(5000 );
 			System.out.println(fileName);
-			String filePath = AccountMgr.LOCAL_UPLOAD_PATH + fileName;
+			String filePath = PayCommonConfig.LOCAL_UPLOAD_PATH + fileName;
 			SimpleUpload.viedupload(filePath, fileName);
 		} catch (Exception e) {
 			// 这里是发生未知异常
+			System.out.println(" 视频 上传异常 ==================");
 			e.printStackTrace();
 		}
 		

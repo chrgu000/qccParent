@@ -402,6 +402,9 @@ public interface UserService {
 
 
 
+	public Profile getprofile(Long userid ) ;
+
+
 	
 
 	

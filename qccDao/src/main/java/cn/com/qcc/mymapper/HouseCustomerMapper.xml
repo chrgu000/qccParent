@@ -1703,7 +1703,11 @@
 	<!-- 查询房源的最新预定信息 -->
 	<select id="getNewBargin" resultType="cn.com.qcc.pojo.Bargain">
 		SELECT * from bargain where bargain.otherid =#{otherid}
-		 and type = #{type} ORDER BY bargain.starttime desc
+		 and type = #{type} 
+		 <if test="daycount !=null">
+		 	and daycount = #{daycount}
+		 </if>
+		 ORDER BY bargain.starttime desc
 		LIMIT 0 , 1
 	</select>	
 	

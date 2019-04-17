@@ -1,7 +1,5 @@
 package cn.com.qcc.tenement.mqmess;
 
-import java.util.List;
-
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;

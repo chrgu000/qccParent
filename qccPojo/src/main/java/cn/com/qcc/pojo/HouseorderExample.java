@@ -1114,6 +1114,186 @@ public class HouseorderExample {
             addCriterion("endtime not between", value1, value2, "endtime");
             return (Criteria) this;
         }
+
+        public Criteria andBrokeruseridIsNull() {
+            addCriterion("brokeruserid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBrokeruseridIsNotNull() {
+            addCriterion("brokeruserid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBrokeruseridEqualTo(Long value) {
+            addCriterion("brokeruserid =", value, "brokeruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBrokeruseridNotEqualTo(Long value) {
+            addCriterion("brokeruserid <>", value, "brokeruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBrokeruseridGreaterThan(Long value) {
+            addCriterion("brokeruserid >", value, "brokeruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBrokeruseridGreaterThanOrEqualTo(Long value) {
+            addCriterion("brokeruserid >=", value, "brokeruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBrokeruseridLessThan(Long value) {
+            addCriterion("brokeruserid <", value, "brokeruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBrokeruseridLessThanOrEqualTo(Long value) {
+            addCriterion("brokeruserid <=", value, "brokeruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBrokeruseridIn(List<Long> values) {
+            addCriterion("brokeruserid in", values, "brokeruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBrokeruseridNotIn(List<Long> values) {
+            addCriterion("brokeruserid not in", values, "brokeruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBrokeruseridBetween(Long value1, Long value2) {
+            addCriterion("brokeruserid between", value1, value2, "brokeruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBrokeruseridNotBetween(Long value1, Long value2) {
+            addCriterion("brokeruserid not between", value1, value2, "brokeruserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andCentpercentnumIsNull() {
+            addCriterion("centpercentnum is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCentpercentnumIsNotNull() {
+            addCriterion("centpercentnum is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCentpercentnumEqualTo(Double value) {
+            addCriterion("centpercentnum =", value, "centpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCentpercentnumNotEqualTo(Double value) {
+            addCriterion("centpercentnum <>", value, "centpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCentpercentnumGreaterThan(Double value) {
+            addCriterion("centpercentnum >", value, "centpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCentpercentnumGreaterThanOrEqualTo(Double value) {
+            addCriterion("centpercentnum >=", value, "centpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCentpercentnumLessThan(Double value) {
+            addCriterion("centpercentnum <", value, "centpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCentpercentnumLessThanOrEqualTo(Double value) {
+            addCriterion("centpercentnum <=", value, "centpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCentpercentnumIn(List<Double> values) {
+            addCriterion("centpercentnum in", values, "centpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCentpercentnumNotIn(List<Double> values) {
+            addCriterion("centpercentnum not in", values, "centpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCentpercentnumBetween(Double value1, Double value2) {
+            addCriterion("centpercentnum between", value1, value2, "centpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCentpercentnumNotBetween(Double value1, Double value2) {
+            addCriterion("centpercentnum not between", value1, value2, "centpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandpercentnumIsNull() {
+            addCriterion("landpercentnum is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandpercentnumIsNotNull() {
+            addCriterion("landpercentnum is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandpercentnumEqualTo(Double value) {
+            addCriterion("landpercentnum =", value, "landpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandpercentnumNotEqualTo(Double value) {
+            addCriterion("landpercentnum <>", value, "landpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandpercentnumGreaterThan(Double value) {
+            addCriterion("landpercentnum >", value, "landpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandpercentnumGreaterThanOrEqualTo(Double value) {
+            addCriterion("landpercentnum >=", value, "landpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandpercentnumLessThan(Double value) {
+            addCriterion("landpercentnum <", value, "landpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandpercentnumLessThanOrEqualTo(Double value) {
+            addCriterion("landpercentnum <=", value, "landpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandpercentnumIn(List<Double> values) {
+            addCriterion("landpercentnum in", values, "landpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandpercentnumNotIn(List<Double> values) {
+            addCriterion("landpercentnum not in", values, "landpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandpercentnumBetween(Double value1, Double value2) {
+            addCriterion("landpercentnum between", value1, value2, "landpercentnum");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandpercentnumNotBetween(Double value1, Double value2) {
+            addCriterion("landpercentnum not between", value1, value2, "landpercentnum");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

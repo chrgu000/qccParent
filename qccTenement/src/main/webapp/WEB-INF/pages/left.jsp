@@ -23,6 +23,10 @@
 		<button type="button" class="btn btn-primary  systemstate">系统参数配置</button>
 	</li>
 	
+	<li style="display:none;"  class="list-group-item "  id="isshow36" >
+		<button type="button" class="btn btn-primary  defaultPercent">管理房东佣金</button>
+	</li>
+	
 	
 	<li style="display:none;"  class="list-group-item " id="isshow34">
 		<button type="button" class="btn btn-primary  parerrule">订房规则配置</button>
@@ -215,7 +219,7 @@
 	<li style="display:none;"  class="list-group-item" id="isshow33" >
 			<button type="button" class="btn btn-primary  landlord_examine" >房东入驻审核</button>
    </li>
-   <li   class="list-group-item" >
+   <li  style="display:none;" class="list-group-item"  id="isshow37">
 		<button type="button" class="btn btn-primary  bdmanager" >B_D账号管理</button>
 	</li>
 </ul>
@@ -310,7 +314,11 @@
 <c:if test="${li.accessid==102}">
 <script type="text/javascript"> $(function (){$('#isshow102').show();});</script></c:if>
 <c:if test="${li.accessid==35}">
-<script type="text/javascript"> $(function (){$('#isshow35').show();});</script></c:if>													
+<script type="text/javascript"> $(function (){$('#isshow35').show();});</script></c:if>		
+<c:if test="${li.accessid==36}">
+<script type="text/javascript"> $(function (){$('#isshow36').show();});</script></c:if>	
+<c:if test="${li.accessid==37}">
+<script type="text/javascript"> $(function (){$('#isshow37').show();});</script></c:if>													
 	
 	
 </c:forEach>

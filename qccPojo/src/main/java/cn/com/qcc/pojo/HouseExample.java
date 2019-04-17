@@ -165,76 +165,6 @@ public class HouseExample {
             return (Criteria) this;
         }
 
-        public Criteria andTribeidsIsNull() {
-            addCriterion("tribeids is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTribeidsIsNotNull() {
-            addCriterion("tribeids is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTribeidsEqualTo(String value) {
-            addCriterion("tribeids =", value, "tribeids");
-            return (Criteria) this;
-        }
-
-        public Criteria andTribeidsNotEqualTo(String value) {
-            addCriterion("tribeids <>", value, "tribeids");
-            return (Criteria) this;
-        }
-
-        public Criteria andTribeidsGreaterThan(String value) {
-            addCriterion("tribeids >", value, "tribeids");
-            return (Criteria) this;
-        }
-
-        public Criteria andTribeidsGreaterThanOrEqualTo(String value) {
-            addCriterion("tribeids >=", value, "tribeids");
-            return (Criteria) this;
-        }
-
-        public Criteria andTribeidsLessThan(String value) {
-            addCriterion("tribeids <", value, "tribeids");
-            return (Criteria) this;
-        }
-
-        public Criteria andTribeidsLessThanOrEqualTo(String value) {
-            addCriterion("tribeids <=", value, "tribeids");
-            return (Criteria) this;
-        }
-
-        public Criteria andTribeidsLike(String value) {
-            addCriterion("tribeids like", value, "tribeids");
-            return (Criteria) this;
-        }
-
-        public Criteria andTribeidsNotLike(String value) {
-            addCriterion("tribeids not like", value, "tribeids");
-            return (Criteria) this;
-        }
-
-        public Criteria andTribeidsIn(List<String> values) {
-            addCriterion("tribeids in", values, "tribeids");
-            return (Criteria) this;
-        }
-
-        public Criteria andTribeidsNotIn(List<String> values) {
-            addCriterion("tribeids not in", values, "tribeids");
-            return (Criteria) this;
-        }
-
-        public Criteria andTribeidsBetween(String value1, String value2) {
-            addCriterion("tribeids between", value1, value2, "tribeids");
-            return (Criteria) this;
-        }
-
-        public Criteria andTribeidsNotBetween(String value1, String value2) {
-            addCriterion("tribeids not between", value1, value2, "tribeids");
-            return (Criteria) this;
-        }
-
         public Criteria andHousetitleIsNull() {
             addCriterion("housetitle is null");
             return (Criteria) this;
@@ -2362,6 +2292,146 @@ public class HouseExample {
 
         public Criteria andRenderingsNotBetween(String value1, String value2) {
             addCriterion("renderings not between", value1, value2, "renderings");
+            return (Criteria) this;
+        }
+
+        public Criteria andHousePostImageIsNull() {
+            addCriterion("housePostImage is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHousePostImageIsNotNull() {
+            addCriterion("housePostImage is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHousePostImageEqualTo(String value) {
+            addCriterion("housePostImage =", value, "housePostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andHousePostImageNotEqualTo(String value) {
+            addCriterion("housePostImage <>", value, "housePostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andHousePostImageGreaterThan(String value) {
+            addCriterion("housePostImage >", value, "housePostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andHousePostImageGreaterThanOrEqualTo(String value) {
+            addCriterion("housePostImage >=", value, "housePostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andHousePostImageLessThan(String value) {
+            addCriterion("housePostImage <", value, "housePostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andHousePostImageLessThanOrEqualTo(String value) {
+            addCriterion("housePostImage <=", value, "housePostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andHousePostImageLike(String value) {
+            addCriterion("housePostImage like", value, "housePostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andHousePostImageNotLike(String value) {
+            addCriterion("housePostImage not like", value, "housePostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andHousePostImageIn(List<String> values) {
+            addCriterion("housePostImage in", values, "housePostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andHousePostImageNotIn(List<String> values) {
+            addCriterion("housePostImage not in", values, "housePostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andHousePostImageBetween(String value1, String value2) {
+            addCriterion("housePostImage between", value1, value2, "housePostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andHousePostImageNotBetween(String value1, String value2) {
+            addCriterion("housePostImage not between", value1, value2, "housePostImage");
+            return (Criteria) this;
+        }
+
+        public Criteria andTribeidsIsNull() {
+            addCriterion("tribeids is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTribeidsIsNotNull() {
+            addCriterion("tribeids is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTribeidsEqualTo(String value) {
+            addCriterion("tribeids =", value, "tribeids");
+            return (Criteria) this;
+        }
+
+        public Criteria andTribeidsNotEqualTo(String value) {
+            addCriterion("tribeids <>", value, "tribeids");
+            return (Criteria) this;
+        }
+
+        public Criteria andTribeidsGreaterThan(String value) {
+            addCriterion("tribeids >", value, "tribeids");
+            return (Criteria) this;
+        }
+
+        public Criteria andTribeidsGreaterThanOrEqualTo(String value) {
+            addCriterion("tribeids >=", value, "tribeids");
+            return (Criteria) this;
+        }
+
+        public Criteria andTribeidsLessThan(String value) {
+            addCriterion("tribeids <", value, "tribeids");
+            return (Criteria) this;
+        }
+
+        public Criteria andTribeidsLessThanOrEqualTo(String value) {
+            addCriterion("tribeids <=", value, "tribeids");
+            return (Criteria) this;
+        }
+
+        public Criteria andTribeidsLike(String value) {
+            addCriterion("tribeids like", value, "tribeids");
+            return (Criteria) this;
+        }
+
+        public Criteria andTribeidsNotLike(String value) {
+            addCriterion("tribeids not like", value, "tribeids");
+            return (Criteria) this;
+        }
+
+        public Criteria andTribeidsIn(List<String> values) {
+            addCriterion("tribeids in", values, "tribeids");
+            return (Criteria) this;
+        }
+
+        public Criteria andTribeidsNotIn(List<String> values) {
+            addCriterion("tribeids not in", values, "tribeids");
+            return (Criteria) this;
+        }
+
+        public Criteria andTribeidsBetween(String value1, String value2) {
+            addCriterion("tribeids between", value1, value2, "tribeids");
+            return (Criteria) this;
+        }
+
+        public Criteria andTribeidsNotBetween(String value1, String value2) {
+            addCriterion("tribeids not between", value1, value2, "tribeids");
             return (Criteria) this;
         }
     }

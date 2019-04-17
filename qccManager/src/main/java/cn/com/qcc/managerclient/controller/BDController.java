@@ -104,7 +104,7 @@ public class BDController {
 		Bdmanager bdmanager = bdService.getBdidByToken(BD_ACCTOKEN);
 		if (CheckDataUtil.checkisEmpty(bdmanager)
 				|| bdmanager.getState().intValue() != 1 ) {
-			return ResultMap.build(400, "你已被移除BD管理");
+			return ResultMap.build(400, "登录超时,请重新登录!!!");
 		}
 		List<UserRoomCustomer> myLand = bdService.myLand(BD_ACCTOKEN , code);	
 		return ResultMap.IS_200(myLand);			

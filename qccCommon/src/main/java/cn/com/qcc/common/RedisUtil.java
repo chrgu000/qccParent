@@ -50,5 +50,7 @@ public class RedisUtil {
 	public static final String ONLINE_PAY_ORDER  =  "onlinepay_first:";
 	public static final Integer ONLINE_PAY_ORDER_OUT_TIME = 60*60*24*1;
 	
+	public static final String BACKIMAGE_FIRST_ID = "backimage_incr_id:";
+	
 
 }

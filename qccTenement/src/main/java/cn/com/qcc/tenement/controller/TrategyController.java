@@ -86,7 +86,6 @@ public class TrategyController {
 	
 	@RequestMapping("/delete")
 	public ResultMap delete (Long userid , Long trategyid) {
-		
 		return trategyService.delete(userid ,trategyid);
 	} 
 	

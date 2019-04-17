@@ -47,17 +47,22 @@
 				IFNULL(inteconn.count, '0') intecount,
 				vipcount.count,
 				vipcount.balance,
+				vipcount.commission , 
 				IFNULL(vipcount.houseaccount ,0) houseaccount ,
 				vipcount.account,
 				IFNULL(masonryconn.count, '0') mascount,
 				vipcount.is_vip,
 				IFNULL(todaylurcey.account, 0) todayaccount,
 				IFNULL(monthlurcey.account, 0) monthaccount,
-				IFNULL(totalurcey.account, 0) totalaccount
+				IFNULL(totalurcey.account, 0) totalaccount,
+				IFNULL(todaycommission.account, 0) todaymissaccount,
+				IFNULL(monthcommission.account, 0) monthmissaccount,
+				IFNULL(totalcommission.account, 0) totalmissaccount
 			FROM
 				vipcount
 			LEFT JOIN inteconn ON vipcount.user_id = inteconn.userid
 			LEFT JOIN masonryconn ON vipcount.user_id = masonryconn.userid
+			
 			JOIN (
 				SELECT
 					SUM(account) account
@@ -67,7 +72,9 @@
 					DATEDIFF(update_time, NOW()) = #{daycount}
 				AND lucre.state = 1
 				AND lucre.userid = #{userid}
+				AND lucre.type = 0 
 			) todaylurcey
+			
 			JOIN (
 				SELECT
 					SUM(account) account
@@ -78,7 +85,9 @@
 				AND YEAR (lucre.update_time) = YEAR (curdate())
 				AND lucre.state = 1
 				AND lucre.userid = #{userid}
+				AND lucre.type = 0 
 			) monthlurcey
+			
 			JOIN (
 				SELECT
 					SUM(account) account
@@ -87,7 +96,50 @@
 				WHERE
 					lucre.state = 1
 				AND lucre.userid = #{userid}
+				AND lucre.type = 0 
 			) totalurcey
+			
+			
+			
+			JOIN (
+				SELECT
+					SUM(account) account
+				FROM
+					lucre
+				WHERE
+					DATEDIFF(update_time, NOW()) = #{daycount}
+				AND lucre.state = 1
+				AND lucre.userid = #{userid}
+				AND lucre.type = 1
+			) todaycommission
+			
+			JOIN (
+				SELECT
+					SUM(account) account
+				FROM
+					lucre
+				WHERE
+					MONTH (lucre.update_time) = MONTH (curdate())
+				AND YEAR (lucre.update_time) = YEAR (curdate())
+				AND lucre.state = 1
+				AND lucre.userid = #{userid}
+				AND lucre.type = 1
+			) monthcommission
+			
+			JOIN (
+				SELECT
+					SUM(account) account
+				FROM
+					lucre
+				WHERE
+					lucre.state = 1
+				AND lucre.userid = #{userid}
+				AND lucre.type = 1
+			) totalcommission
+			
+			
+			
+			
 			WHERE
 				vipcount.user_id = #{userid}
   

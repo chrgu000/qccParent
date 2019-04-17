@@ -335,7 +335,7 @@ public interface HouseService {
 	 * @param total_amount : 总金额
 	 * @param weixinorder : 微信商户订单号
 	 * **/
-	String houseyudingsuccess(String houseorderid, String total_amount ,String weixinorder);
+	String houseyudingsuccess( String total_amount ,String weixinorder);
 	
 	/**
 	 * 查询我的历史预定信息

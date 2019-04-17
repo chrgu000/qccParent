@@ -3,7 +3,6 @@
 <mapper namespace="cn.com.qcc.mapper.HouseMapper" >
   <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.House" >
     <id column="houseid" property="houseid" jdbcType="BIGINT" />
-    <result column="tribeids" property="tribeids" jdbcType="VARCHAR" />
     <result column="housetitle" property="housetitle" jdbcType="VARCHAR" />
     <result column="buildingid" property="buildingid" jdbcType="BIGINT" />
     <result column="user_id" property="user_id" jdbcType="BIGINT" />
@@ -36,6 +35,8 @@
     <result column="housecode" property="housecode" jdbcType="VARCHAR" />
     <result column="xcxpicture" property="xcxpicture" jdbcType="VARCHAR" />
     <result column="renderings" property="renderings" jdbcType="VARCHAR" />
+    <result column="housePostImage" property="housePostImage" jdbcType="VARCHAR" />
+    <result column="tribeids" property="tribeids" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -96,11 +97,11 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    houseid, tribeids, housetitle, buildingid, user_id, user_identity, apartment_id, 
-    housetag_id, property_id, brandid, landlord, landlordtel, contacts, contactstel, 
-    area, floor, price_id, paystyle, ages, turn, redecorat, underground, picture, description, 
-    housestatus, houstatus, create_time, house_number, videourl, schedule, update_time, 
-    housecode, xcxpicture, renderings
+    houseid, housetitle, buildingid, user_id, user_identity, apartment_id, housetag_id, 
+    property_id, brandid, landlord, landlordtel, contacts, contactstel, area, floor, 
+    price_id, paystyle, ages, turn, redecorat, underground, picture, description, housestatus, 
+    houstatus, create_time, house_number, videourl, schedule, update_time, housecode, 
+    xcxpicture, renderings, housePostImage, tribeids
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.HouseExample" >
     select
@@ -133,45 +134,42 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.House" >
-     <selectKey  resultType="long"  order="AFTER"  keyProperty="houseid" >
+    <selectKey  resultType="long"  order="AFTER"  keyProperty="houseid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
-    insert into house (houseid, tribeids, housetitle, 
-      buildingid, user_id, user_identity, 
-      apartment_id, housetag_id, property_id, 
-      brandid, landlord, landlordtel, 
-      contacts, contactstel, area, 
-      floor, price_id, paystyle, 
-      ages, turn, redecorat, 
-      underground, picture, description, 
-      housestatus, houstatus, create_time, 
-      house_number, videourl, schedule, 
-      update_time, housecode, xcxpicture, 
-      renderings)
-    values (#{houseid,jdbcType=BIGINT}, #{tribeids,jdbcType=VARCHAR}, #{housetitle,jdbcType=VARCHAR}, 
-      #{buildingid,jdbcType=BIGINT}, #{user_id,jdbcType=BIGINT}, #{user_identity,jdbcType=VARCHAR}, 
-      #{apartment_id,jdbcType=INTEGER}, #{housetag_id,jdbcType=VARCHAR}, #{property_id,jdbcType=INTEGER}, 
-      #{brandid,jdbcType=BIGINT}, #{landlord,jdbcType=VARCHAR}, #{landlordtel,jdbcType=VARCHAR}, 
-      #{contacts,jdbcType=VARCHAR}, #{contactstel,jdbcType=VARCHAR}, #{area,jdbcType=DOUBLE}, 
-      #{floor,jdbcType=INTEGER}, #{price_id,jdbcType=BIGINT}, #{paystyle,jdbcType=VARCHAR}, 
-      #{ages,jdbcType=VARCHAR}, #{turn,jdbcType=VARCHAR}, #{redecorat,jdbcType=VARCHAR}, 
-      #{underground,jdbcType=VARCHAR}, #{picture,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
-      #{housestatus,jdbcType=CHAR}, #{houstatus,jdbcType=CHAR}, #{create_time,jdbcType=TIMESTAMP}, 
-      #{house_number,jdbcType=VARCHAR}, #{videourl,jdbcType=VARCHAR}, #{schedule,jdbcType=INTEGER}, 
-      #{update_time,jdbcType=TIMESTAMP}, #{housecode,jdbcType=VARCHAR}, #{xcxpicture,jdbcType=VARCHAR}, 
-      #{renderings,jdbcType=VARCHAR})
+    insert into house (houseid, housetitle, buildingid, 
+      user_id, user_identity, apartment_id, 
+      housetag_id, property_id, brandid, 
+      landlord, landlordtel, contacts, 
+      contactstel, area, floor, 
+      price_id, paystyle, ages, 
+      turn, redecorat, underground, 
+      picture, description, housestatus, 
+      houstatus, create_time, house_number, 
+      videourl, schedule, update_time, 
+      housecode, xcxpicture, renderings, 
+      housePostImage, tribeids)
+    values (#{houseid,jdbcType=BIGINT}, #{housetitle,jdbcType=VARCHAR}, #{buildingid,jdbcType=BIGINT}, 
+      #{user_id,jdbcType=BIGINT}, #{user_identity,jdbcType=VARCHAR}, #{apartment_id,jdbcType=INTEGER}, 
+      #{housetag_id,jdbcType=VARCHAR}, #{property_id,jdbcType=INTEGER}, #{brandid,jdbcType=BIGINT}, 
+      #{landlord,jdbcType=VARCHAR}, #{landlordtel,jdbcType=VARCHAR}, #{contacts,jdbcType=VARCHAR}, 
+      #{contactstel,jdbcType=VARCHAR}, #{area,jdbcType=DOUBLE}, #{floor,jdbcType=INTEGER}, 
+      #{price_id,jdbcType=BIGINT}, #{paystyle,jdbcType=VARCHAR}, #{ages,jdbcType=VARCHAR}, 
+      #{turn,jdbcType=VARCHAR}, #{redecorat,jdbcType=VARCHAR}, #{underground,jdbcType=VARCHAR}, 
+      #{picture,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{housestatus,jdbcType=CHAR}, 
+      #{houstatus,jdbcType=CHAR}, #{create_time,jdbcType=TIMESTAMP}, #{house_number,jdbcType=VARCHAR}, 
+      #{videourl,jdbcType=VARCHAR}, #{schedule,jdbcType=INTEGER}, #{update_time,jdbcType=TIMESTAMP}, 
+      #{housecode,jdbcType=VARCHAR}, #{xcxpicture,jdbcType=VARCHAR}, #{renderings,jdbcType=VARCHAR}, 
+      #{housePostImage,jdbcType=VARCHAR}, #{tribeids,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.House" >
-     <selectKey  resultType="long"  order="AFTER"  keyProperty="houseid" >
+    <selectKey  resultType="long"  order="AFTER"  keyProperty="houseid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into house
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="houseid != null" >
         houseid,
-      </if>
-      <if test="tribeids != null" >
-        tribeids,
       </if>
       <if test="housetitle != null" >
         housetitle,
@@ -269,13 +267,16 @@
       <if test="renderings != null" >
         renderings,
       </if>
+      <if test="housePostImage != null" >
+        housePostImage,
+      </if>
+      <if test="tribeids != null" >
+        tribeids,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="houseid != null" >
         #{houseid,jdbcType=BIGINT},
-      </if>
-      <if test="tribeids != null" >
-        #{tribeids,jdbcType=VARCHAR},
       </if>
       <if test="housetitle != null" >
         #{housetitle,jdbcType=VARCHAR},
@@ -373,6 +374,12 @@
       <if test="renderings != null" >
         #{renderings,jdbcType=VARCHAR},
       </if>
+      <if test="housePostImage != null" >
+        #{housePostImage,jdbcType=VARCHAR},
+      </if>
+      <if test="tribeids != null" >
+        #{tribeids,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="cn.com.qcc.pojo.HouseExample" resultType="java.lang.Integer" >
@@ -386,9 +393,6 @@
     <set >
       <if test="record.houseid != null" >
         houseid = #{record.houseid,jdbcType=BIGINT},
-      </if>
-      <if test="record.tribeids != null" >
-        tribeids = #{record.tribeids,jdbcType=VARCHAR},
       </if>
       <if test="record.housetitle != null" >
         housetitle = #{record.housetitle,jdbcType=VARCHAR},
@@ -486,6 +490,12 @@
       <if test="record.renderings != null" >
         renderings = #{record.renderings,jdbcType=VARCHAR},
       </if>
+      <if test="record.housePostImage != null" >
+        housePostImage = #{record.housePostImage,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tribeids != null" >
+        tribeids = #{record.tribeids,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -494,7 +504,6 @@
   <update id="updateByExample" parameterType="map" >
     update house
     set houseid = #{record.houseid,jdbcType=BIGINT},
-      tribeids = #{record.tribeids,jdbcType=VARCHAR},
       housetitle = #{record.housetitle,jdbcType=VARCHAR},
       buildingid = #{record.buildingid,jdbcType=BIGINT},
       user_id = #{record.user_id,jdbcType=BIGINT},
@@ -526,7 +535,9 @@
       update_time = #{record.update_time,jdbcType=TIMESTAMP},
       housecode = #{record.housecode,jdbcType=VARCHAR},
       xcxpicture = #{record.xcxpicture,jdbcType=VARCHAR},
-      renderings = #{record.renderings,jdbcType=VARCHAR}
+      renderings = #{record.renderings,jdbcType=VARCHAR},
+      housePostImage = #{record.housePostImage,jdbcType=VARCHAR},
+      tribeids = #{record.tribeids,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -534,9 +545,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.House" >
     update house
     <set >
-      <if test="tribeids != null" >
-        tribeids = #{tribeids,jdbcType=VARCHAR},
-      </if>
       <if test="housetitle != null" >
         housetitle = #{housetitle,jdbcType=VARCHAR},
       </if>
@@ -633,13 +641,18 @@
       <if test="renderings != null" >
         renderings = #{renderings,jdbcType=VARCHAR},
       </if>
+      <if test="housePostImage != null" >
+        housePostImage = #{housePostImage,jdbcType=VARCHAR},
+      </if>
+      <if test="tribeids != null" >
+        tribeids = #{tribeids,jdbcType=VARCHAR},
+      </if>
     </set>
     where houseid = #{houseid,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.House" >
     update house
-    set tribeids = #{tribeids,jdbcType=VARCHAR},
-      housetitle = #{housetitle,jdbcType=VARCHAR},
+    set housetitle = #{housetitle,jdbcType=VARCHAR},
       buildingid = #{buildingid,jdbcType=BIGINT},
       user_id = #{user_id,jdbcType=BIGINT},
       user_identity = #{user_identity,jdbcType=VARCHAR},
@@ -670,7 +683,9 @@
       update_time = #{update_time,jdbcType=TIMESTAMP},
       housecode = #{housecode,jdbcType=VARCHAR},
       xcxpicture = #{xcxpicture,jdbcType=VARCHAR},
-      renderings = #{renderings,jdbcType=VARCHAR}
+      renderings = #{renderings,jdbcType=VARCHAR},
+      housePostImage = #{housePostImage,jdbcType=VARCHAR},
+      tribeids = #{tribeids,jdbcType=VARCHAR}
     where houseid = #{houseid,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -109,12 +109,13 @@ public class ParamUtil {
 		try {
 			@SuppressWarnings("rawtypes")
 			Map map = HttpSign.doXMLParse(xml);
+			System.out.println(map);
 			String returnCode = map.get("return_code").toString();
 			// 根据错误码返回错误信息
 			String err_code = "操作成功";
 			Object obj = map.get("err_code");
 			if (obj !=null) {err_code = obj.toString();}
-			String error_message ="";
+			String error_message ="操作失败";
 			if ("AMOUNT_LIMIT".equals(err_code)) {error_message = "提现金额1-2000元";}
 			if ("NAME_MISMATCH".equals(err_code)) {error_message="实名姓名不匹配";}
 			if ("NOTENOUGH".equals(err_code)) {error_message = "平台余额不足";}

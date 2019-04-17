@@ -7,6 +7,7 @@
     <result column="state" property="state" jdbcType="INTEGER" />
     <result column="account" property="account" jdbcType="DOUBLE" />
     <result column="userid" property="userid" jdbcType="BIGINT" />
+    <result column="type" property="type" jdbcType="INTEGER" />
     <result column="update_time" property="update_time" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -68,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    lucreid, descname, state, account, userid, update_time
+    lucreid, descname, state, account, userid, type, update_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.LucreExample" >
     select
@@ -101,17 +102,19 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Lucre" >
+  
    <selectKey  resultType="long"  order="AFTER"  keyProperty="lucreid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
     insert into lucre (lucreid, descname, state, 
-      account, userid, update_time
-      )
+      account, userid, type, 
+      update_time)
     values (#{lucreid,jdbcType=BIGINT}, #{descname,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, 
-      #{account,jdbcType=DOUBLE}, #{userid,jdbcType=BIGINT}, #{update_time,jdbcType=TIMESTAMP}
-      )
+      #{account,jdbcType=DOUBLE}, #{userid,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, 
+      #{update_time,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Lucre" >
+  
    <selectKey  resultType="long"  order="AFTER"  keyProperty="lucreid" >
             SELECT LAST_INSERT_ID() 
     </selectKey>
@@ -132,6 +135,9 @@
       <if test="userid != null" >
         userid,
       </if>
+      <if test="type != null" >
+        type,
+      </if>
       <if test="update_time != null" >
         update_time,
       </if>
@@ -151,6 +157,9 @@
       </if>
       <if test="userid != null" >
         #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
       </if>
       <if test="update_time != null" >
         #{update_time,jdbcType=TIMESTAMP},
@@ -181,6 +190,9 @@
       <if test="record.userid != null" >
         userid = #{record.userid,jdbcType=BIGINT},
       </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
       <if test="record.update_time != null" >
         update_time = #{record.update_time,jdbcType=TIMESTAMP},
       </if>
@@ -196,6 +208,7 @@
       state = #{record.state,jdbcType=INTEGER},
       account = #{record.account,jdbcType=DOUBLE},
       userid = #{record.userid,jdbcType=BIGINT},
+      type = #{record.type,jdbcType=INTEGER},
       update_time = #{record.update_time,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -216,6 +229,9 @@
       <if test="userid != null" >
         userid = #{userid,jdbcType=BIGINT},
       </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
       <if test="update_time != null" >
         update_time = #{update_time,jdbcType=TIMESTAMP},
       </if>
@@ -228,6 +244,7 @@
       state = #{state,jdbcType=INTEGER},
       account = #{account,jdbcType=DOUBLE},
       userid = #{userid,jdbcType=BIGINT},
+      type = #{type,jdbcType=INTEGER},
       update_time = #{update_time,jdbcType=TIMESTAMP}
     where lucreid = #{lucreid,jdbcType=BIGINT}
   </update>

@@ -408,17 +408,20 @@ public class IDUtils {
 	}
 
 	/**
-	 * 获取一张图片的名称
+	 * 
+	 *    根据文件的完整路径   https://www/zzw777.com/hello.png?TTTXXXXX
+	 *    获取文件的完整名称 包括后缀
+	 * @param fileUrl
 	 **/
-	public static String onepicName(String url) {
-		if (url == null || "".equals(url)) {
+	public static String getFileOrgName(String fileUrl) {
+		if (fileUrl == null || "".equals(fileUrl)) {
 			return "";
 		}
-		url = url.substring(url.lastIndexOf("/") + 1, url.length());
-		if (url.contains("?")) {
-			url = url.substring(0, url.indexOf("?"));
+		fileUrl = fileUrl.substring(fileUrl.lastIndexOf("/") + 1, fileUrl.length());
+		if (fileUrl.contains("?")) {
+			fileUrl = fileUrl.substring(0, fileUrl.indexOf("?"));
 		}
-		return url;
+		return fileUrl;
 	}
 
 	/** 获取机器的IP地址 **/

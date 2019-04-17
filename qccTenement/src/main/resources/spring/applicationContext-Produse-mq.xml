@@ -154,4 +154,15 @@
 	<bean id="vedioUpload" class="org.apache.activemq.command.ActiveMQQueue">
 		<constructor-arg value="vedioUpload" />
 	</bean>  
+	
+	<!-- NO.24 退房发送模板消息 -->
+	<bean id="roomOut" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="roomOut" />
+	</bean>  
+	
+	
+	<!-- NO.25  房源预定成功发送模板消息 -->
+	<bean id="houseyudingSuccess" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="houseyudingSuccess" />
+	</bean>  
 </beans>

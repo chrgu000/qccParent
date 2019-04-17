@@ -446,7 +446,7 @@ public class SendMessage {
 	/**
 	 */
 	@SuppressWarnings("unused")
-	public static void sendHouseOrder(String phone, HttpServletRequest request) {
+	public static void sendHouseOrder(String phone) {
 		String content = "您好，您预订的房源订金已支付成功等待房东确认。";
 	}
 	

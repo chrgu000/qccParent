@@ -40,10 +40,7 @@ public class HouseSaleAddOrUpdateMessage implements MessageListener{
 					houseSolrDao.oneHouseDeleteFromSolr(houseCustomer);
 				}else {
 					houseSolrDao.AddOneHouseToSolr(houseCustomer);
-					// 这里需要同步房源的缓存
-					HouseCustomer cache = houseCustomerMapper.findHouseDetails(houseid);
-					jedisClient.set(RedisUtil.HOUSE_FIRST_KEY+ houseid, JsonUtils.objectToJson(cache));
-					jedisClient.expire(RedisUtil.HOUSE_FIRST_KEY+ houseid, RedisUtil.HOUSE_OUT_TIME);
+					jedisClient.expire(RedisUtil.HOUSE_FIRST_KEY+ houseid, 0);
 				}
 				
 			}

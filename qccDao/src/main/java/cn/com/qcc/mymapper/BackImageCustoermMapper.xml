@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.qcc.mymapper.BackImageCustoermMapper" >
+
+	<!--获取默认的背景图片-->
+	<select id="searchDefaultByType" resultType="cn.com.qcc.pojo.Backimage" >
+		SELECT * from backimage
+		where type = #{type} ORDER BY createtime desc LIMIT 1;
+	</select>
+	
+	
+	<!--获取默认的背景图片-->
+	<select id="searchAllByType" resultType="cn.com.qcc.pojo.Backimage" >
+		SELECT * from backimage
+		where type = #{type} ORDER BY createtime desc LIMIT 0,50;
+	</select>
+	
+	
+	
+	<!--查询需要建立经纪人的普通二维码-->
+	<select id="searchBrokerCreatePost" resultType="cn.com.qcc.pojo.Broker" >
+		SELECT * from broker where  broker.xcxpicture is null or broker.xcxpicture = ''
+				LIMIT 0 ,1000
+	</select>
+	
+	
+	<!--查询需要创建普通二维码的房源信息-->
+	<select id="searchHouseCommonCreate" resultType="cn.com.qcc.pojo.House" >
+		SELECT * from house where house.xcxpicture is null or house.xcxpicture = ''
+				ORDER BY house.update_time desc 
+				LIMIT 0 ,1000
+	</select>
+	
+	
+	<!--查询需要创建普通二维码的房源信息-->
+	<select id="searchbuilCommonCreate" resultType="cn.com.qcc.pojo.Building" >
+		SELECT * from building where xcxpicture is null or xcxpicture = ''
+				ORDER BY building.update_time desc 
+				LIMIT 0 ,1000		
+	</select>
+	
+	<!--查询需要创建普通二维码的房源信息-->
+	<select id="searchvillCommonCreate" resultType="cn.com.qcc.pojo.Village" >
+		SELECT * from village where xcxpicture is null or xcxpicture = ''
+				LIMIT 0 ,1000
+	</select>
+	
+	
+	<!--查询需要创建普通二维码的房源信息-->
+	<select id="searchHouseHaibaoCommonCreate" resultType="cn.com.qcc.queryvo.HouseCustomer" >
+					SELECT
+						house.houseid,
+						apartmentname,
+						prices,
+						pricetype ,
+						property_id ,
+						house.picture
+					FROM
+						house
+						LEFT JOIN price on house.price_id = price.priceid
+						LEFT JOIN apartment on apartment.apartmentid = house.apartment_id 
+			where house.housePostImage is null or house.housePostImage = '' 
+			ORDER BY house.update_time desc
+						limit 0  , 20
+	</select>
+	
+	
+	<!--查询需要创建普通二维码的房源信息-->
+	<select id="searchHousePostMess" resultType="cn.com.qcc.queryvo.HouseCustomer" >
+					SELECT
+						house.houseid,
+						apartmentname,
+						prices,
+						pricetype ,
+						property_id ,
+						house.picture ,
+						house.housePostImage
+					FROM
+						house
+						LEFT JOIN price on house.price_id = price.priceid
+						LEFT JOIN apartment on apartment.apartmentid = house.apartment_id 
+			where house.houseid  = #{houseid}
+	</select>
+  
+</mapper>

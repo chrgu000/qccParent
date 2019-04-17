@@ -32,7 +32,7 @@ public class Houseorder {
     /** 预定的价格*/
     private Double prices;
 
-    /** 1-已经支付，2-没有支付,3-移除，4-等待房东确认,5-已经入住,6-全额退款*/
+    /** 1-已经支付，2-没有支付,3-移除，4-房东确认,5-已经入住,6-全额退款*/
     private Integer paystate;
 
     /** 退款原因*/
@@ -55,9 +55,21 @@ public class Houseorder {
 
     /** 截止时间*/
     private Date endtime;
+
+    /** 经纪人的userid*/
+    private Long brokeruserid;
+
+    /** 租客付佣金百分比*/
+    private Double centpercentnum;
+
+    /** 房东付佣金白恩比*/
+    private Double landpercentnum;
+    
+    
+    
     
 
-	public double getFreemonery() {
+    public double getFreemonery() {
 		return freemonery;
 	}
 
@@ -201,4 +213,27 @@ public class Houseorder {
         this.endtime = endtime;
     }
 
+    public Long getBrokeruserid() {
+        return brokeruserid;
+    }
+
+    public void setBrokeruserid(Long brokeruserid) {
+        this.brokeruserid = brokeruserid;
+    }
+
+    public Double getCentpercentnum() {
+        return centpercentnum;
+    }
+
+    public void setCentpercentnum(Double centpercentnum) {
+        this.centpercentnum = centpercentnum;
+    }
+
+    public Double getLandpercentnum() {
+        return landpercentnum;
+    }
+
+    public void setLandpercentnum(Double landpercentnum) {
+        this.landpercentnum = landpercentnum;
+    }
 }

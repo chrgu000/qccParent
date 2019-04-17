@@ -211,4 +211,14 @@
 		<property name="destination" ref="vedioUpload" />
 		<property name="messageListener" ref="vedioUploadMess" />
 	</bean> 
+	
+	
+	
+	<!-- 上房源预定成功模板消息的回调   NO.25 房源预定成功收到模板消息   -->
+	<bean id="houseyudingSuccessMess" class="cn.com.qcc.tenement.mqmess.HouseyudingSuccessMess"/>
+	<bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="houseyudingSuccess" />
+		<property name="messageListener" ref="houseyudingSuccessMess" />
+	</bean> 
 </beans>

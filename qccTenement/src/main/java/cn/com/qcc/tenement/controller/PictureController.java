@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.IDUtils;
+import cn.com.qcc.common.PayCommonConfig;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.common.SimpleUpload;
 import cn.com.qcc.common.WaterMarkUtils;
@@ -27,7 +28,7 @@ public class PictureController {
 	@Autowired JmsTemplate jmsTemplate;
 	@Resource  Destination vedioUpload;
 	
-	private final static String qnweb_path = "http://www.hadoop.zzw777.com/";
+	
 	
 	
 	//视频的最大大小20M
@@ -71,7 +72,7 @@ public class PictureController {
 		String key = IDUtils.genItemId() + lastName;
 		// 上传到远程服务器
 		//SimpleUpload.vedioUpload(content, key);
-		String filePath = AccountMgr.LOCAL_UPLOAD_PATH + key;
+		String filePath = PayCommonConfig.LOCAL_UPLOAD_PATH + key;
 		File file = new File(filePath);
 		try {
 			content.transferTo(file);
@@ -104,7 +105,7 @@ public class PictureController {
 	        // 3 , 上传到七牛云服务器
 	        SimpleUpload.upload(filePath, key);
 	       //发出消息通知后台删除本地图片
-			String imagepath =  qnweb_path + key;
+			String imagepath =  PayCommonConfig.HADOOP_WEB_RETURN_PAHT + key;
 			returnpath += imagepath + "-";
 		}
 		
@@ -130,7 +131,7 @@ public class PictureController {
 			// 上传到远程服务器
 			SimpleUpload.doUpload(images ,key);
 			// 设置返回的路径
-			returnPath  += qnweb_path + key  ;
+			returnPath  += PayCommonConfig.HADOOP_WEB_RETURN_PAHT + key  ;
 		}
 		return ResultMap.IS_200(returnPath);
     }
