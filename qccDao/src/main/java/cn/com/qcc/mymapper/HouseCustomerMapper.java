@@ -246,6 +246,10 @@ public interface HouseCustomerMapper {
 	
 	/**查询导入房源库的信息**/
 	Housemodel searchAddToHouseModel(Long houseid);
+	
+	
+	/**查询 7 天 没有支付的房源 订单**/
+	List<Houseorder> houseOrerNotPay();
 
 	
 	

@@ -185,7 +185,7 @@ public class PosterCreateServiceImpl implements PosterCreateService {
 
 			// 价格
 			Font usernameFont = new Font("黑体", Font.BOLD, 40);
-			int usernameFontX = 280;
+			int usernameFontX = 310;
 			int usernameFontY = 100;
 			Graphics2DUtils.drawString(g, Color.decode("#CD0000"), usernameFont, prices, usernameFontX, usernameFontY);
 

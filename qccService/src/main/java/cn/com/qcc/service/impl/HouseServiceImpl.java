@@ -985,6 +985,39 @@ public class HouseServiceImpl implements HouseService {
 		SolrPageUtil.setStartAndEnd(pagequery, query);
 		return query;
 	}
+	
+	// 地图找附近房源
+	public SearchResult findHouseBySizeWithMap(Long likecode ,AddressCustomer addressCustomer 
+			, Long userid,PageQuery pagequry) {
+		SolrQuery query = getHouseBySizeQueryWithMap(likecode ,addressCustomer ,userid,pagequry);
+		SearchResult result = houseSolrDao.findHouseBySizeWithMap(query);
+		return result;
+	}
+	
+	private SolrQuery getHouseBySizeQueryWithMap(Long likecode, AddressCustomer addressCustomer, Long userid
+			,PageQuery pagequery) {
+		SolrQuery query = new SolrQuery();
+		query.setQuery("*:*");
+		// 是否分组
+		query.setParam("group", true);
+		// 分组的字段，不可以是多值字段
+		query.setParam("group.field", "buildingid");
+		// 分组中每个组的上限数量，默认为1
+		query.setParam("group.limit", "1");
+		// 分布式模式使用分组，并返回分组数量
+		query.setParam("group.ngroups", "true");
+		
+		SolrPageUtil.juliquery(query,"", addressCustomer);
+		query.set("fq","likecode:"+likecode+"*");
+		// 还要设置查询房源
+		query.add("fq","propertyname:房源");
+	    // 查询可以租的
+		query.add("fq","housestatus:1");
+		query.addSort("geodist()",ORDER.asc);//按照从近到远排序
+		SolrPageUtil.setStartAndEnd(pagequery, query);
+		return query;
+	}
+	
 	@Override
 	public int findHousebyconditionCount(HouseVo houseVo) {
 		return houseCustomerMapper.findHousebyconditionCount(houseVo);

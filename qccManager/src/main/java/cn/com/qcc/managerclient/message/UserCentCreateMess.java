@@ -1,5 +1,7 @@
 package cn.com.qcc.managerclient.message;
 
+import java.util.Date;
+
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
@@ -10,9 +12,11 @@ import WangYiUtil.WangYiCommon;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.SendMessage;
 import cn.com.qcc.mapper.HouseMapper;
+import cn.com.qcc.mapper.HousepersionMapper;
 import cn.com.qcc.mymapper.HouseCustomerMapper;
 import cn.com.qcc.mymapper.HouseRoomCustomerMapper;
 import cn.com.qcc.pojo.House;
+import cn.com.qcc.pojo.Housepersion;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.UserCentCustomer;
 import cn.com.qcc.service.solrdao.HouseSolrDao;
@@ -35,6 +39,8 @@ public class UserCentCreateMess implements MessageListener {
 	HouseCustomerMapper houseCustomerMapper;
 	@Autowired
 	HouseSolrDao houseSolrDao;
+	@Autowired
+	HousepersionMapper housepersionMapper;
 
 	public void onMessage(Message message) {
 		
@@ -70,6 +76,16 @@ public class UserCentCreateMess implements MessageListener {
 			}
 			
 			
+			// 4 添加到历史租客
+			Housepersion housepersion = new Housepersion();
+			housepersion.setSex(userCentCustomer.getSex());
+			housepersion.setCardtype("身份证");
+			housepersion.setCreate_time(new Date());
+			housepersion.setCentstate(1);
+			housepersion.setIdentity(userCentCustomer.getIdentity());
+			housepersion.setTelephone(userCentCustomer.getTelephone());
+			housepersion.setRealname(userCentCustomer.getRealname());
+			housepersionMapper.insertSelective(housepersion);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -25,5 +25,14 @@
 	</bean> 
 	
 	
+	<!-- 退房收到模板消息 --> 
+	<bean id="roomOutMess" class="cn.com.qcc.managerclient.message.RoomOutMess"/>
+	<bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="roomOut" />
+		<property name="messageListener" ref="roomOutMess" />
+	</bean> 
+	
+	
 	
 </beans>

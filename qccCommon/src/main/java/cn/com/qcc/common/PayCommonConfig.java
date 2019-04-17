@@ -8,7 +8,7 @@ public class PayCommonConfig {
 	/**测试环境临时文件保存的路径**/
 	//public static final String LOCAL_UPLOAD_PATH = "d://hello/";
 	
-	/**七彩巢房东端app 对应的 APPID**/
+	/**七彩巢房东端app 对应的 APPID**/ 
 	public static final String LAND_APPID = "wx5721254e1aeb368f";
 	
 	/**七彩巢用户端app 对应的 APPID**/

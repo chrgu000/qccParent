@@ -410,6 +410,9 @@ public interface HouseService {
 	ResultMap publishsaleBatch(Building building, Price price, House house, String batchhouse, Village village,
 			Long userid, HousetagCustomer housetag, String propertyname, String apartmentname, String brand);
 	
+	SearchResult findHouseBySizeWithMap(Long likecode, AddressCustomer addressCustomer, Long userid,
+			PageQuery pagequery);
+	
 	
 
 	

@@ -478,7 +478,6 @@ public class HouseController {
 
 	/**
 	 * 附近房源
-	 * 
 	 * @param userid   : 用户ID
 	 * @param city  : 城市名称
 	 * @param addressCustomer.nearLongitude  : 经度
@@ -509,6 +508,46 @@ public class HouseController {
 		map.put("nearList", houseList);
 		return ResultMap.IS_200(map);
 	}
+	
+	
+	
+	
+	
+	/**
+	 * 地图找附近房源
+	 * @param city  : 城市名称
+	 * @param addressCustomer.nearLongitude  : 经度
+	 * @param addressCustomer.nearLatude  : 纬度
+	 */
+	@RequestMapping(value = "/house/findHouseBySizeWithMap")
+	@ResponseBody
+	public ResultMap findHouseBySizeWithMap(String city, HouseVo houseVo, 
+			@RequestParam(defaultValue = "0") Integer currentpage,
+			HttpServletRequest request, @RequestParam(defaultValue = "40") int pagesize) {
+		// TDDTO city = "深圳";
+		Map<String, Object> map = new HashMap<>();
+		// 通过城市获取到code
+		Long likecode = villageService.getcodebycity(city);
+		houseVo = houseVo != null ? houseVo : new HouseVo();
+		if (CheckDataUtil.checkisEmpty(likecode)) {return ResultMap.build(400, "参数不全");}
+		PageQuery pagequery = new PageQuery();
+		pagequery.setPagesize(pagesize);
+		pagequery.setCurrentpage(currentpage);
+		SearchResult result  = houseService.findHouseBySizeWithMap(likecode,houseVo.getAddressCustomer()
+				,houseVo.getUserid(),pagequery);
+		int infoCount =result.getRecordCount();
+		pagequery.setPageParams(infoCount, pagesize, currentpage);
+		List<HouseCustomer> houseList = result.getHouselist();
+		// 截取地址 和查询佣金
+		//suplitDetails(houseList);
+		map.put("pagequery", pagequery);
+		map.put("citycode", likecode);
+		map.put("nearList", houseList);
+		return ResultMap.IS_200(map);
+	}
+	
+	
+	
 
 	// 吧对应的佣金设置在房子上面
 	private void setPreList(List<HouseCustomer> houseList, List<PreparatoryCustomer> preList) {

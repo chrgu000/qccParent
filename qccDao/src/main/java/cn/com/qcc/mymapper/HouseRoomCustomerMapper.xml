@@ -150,11 +150,14 @@
 				building.building,
 				village.villagename,
 				house.houseid,
-				house.house_number
-				
+				house.house_number ,
+				`profile`.real_name realname ,
+				IFNULL(`profile`.sex,'男') sex,
+				`profile`.identity
 			FROM
 				usercent
 			LEFT JOIN `user` ON usercent.userid = `user`.userid
+			LEFT JOIN  `profile` on `profile`.user_id = `user`.userid
 			LEFT JOIN house ON usercent.houseid = house.houseid
 			LEFT JOIN building ON house.buildingid = building.buildingid
 			LEFT JOIN village ON building.villageid = village.villageid

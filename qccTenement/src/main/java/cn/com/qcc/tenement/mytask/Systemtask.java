@@ -18,13 +18,16 @@ import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.mapper.BrokerMapper;
 import cn.com.qcc.mapper.BuildingMapper;
 import cn.com.qcc.mapper.HouseMapper;
+import cn.com.qcc.mapper.HouseorderMapper;
 import cn.com.qcc.mapper.VillageMapper;
 import cn.com.qcc.mapper.VipcountMapper;
 import cn.com.qcc.mymapper.BackImageCustoermMapper;
+import cn.com.qcc.mymapper.HouseCustomerMapper;
 import cn.com.qcc.mymapper.UserCustomerMapper;
 import cn.com.qcc.pojo.Broker;
 import cn.com.qcc.pojo.Building;
 import cn.com.qcc.pojo.House;
+import cn.com.qcc.pojo.Houseorder;
 import cn.com.qcc.pojo.Lucre;
 import cn.com.qcc.pojo.Village;
 import cn.com.qcc.pojo.Vipcount;
@@ -74,8 +77,27 @@ public class Systemtask {
 	BrokerMapper brokerMapper;
 	@Autowired
 	PosterCreateService posterCreateService;
+	@Autowired
+	HouseCustomerMapper houseCustomerMapper;
+	@Autowired
+	HouseorderMapper houseorderMapper;
 
 
+	/*
+	 * 清空 7 天之前 没有支付的房源订单
+	 */
+	@Scheduled(cron = SystemTaskTime.delete_houseorder_notpay)
+	public void deleteHosueNotPay() {
+		List< Houseorder> list = houseCustomerMapper.houseOrerNotPay();
+		if (CheckDataUtil.checkNotEmpty(list)) {
+			for (Houseorder order : list) {
+				houseorderMapper.deleteByPrimaryKey(order.getHouseorderid());
+			}
+		}
+	}
+
+	
+	
 	/*
 	 * 如果房源长时间没有更新，每个周五晚上3点10分自动下架
 	 */

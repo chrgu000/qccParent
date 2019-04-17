@@ -143,7 +143,7 @@ public class HouseSolrDao {
 				item.setHouseid((Long) solrDocument.get("houseid"));
 				// 距离
 				item.setJuli(IDUtils.doubletoint((double) solrDocument.get("juli"), 1000));
-				
+
 				// 一张图片
 				item.setOnepicture((String) solrDocument.get("onepicture"));
 				// 地铁路线
@@ -218,7 +218,7 @@ public class HouseSolrDao {
 				if (CheckDataUtil.checkNotEmpty(schell)) {
 					item.setSchedule(Integer.parseInt(schell));
 				}
-				
+
 				item.setVillagename((String) solrDocument.get("villagename"));
 				item.setArea((Double) solrDocument.get("area"));
 				item.setBcount((Long) solrDocument.get("bcount"));
@@ -412,8 +412,6 @@ public class HouseSolrDao {
 		}
 
 	}
-	
-	
 
 	public SearchResult findHouseBySize(SolrQuery query) {
 		try {
@@ -461,7 +459,7 @@ public class HouseSolrDao {
 					item.setLatitude(latlng.split(",")[0]);
 					item.setLongitude(latlng.split(",")[1]);
 				}
-				
+
 				itemList.add(item);
 			}
 			result.setHouselist(itemList);
@@ -645,22 +643,22 @@ public class HouseSolrDao {
 		// 设置rows，返回多少组
 		query.setRows(10);
 		// 执行搜索，返回response对象
-		query.addSort("update_time",ORDER.desc);
+		query.addSort("update_time", ORDER.desc);
 		QueryResponse rq = houseSolrServer.query(query);
 		// 从response中获取想要的结果，因为结构与正常搜索的结构不一致，所以取数据时与普通搜索获取数据不一样
 		GroupResponse groupResponse = rq.getGroupResponse();
 		List<GroupCommand> groupCommandList = groupResponse.getValues();
-//		SolrDocumentList solrDocumentList = new SolrDocumentList();
-//		long count = 0;
-//		long groupNum = 0;
+		// SolrDocumentList solrDocumentList = new SolrDocumentList();
+		// long count = 0;
+		// long groupNum = 0;
 		SearchResult result = new SearchResult();
 		List<ArticleDetailCustomer> itemList = new ArrayList<>();
 		// 判断是否为空
 		if (groupCommandList != null && groupCommandList.size() > 0) {
-			/*// 匹配出的结果总数
-			count = groupCommandList.get(0).getMatches();
-			// 分组总数
-			groupNum = groupCommandList.get(0).getNGroups();*/
+			/*
+			 * // 匹配出的结果总数 count = groupCommandList.get(0).getMatches(); // 分组总数
+			 * groupNum = groupCommandList.get(0).getNGroups();
+			 */
 			result.setRecordCount(groupCommandList.get(0).getNGroups());
 			List<Group> groupList = groupCommandList.get(0).getValues();
 			// 遍历返回的每个分组
@@ -669,25 +667,26 @@ public class HouseSolrDao {
 				for (SolrDocument solrDocument : group.getResult()) {
 					// 将分组中的数放入最后一个参数
 					ArticleDetailCustomer detailCustomer = new ArticleDetailCustomer();
-					//取出详情的id
-					detailCustomer.setArticledetailid((Long) solrDocument.get("houseid") );
-					//部落id
-					detailCustomer.setTribeids((String )solrDocument.get("tribeids"));
-					//部落名称
-					detailCustomer.setTribename( (String)solrDocument.get("typename"));
+					// 取出详情的id
+					detailCustomer.setArticledetailid((Long) solrDocument.get("houseid"));
+					// 部落id
+					detailCustomer.setTribeids((String) solrDocument.get("tribeids"));
+					// 部落名称
+					detailCustomer.setTribename((String) solrDocument.get("typename"));
 					detailCustomer.setTitle((String) solrDocument.get("housetitle"));
 					// 部落图片
-					detailCustomer.setTribepicture( (String)solrDocument.get("tribepicture"));
+					detailCustomer.setTribepicture((String) solrDocument.get("tribepicture"));
 					// 发布时间
 					detailCustomer.setUpdate_time((Date) solrDocument.get("update_time"));
 					// 物品图片
 					detailCustomer.setOnepicture((String) solrDocument.get("onepicture"));
 					// 物品类型id
-				//	detailCustomer.setArticletypeid( (Long)solrDocument.get("articletypeid"));
-					//加入集合中
+					// detailCustomer.setArticletypeid(
+					// (Long)solrDocument.get("articletypeid"));
+					// 加入集合中
 					itemList.add(detailCustomer);
 				}
-				
+
 				result.setDetaillist(itemList);
 			}
 		}
@@ -695,28 +694,99 @@ public class HouseSolrDao {
 
 	public ResultMap deletehousebypagequery(PageQuery pagequery) {
 
-			try {
-				String query = "houseid:["+pagequery.getPagestart()+" TO "+pagequery.getPageend()+"]";
-				houseSolrServer.deleteByQuery(query);
-				houseSolrServer.commit();
-			} catch (Exception e) {
-				
-				return ResultMap.build(400, "删除失败");
-			}
-			return ResultMap.IS_200();
-		
+		try {
+			String query = "houseid:[" + pagequery.getPagestart() + " TO " + pagequery.getPageend() + "]";
+			houseSolrServer.deleteByQuery(query);
+			houseSolrServer.commit();
+		} catch (Exception e) {
+
+			return ResultMap.build(400, "删除失败");
+		}
+		return ResultMap.IS_200();
+
 	}
-	
+
 	public void deletehousebyhouseid(Long houseid) {
 		try {
-			//String query = "houseid:"+houseid+" articletypeid:1";
-			//houseSolrServer.deleteByQuery(query);
-			//houseSolrServer.deleteById(id, commitWithinMs)
+			// String query = "houseid:"+houseid+" articletypeid:1";
+			// houseSolrServer.deleteByQuery(query);
+			// houseSolrServer.deleteById(id, commitWithinMs)
 			houseSolrServer.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+	}
+
+	public SearchResult findHouseBySizeWithMap(SolrQuery query) {
+		SearchResult result = new SearchResult();
+
+		try {
+			
+			System.out.println(query);
+			// 执行搜索，返回response对象
+			QueryResponse rq = houseSolrServer.query(query);
+			// 从response中获取想要的结果，因为结构与正常搜索的结构不一致，所以取数据时与普通搜索获取数据不一样
+			GroupResponse groupResponse = rq.getGroupResponse();
+			List<GroupCommand> groupCommandList = groupResponse.getValues();
+			SolrDocumentList solrDocumentList = new SolrDocumentList();
+			long count = 0;  	// 匹配出的结果总数
+			long groupNum = 0;  // 分组总数
+			// 判断是否为空
+			if (groupCommandList != null && groupCommandList.size() > 0) {
+				// 匹配出的结果总数
+				count = groupCommandList.get(0).getMatches();
+				// 分组总数
+				groupNum = groupCommandList.get(0).getNGroups();
+				result.setRecordCount(Integer.parseInt( groupNum+"" ));
+				List<Group> groupList = groupCommandList.get(0).getValues();
+				// 遍历返回的每个分组
+				for (Group group : groupList) {
+					// 若为普通搜索的结果则只有一条；若为分组详情则只有一组，将一组全部放入
+					for (SolrDocument solrDocument : group.getResult()) {
+						// 将分组中的数放入最后一个参数
+						solrDocument.addField("numFound", group.getResult().getNumFound());
+						// 每个分组只取第一个
+						solrDocumentList.add(solrDocument);
+					}
+				}
+			}
+
+			List<HouseCustomer> itemList = new ArrayList<>();
+			for (SolrDocument solrDocument : solrDocumentList) {
+				HouseCustomer item = new HouseCustomer();
+				item.setHouseid((Long) solrDocument.get("houseid"));
+				item.setPrices(IDUtils.doubletoint((Double) solrDocument.get("prices"), 1) + "");
+				item.setPricetype((String) solrDocument.get("pricetype"));
+				item.setUserid((Long) solrDocument.get("userid") + "");
+				item.setUser_id((Long) solrDocument.get("userid"));
+				item.setBuilding((String) solrDocument.get("building"));
+				item.setVillagename((String) solrDocument.get("villagename"));
+				item.setArea((Double) solrDocument.get("area"));
+				item.setApartmentname((String) solrDocument.get("apartmentname"));
+				String latlng = (String) solrDocument.get("latlng");
+				if (CheckDataUtil.checkNotEmpty(latlng)) {
+					item.setLatitude(latlng.split(",")[0]);
+					item.setLongitude(latlng.split(",")[1]);
+				}
+				if (CheckDataUtil.checkNotEmpty( solrDocument.get("schedule"))) {
+					// 是否可以预定...
+					item.setSchedule(Integer.parseInt((String) solrDocument.get("schedule")));
+				} else {
+					item.setSchedule(2); //2 不可以预定
+				}
+				
+				itemList.add(item);
+			}
+			result.setHouselist(itemList);
+		} catch (Exception e) {
+			
+			
+		}
 		
+		
+		
+		return result ; 
 	}
 
 }

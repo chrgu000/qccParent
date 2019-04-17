@@ -39,6 +39,9 @@ public class SystemTaskTime {
 	/**生成海报二维码 3:00   **/
 	public static final String buil_PostImage = "0 0 3 * * ?";
 	
+	/** 删除 7 天没有付款的房源订单   **/
+	public static final String delete_houseorder_notpay = "0 20 3 * * ?";
+	
 	
 	
 	

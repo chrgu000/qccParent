@@ -1759,5 +1759,18 @@
 		LEFT JOIN (SELECT * from area)father on area.parentId = father.`code`
 		LEFT JOIN detaileaddress on detaileaddress.detailid = building.detailid
 		where house.houseid = #{houseid} 
-	</select>																		
+	</select>	
+	
+	
+	
+	<!-- 查询 超过 7 天没有支付的房源订单 -->
+	<select id="houseOrerNotPay" resultType="cn.com.qcc.pojo.Houseorder">
+		SELECT
+			*
+		FROM
+			houseorder
+		WHERE
+			houseorder.paystate = 2 AND 
+			ordertime <![CDATA[<=]]> DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+	</select>																	
 </mapper>
