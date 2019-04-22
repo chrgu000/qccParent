@@ -15,6 +15,7 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
+import WangYiUtil.WangYiUtil;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.PayCommonConfig;
@@ -70,9 +71,7 @@ public class HouseyudingSuccessMess  implements MessageListener{
 			String formid = sendData.split("_")[3];
 			String type = sendData.split("_")[4];
 			System.out.println("=======房源预定成功收到模板消息========" + sendData);
-			
 			Houseorder search = houseorderMapper.selectByPrimaryKey(Long.valueOf(houseorderid));
-			
 			// 1, 修改房源为已经预定状态
 			House updatehouse = new House();
 			updatehouse.setHousestatus("6");
@@ -149,6 +148,17 @@ public class HouseyudingSuccessMess  implements MessageListener{
 			wxMssVo.setData(m);
 			
 			smallRoutineService.pushOneUser(openid, formid, temid, wxMssVo , type ,restTemplate);
+			
+			
+			// 发送
+			String systemId = "10087";
+			
+			String body = "" ;
+			
+			String sendUserids = "" ; 
+			
+			WangYiUtil.piliangqiuzu(body,sendUserids ,systemId);
+			
 		} catch (Exception e) {
 			
 		}

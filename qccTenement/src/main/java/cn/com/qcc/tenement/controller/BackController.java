@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import WangYiUtil.WangYiUtil;
 import cn.com.qcc.common.CheckDataUtil;
-import cn.com.qcc.common.DefaultPercent;
 import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;

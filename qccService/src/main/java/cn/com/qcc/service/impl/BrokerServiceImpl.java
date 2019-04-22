@@ -98,8 +98,6 @@ public class BrokerServiceImpl implements BrokerService{
 			profile.setSex( (String)map.get("sex"));
 			//家庭住址
 			profile.setHomeaddress((String)map.get("address"));
-			// 更新的用户
-			profile.setProfileid(userCustomer.getProfileid());
 			profileMapper.updateByPrimaryKeySelective(profile);
 		}
 		return ResultMap.build(code, message , profile.getUser_id());

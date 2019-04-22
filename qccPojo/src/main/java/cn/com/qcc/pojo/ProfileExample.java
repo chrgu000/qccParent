@@ -105,66 +105,6 @@ public class ProfileExample {
             criteria.add(new Criterion(condition, value1, value2));
         }
 
-        public Criteria andProfileidIsNull() {
-            addCriterion("profileid is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andProfileidIsNotNull() {
-            addCriterion("profileid is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andProfileidEqualTo(Long value) {
-            addCriterion("profileid =", value, "profileid");
-            return (Criteria) this;
-        }
-
-        public Criteria andProfileidNotEqualTo(Long value) {
-            addCriterion("profileid <>", value, "profileid");
-            return (Criteria) this;
-        }
-
-        public Criteria andProfileidGreaterThan(Long value) {
-            addCriterion("profileid >", value, "profileid");
-            return (Criteria) this;
-        }
-
-        public Criteria andProfileidGreaterThanOrEqualTo(Long value) {
-            addCriterion("profileid >=", value, "profileid");
-            return (Criteria) this;
-        }
-
-        public Criteria andProfileidLessThan(Long value) {
-            addCriterion("profileid <", value, "profileid");
-            return (Criteria) this;
-        }
-
-        public Criteria andProfileidLessThanOrEqualTo(Long value) {
-            addCriterion("profileid <=", value, "profileid");
-            return (Criteria) this;
-        }
-
-        public Criteria andProfileidIn(List<Long> values) {
-            addCriterion("profileid in", values, "profileid");
-            return (Criteria) this;
-        }
-
-        public Criteria andProfileidNotIn(List<Long> values) {
-            addCriterion("profileid not in", values, "profileid");
-            return (Criteria) this;
-        }
-
-        public Criteria andProfileidBetween(Long value1, Long value2) {
-            addCriterion("profileid between", value1, value2, "profileid");
-            return (Criteria) this;
-        }
-
-        public Criteria andProfileidNotBetween(Long value1, Long value2) {
-            addCriterion("profileid not between", value1, value2, "profileid");
-            return (Criteria) this;
-        }
-
         public Criteria andUser_idIsNull() {
             addCriterion("user_id is null");
             return (Criteria) this;

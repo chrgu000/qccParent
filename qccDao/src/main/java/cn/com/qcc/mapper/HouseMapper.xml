@@ -134,9 +134,6 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.House" >
-    <selectKey  resultType="long"  order="AFTER"  keyProperty="houseid" >
-            SELECT LAST_INSERT_ID() 
-    </selectKey>
     insert into house (houseid, housetitle, buildingid, 
       user_id, user_identity, apartment_id, 
       housetag_id, property_id, brandid, 
@@ -163,9 +160,6 @@
       #{housePostImage,jdbcType=VARCHAR}, #{tribeids,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.House" >
-    <selectKey  resultType="long"  order="AFTER"  keyProperty="houseid" >
-            SELECT LAST_INSERT_ID() 
-    </selectKey>
     insert into house
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="houseid != null" >

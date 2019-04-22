@@ -135,7 +135,7 @@ public class WeChatAppPay {
 		// 商品描述交易字段格式根据不同的应用场景按照以下格式： APP——需传入应用市场上的APP名字-实际商品名称，天天爱消除-游戏充值。
 		paraMap.put("body", "七彩巢充值");
 		// 微信支付分配的商户号
-		paraMap.put("mch_id", WeChatAppPayUtils.MCH_ID);
+		paraMap.put("mch_id", PayCommonConfig.qcc_kfpt_mchid);
 		// 商品详细描述，对于使用单品优惠的商户，改字段必须按照规范上传，详见
 		paraMap.put("detail", "七彩巢充值");
 		// 随机字符串，不长于32位。
@@ -150,7 +150,7 @@ public class WeChatAppPay {
 		// 将参数字典序列排序
 		String stringSignTemp = WeChatAppPayUtils.formatUrlMap(paraMap, false, false);
 
-		stringSignTemp = stringSignTemp + "&key=" + WeChatAppPayUtils.MCH_ID_KEY;
+		stringSignTemp = stringSignTemp + "&key=" + PayCommonConfig.qcc_kfpt_partnerkey;
 
 		// 得到签名
 		String sign = MD5.MD5Encoding(stringSignTemp).toUpperCase();
@@ -168,7 +168,7 @@ public class WeChatAppPay {
 		xml.append("</xml>");
 
 		// 请求接口返回prepay_id等等数据
-		String responseBosy = HttpUtil.sentPost(WeChatAppPayUtils.PAYURL, xml.toString(), "UTF-8");
+		String responseBosy = HttpUtil.sentPost(PayCommonConfig.weixin_tongyixiadan, xml.toString(), "UTF-8");
 		// 将返回的xml转为map
 		Map<String, String> resultMap = WeChatAppPayUtils.readStringXmlOut(responseBosy);
 
@@ -181,7 +181,7 @@ public class WeChatAppPay {
 			// 微信开放平台审核通过的应用APPID
 			paraMapApp.put("appid", appid);
 			// 微信支付分配的商户号
-			paraMapApp.put("partnerid", WeChatAppPayUtils.MCH_ID);
+			paraMapApp.put("partnerid", PayCommonConfig.qcc_kfpt_mchid);
 			paraMapApp.put("prepayid", prepay_id);
 			paraMapApp.put("package", "Sign=WXPay");
 			paraMapApp.put("noncestr", WeChatAppPayUtils.getNonceStr());
@@ -189,7 +189,7 @@ public class WeChatAppPay {
 			paraMapApp.put("timestamp", timeStamp);
 
 			String stringSignTempApp = WeChatAppPayUtils.formatUrlMap(paraMapApp, false, false);
-			stringSignTempApp = stringSignTempApp + "&key=" + WeChatAppPayUtils.MCH_ID_KEY;
+			stringSignTempApp = stringSignTempApp + "&key=" + PayCommonConfig.qcc_kfpt_partnerkey;
 			// 得到app支付签名
 			String signApp = MD5.MD5Encoding(stringSignTempApp).toUpperCase();
 			paraMapApp.put("sign", signApp);

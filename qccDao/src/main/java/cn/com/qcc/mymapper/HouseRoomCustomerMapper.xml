@@ -217,7 +217,8 @@
 				housepay.* ,usercent.usercentnum  ,
 				usercent.userid ,usercent.landuserid ,
 				usercent.manageruserid ,
-				house.house_number house_number
+				house.house_number house_number ,
+				building.identity building
 			FROM
 				payexpert
 			LEFT JOIN usercent on payexpert.usercentid = usercent.usercentid
@@ -239,6 +240,7 @@
 			LIMIT 0,1
 			) housepay on housepay.payexpertid = payexpert.payexpertid
 		LEFT JOIN house on house.houseid = housepay.houseid
+		LEFT JOIN building on house.buildingid = building.buildingid
 	</select>
  	
  	

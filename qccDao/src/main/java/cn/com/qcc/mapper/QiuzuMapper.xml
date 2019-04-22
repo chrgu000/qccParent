@@ -113,9 +113,6 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Qiuzu" >
-    <selectKey  resultType="long"  order="AFTER"  keyProperty="qiuzuid" >
-            SELECT LAST_INSERT_ID() 
-    </selectKey>
     insert into qiuzu (qiuzuid, code, user_id, 
       caption, classification, housetype, 
       detailid, metroid, areas, 
@@ -130,9 +127,6 @@
       #{update_time,jdbcType=TIMESTAMP}, #{picture,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Qiuzu" >
-    <selectKey  resultType="long"  order="AFTER"  keyProperty="qiuzuid" >
-            SELECT LAST_INSERT_ID() 
-    </selectKey>
     insert into qiuzu
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="qiuzuid != null" >

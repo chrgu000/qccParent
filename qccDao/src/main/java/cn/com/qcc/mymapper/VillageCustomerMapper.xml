@@ -1185,4 +1185,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 					)
 				ORDER BY village.update_time desc 
 	</select>
+	
+	
+	
+	<select id="searchNextVillid" resultType="long" >
+			SELECT MAX(villageid) +1 from village
+	</select>
+	<select id="searchNextBuilid" resultType="long" >
+			SELECT MAX(buildingid) +1 from building
+	</select>
 </mapper>

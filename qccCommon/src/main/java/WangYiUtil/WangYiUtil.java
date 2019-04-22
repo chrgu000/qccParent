@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
@@ -21,17 +22,16 @@ import cn.com.qcc.common.Base64;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.CheckSumBuilder;
 import cn.com.qcc.common.JsonUtils;
-import cn.com.qcc.common.SendMessage;
 
 @SuppressWarnings({ "deprecation", "resource", "static-access", "unchecked" })
 public class WangYiUtil {
-	
+
 	public static final String APPKEY = "00481cb45c031fe722c155d3f321dac0";
 	public static final String APPSECRET = "f2f1c46cc596";
 	public static final String NONCE = "12345";
 
 	/** 设置网易云请求的请求头部 **/
-	public static  HttpPost SetSendHead(String url) {
+	public static HttpPost SetSendHead(String url) {
 		HttpPost httpPost = new HttpPost(url);
 		String curTime = String.valueOf((new Date()).getTime() / 1000L);
 		String checkSum = CheckSumBuilder.getCheckSum(APPSECRET, NONCE, curTime);// 参考
@@ -43,10 +43,9 @@ public class WangYiUtil {
 		httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
 		return httpPost;
 	};
-	
-	
+
 	/** 设置网易云请求的请求头部 **/
-	public static  HttpPost SetSendHeadFile(String url) {
+	public static HttpPost SetSendHeadFile(String url) {
 		HttpPost httpPost = new HttpPost(url);
 		String curTime = String.valueOf((new Date()).getTime() / 1000L);
 		String checkSum = CheckSumBuilder.getCheckSum(APPSECRET, NONCE, curTime);// 参考
@@ -59,81 +58,78 @@ public class WangYiUtil {
 		return httpPost;
 	};
 
-	/**创建用户**/
-	public static  Map<String, Object> getACCIDANDTOKEN(Long userid, String name, String icon)
+	/** 创建用户 **/
+	public static Map<String, Object> getACCIDANDTOKEN(Long userid, String name, String icon)
 			throws ParseException, IOException {
-		
+
 		// 设置请求头部信息
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = SetSendHead(WangYiCommon.CREATEUSER);
-		
+
 		// 设置请求的参数
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		// 用户的userid 对应的云唯一约束
-		nvps.add(new BasicNameValuePair("accid", userid + "")); 
+		nvps.add(new BasicNameValuePair("accid", userid + ""));
 		// 用户昵称
-		nvps.add(new BasicNameValuePair("name", name)); 
+		nvps.add(new BasicNameValuePair("name", name));
 		// 用户头像
-		nvps.add(new BasicNameValuePair("icon", icon)); 
+		nvps.add(new BasicNameValuePair("icon", icon));
 		httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
-		
+
 		// 执行请求
 		HttpResponse response = httpClient.execute(httpPost);
-		
+
 		// 打印执行结果
 		String str = EntityUtils.toString(response.getEntity(), "utf-8");
 		net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
 		Map<String, Object> map = (Map<String, Object>) jsonobj;
-		
+
 		return map;
 	}
-	
-	
-	
-	/**创建用户**/
-	public static  Map<String, Object> getACCIDANDTOKEN(String userid, String name, String icon)
+
+	/** 创建用户 **/
+	public static Map<String, Object> getACCIDANDTOKEN(String userid, String name, String icon)
 			throws ParseException, IOException {
-		
+
 		// 设置请求头部信息
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = SetSendHead(WangYiCommon.CREATEUSER);
-		
+
 		// 设置请求的参数
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		// 用户的userid 对应的云唯一约束
-		nvps.add(new BasicNameValuePair("accid", userid + "")); 
+		nvps.add(new BasicNameValuePair("accid", userid + ""));
 		// 用户昵称
-		nvps.add(new BasicNameValuePair("name", name)); 
+		nvps.add(new BasicNameValuePair("name", name));
 		// 用户头像
-		nvps.add(new BasicNameValuePair("icon", icon)); 
+		nvps.add(new BasicNameValuePair("icon", icon));
 		httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
-		
+
 		// 执行请求
 		HttpResponse response = httpClient.execute(httpPost);
-		
+
 		// 打印执行结果
 		String str = EntityUtils.toString(response.getEntity(), "utf-8");
 		net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
 		Map<String, Object> map = (Map<String, Object>) jsonobj;
-		
+
 		return map;
 	}
 
 	// 批量发送消息
-	public static void piliangqiuzu(String body, String toAccids) {
+	public static void piliangqiuzu(String body, String toAccids , String systemId) {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = SetSendHead(WangYiCommon.SENDBATCHMSG);
-		
 		// 设置请求的参数
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		// 10088 求租推送的唯一标识
-		nvps.add(new BasicNameValuePair("fromAccid", "10088"));
+		nvps.add(new BasicNameValuePair("fromAccid", systemId));
 		// 推送的用户的id集合
-		nvps.add(new BasicNameValuePair("toAccids", toAccids)); 
+		nvps.add(new BasicNameValuePair("toAccids", toAccids));
 		// type推送模式
-		nvps.add(new BasicNameValuePair("type", "0")); 
+		nvps.add(new BasicNameValuePair("type", "0"));
 		// 推送的消息体
-		nvps.add(new BasicNameValuePair("body", "{'msg':'" + body + "'}")); 
+		nvps.add(new BasicNameValuePair("body", "{'msg':'" + body + "'}"));
 		// "{'msg':'深圳最新上市20+求租--深圳求租--EDIT--18316999864'}"
 		try {
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
@@ -152,24 +148,60 @@ public class WangYiUtil {
 
 	}
 
-	/** 移除网易云不喜欢的求租房源 **/ 
+	// 批量发送消息
+	public static void test() {
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		String usrl = "https://api.netease.im/nimserver/msg/sendBatchMsg.action";
+		HttpPost httpPost = SetSendHead(usrl);
+		String bod222y =  "11❤小区地址❤放放风❤hello";
+		// 设置请求的参数
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		// 10088 求租推送的唯一标识
+		nvps.add(new BasicNameValuePair("fromAccid", "10087"));
+		// 推送的用户的id集合
+		nvps.add(new BasicNameValuePair("toAccids", "[10001765]"));
+		// type推送模式
+		nvps.add(new BasicNameValuePair("type", "0"));
+		// 推送的消息体
+		nvps.add(new BasicNameValuePair("body", "{'msg':'" + bod222y + "'}"));
+		// "{'msg':'深圳最新上市20+求租--深圳求租--EDIT--18316999864'}"
+		try {
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// 执行请求
+		try {
+			httpClient.execute(httpPost);
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("ddd");
+
+	}
+
+	/** 移除网易云不喜欢的求租房源 **/
 	public static Map<String, Object> removenotlike(String userid, String msgid, String time, String fromuserid)
 			throws ParseException, IOException {
-		//设置请求头部
+		// 设置请求头部
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = SetSendHead(WangYiCommon.RECALURL);
 		// 设置请求的参数
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		// 删除的消息id
-		nvps.add(new BasicNameValuePair("deleteMsgid", msgid)); 
+		nvps.add(new BasicNameValuePair("deleteMsgid", msgid));
 		// 发送人id
 		nvps.add(new BasicNameValuePair("from", fromuserid));
 		// 消息的时间戳
-		nvps.add(new BasicNameValuePair("timetag", time)); 
+		nvps.add(new BasicNameValuePair("timetag", time));
 		// type 标识消息类型
-		nvps.add(new BasicNameValuePair("type", "7")); 
+		nvps.add(new BasicNameValuePair("type", "7"));
 		// 消息抵达的id
-		nvps.add(new BasicNameValuePair("to", userid)); 
+		nvps.add(new BasicNameValuePair("to", userid));
 		// ignoreTime 1 表示忽略最大撤回时间
 		nvps.add(new BasicNameValuePair("ignoreTime", "1"));
 		httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
@@ -182,15 +214,15 @@ public class WangYiUtil {
 		return map;
 	}
 
-	/**重置网易云密码此方法仅供测试使用**/
+	/** 重置网易云密码此方法仅供测试使用 **/
 	public static String updatetoken(long userid) throws Exception {
-		//设置请求头部信息
+		// 设置请求头部信息
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = SetSendHead(WangYiCommon.REFRESHTOKEN);
 
 		// 设置请求的参数
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-		//用户id
+		// 用户id
 		nvps.add(new BasicNameValuePair("accid", userid + ""));
 		httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
 		// 执行请求
@@ -222,10 +254,10 @@ public class WangYiUtil {
 	 **/
 	public static String createGroup(String groupName, Long userid, String descName, String icon, String otherids)
 			throws Exception {
-		//设置请求头部信息
+		// 设置请求头部信息
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = SetSendHead(WangYiCommon.CREATETEAM);
-		
+
 		String insertUser = userid.toString();
 		if (CheckDataUtil.checkNotEmpty(otherids)) {
 			insertUser = otherids;
@@ -345,7 +377,7 @@ public class WangYiUtil {
 		return Integer.parseInt(map.get("code").toString());
 	}
 
-	/**删除群组**/
+	/** 删除群组 **/
 	public static Integer deleteGroup(Long tid, Long userid) throws Exception {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = SetSendHead(WangYiCommon.TEAMREMOVE);
@@ -362,7 +394,7 @@ public class WangYiUtil {
 		return Integer.parseInt(map.get("code").toString());
 	}
 
-	/**离开群组**/
+	/** 离开群组 **/
 	public static Integer levelGroup(Long tid, Long userid) throws Exception {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = SetSendHead(WangYiCommon.TEAMLEVEL);
@@ -387,11 +419,11 @@ public class WangYiUtil {
 	 * @throws Exception
 	 **/
 	public static int larenGroup(Long groupid, Long userid, Integer magree, String otherids) throws Exception {
-		
+
 		// 设置头部请求信息
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = SetSendHead(WangYiCommon.TEAMADD);
-		
+
 		// 设置请求的参数
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		// 群id
@@ -418,13 +450,13 @@ public class WangYiUtil {
 		return Integer.parseInt(map.get("code").toString());
 	}
 
-	/**更新用户信息**/
+	/** 更新用户信息 **/
 	public static int updateUser(Long accid, String name, String icon, String sign, String mobile, String email,
 			String birth, String gender) throws Exception {
 		// 设置请求头部信息
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = SetSendHead(WangYiCommon.UPDATEUSERINFO);
-	
+
 		// 设置请求的参数
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		nvps.add(new BasicNameValuePair("accid", accid.toString()));
@@ -457,16 +489,15 @@ public class WangYiUtil {
 		Map<String, Object> map = (Map<String, Object>) jsonobj;
 		return Integer.parseInt(map.get("code").toString());
 	}
-	
-	
-	/**发送通知短信**/
+
+	/** 发送通知短信 **/
 	public static Map<String, Object> CodeCheckMess(String TEMPLATEID, String PHONE) {
 		Map<String, Object> returnmap = null;
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = SetSendHead(WangYiCommon.SENDTEMPLATE);
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		nvps.add(new BasicNameValuePair("templateid", TEMPLATEID));
-		nvps.add(new BasicNameValuePair("mobiles", "["+PHONE+"]"));
+		nvps.add(new BasicNameValuePair("mobiles", "[" + PHONE + "]"));
 		nvps.add(new BasicNameValuePair("params", "['【','】']"));
 		try {
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
@@ -481,25 +512,46 @@ public class WangYiUtil {
 			return returnmap;
 		}
 	}
-	
-	
-	public static void main (String [] args) {
-		String modelId = "9654153";
-		String phones = "17683875971,18682067129";
-		String contents="50,10";
-		SendMessage.sendNoticMess(contents, phones, modelId);
+
+	public static Map<String, Object> SendNoticToUser() {
+		Map<String, Object> returnmap = null;
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		String url = "https://api.netease.im/nimserver/msg/sendAttachMsg.action";
+		HttpPost httpPost = SetSendHead(url);
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("from", "10087"));
+		// 0：点对点自定义通知，1：群消息自定义通知，其他返回414
+		nvps.add(new BasicNameValuePair("msgtype", "0"));
+		// msgtype==0是表示accid即用户id，msgtype==1表示tid即群id
+		nvps.add(new BasicNameValuePair("to", "10001765"));
+		// 自定义通知内容，第三方组装的字符串，建议是JSON串，最大长度4096字符
+		nvps.add(new BasicNameValuePair("attach", "{userid:1000}"));
+		try {
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
+			// 执行请求
+			HttpResponse response = httpClient.execute(httpPost);
+			String str = EntityUtils.toString(response.getEntity(), "utf-8");
+			net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
+			returnmap = (Map<String, Object>) jsonobj;
+			return returnmap;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return returnmap;
+		}
+
 	}
-	
-	/**发送用户收益通知**/
-	public static Map<String, Object> ShouYiMess(String content1, String content2,String PHONE) {
+
+
+	/** 发送用户收益通知 **/
+	public static Map<String, Object> ShouYiMess(String content1, String content2, String PHONE) {
 		Map<String, Object> returnmap = null;
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = SetSendHead(WangYiCommon.SENDTEMPLATE);
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		String TEMPLATEID = WangYiCommon.SHOU_YI_TEMPID;
 		nvps.add(new BasicNameValuePair("templateid", TEMPLATEID));
-		nvps.add(new BasicNameValuePair("mobiles", "["+PHONE+"]"));
-		String defaultString =  "['【','】']";
+		nvps.add(new BasicNameValuePair("mobiles", "[" + PHONE + "]"));
+		String defaultString = "['【','】']";
 		defaultString.replace("【", content1);
 		defaultString.replace("】", content2);
 		nvps.add(new BasicNameValuePair("params", defaultString));
@@ -516,20 +568,19 @@ public class WangYiUtil {
 			return returnmap;
 		}
 	}
-	
-	
+
 	/**
 	 * 发送通知类型短信
 	 * 
-	 * **/
-	public static Map<String, Object> sendNoticMess(String contents, String phones,String modelId) {
+	 **/
+	public static Map<String, Object> sendNoticMess(String contents, String phones, String modelId) {
 		Map<String, Object> returnmap = null;
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = SetSendHead(WangYiCommon.SENDTEMPLATE);
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		nvps.add(new BasicNameValuePair("templateid", modelId));
 		nvps.add(new BasicNameValuePair("mobiles", phones));
-		nvps.add(new BasicNameValuePair("params",contents));
+		nvps.add(new BasicNameValuePair("params", contents));
 		try {
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
 			// 执行请求
@@ -544,9 +595,8 @@ public class WangYiUtil {
 			return returnmap;
 		}
 	}
-	
-	
-	/**房东发起租约给租户发送短信**/
+
+	/** 房东发起租约给租户发送短信 **/
 	public static Map<String, Object> landCentPush(String content, String PHONE) {
 		Map<String, Object> returnmap = null;
 		DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -554,8 +604,8 @@ public class WangYiUtil {
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		String TEMPLATEID = WangYiCommon.SHOU_YI_TEMPID;
 		nvps.add(new BasicNameValuePair("templateid", TEMPLATEID));
-		nvps.add(new BasicNameValuePair("mobiles", "["+PHONE+"]"));
-		nvps.add(new BasicNameValuePair("params", "["+content+"]"));
+		nvps.add(new BasicNameValuePair("mobiles", "[" + PHONE + "]"));
+		nvps.add(new BasicNameValuePair("params", "[" + content + "]"));
 		try {
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
 			// 执行请求
@@ -569,10 +619,8 @@ public class WangYiUtil {
 			return returnmap;
 		}
 	}
-	
-	
-	
-	/**发送通知短信**/
+
+	/** 发送通知短信 **/
 	public static Map<String, Object> upload(MultipartFile content) {
 		Map<String, Object> returnmap = null;
 		DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -581,33 +629,28 @@ public class WangYiUtil {
 		try {
 			nvps.add(new BasicNameValuePair("content", Base64.encode(content.getBytes())));
 			/**
-			 * 0 表示文本消息,
-				1 表示图片，
-				2 表示语音，
-				3 表示视频，
-				4 表示地理位置信息，
-				6 表示文件，
-				100 自定义消息类型（特别注意，对于未对接易盾反垃圾功能的应用，该类型的消息不会提交反垃圾系统检测）
+			 * 0 表示文本消息, 1 表示图片， 2 表示语音， 3 表示视频， 4 表示地理位置信息， 6 表示文件， 100
+			 * 自定义消息类型（特别注意，对于未对接易盾反垃圾功能的应用，该类型的消息不会提交反垃圾系统检测）
 			 * 
-			 * */
-			
+			 */
 			nvps.add(new BasicNameValuePair("type", "3"));
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
 			// 执行请求
 			HttpResponse response = httpClient.execute(httpPost);
 			String str = EntityUtils.toString(response.getEntity(), "utf-8");
 			net.sf.json.JSONObject jsonobj = new net.sf.json.JSONObject().fromObject(str);
-			System.out.println(jsonobj);               
+			System.out.println(jsonobj);
 			returnmap = (Map<String, Object>) jsonobj;
 			return returnmap;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return returnmap;
 		}
-		
-		
-	}
 
+	}
 	
+	public static void main (String [] args) {
+		SendNoticToUser();
+	}
 
 }

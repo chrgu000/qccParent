@@ -9,7 +9,7 @@ public class Lucre {
     /** 收益描述*/
     private String descname;
 
-    /** 1-正常,2-非正常,3-已添加到总收益*/
+    /**1-正常,2-非正常,3-已添加到总收益,4-不加入收入**/
     private Integer state;
 
     /** 收益金额*/

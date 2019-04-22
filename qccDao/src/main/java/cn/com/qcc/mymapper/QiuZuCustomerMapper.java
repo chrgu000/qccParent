@@ -52,6 +52,8 @@ public interface QiuZuCustomerMapper {
 
 	List<QiuzuCustomer> sendmess(QiuzuCustomer qiuzuCustomer);
 
+	long searchNextId();
+
 	
 
 

@@ -1037,12 +1037,12 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 				Long brokeruserid = houseorder.getBrokeruserid();
 				if (CheckDataUtil.checkNotEmpty(brokeruserid)) {
 					double brokerMonery = getBrokerMoner(brokeruserid , deleteMonery );
-					
+					String descname = house.getBuilding() + " [" + house.getHouse_number() +" ]";
 					// 计算经纪人佣金
 					if (brokerMonery > 0) {
 						Lucre record = new Lucre();
 						record.setAccount(brokerMonery); // 佣金金额
-						record.setDescname("收到佣金");  // 描述
+						record.setDescname(descname);  // 描述
 						record.setState(1); //  1-正常,2-非正常,3-已添加到佣金
 						record.setType(1); // 0-收益 1-佣金
 						record.setUpdate_time(new Date());
@@ -1135,7 +1135,9 @@ public class HouseRoomServiceImpl implements HouseRoomService {
 				return yongjin * defaultpercentMapper.jianzhiNum();
 			}
 		}
-		return 0;
+		
+		// 如果不是经纪人的情况下 按照 兼职的算
+		return  yongjin * defaultpercentMapper.jianzhiNum();
 	}
 
 	@Override

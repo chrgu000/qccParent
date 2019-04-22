@@ -1,16 +1,12 @@
 package cn.com.qcc.tenement.mqmess;
-import java.util.List;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.mymapper.HouseCustomerMapper;
-import cn.com.qcc.mymapper.VillageCustomerMapper;
-import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.service.InteService;
-import cn.com.qcc.service.solrdao.BuilSolrDao;
 import cn.com.qcc.service.solrdao.HouseSolrDao;
 
 
@@ -28,10 +24,6 @@ public class HouseAddBacthMess implements MessageListener{
 	private HouseCustomerMapper houseCustomerMapper;
 	@Autowired
 	private HouseSolrDao houseSolrDao;
-	@Autowired
-	private VillageCustomerMapper villageCustomerMapper;
-	@Autowired
-	private BuilSolrDao builSolrDao;
 	
 	public void onMessage(Message message) {
 		try {

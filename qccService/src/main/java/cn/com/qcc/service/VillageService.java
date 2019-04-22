@@ -15,7 +15,6 @@ import cn.com.qcc.queryvo.ApartmentCustomer;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.queryvo.HousetagCustomer;
-import cn.com.qcc.queryvo.MetroCustomer;
 import cn.com.qcc.queryvo.SearchModal;
 import cn.com.qcc.queryvo.SearchResult;
 import cn.com.qcc.queryvo.UserCustomer;

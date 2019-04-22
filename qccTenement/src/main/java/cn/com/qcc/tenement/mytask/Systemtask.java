@@ -1,4 +1,7 @@
 package cn.com.qcc.tenement.mytask;
+
+
+
 import java.io.File;
 import java.util.Date;
 import java.util.List;
@@ -209,6 +212,9 @@ public class Systemtask {
 		System.out.println("进入定时任务three");
 		int daycount = PayCommonConfig.lurce_day_count;
 		
+		// 在统计收益之前先把专职对应的房源佣金 前 N条的数据设置 已经收益的状态
+		int n  = 6 ;
+		userCustomerMapper.updateLurceSetIsLucredByBroker(n);
 		// 这里是统计收益的
 		List<Lucre> lucreList = inteService.searchNeedAddLurceByTime(daycount);
 		// 如果数据存在
@@ -341,7 +347,6 @@ public class Systemtask {
 		}
 		jedisClient.set("house_sysc_start_end:", value);
 	}
-	
 	
 	/**同步楼栋索引库***/
 	@Scheduled(cron=SystemTaskTime.sysc_building)

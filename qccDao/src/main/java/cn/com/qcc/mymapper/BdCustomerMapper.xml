@@ -69,6 +69,8 @@
 		<if test="code !=null">
 				AND landlord.code = #{code}
 		</if>
+		
+		ORDER BY landlord.update_time DESC 
   </select>
   
   

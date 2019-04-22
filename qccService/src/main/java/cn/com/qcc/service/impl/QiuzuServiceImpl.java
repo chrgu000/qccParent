@@ -297,6 +297,8 @@ public class QiuzuServiceImpl implements QiuzuService {
 				qiuzu.setQiuzustatus(searchstate + "");
 				qiuzu.setCreate_time(new Date());
 				qiuzu.setUpdate_time(new Date());
+				long qiuzuid = qiuZuCustomerMapper.searchNextId();
+				qiuzu.setQiuzuid(qiuzuid);
 				qiuzuMapper.insertSelective(qiuzu);
 				//求租状态改变发送消息
 				SendMessUtil.sendData(jmsTemplate, qiuzuAddOrUpdate, qiuzu.getQiuzuid()+"-"+qiuzu.getUser_id());

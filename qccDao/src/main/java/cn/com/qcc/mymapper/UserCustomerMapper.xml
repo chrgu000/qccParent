@@ -1338,5 +1338,32 @@
 	</select>
 	
 	
+	
+	
+	
+	<!--登录账单时候查询用户基本信息 -->
+	<select id="updateLurceSetIsLucredByBroker" >
+		UPDATE lucre set state = 4 where lucreid in (
+				<!-- 先查询虚表符合本月 和 租金收益的数据 -->
+				select a.lucreid from ( SELECT *  from lucre
+			    where   date_format(update_time,'%Y-%m')=date_format(now(),'%Y-%m')
+			    AND type = 1
+			    AND userid in (  SELECT userid from broker where type = 0 ) 
+		     )  a
+			where exists (
+				<!-- 抽取出前 n条数据 -->
+				select count(*) count from (
+					SELECT *  from lucre
+				    where   date_format(update_time,'%Y-%m')=date_format(now(),'%Y-%m')
+				    AND type = 1
+				    AND userid in ( SELECT userid from broker where type = 0   )  
+				) s   where s.userid = a.userid 
+					and  s.update_time <![CDATA[<]]> a.update_time 
+					having count  <![CDATA[<]]> #{n}
+			) 
+		)
+	</select>
+	
+	
   
 </mapper>

@@ -606,7 +606,7 @@ public class HouseController {
 	 */
 	@RequestMapping(value = "/house/Details/{type}")
 	@ResponseBody
-	public ResultMap findHouseDetails(Long houseid,Long userid, Browse browse, @PathVariable Integer type, String checktype,
+	public ResultMap findHouseDetails(Long houseid,Long userid, Browse browse, @PathVariable Integer type, 
 			@RequestParam(defaultValue = "1") Integer currentpage, @RequestParam(defaultValue = "8") int pagesize) {
 		
 		// 如果是正常登录的

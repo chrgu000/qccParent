@@ -75,9 +75,6 @@ public class Village {
     /** */
     private Date update_time;
 
-    /** BD账号*/
-    private String bdid;
-
     public Long getVillageid() {
         return villageid;
     }
@@ -268,13 +265,5 @@ public class Village {
 
     public void setUpdate_time(Date update_time) {
         this.update_time = update_time;
-    }
-
-    public String getBdid() {
-        return bdid;
-    }
-
-    public void setBdid(String bdid) {
-        this.bdid = bdid == null ? null : bdid.trim();
     }
 }

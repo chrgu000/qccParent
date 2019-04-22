@@ -2,8 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.com.qcc.mapper.ProfileMapper" >
   <resultMap id="BaseResultMap" type="cn.com.qcc.pojo.Profile" >
-    <id column="profileid" property="profileid" jdbcType="BIGINT" />
-    <result column="user_id" property="user_id" jdbcType="BIGINT" />
+    <id column="user_id" property="user_id" jdbcType="BIGINT" />
     <result column="unionid" property="unionid" jdbcType="VARCHAR" />
     <result column="address_id" property="address_id" jdbcType="BIGINT" />
     <result column="avatar" property="avatar" jdbcType="VARCHAR" />
@@ -81,9 +80,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    profileid, user_id, unionid, address_id, avatar, user_name, real_name, identity, 
-    idpictures, homeaddress, mysign, sex, mail, code, signstate, create_time, birthday, 
-    sign_time, userPostImage
+    user_id, unionid, address_id, avatar, user_name, real_name, identity, idpictures, 
+    homeaddress, mysign, sex, mail, code, signstate, create_time, birthday, sign_time, 
+    userPostImage
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.ProfileExample" >
     select
@@ -103,11 +102,11 @@
     select 
     <include refid="Base_Column_List" />
     from profile
-    where profileid = #{profileid,jdbcType=BIGINT}
+    where user_id = #{user_id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from profile
-    where profileid = #{profileid,jdbcType=BIGINT}
+    where user_id = #{user_id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="cn.com.qcc.pojo.ProfileExample" >
     delete from profile
@@ -116,35 +115,24 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Profile" >
-  
-   <selectKey  resultType="long"  order="AFTER"  keyProperty="profileid" >
-            SELECT LAST_INSERT_ID() 
-    </selectKey>
-    insert into profile (profileid, user_id, unionid, 
-      address_id, avatar, user_name, 
-      real_name, identity, idpictures, 
-      homeaddress, mysign, sex, 
-      mail, code, signstate, 
-      create_time, birthday, sign_time, 
-      userPostImage)
-    values (#{profileid,jdbcType=BIGINT}, #{user_id,jdbcType=BIGINT}, #{unionid,jdbcType=VARCHAR}, 
-      #{address_id,jdbcType=BIGINT}, #{avatar,jdbcType=VARCHAR}, #{user_name,jdbcType=VARCHAR}, 
-      #{real_name,jdbcType=VARCHAR}, #{identity,jdbcType=VARCHAR}, #{idpictures,jdbcType=VARCHAR}, 
-      #{homeaddress,jdbcType=VARCHAR}, #{mysign,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
-      #{mail,jdbcType=VARCHAR}, #{code,jdbcType=BIGINT}, #{signstate,jdbcType=INTEGER}, 
-      #{create_time,jdbcType=TIMESTAMP}, #{birthday,jdbcType=TIMESTAMP}, #{sign_time,jdbcType=TIMESTAMP}, 
-      #{userPostImage,jdbcType=VARCHAR})
+    insert into profile (user_id, unionid, address_id, 
+      avatar, user_name, real_name, 
+      identity, idpictures, homeaddress, 
+      mysign, sex, mail, 
+      code, signstate, create_time, 
+      birthday, sign_time, userPostImage
+      )
+    values (#{user_id,jdbcType=BIGINT}, #{unionid,jdbcType=VARCHAR}, #{address_id,jdbcType=BIGINT}, 
+      #{avatar,jdbcType=VARCHAR}, #{user_name,jdbcType=VARCHAR}, #{real_name,jdbcType=VARCHAR}, 
+      #{identity,jdbcType=VARCHAR}, #{idpictures,jdbcType=VARCHAR}, #{homeaddress,jdbcType=VARCHAR}, 
+      #{mysign,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, #{mail,jdbcType=VARCHAR}, 
+      #{code,jdbcType=BIGINT}, #{signstate,jdbcType=INTEGER}, #{create_time,jdbcType=TIMESTAMP}, 
+      #{birthday,jdbcType=TIMESTAMP}, #{sign_time,jdbcType=TIMESTAMP}, #{userPostImage,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Profile" >
-  
-   <selectKey  resultType="long"  order="AFTER"  keyProperty="profileid" >
-            SELECT LAST_INSERT_ID() 
-    </selectKey>
     insert into profile
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="profileid != null" >
-        profileid,
-      </if>
       <if test="user_id != null" >
         user_id,
       </if>
@@ -201,9 +189,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="profileid != null" >
-        #{profileid,jdbcType=BIGINT},
-      </if>
       <if test="user_id != null" >
         #{user_id,jdbcType=BIGINT},
       </if>
@@ -269,9 +254,6 @@
   <update id="updateByExampleSelective" parameterType="map" >
     update profile
     <set >
-      <if test="record.profileid != null" >
-        profileid = #{record.profileid,jdbcType=BIGINT},
-      </if>
       <if test="record.user_id != null" >
         user_id = #{record.user_id,jdbcType=BIGINT},
       </if>
@@ -333,8 +315,7 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update profile
-    set profileid = #{record.profileid,jdbcType=BIGINT},
-      user_id = #{record.user_id,jdbcType=BIGINT},
+    set user_id = #{record.user_id,jdbcType=BIGINT},
       unionid = #{record.unionid,jdbcType=VARCHAR},
       address_id = #{record.address_id,jdbcType=BIGINT},
       avatar = #{record.avatar,jdbcType=VARCHAR},
@@ -359,9 +340,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="cn.com.qcc.pojo.Profile" >
     update profile
     <set >
-      <if test="user_id != null" >
-        user_id = #{user_id,jdbcType=BIGINT},
-      </if>
       <if test="unionid != null" >
         unionid = #{unionid,jdbcType=VARCHAR},
       </if>
@@ -414,12 +392,11 @@
         userPostImage = #{userPostImage,jdbcType=VARCHAR},
       </if>
     </set>
-    where profileid = #{profileid,jdbcType=BIGINT}
+    where user_id = #{user_id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.com.qcc.pojo.Profile" >
     update profile
-    set user_id = #{user_id,jdbcType=BIGINT},
-      unionid = #{unionid,jdbcType=VARCHAR},
+    set unionid = #{unionid,jdbcType=VARCHAR},
       address_id = #{address_id,jdbcType=BIGINT},
       avatar = #{avatar,jdbcType=VARCHAR},
       user_name = #{user_name,jdbcType=VARCHAR},
@@ -436,6 +413,6 @@
       birthday = #{birthday,jdbcType=TIMESTAMP},
       sign_time = #{sign_time,jdbcType=TIMESTAMP},
       userPostImage = #{userPostImage,jdbcType=VARCHAR}
-    where profileid = #{profileid,jdbcType=BIGINT}
+    where user_id = #{user_id,jdbcType=BIGINT}
   </update>
 </mapper>

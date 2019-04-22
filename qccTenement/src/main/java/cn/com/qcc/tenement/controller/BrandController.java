@@ -33,6 +33,7 @@ public class BrandController {
 	@Autowired HouseService houseService;
 	
 	
+
 	
 	/**
 	 * 创建品牌

@@ -22,25 +22,6 @@ import weixin.util.MD5;
 
 public class WeChatAppPayUtils {
 	
-	
-
-
-
-    //商户号
-    public static final String MCH_ID = "1509961881";
-
-    //商户密钥
-    public static final String MCH_ID_KEY = "h23456789101112131415139399300Sz";
-
-    //统一下单地址
-    public final static String PAYURL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-
-    /***
-     * 异步回调地址
-     * */
-    public final static String NOTIFY_URL = "https://www.zzw777.com/Tenement/houseyuding/return";
-
-
     /**
      * 获取精确到秒的时间戳 10 位数
      *

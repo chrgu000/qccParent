@@ -146,6 +146,10 @@ public interface VillageCustomerMapper {
 	/**查询经纪人对应的小区**/
 	List<VillageCustomer> searchVillageByConsultant(Long userid);
 
+	long searchNextBuilid();
+
+	long searchNextVillid();
+
 	
 
 

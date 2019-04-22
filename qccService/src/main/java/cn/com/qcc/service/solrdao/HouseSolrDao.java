@@ -723,19 +723,18 @@ public class HouseSolrDao {
 
 		try {
 			
-			System.out.println(query);
 			// 执行搜索，返回response对象
 			QueryResponse rq = houseSolrServer.query(query);
 			// 从response中获取想要的结果，因为结构与正常搜索的结构不一致，所以取数据时与普通搜索获取数据不一样
 			GroupResponse groupResponse = rq.getGroupResponse();
 			List<GroupCommand> groupCommandList = groupResponse.getValues();
 			SolrDocumentList solrDocumentList = new SolrDocumentList();
-			long count = 0;  	// 匹配出的结果总数
+		 //	long count = 0;  	// 匹配出的结果总数
 			long groupNum = 0;  // 分组总数
 			// 判断是否为空
 			if (groupCommandList != null && groupCommandList.size() > 0) {
 				// 匹配出的结果总数
-				count = groupCommandList.get(0).getMatches();
+				//count = groupCommandList.get(0).getMatches();
 				// 分组总数
 				groupNum = groupCommandList.get(0).getNGroups();
 				result.setRecordCount(Integer.parseInt( groupNum+"" ));

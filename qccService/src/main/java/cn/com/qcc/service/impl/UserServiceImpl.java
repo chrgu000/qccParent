@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import WangYiUtil.WangYiUtil;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.IDUtils;
-import cn.com.qcc.common.JsonUtils;
 import cn.com.qcc.common.MyJsonUtil;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
@@ -652,14 +651,19 @@ public class UserServiceImpl implements UserService {
 	
 	/**检查自己是否添加了别人为好友**/
 	private Userconn checkUser(Userconn userconn) {
-		UserconnExample example = new UserconnExample();
-		UserconnExample.Criteria criteria = example.createCriteria();
-		criteria.andUseridEqualTo(userconn.getUserid());
-		criteria.andFollowuseridEqualTo(userconn.getFollowuserid());
-		List<Userconn> connlist = userconnMapper.selectByExample(example);
-		if (!connlist.isEmpty() && connlist.size() > 0) {
-			return connlist.get(0);
+		
+		if (CheckDataUtil.checkNotEmpty(userconn.getUserid())
+				&& CheckDataUtil.checkNotEmpty(userconn.getFollowuserid())) {
+			UserconnExample example = new UserconnExample();
+			UserconnExample.Criteria criteria = example.createCriteria();
+			criteria.andUseridEqualTo(userconn.getUserid());
+			criteria.andFollowuseridEqualTo(userconn.getFollowuserid());
+			List<Userconn> connlist = userconnMapper.selectByExample(example);
+			if (!connlist.isEmpty() && connlist.size() > 0) {
+				return connlist.get(0);
+			}
 		}
+		
 		return null;
 	}
 
@@ -727,15 +731,21 @@ public class UserServiceImpl implements UserService {
 	// 查看是否是好友
 	public String findIsFriend(Long userid, Long followUserId) {
 		String str = "加好友";
-		Userconn userconn = new Userconn();
-		userconn.setUserid(userid);
-		userconn.setFollowuserid(followUserId);
-		Userconn search = checkUser(userconn);
-		if (search != null) {
-			if (search.getState() == 3) {
-				str = "好友";
+		
+		if (CheckDataUtil.checkNotEmpty(userid) 
+				&& CheckDataUtil.checkNotEmpty(followUserId)) {
+			
+			Userconn userconn = new Userconn();
+			userconn.setUserid(userid);
+			userconn.setFollowuserid(followUserId);
+			Userconn search = checkUser(userconn);
+			if (search != null) {
+				if (search.getState() == 3) {
+					str = "好友";
+				}
 			}
 		}
+		
 		return str;
 	}
 

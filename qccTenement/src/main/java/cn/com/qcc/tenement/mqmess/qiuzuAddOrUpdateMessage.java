@@ -164,7 +164,8 @@ public class qiuzuAddOrUpdateMessage implements MessageListener{
 		}
 		
 		System.out.println(sendUserids);
-		WangYiUtil.piliangqiuzu(body,sendUserids);
+		String systemId = "10088";
+		WangYiUtil.piliangqiuzu(body,sendUserids ,systemId);
 	}
 	
 	

@@ -30,13 +30,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-//import org.apache.http.impl.client.DefaultHttpClient;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.springframework.web.multipart.MultipartFile;
-
-import cn.com.qcc.detailcommon.AccountMgr;
 
 @SuppressWarnings("deprecation")
 public class HttpSign {

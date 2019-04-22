@@ -143,7 +143,7 @@ public class PayCommonConfig {
 	public static final String text_certPath = "D:/gzhcent/apiclient_cert.p12";
 	
 	/**公众号证书的位置**/
-	public static final String gzh_KEY_PATH = "/root/cents/gzh/apiclient_cert.p12";
+	public static final String gzh_KEY_PATH = "/usr/local/cents/apiclient_cert.p12";
 	
 	/**微信退款接口**/
 	public static final String  refund_url = "https://api.mch.weixin.qq.com/secapi/pay/refund";

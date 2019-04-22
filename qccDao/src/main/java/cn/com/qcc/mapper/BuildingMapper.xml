@@ -22,7 +22,6 @@
     <result column="land" property="land" jdbcType="VARCHAR" />
     <result column="xcxpicture" property="xcxpicture" jdbcType="VARCHAR" />
     <result column="update_time" property="update_time" jdbcType="TIMESTAMP" />
-    <result column="bdid" property="bdid" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -85,7 +84,7 @@
   <sql id="Base_Column_List" >
     buildingid, building, detailid, villageid, userid, brandid, describes, picture, videourl, 
     buildingcode, state, linkphone, linkman, landphone, identity, bnumber, metroid, land, 
-    xcxpicture, update_time, bdid
+    xcxpicture, update_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.BuildingExample" >
     select
@@ -118,30 +117,22 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Building" >
-  <selectKey  resultType="long"  order="AFTER"  keyProperty="buildingid" >
-            SELECT LAST_INSERT_ID() 
-    </selectKey>
     insert into building (buildingid, building, detailid, 
       villageid, userid, brandid, 
       describes, picture, videourl, 
       buildingcode, state, linkphone, 
       linkman, landphone, identity, 
       bnumber, metroid, land, 
-      xcxpicture, update_time, bdid
-      )
+      xcxpicture, update_time)
     values (#{buildingid,jdbcType=BIGINT}, #{building,jdbcType=VARCHAR}, #{detailid,jdbcType=BIGINT}, 
       #{villageid,jdbcType=BIGINT}, #{userid,jdbcType=BIGINT}, #{brandid,jdbcType=BIGINT}, 
       #{describes,jdbcType=VARCHAR}, #{picture,jdbcType=VARCHAR}, #{videourl,jdbcType=VARCHAR}, 
       #{buildingcode,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, #{linkphone,jdbcType=VARCHAR}, 
       #{linkman,jdbcType=VARCHAR}, #{landphone,jdbcType=VARCHAR}, #{identity,jdbcType=VARCHAR}, 
       #{bnumber,jdbcType=VARCHAR}, #{metroid,jdbcType=BIGINT}, #{land,jdbcType=VARCHAR}, 
-      #{xcxpicture,jdbcType=VARCHAR}, #{update_time,jdbcType=TIMESTAMP}, #{bdid,jdbcType=VARCHAR}
-      )
+      #{xcxpicture,jdbcType=VARCHAR}, #{update_time,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Building" >
-  <selectKey  resultType="long"  order="AFTER"  keyProperty="buildingid" >
-            SELECT LAST_INSERT_ID() 
-    </selectKey>
     insert into building
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="buildingid != null" >
@@ -204,9 +195,6 @@
       <if test="update_time != null" >
         update_time,
       </if>
-      <if test="bdid != null" >
-        bdid,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="buildingid != null" >
@@ -268,9 +256,6 @@
       </if>
       <if test="update_time != null" >
         #{update_time,jdbcType=TIMESTAMP},
-      </if>
-      <if test="bdid != null" >
-        #{bdid,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -343,9 +328,6 @@
       <if test="record.update_time != null" >
         update_time = #{record.update_time,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.bdid != null" >
-        bdid = #{record.bdid,jdbcType=VARCHAR},
-      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -372,8 +354,7 @@
       metroid = #{record.metroid,jdbcType=BIGINT},
       land = #{record.land,jdbcType=VARCHAR},
       xcxpicture = #{record.xcxpicture,jdbcType=VARCHAR},
-      update_time = #{record.update_time,jdbcType=TIMESTAMP},
-      bdid = #{record.bdid,jdbcType=VARCHAR}
+      update_time = #{record.update_time,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -438,9 +419,6 @@
       <if test="update_time != null" >
         update_time = #{update_time,jdbcType=TIMESTAMP},
       </if>
-      <if test="bdid != null" >
-        bdid = #{bdid,jdbcType=VARCHAR},
-      </if>
     </set>
     where buildingid = #{buildingid,jdbcType=BIGINT}
   </update>
@@ -464,8 +442,7 @@
       metroid = #{metroid,jdbcType=BIGINT},
       land = #{land,jdbcType=VARCHAR},
       xcxpicture = #{xcxpicture,jdbcType=VARCHAR},
-      update_time = #{update_time,jdbcType=TIMESTAMP},
-      bdid = #{bdid,jdbcType=VARCHAR}
+      update_time = #{update_time,jdbcType=TIMESTAMP}
     where buildingid = #{buildingid,jdbcType=BIGINT}
   </update>
 </mapper>

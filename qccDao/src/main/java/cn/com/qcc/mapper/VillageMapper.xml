@@ -26,7 +26,6 @@
     <result column="describes" property="describes" jdbcType="VARCHAR" />
     <result column="xcxpicture" property="xcxpicture" jdbcType="VARCHAR" />
     <result column="update_time" property="update_time" jdbcType="TIMESTAMP" />
-    <result column="bdid" property="bdid" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -89,7 +88,7 @@
   <sql id="Base_Column_List" >
     villageid, villagetypeid, villagename, code, userid, picture, videourl, housecount, 
     comyear, company, carfree, comfree, comphone, carcount, comcount, devephone, developer, 
-    villagephone, keyword, detailid, state, describes, xcxpicture, update_time, bdid
+    villagephone, keyword, detailid, state, describes, xcxpicture, update_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.qcc.pojo.VillageExample" >
     select
@@ -122,9 +121,6 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.qcc.pojo.Village" >
-   <selectKey  resultType="long"  order="AFTER"  keyProperty="villageid" >
-            SELECT LAST_INSERT_ID() 
-    </selectKey>
     insert into village (villageid, villagetypeid, villagename, 
       code, userid, picture, 
       videourl, housecount, comyear, 
@@ -132,8 +128,8 @@
       comphone, carcount, comcount, 
       devephone, developer, villagephone, 
       keyword, detailid, state, 
-      describes, xcxpicture, update_time, 
-      bdid)
+      describes, xcxpicture, update_time
+      )
     values (#{villageid,jdbcType=BIGINT}, #{villagetypeid,jdbcType=INTEGER}, #{villagename,jdbcType=VARCHAR}, 
       #{code,jdbcType=BIGINT}, #{userid,jdbcType=BIGINT}, #{picture,jdbcType=VARCHAR}, 
       #{videourl,jdbcType=VARCHAR}, #{housecount,jdbcType=VARCHAR}, #{comyear,jdbcType=VARCHAR}, 
@@ -141,13 +137,10 @@
       #{comphone,jdbcType=VARCHAR}, #{carcount,jdbcType=VARCHAR}, #{comcount,jdbcType=VARCHAR}, 
       #{devephone,jdbcType=VARCHAR}, #{developer,jdbcType=VARCHAR}, #{villagephone,jdbcType=VARCHAR}, 
       #{keyword,jdbcType=VARCHAR}, #{detailid,jdbcType=BIGINT}, #{state,jdbcType=INTEGER}, 
-      #{describes,jdbcType=VARCHAR}, #{xcxpicture,jdbcType=VARCHAR}, #{update_time,jdbcType=TIMESTAMP}, 
-      #{bdid,jdbcType=VARCHAR})
+      #{describes,jdbcType=VARCHAR}, #{xcxpicture,jdbcType=VARCHAR}, #{update_time,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.com.qcc.pojo.Village" >
-   <selectKey  resultType="long"  order="AFTER"  keyProperty="villageid" >
-            SELECT LAST_INSERT_ID() 
-    </selectKey>
     insert into village
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="villageid != null" >
@@ -222,9 +215,6 @@
       <if test="update_time != null" >
         update_time,
       </if>
-      <if test="bdid != null" >
-        bdid,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="villageid != null" >
@@ -298,9 +288,6 @@
       </if>
       <if test="update_time != null" >
         #{update_time,jdbcType=TIMESTAMP},
-      </if>
-      <if test="bdid != null" >
-        #{bdid,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -385,9 +372,6 @@
       <if test="record.update_time != null" >
         update_time = #{record.update_time,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.bdid != null" >
-        bdid = #{record.bdid,jdbcType=VARCHAR},
-      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -418,8 +402,7 @@
       state = #{record.state,jdbcType=INTEGER},
       describes = #{record.describes,jdbcType=VARCHAR},
       xcxpicture = #{record.xcxpicture,jdbcType=VARCHAR},
-      update_time = #{record.update_time,jdbcType=TIMESTAMP},
-      bdid = #{record.bdid,jdbcType=VARCHAR}
+      update_time = #{record.update_time,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -496,9 +479,6 @@
       <if test="update_time != null" >
         update_time = #{update_time,jdbcType=TIMESTAMP},
       </if>
-      <if test="bdid != null" >
-        bdid = #{bdid,jdbcType=VARCHAR},
-      </if>
     </set>
     where villageid = #{villageid,jdbcType=BIGINT}
   </update>
@@ -526,8 +506,7 @@
       state = #{state,jdbcType=INTEGER},
       describes = #{describes,jdbcType=VARCHAR},
       xcxpicture = #{xcxpicture,jdbcType=VARCHAR},
-      update_time = #{update_time,jdbcType=TIMESTAMP},
-      bdid = #{bdid,jdbcType=VARCHAR}
+      update_time = #{update_time,jdbcType=TIMESTAMP}
     where villageid = #{villageid,jdbcType=BIGINT}
   </update>
 </mapper>

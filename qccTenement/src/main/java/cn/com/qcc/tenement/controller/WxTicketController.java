@@ -48,7 +48,6 @@ public class WxTicketController {
 	 * @param sceneId 场景Id 
 	 * @return 
 	 */  
-	
 	public ResultMap createTempTicket() {  
 		
 		String accessToken = MD5Util.getAccessToken(PayCommonConfig.qcc_gzhappid, PayCommonConfig.qcc_gzhsecret);

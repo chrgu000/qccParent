@@ -10,7 +10,7 @@ public interface ProfileMapper {
 
     int deleteByExample(ProfileExample example);
 
-    int deleteByPrimaryKey(Long profileid);
+    int deleteByPrimaryKey(Long user_id);
 
     int insert(Profile record);
 
@@ -18,7 +18,7 @@ public interface ProfileMapper {
 
     List<Profile> selectByExample(ProfileExample example);
 
-    Profile selectByPrimaryKey(Long profileid);
+    Profile selectByPrimaryKey(Long user_id);
 
     int updateByExampleSelective(@Param("record") Profile record, @Param("example") ProfileExample example);
 

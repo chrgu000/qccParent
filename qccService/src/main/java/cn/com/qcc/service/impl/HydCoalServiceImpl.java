@@ -32,8 +32,6 @@ import cn.com.qcc.pojo.HydcoalExample;
 import cn.com.qcc.pojo.Landbuilding;
 import cn.com.qcc.pojo.Payexpert;
 import cn.com.qcc.pojo.User;
-import cn.com.qcc.pojo.Usercent;
-import cn.com.qcc.pojo.UsercentExample;
 import cn.com.qcc.queryvo.BuildingCustomer;
 import cn.com.qcc.queryvo.HistorymeterCustomer;
 import cn.com.qcc.queryvo.HistorymeterVo;

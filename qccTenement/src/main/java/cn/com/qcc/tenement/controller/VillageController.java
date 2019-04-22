@@ -653,8 +653,6 @@ public class VillageController {
 	@RequestMapping("/addbuildingtosolr")
 	@ResponseBody
 	public ResultMap addbuildingtosolr(int start , int end){
-		System.out.println(start);
-		System.out.println(end);
 		PageQuery query = new PageQuery();
 		query.setPagestart(start);
 		query.setPageend(end);

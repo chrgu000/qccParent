@@ -261,6 +261,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		date_add(#{end_date}, interval 1 day)) group by qiuzu.phone order by qiuzu.update_time desc 
 	</select>
 	
+	
+	<!-- 群发短信的求租用户 -->
+	<select id="searchNextId" resultType="long" >
+			SELECT MAX(qiuzuid) +1 from qiuzu
+	</select>
+	
 </mapper>
 
 

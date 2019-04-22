@@ -1,5 +1,6 @@
 package cn.com.qcc.mess.util;
 
+
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 

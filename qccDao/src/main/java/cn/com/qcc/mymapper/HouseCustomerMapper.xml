@@ -1772,5 +1772,12 @@
 		WHERE
 			houseorder.paystate = 2 AND 
 			ordertime <![CDATA[<=]]> DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-	</select>																	
+	</select>
+	
+	
+	
+	<!-- 查询 超过 7 天没有支付的房源订单 -->
+	<select id="searchNextId" resultType="long">
+		SELECT MAX(houseid) + 1  from house
+	</select>																				
 </mapper>

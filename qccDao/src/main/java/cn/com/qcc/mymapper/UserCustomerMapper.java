@@ -254,6 +254,9 @@ public interface UserCustomerMapper {
 
 	public List<Vipcount> selectNotVip();
 	
+	/**设置本月前 n天专职经纪人的收益不做统计 **/
+	public void updateLurceSetIsLucredByBroker(int n);
+	
 
 	
 

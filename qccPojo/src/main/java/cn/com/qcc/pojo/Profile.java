@@ -3,9 +3,6 @@ package cn.com.qcc.pojo;
 import java.util.Date;
 
 public class Profile {
-    /** */
-    private Long profileid;
-
     /** 对应用户表中的id字段*/
     private Long user_id;
 
@@ -59,14 +56,6 @@ public class Profile {
 
     /** 用户海报*/
     private String userPostImage;
-
-    public Long getProfileid() {
-        return profileid;
-    }
-
-    public void setProfileid(Long profileid) {
-        this.profileid = profileid;
-    }
 
     public Long getUser_id() {
         return user_id;

@@ -63,9 +63,6 @@ public class Building {
     /** */
     private Date update_time;
 
-    /** BD账号的id*/
-    private String bdid;
-
     public Long getBuildingid() {
         return buildingid;
     }
@@ -224,13 +221,5 @@ public class Building {
 
     public void setUpdate_time(Date update_time) {
         this.update_time = update_time;
-    }
-
-    public String getBdid() {
-        return bdid;
-    }
-
-    public void setBdid(String bdid) {
-        this.bdid = bdid == null ? null : bdid.trim();
     }
 }

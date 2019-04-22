@@ -57,7 +57,7 @@ public class BrokerController {
 			profile.setReal_name(realname);
 			profile.setIdentity(identity);
 			profile.setSignstate(2);
-			profile.setProfileid(userCustomer.getProfileid());
+			profile.setUser_id(userCustomer.getUserid());
 			userService.updateprofile(profile);
 		}
 		return resultMap;

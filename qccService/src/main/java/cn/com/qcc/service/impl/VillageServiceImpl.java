@@ -163,10 +163,11 @@ public class VillageServiceImpl implements VillageService {
 			// 设置更新时间
 			village.setUpdate_time(new Date());
 			village.setXcxpicture("");
+			long villageid = villageCustomerMapper.searchNextVillid();
+			village.setVillageid(villageid);
 			villageMapper.insertSelective(village);
 		} else {
 			// 否则做编辑操作
-			village.setBdid(null);
 			villageMapper.updateByPrimaryKeySelective(village);
 		}
 		String sendData = village.getVillageid()+"";
@@ -253,14 +254,14 @@ public class VillageServiceImpl implements VillageService {
 		}
 		Integer searchstate = systemstateMapper.selectByPrimaryKey(8).getDefaultstate();
 		building.setDetailid(Long.valueOf(detailid));
-		System.out.println("==================" +  building.getBuildingid() + "==================传入的楼栋");
 		if (CheckDataUtil.checkisEmpty(building.getBuildingid())) {
 			building.setState(searchstate);
 			building.setUpdate_time(new Date());
 			building.setXcxpicture("");
+			long buildingid = villageCustomerMapper.searchNextBuilid();
+			building.setBuildingid(buildingid);
 			buildingMapper.insertSelective(building);
 		} else {
-			building.setBdid(null);
 			building.setBuildingcode(null);
 			buildingMapper.updateByPrimaryKeySelective(building);
 		}

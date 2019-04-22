@@ -3,10 +3,8 @@ package cn.com.qcc.tenement.mqmess;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
-
 import cn.com.qcc.common.PayCommonConfig;
 import cn.com.qcc.common.SimpleUpload;
-import cn.com.qcc.detailcommon.AccountMgr;
 
 
 public class VedioUploadMess implements MessageListener  {
@@ -18,7 +16,6 @@ public class VedioUploadMess implements MessageListener  {
 			String fileName =  (String)textMessage.getText() ;
 			// 拿到TEXT 需要休眠一会儿。等待数据库提交事务
 			Thread.sleep(5000 );
-			System.out.println(fileName);
 			String filePath = PayCommonConfig.LOCAL_UPLOAD_PATH + fileName;
 			SimpleUpload.viedupload(filePath, fileName);
 		} catch (Exception e) {

@@ -13,13 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.IDUtils;
-import cn.com.qcc.common.RedisUtil;
 import cn.com.qcc.common.ReferralCode;
 import cn.com.qcc.common.ResultMap;
-import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.pojo.Backimage;
 import cn.com.qcc.pojo.Profile;
 import cn.com.qcc.service.BackImageService;

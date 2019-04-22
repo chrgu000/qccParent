@@ -433,6 +433,8 @@ public class HouseServiceImpl implements HouseService {
 			// 设置用户ID
 			house.setUser_id(Long.valueOf(userid));
 			house.setXcxpicture("");
+			long houseid = houseCustomerMapper.searchNextId();
+			house.setHouseid(houseid);
 			houseMapper.insert(house);
 			//发送消息
 			sendData = house.getHouseid()+"-insert-"+tribeid+"-"+userid;
@@ -755,6 +757,8 @@ public class HouseServiceImpl implements HouseService {
 			house.setHoustatus("2");
 			// 设置用ID
 			house.setUser_id(Long.valueOf(userid));
+			long houseid = houseCustomerMapper.searchNextId();
+			house.setHouseid(houseid);
 			houseMapper.insert(house);
 		}
 		String sendData = house.getHouseid().toString();
@@ -1740,10 +1744,11 @@ public class HouseServiceImpl implements HouseService {
 					// 设置用户ID
 					inhouse.setUser_id(Long.valueOf(userid));
 					inhouse.setXcxpicture("");
+					long houseid = houseCustomerMapper.searchNextId();
+					house.setHouseid(houseid);
 					houseMapper.insert(inhouse);
-					Long inserhouseid = house.getHouseid();
-					sendData = sendData + inserhouseid + "-";
-					preparatoryhouse( preparatory ,inserhouseid );
+					sendData = sendData + houseid + "-";
+					preparatoryhouse( preparatory ,houseid );
 					inhouse.setHouseid(null);
 				}else {
 					House errorhouse = new House();
@@ -2096,9 +2101,10 @@ public class HouseServiceImpl implements HouseService {
 					// 设置用户ID
 					inhouse.setUser_id(Long.valueOf(userid));
 					inhouse.setXcxpicture("");
+					long houseid = houseCustomerMapper.searchNextId();
+					house.setHouseid(houseid);
 					houseMapper.insert(inhouse);
-					Long inserhouseid = house.getHouseid();
-					sendData = sendData + inserhouseid + "-";
+					sendData = sendData + houseid + "-";
 				//	preparatoryhouse( preparatory ,inserhouseid );
 					house.setHouseid(null);
 				}else {
