@@ -78,25 +78,30 @@ public class HouseyudingSuccessMess  implements MessageListener{
 			updatehouse.setHouseid(search.getHouseid());
 			houseMapper.updateByPrimaryKeySelective(updatehouse);
 			
+			String sendUserids = "" ; 
+			String body = "" ;
+			
 			// 2,发送短信
 			// 发送短信给租客提醒预定成功
 			HouseCustomer details = houseCustomerMapper.findHouseDetails(search.getHouseid());
+			sendUserids = details.getUserid();
 			User user = userMapper.selectByPrimaryKey(search.getUserid());
 			String userPhone = user.getTelephone() + "";
 			if (CheckDataUtil.checkNotEqual(userPhone, search.getReservationstel())) {
 				userPhone = userPhone + " 或 " + search.getReservationstel() ;
 			}
 			userPhone = userPhone + " (预定人称呼) "+ search.getReservations();
-			String contentCommon = details.getVillagename() + "-" +
+			String defaultValue = details.getVillagename() + "-" +
 					details.getBuilding() + "-" +
 					details.getHouse_number() +"(号房)";
-			contentCommon  = contentCommon + "," + search.getPrices() + " 元"  + "," +search.getWeixinorder();
+			String contentCommon  = defaultValue + "," + search.getPrices() + " 元"  + "," +search.getWeixinorder();
 			
 			String noticManager  = contentCommon +"," + userPhone;
 			
 			// 通过管理的id去查询房东 的userid
 			Long landUserId = getLandUserId(details.getUserid());
 			if (CheckDataUtil.checkNotEmpty(landUserId)) {
+				sendUserids = sendUserids +"," + landUserId;
 				User manager = userMapper.selectByPrimaryKey(Long.valueOf(  details.getUserid())  );
 				// 通知管理员 或者房东有新的 预定
 				String modelIdUser = PayCommonConfig.HOUSE_YUDING_SUCCESS_NOTIC_MANAGER;
@@ -152,11 +157,11 @@ public class HouseyudingSuccessMess  implements MessageListener{
 			
 			// 发送
 			String systemId = "10087";
-			
-			String body = "" ;
-			
-			String sendUserids = "" ; 
-			
+			sendUserids = "[" + sendUserids + "]";
+			// 房子id +图片 + 价格 + 房源地址 + 预定人姓名 + 预定人电话
+			body = details.getHouseid() + "❤" + details.getPicture().split(",")[0]+"❤" + 
+					search.getPrices()+" 元" + "❤" +  	defaultValue 
+					+ "❤" + search.getReservations() + "❤" + user.getTelephone();
 			WangYiUtil.piliangqiuzu(body,sendUserids ,systemId);
 			
 		} catch (Exception e) {

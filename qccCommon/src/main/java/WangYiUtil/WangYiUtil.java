@@ -631,7 +631,6 @@ public class WangYiUtil {
 			/**
 			 * 0 表示文本消息, 1 表示图片， 2 表示语音， 3 表示视频， 4 表示地理位置信息， 6 表示文件， 100
 			 * 自定义消息类型（特别注意，对于未对接易盾反垃圾功能的应用，该类型的消息不会提交反垃圾系统检测）
-			 * 
 			 */
 			nvps.add(new BasicNameValuePair("type", "3"));
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
