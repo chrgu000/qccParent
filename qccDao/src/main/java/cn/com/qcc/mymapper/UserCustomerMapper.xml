@@ -1365,5 +1365,10 @@
 	</select>
 	
 	
+	<select id="getWeixinOpendId" resultType="string">
+		SELECT vipcount.weixinaccount from vipcount
+			where vipcount.user_id in ( ${sendUserids} )
+	
+	</select>
   
 </mapper>

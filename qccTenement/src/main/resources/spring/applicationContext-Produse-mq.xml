@@ -165,4 +165,10 @@
 	<bean id="houseyudingSuccess" class="org.apache.activemq.command.ActiveMQQueue">
 		<constructor-arg value="houseyudingSuccess" />
 	</bean>  
+	
+	
+	<!-- NO.26  预订房源退款 -->
+	<bean id="houseTuiKuan" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="houseTuiKuan" />
+	</bean>  
 </beans>

@@ -114,6 +114,7 @@ public class MD5Util {
 	public static String getAccessToken(String appid, String appsecret) {  
 	    String result = HttpRequestUtil.getAccessToken(appid,appsecret);  
 	    JSONObject jsonObject = JSONObject.fromObject(result);  
+	    System.out.println(jsonObject);
 	    if (null != jsonObject) {  
 	        try {  
 	            result = jsonObject.getString("access_token");  

@@ -221,4 +221,14 @@
 		<property name="destination" ref="houseyudingSuccess" />
 		<property name="messageListener" ref="houseyudingSuccessMess" />
 	</bean> 
+	
+	
+	
+	<!-- 房源退款收到模板消息   NO.26 房源退款收到模板消息   -->
+	<bean id="houseTuiKuanMess" class="cn.com.qcc.tenement.mqmess.HouseTuiKuanMess"/>
+	<bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="houseTuiKuan" />
+		<property name="messageListener" ref="houseTuiKuanMess" />
+	</bean> 
 </beans>

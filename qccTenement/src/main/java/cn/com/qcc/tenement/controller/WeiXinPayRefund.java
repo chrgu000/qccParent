@@ -3,9 +3,12 @@ package cn.com.qcc.tenement.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.jms.Destination;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +19,7 @@ import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.ParamUtil;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.mapper.UsercentMapper;
+import cn.com.qcc.mess.util.SendMessUtil;
 import cn.com.qcc.pojo.Usercent;
 import cn.com.qcc.pojo.UsercentExample;
 import cn.com.qcc.queryvo.HouseOrderCustomer;
@@ -31,6 +35,10 @@ public class WeiXinPayRefund {
 	private HouseService houseService;
 	@Autowired
 	private UsercentMapper usercentMapper;
+	@Resource  
+	private Destination houseTuiKuan;
+	@Autowired 
+	private JmsTemplate jmsTemplate;
 
 	/**
 	 * 预定房源退款操作
@@ -87,6 +95,8 @@ public class WeiXinPayRefund {
 				if (checkmap.getCode() == 200) {
 					// 如果退款成功执行相关业务逻辑
 					houseService.updatehouseorder(houseorder.getUserid(), Long.valueOf(houseorderid), 6, refundmess);
+					String sendData  = houseorderid;
+					SendMessUtil.sendData(jmsTemplate, houseTuiKuan, sendData);
 				}
 				return checkmap;
 			} else {

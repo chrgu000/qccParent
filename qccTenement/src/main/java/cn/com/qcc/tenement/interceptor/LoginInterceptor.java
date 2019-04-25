@@ -16,7 +16,7 @@ import cn.com.qcc.service.UserService;
 import net.sf.json.JSONObject;
 /*
  * 登录拦截器，注明哪些方法需要登录以后才可以进行的操作要 [此拦截器主要作用用后台用户登录作拦截]
- * 注意@requestMapping()设置成比如@requestMapping("/userlogin/XXX")
+ * 注意@requestMapping()设置成比如@requestMapping("/userlogin/")
  * 
  */
 public class LoginInterceptor implements HandlerInterceptor {

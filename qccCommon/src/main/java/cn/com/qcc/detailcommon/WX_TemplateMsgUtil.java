@@ -108,7 +108,7 @@ public class WX_TemplateMsgUtil {
         }finally {
             if(templatId!=null) {
                 //删除新增的 微信模板
-                deleteWXTemplateMsgById(templatId);
+                //deleteWXTemplateMsgById(templatId);
             }
         }
         return "success";

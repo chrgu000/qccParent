@@ -18,13 +18,19 @@ import org.springframework.web.client.RestTemplate;
 import WangYiUtil.WangYiUtil;
 import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.DateUtil;
+import cn.com.qcc.common.KeyWordUtil;
 import cn.com.qcc.common.PayCommonConfig;
+import cn.com.qcc.common.SendGongZongUtil;
 import cn.com.qcc.common.SendMessage;
+import cn.com.qcc.common.WxTemplate;
+import cn.com.qcc.detailcommon.WX_UserUtil;
 import cn.com.qcc.mapper.HouseMapper;
 import cn.com.qcc.mapper.HouseorderMapper;
 import cn.com.qcc.mapper.LandlordManagerMapper;
 import cn.com.qcc.mapper.UserMapper;
+import cn.com.qcc.mapper.VipcountMapper;
 import cn.com.qcc.mymapper.HouseCustomerMapper;
+import cn.com.qcc.mymapper.UserCustomerMapper;
 import cn.com.qcc.pojo.House;
 import cn.com.qcc.pojo.Houseorder;
 import cn.com.qcc.pojo.LandlordManager;
@@ -33,6 +39,7 @@ import cn.com.qcc.pojo.User;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.service.SmallRoutineService;
 import cn.com.qcc.service.solrdao.HouseSolrDao;
+import weixin.util.MD5Util;
 import weixin.util.TemplateData;
 import weixin.util.WxMssVo;
 
@@ -59,6 +66,8 @@ public class HouseyudingSuccessMess  implements MessageListener{
 	UserMapper userMapper;
 	@Autowired
 	LandlordManagerMapper landlordManagerMapper;
+	@Autowired
+	UserCustomerMapper userCustomerMapper;
 	
 	@Override
 	public void onMessage(Message message) {
@@ -97,6 +106,7 @@ public class HouseyudingSuccessMess  implements MessageListener{
 			String contentCommon  = defaultValue + "," + search.getPrices() + " 元"  + "," +search.getWeixinorder();
 			
 			String noticManager  = contentCommon +"," + userPhone;
+			
 			
 			// 通过管理的id去查询房东 的userid
 			Long landUserId = getLandUserId(details.getUserid());
@@ -154,6 +164,7 @@ public class HouseyudingSuccessMess  implements MessageListener{
 			
 			smallRoutineService.pushOneUser(openid, formid, temid, wxMssVo , type ,restTemplate);
 			
+			List<String> openIdList = userCustomerMapper.getWeixinOpendId(sendUserids);
 			
 			// 发送
 			String systemId = "10087";
@@ -164,12 +175,44 @@ public class HouseyudingSuccessMess  implements MessageListener{
 					+ "❤" + search.getReservations() + "❤" + user.getTelephone();
 			WangYiUtil.piliangqiuzu(body,sendUserids ,systemId);
 			
+			
+			
+			
+			if (CheckDataUtil.checkNotEmpty(openIdList)) {
+				
+				for (String openId : openIdList) {
+					// 发送公众号消息
+					WxTemplate template = new WxTemplate();
+					template.setUrl(PayCommonConfig.GONGZONGMESS_HOUSE_YUDING_URL);
+					template.setTouser(openId);
+					template.setTopcolor("#000000");
+					template.setTemplate_id( PayCommonConfig.GONGZONGMESS_HOUSE_YUDING_TEMID);
+					KeyWordUtil keyWordUtil = new KeyWordUtil();
+					// 房号
+					keyWordUtil.setKeyword1(details.getHouse_number() );
+					keyWordUtil.setKeyword2("估计入住" +  search.getDaycount() + "天");
+					keyWordUtil.setKeyword3(details.getPrices() + "元/月");
+					keyWordUtil.setKeyword4(search.getPrices() + "元");
+					String title = "尊敬的用户你好,你位于 :" + details.getVillagename() + 
+							"-" + details.getBuilding() +" 的房源被成功预定！";
+					keyWordUtil.setTitle(title );
+					String remark = "租户联系方式：" + user.getTelephone() + "[ " +  search.getReservations()
+					+" ] 请登录七彩巢APP 发布相应租约!";
+					keyWordUtil.setRemark(remark);
+					SendGongZongUtil.SendMess(template, keyWordUtil);
+				}
+				
+			}
+			
+			
 		} catch (Exception e) {
 			
 		}
 	}
 	
 	
+
+
 	private Long  getLandUserId(String userid) {
 		LandlordManagerExample example = new LandlordManagerExample();
 		LandlordManagerExample.Criteria criteria = example.createCriteria();

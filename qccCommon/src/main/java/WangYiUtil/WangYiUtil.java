@@ -649,7 +649,12 @@ public class WangYiUtil {
 	}
 	
 	public static void main (String [] args) {
-		SendNoticToUser();
+		// 房子id +图片 + 价格 + 房源地址 + 预定人姓名 + 预定人电话
+		String body = "7641" + "❤http://www.hadoop.zzw777.com/155575471989992.png"
+		+"❤1200元" + "❤刘屋村 植物园路338 1026A" +"❤王五" + "❤17689890000";
+		String userids = "[10001765,10000525,10000003]";
+		String sysid = "10087";
+		piliangqiuzu(body, userids, sysid);
 	}
 
 }

@@ -6,6 +6,22 @@ public class TemplateData {
 	private String value;// ,,依次排下去
 	private String color;// 字段颜色（微信官方已废弃，设置没有效果）
 
+	public TemplateData() {
+		super();
+	}
+
+	public TemplateData(String value) {
+		super();
+		this.value = value;
+	}
+
+	public TemplateData( String value, String color) {
+		super();
+		
+		this.value = value;
+		this.color = color;
+	}
+
 	public String getValue() {
 		return value;
 	}

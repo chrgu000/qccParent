@@ -170,4 +170,10 @@ public class PayCommonConfig {
 	
 	/**七牛云返回的域名**/
 	public final static String HADOOP_WEB_RETURN_PAHT = "http://www.hadoop.zzw777.com/";
+	
+	/**房源预定成功接收的公众号 底部 点击链家**/
+	public static final String GONGZONGMESS_HOUSE_YUDING_URL = "https://www.zzw777.com/download.html";
+
+	/**房源预定成功后公众平台模板id**/
+	public static final String GONGZONGMESS_HOUSE_YUDING_TEMID = "-zFaBpcCPoHNSmJSPzLkrhKHIH5-rPSLU9bwrV7ebNA";
 }

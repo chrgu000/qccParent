@@ -1,5 +1,10 @@
 package cn.com.qcc.tenement.controller;
-
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.ConnectException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -7,6 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
@@ -25,12 +34,20 @@ import org.springframework.web.client.RestTemplate;
 
 import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.IDUtils;
+import cn.com.qcc.common.KeyWordUtil;
 import cn.com.qcc.common.PayCommonConfig;
 import cn.com.qcc.common.ResultMap;
+import cn.com.qcc.common.SendGongZongUtil;
+import cn.com.qcc.common.WxTemplate;
+import cn.com.qcc.detailcommon.WX_UserUtil;
+import cn.com.qcc.mymapper.UserCustomerMapper;
 import cn.com.qcc.queryvo.HouseCustomer;
 import cn.com.qcc.service.PosterCreateService;
 import cn.com.qcc.service.SmallRoutineService;
 import cn.com.qcc.service.solrdao.HouseSolrDao;
+import net.sf.json.JSONObject;
+import weixin.util.MD5Util;
+import weixin.util.MyX509TrustManager;
 import weixin.util.TemplateData;
 import weixin.util.WxMssVo;
 
@@ -43,10 +60,36 @@ public class TestToken {
 	SmallRoutineService smallRoutineService;
 	@Autowired
 	RestTemplate restTemplate;
+	@Autowired
+	UserCustomerMapper userCustomerMapper;
 
+	public static void main (String [] args) 
+	{
+		String openid = "oYQk1xOU_re4F2bIbTfRvSgTh42k";
+		String template_id = "-zFaBpcCPoHNSmJSPzLkrhKHIH5-rPSLU9bwrV7ebNA";
+		String url = "https://www.zzw777.com/download.html";
+		WxTemplate template = new WxTemplate();
+		template.setTemplate_id(template_id);
+		template.setTouser(openid);
+		KeyWordUtil keyWordUtil = new KeyWordUtil();
+		keyWordUtil.setKeyword1("1");
+		keyWordUtil.setKeyword2("2");
+		keyWordUtil.setKeyword3("3");
+		keyWordUtil.setKeyword4("4");
+		keyWordUtil.setTitle("title");
+		keyWordUtil.setRemark("remark");
+		SendGongZongUtil.SendMess(template, keyWordUtil);
+		//senMsg(openid);
+	}
+	
 	@RequestMapping("/mess")
-	public void send(String openid, String formid) {
-		String temid = PayCommonConfig.QCC_PAY_SUCCESS_TEMID;
+	public  void send(String openid, String formid) {
+		String sendUserids = "10001765";
+		List<String> list = userCustomerMapper.getWeixinOpendId(sendUserids);
+		for (String string : list) {
+			System.out.println(string);
+		}
+		/*String temid = PayCommonConfig.QCC_PAY_SUCCESS_TEMID;
 		String type = "qcc";
 		WxMssVo wxMssVo = new WxMssVo();
 		wxMssVo.setTouser(openid);// 用户openid
@@ -70,70 +113,75 @@ public class TestToken {
 		keyword3.setValue(date);
 		m.put("keyword3", keyword3);
 		wxMssVo.setData(m);
-		smallRoutineService.pushOneUser(openid, formid, temid, wxMssVo, type, restTemplate);
+		smallRoutineService.pushOneUser(openid, formid, temid, wxMssVo, type, restTemplate);*/
 
 	}
 
-	/*
-	 * public static void main(String[] args) { //封装了推送实体类，别问我为什么一直封装，java三特性 继承
-	 * 封装 多态 wxsmallTemplate tem = new wxsmallTemplate();
-	 * tem.setTemplateId("_yPJaTTc7zmPliitwUm0VY4wjRRvuVOdk57tA1Nggw0");
-	 * //推送给哪位神仙。 这个是openId 不是UnionID 如果是unionId肯定推送不过去。
-	 * tem.setToUser("oHi8u5dZc6whcGp8DpUv7h-iM12g"); //fromId
-	 * 这个炒鸡重要，没有他百分百推送不成功，fromId+openId 才能推送
-	 * tem.setForm_id("679293f4f93c31e15d1f14dcf3f77d5a"); //用户点击之后调到小程序哪个页面
-	 * 找你们前段工程师提供即可 tem.setPage("pages/welcome/welcome"); //有封装了一个实体类 哈哈哈
-	 * 这个是模板消息参数 List<wxsmallTemplateParam> paras = new
-	 * ArrayList<wxsmallTemplateParam>(); //这个是满参构造 keyword1代表的第一个提示 红包已到账这是提示
-	 * #DC143C这是色值不过废弃了 wxsmallTemplateParam templateParam = new
-	 * wxsmallTemplateParam( "keyword1", "红包已到账", "#DC143C"); //装进小参数结合中
-	 * paras.add(templateParam); //我就不嘚瑟了 省点劲直接扔进去算了哈哈哈哈哈~~~~ paras.add(new
-	 * wxsmallTemplateParam("keyword2", "刘骞", "")); paras.add(new
-	 * wxsmallTemplateParam("keyword3", "0.02元", "#DC143C")); paras.add(new
-	 * wxsmallTemplateParam("keyword4", "成功成为您店铺的会员", "")); paras.add(new
-	 * wxsmallTemplateParam("keyword5", "卓志海", "")); paras.add(new
-	 * wxsmallTemplateParam("keyword6", "暂无推荐店铺", "")); paras.add(new
-	 * wxsmallTemplateParam("keyword7", "红包已到您app账户，请尽快查询", "#0000FF"));
+	
+	
+	
+	
+	
+	public static void senMsg(String openId ) { 
+		String ACCESS_TOKEN = MD5Util.getAccessToken(PayCommonConfig.qcc_gzhappid, PayCommonConfig.qcc_gzhsecret);// 获取AccessToken
+		Integer state = WX_UserUtil.subscribeState(openId  ,ACCESS_TOKEN);
+		String temid = "-zFaBpcCPoHNSmJSPzLkrhKHIH5-rPSLU9bwrV7ebNA";
+		WxTemplate template= new WxTemplate();
+		template.setUrl("https://www.zzw777.com/download.html");
+		template.setTouser(openId);
+		template.setTopcolor("#000000");
+		template.setTemplate_id(temid);
+		Map<String,TemplateData> m = new HashMap<String,TemplateData>();
+		TemplateData first = new TemplateData();
+		first.setColor("#8B8378");
+		String title = "尊敬的用户你好,你位于植物园路 337 的房间 已在线被预订 <image src='http://www.hadoop.zzw777.com/154285959284445.png'/>";
+		first.setValue(title);
+		m.put("first", first);
+		TemplateData name = new TemplateData();
+		name.setColor("#000000");
+		name.setValue("2014A [号房]");
+		m.put("keyword1", name);
+		TemplateData qixian = new TemplateData();
+		qixian.setColor("#000000");
+		qixian.setValue("半年起租");
+		m.put("keyword2", qixian);
+		TemplateData zujin = new TemplateData();
+		zujin.setColor("#000000");
+		zujin.setValue("1200元/月");
+		m.put("keyword3", zujin);
+		TemplateData dingjin = new TemplateData();
+		dingjin.setColor("#000000");
+		dingjin.setValue(" 500元");
+		m.put("keyword4", dingjin);
+		TemplateData remark = new TemplateData();
+		remark.setColor("blue");
+		remark.setValue("租户联系方式：18316999864,请前往房东APP.发布租约");
+		//remark.setKeyword("keyword2");
+		m.put("remark", remark);
+		template.setData(m);
+		//JSONObject.fromObject(t).toString()); //此处你应该代入自己的template
+		JSONObject jsonobj = httpRequest("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+ACCESS_TOKEN+"", "POST",
+				JSONObject.fromObject(template).toString());
+		System.out.println(jsonobj);
+	}
+
+	public static JSONObject packJsonmsg(Map<String, TemplateData> param) {
+		JSONObject json = new JSONObject();
+		for (Map.Entry<String, TemplateData> entry : param.entrySet()) {
+			JSONObject keyJson = new JSONObject();
+			TemplateData dta = entry.getValue();
+			keyJson.put("value", dta.getValue());
+			keyJson.put("color", dta.getColor());
+			json.put(entry.getKey(), keyJson);
+		}
+		return json;
+	}
+
+	/**
+	 * 封装模板详细信息
 	 * 
-	 * SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); Date
-	 * temp = new Date(); String str = ""; str = sdf.format(temp); paras.add(new
-	 * wxsmallTemplateParam("keyword8", str, "")); //然后把所有参数扔到大的模板中
-	 * tem.setTemplateParamList(paras); //模板需要放大的关键词，不填则默认无放大
-	 * tem.setEmphasis_keyword("keyword1.DATA"); //获取token凭证。 //Token token =
-	 * com.jiaewo.house.wxxcx.util.CommonUtil.getToken();
-	 * 
-	 * }
-	 * 
-	 * @RequestMapping("/tts")
-	 * 
-	 * @ResponseBody public ResultMap testtoke(String openid) throws
-	 * SolrServerException { jedisClient.set("ddd:", "aaaaaa");
-	 * jedisClient.incr("ddd:") ; //senMsg( openid); houseSolrDao.queryAll();
-	 * return ResultMap.IS_200(); }
-	 * 
-	 * static void senMsg(String openId) { // 用户是否订阅该公众号标识 (0代表此用户没有关注该公众号
-	 * 1表示关注了该公众号) Integer state = WX_UserUtil.subscribeState(openId); if (state
-	 * == 1) { // 绑定了微信并且关注了服务号的用户 , 注册成功-推送注册短信 Map<String, TemplateData> param
-	 * = new HashMap<>(); param.put("first", new
-	 * TemplateData("尊敬的用户你预定的房号1074房东已经确认,请合理的安排入住时间。", "#696969"));
-	 * param.put("keyword1", new TemplateData("1074A", "#696969"));
-	 * param.put("keyword2", new TemplateData("2017年05月06日", "#696969"));
-	 * param.put("remark", new TemplateData("祝投生活愉快！", "#696969")); //
-	 * 注册的微信-模板Id //openId = "o3AMB0c5QVaqTKVp6XOHMC9BYcUE"; String regTempId =
-	 * "q3P5tKU7dmHGQWMqerQXpwlDreyZ2ceftcxovZJd6rI"; // 调用发送微信消息给用户的接口
-	 * WX_TemplateMsgUtil.sendWechatMsgToUser(openId, regTempId, "", "#000000",
-	 * packJsonmsg(param));
-	 * 
-	 * }
-	 * 
-	 * 
-	 * }
-	 * 
-	 *//**
-		 * 封装模板详细信息
-		 * 
-		 * @return
-		 */
+	 * @return
+	 */
 	/*
 	 * public static JSONObject packJsonmsg(Map<String, TemplateData> param) {
 	 * JSONObject json = new JSONObject(); for (Map.Entry<String, TemplateData>
@@ -242,6 +290,7 @@ public class TestToken {
 	PosterCreateService posterCreateService;
 	@Resource
 	private SolrServer houseSolrServer;
+
 	@RequestMapping("/tts")
 	@ResponseBody
 	public ResultMap testtoke(String filePath, String onePicture, Long houseid) throws SolrServerException {
@@ -288,15 +337,18 @@ public class TestToken {
 				}
 			}
 		}
-		
+
 		List<HouseCustomer> itemList = new ArrayList<>();
 		for (SolrDocument solrDocument : solrDocumentList) {
 			HouseCustomer item = new HouseCustomer();
 			// id 主键
 			item.setHouseid((Long) solrDocument.get("houseid"));
 			// 距离
-			/*item.setJuli(IDUtils.doubletoint((double) solrDocument.get("juli"), 1000));*/
-			
+			/*
+			 * item.setJuli(IDUtils.doubletoint((double)
+			 * solrDocument.get("juli"), 1000));
+			 */
+
 			// 一张图片
 			item.setOnepicture((String) solrDocument.get("onepicture"));
 			// 地铁路线
@@ -324,9 +376,66 @@ public class TestToken {
 			item.setApartmentname((String) solrDocument.get("apartmentname"));
 			itemList.add(item);
 		}
-		
+
 		return ResultMap.IS_200(itemList);
 
 	}
+	
+	
+	public static JSONObject httpRequest(String requestUrl, String requestMethod, String outputStr) {
+		JSONObject jsonObject = null;
+		StringBuffer buffer = new StringBuffer();
+		try {
+		// 创建SSLContext对象，并使用我们指定的信任管理器初始化
+		TrustManager[] tm = { new MyX509TrustManager() };
+		SSLContext sslContext = SSLContext.getInstance("SSL", "SunJSSE");
+		sslContext.init(null, tm, new java.security.SecureRandom());
+		// 从上述SSLContext对象中得到SSLSocketFactory对象
+		SSLSocketFactory ssf = sslContext.getSocketFactory();
+
+		URL url = new URL(requestUrl);
+		HttpsURLConnection httpUrlConn = (HttpsURLConnection) url.openConnection();
+		httpUrlConn.setSSLSocketFactory(ssf);
+
+		httpUrlConn.setDoOutput(true);
+		httpUrlConn.setDoInput(true);
+		httpUrlConn.setUseCaches(false);
+		// 设置请求方式（GET/POST）
+		httpUrlConn.setRequestMethod(requestMethod);
+
+		if ("GET".equalsIgnoreCase(requestMethod))
+		httpUrlConn.connect();
+
+		// 当有数据需要提交时
+		if (null != outputStr) {
+		OutputStream outputStream = httpUrlConn.getOutputStream();
+		// 注意编码格式，防止中文乱码
+		outputStream.write(outputStr.getBytes("UTF-8"));
+		outputStream.close();
+		}
+
+		// 将返回的输入流转换成字符串
+		InputStream inputStream = httpUrlConn.getInputStream();
+		InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "utf-8");
+		BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+		String str = null;
+		while ((str = bufferedReader.readLine()) != null) {
+		buffer.append(str);
+		}
+		bufferedReader.close();
+		inputStreamReader.close();
+		// 释放资源
+		inputStream.close();
+		inputStream = null;
+		httpUrlConn.disconnect();
+		jsonObject = JSONObject.fromObject(buffer.toString());
+		} catch (ConnectException ce) {
+		ce.printStackTrace();
+		} catch (Exception e) {
+		e.printStackTrace();
+		}
+		return jsonObject;
+		}
 
 }

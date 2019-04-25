@@ -257,6 +257,9 @@ public interface UserCustomerMapper {
 	/**设置本月前 n天专职经纪人的收益不做统计 **/
 	public void updateLurceSetIsLucredByBroker(int n);
 	
+	/**userid查询公众号 openid**/
+	public List<String> getWeixinOpendId( @Param("sendUserids") String sendUserids);
+	
 
 	
 
