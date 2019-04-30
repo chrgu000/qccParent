@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,6 +25,7 @@ import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.detailcommon.ExcelExportSXXSSF;
+import cn.com.qcc.detailcommon.JedisClient;
 import cn.com.qcc.detailcommon.Sha1;
 import cn.com.qcc.pojo.Access;
 import cn.com.qcc.pojo.Bdmanager;
@@ -63,6 +65,7 @@ public class BackController{
 	@Autowired LandLordService landLordService;
 	@Autowired HouseSolrDao houseSolrDao;
 	@Autowired BDService bdService;
+	@Autowired JedisClient jedisClient;
 	
 	@RequestMapping("/bd/searchAddBd")
 	@ResponseBody
@@ -158,14 +161,59 @@ public class BackController{
 		houseSolrDao.oneHouseDeleteFromSolr(houseCustomer);
 		return ResultMap.IS_200();
 	}
+	
+	
+	@RequestMapping("/userback/login")
+	@ResponseBody
+	public ResultMap userbacklogin ( @RequestBody User user) {
+		System.out.println(user.getPassword());
+		if (CheckDataUtil.checkisEmpty(user)) {
+			return ResultMap.build(400, "输入手机号码");
+		}
+		// Base64解密
+		String password = user.getPassword();
+		String password1 = getFromBASE64(password);
+		// Sha1加密
+		password = Sha1.getSha1(password1 + "_zf");
+		System.out.println(password);
+		User userSearch = userService.loginByPwd(user);
+		if (CheckDataUtil.checkisEmpty(userSearch)) {
+			return ResultMap.build(400, "该用户不存在");
+		}
+		if (!userSearch.getPassword().equals(password)) {
+			return ResultMap.build(400, "账号或者密码错误");
+		}
+		
+		UserCustomer rolen_user = getRoleName(userSearch);
+		
+		if (CheckDataUtil.checkisEmpty(rolen_user)) {
+			return ResultMap.build(400, "你没有登录后台的权限");
+		}
+		
+		if (!"1".equals(rolen_user.getState().toString())) {
+			return ResultMap.build(400, "账号已经被冻结");
+		}
+		
+		UserCustomer user_search = userService.getUserAndProfile(userSearch.getUserid());
+		user_search.setRoleid(rolen_user.getRoleid());
+		user_search.setRolename(rolen_user.getRolename());
+		// 通过用户ID查询权限集合
+		List<Access> list = getaccessbyuserid(user_search);
+		user_search.setAccess(list);
+		request.getSession().setAttribute("userback", user_search);
+		return ResultMap.IS_200(user_search);
+	}
 
 	/** 用户通过密码登录后台
 	 * @param password : 账号密码
 	 * @param telephone : 电话号码
 	 */
-	@RequestMapping(value = "/userback/login")
+	@RequestMapping(value = "/userback/login11")
 	public String userLoginByPwd(HttpServletRequest request, HttpServletResponse response, String password, Model model,
 			Long telephone) throws Exception {
+		
+		
+		
 		// Base64解密
 		String password1 = getFromBASE64(password);
 		// Sha1加密

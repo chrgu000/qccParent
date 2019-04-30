@@ -1438,7 +1438,7 @@ public class HouseServiceImpl implements HouseService {
 		// 第一步先查询房源的状态 [必须是可租的房子]
 		House house = houseMapper.selectByPrimaryKey(houseorder.getHouseid());
 		if (CheckDataUtil.checkisEmpty(house)
-				&& !"1".equals(house.getHousestatus())) {
+				||  !"1".equals(house.getHousestatus())) {
 			return ResultMap.build(400, "该房源已经出租或者下架");
 		}
 		

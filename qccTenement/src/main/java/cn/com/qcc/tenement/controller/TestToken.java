@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
-import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.IDUtils;
 import cn.com.qcc.common.KeyWordUtil;
 import cn.com.qcc.common.PayCommonConfig;
@@ -49,7 +48,6 @@ import net.sf.json.JSONObject;
 import weixin.util.MD5Util;
 import weixin.util.MyX509TrustManager;
 import weixin.util.TemplateData;
-import weixin.util.WxMssVo;
 
 @Controller
 public class TestToken {

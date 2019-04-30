@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
 
+import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.PayCommonConfig;
 import cn.com.qcc.common.ResultMap;
 @SuppressWarnings({ "resource", "unchecked", "deprecation" })
@@ -37,11 +38,11 @@ public class WeiXinPhoneController {
 	@ResponseBody
 	public  ResultMap getPhoneNumber(String encryptedData, String code, String iv ,String descname) throws UnsupportedEncodingException {
 		
-		if (encryptedData == null || encryptedData=="" || "undefined".equals(encryptedData)
-				|| iv == null || iv=="" || "undefined".equals(iv)) {
+		
+		if (CheckDataUtil.checkisEmpty(encryptedData)
+				|| CheckDataUtil.checkisEmpty(iv)) {
 			return ResultMap.build(400,"用户拒绝授权");
 		}
-		
 		
 		String session_key="";
 		try {
