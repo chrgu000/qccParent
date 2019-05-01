@@ -95,10 +95,7 @@ public class BuyController {
 		return "map";
 	}
 	
-	@RequestMapping("/index")
-	public String index() {
-		return "index";
-	}
+	
 	@ResponseBody
 	@RequestMapping("/test")
 	public ResultMap TEST(VillageeVo villageeVo) {

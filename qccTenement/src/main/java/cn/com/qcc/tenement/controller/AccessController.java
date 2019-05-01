@@ -125,7 +125,7 @@ public class AccessController {
 	 * **/
 	@RequestMapping("/back/updatesystemstate")
 	@ResponseBody
-	public ResultMap updatesystemstate( @RequestBody Systemstate systemstate) {
+	public ResultMap updatesystemstate(  Systemstate systemstate) {
 		ResultMap resultMap = accessService.updatesystemstate(systemstate);
 		return resultMap;
 	}

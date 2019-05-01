@@ -11,7 +11,6 @@ public class Config {
 
 	
 	
-	
 	/**
 	 * 系统语言环境，默认为中文zh
 	 */

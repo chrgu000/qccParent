@@ -163,9 +163,9 @@ public class BackController{
 	}
 	
 	
-	@RequestMapping("/userback/login")
+	@RequestMapping("/userback/login11")
 	@ResponseBody
-	public ResultMap userbacklogin ( @RequestBody User user) {
+	public ResultMap userbacklogin ( User user) {
 		System.out.println(user.getPassword());
 		if (CheckDataUtil.checkisEmpty(user)) {
 			return ResultMap.build(400, "输入手机号码");
@@ -208,7 +208,7 @@ public class BackController{
 	 * @param password : 账号密码
 	 * @param telephone : 电话号码
 	 */
-	@RequestMapping(value = "/userback/login11")
+	@RequestMapping(value = "/userback/login")
 	public String userLoginByPwd(HttpServletRequest request, HttpServletResponse response, String password, Model model,
 			Long telephone) throws Exception {
 		
@@ -218,12 +218,15 @@ public class BackController{
 		String password1 = getFromBASE64(password);
 		// Sha1加密
 		String str1 = Sha1.getSha1(password1 + "_zf");
+		System.out.println(telephone);
+		System.out.println(str1);
 		if (telephone == null) {
-			return "login";
+			return "redirect:/login";
 		}
 		User user = new User();
 		user.setTelephone(telephone);
 		User user1 = userService.loginByPwd(user);
+		System.out.println(user1.getPassword());
 		if (user1 != null) {
 			if (!user1.getPassword().equals(str1)) {
 				request.getSession().setAttribute("error", "用户名名和密码不一致");
@@ -253,7 +256,7 @@ public class BackController{
 			
 
 		}
-		request.getSession().setAttribute("error", "登录过期或账户不存在");
+		request.getSession().setAttribute("error", "账号密码不匹配");
 		return "redirect:/login";
 
 	}
@@ -275,8 +278,22 @@ public class BackController{
 	}
 
 	@RequestMapping(value = "/login")
-	public String login() {
+	public String login(Model model) {
+		
+		Object error = request.getSession().getAttribute("error");
+		if (CheckDataUtil.checkNotEmpty(error)) {
+			
+			model.addAttribute("error", error.toString());
+			System.out.println(error);
+		}
+		
+		
 		return "login";
+	}
+	
+	@RequestMapping("/index")
+	public String index() {
+		return "index";
 	}
 
 	/**

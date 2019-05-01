@@ -31,13 +31,11 @@ public class LoginInterceptor implements HandlerInterceptor {
 		// 用户访问的url
 		String url = request.getRequestURI();
 		String urlname = userService.getaccessurl_name(url);
-		if ("/Tenement/userback/login".equals(url)) {
+		if ("/Tenement/userback/login".equals(url) ||
+				"/Tenement/login".equals(url)) {
 			return true;
 		}
 		
-		if (1==1) {
-			return true;
-		}
 		
 		for (String open_url : open_urls) {
 			if (url.indexOf(open_url) >= 0) {
@@ -63,7 +61,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 					}
 					//如果是登录按钮
 					if ("/Tenement/index".equals(url)) {
-						request.getSession().setAttribute("error", "你没有登录后台的权限" );
+						request.getSession().setAttribute("error", "" );
 						response.sendRedirect("/Tenement/login");
 						return false;
 					}
