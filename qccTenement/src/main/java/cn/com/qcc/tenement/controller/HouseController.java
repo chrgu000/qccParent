@@ -521,7 +521,7 @@ public class HouseController {
 	 */
 	@RequestMapping(value = "/house/findHouseBySizeWithMap")
 	@ResponseBody
-	public ResultMap findHouseBySizeWithMap(String city, HouseVo houseVo, 
+	public ResultMap findHouseBySizeWithMap(String city, HouseVo houseVo, Integer property_id ,
 			@RequestParam(defaultValue = "0") Integer currentpage,
 			HttpServletRequest request, @RequestParam(defaultValue = "40") int pagesize) {
 		// TDDTO city = "深圳";
@@ -534,7 +534,7 @@ public class HouseController {
 		pagequery.setPagesize(pagesize);
 		pagequery.setCurrentpage(currentpage);
 		SearchResult result  = houseService.findHouseBySizeWithMap(likecode,houseVo.getAddressCustomer()
-				,houseVo.getUserid(),pagequery);
+				,houseVo.getUserid(),pagequery ,property_id);
 		int infoCount =result.getRecordCount();
 		pagequery.setPageParams(infoCount, pagesize, currentpage);
 		List<HouseCustomer> houseList = result.getHouselist();

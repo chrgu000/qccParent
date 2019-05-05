@@ -992,14 +992,15 @@ public class HouseServiceImpl implements HouseService {
 	
 	// 地图找附近房源
 	public SearchResult findHouseBySizeWithMap(Long likecode ,AddressCustomer addressCustomer 
-			, Long userid,PageQuery pagequry) {
-		SolrQuery query = getHouseBySizeQueryWithMap(likecode ,addressCustomer ,userid,pagequry);
+			, Long userid,PageQuery pagequry , Integer property_id) {
+		SolrQuery query = getHouseBySizeQueryWithMap(likecode ,addressCustomer ,userid,pagequry
+				, property_id);
 		SearchResult result = houseSolrDao.findHouseBySizeWithMap(query);
 		return result;
 	}
 	
 	private SolrQuery getHouseBySizeQueryWithMap(Long likecode, AddressCustomer addressCustomer, Long userid
-			,PageQuery pagequery) {
+			,PageQuery pagequery ,Integer property_id) {
 		SolrQuery query = new SolrQuery();
 		query.setQuery("*:*");
 		// 是否分组
@@ -1014,9 +1015,10 @@ public class HouseServiceImpl implements HouseService {
 		SolrPageUtil.juliquery(query,"", addressCustomer);
 		query.set("fq","likecode:"+likecode+"*");
 		// 还要设置查询房源
-		query.add("fq","propertyname:房源");
+		//query.add("fq","propertyname:房源");
 	    // 查询可以租的
 		query.add("fq","housestatus:1");
+		query.add("fq","propertyid:"+property_id+"");
 		query.addSort("geodist()",ORDER.asc);//按照从近到远排序
 		SolrPageUtil.setStartAndEnd(pagequery, query);
 		return query;

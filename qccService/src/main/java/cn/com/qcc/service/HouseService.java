@@ -411,7 +411,7 @@ public interface HouseService {
 			Long userid, HousetagCustomer housetag, String propertyname, String apartmentname, String brand);
 	
 	SearchResult findHouseBySizeWithMap(Long likecode, AddressCustomer addressCustomer, Long userid,
-			PageQuery pagequery);
+			PageQuery pagequery ,Integer property_id);
 	
 	
 
