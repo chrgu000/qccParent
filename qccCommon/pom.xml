@@ -242,13 +242,14 @@
 			<artifactId>jackson-mapper-asl</artifactId>
 			<version>1.9.12</version>
 		</dependency>
-		<!-- 微信支付 -->
+		<!-- 微信支付 
 		<dependency>
 			<groupId>com.qiniu</groupId>
 			<artifactId>happy-dns-java</artifactId>
 			<version>0.1.4</version>
 			<scope>compile</scope>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
@@ -309,11 +310,14 @@
 			<version>3.3.1</version>
 			<scope>compile</scope>
 		</dependency>
+		
+		<!--  
 		<dependency>
 			<groupId>com.qiniu</groupId>
 			<artifactId>happy-dns-java</artifactId>
 			<version>0.1.4</version>
 			<scope>compile</scope>
 		</dependency>
+		-->
 	</dependencies>
 </project>

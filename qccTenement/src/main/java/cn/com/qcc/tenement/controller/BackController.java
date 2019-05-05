@@ -218,15 +218,12 @@ public class BackController{
 		String password1 = getFromBASE64(password);
 		// Sha1加密
 		String str1 = Sha1.getSha1(password1 + "_zf");
-		System.out.println(telephone);
-		System.out.println(str1);
 		if (telephone == null) {
 			return "redirect:/login";
 		}
 		User user = new User();
 		user.setTelephone(telephone);
 		User user1 = userService.loginByPwd(user);
-		System.out.println(user1.getPassword());
 		if (user1 != null) {
 			if (!user1.getPassword().equals(str1)) {
 				request.getSession().setAttribute("error", "用户名名和密码不一致");
