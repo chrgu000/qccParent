@@ -103,6 +103,12 @@ public class BackController{
 		return bdService.changeState(bdid);
 	}
 	
+	@RequestMapping("/home")
+	public String changeState111() {
+		System.out.print("111");
+		return "hello";
+	}
+	
 	@RequestMapping("/bd/changeEditstate")
 	@ResponseBody
 	public ResultMap changeEditstate(String bdid) {

@@ -162,7 +162,7 @@ public class AddressServiceImpl implements AddressService {
 	}
 	@Override
 	public int mertrosearchCount(Long code) {
-		// TODO Auto-generated method stub
+		System.out.print("字体好大啊，看着好舒服。");
 		return addressCustomerMapper.metrosearchCount(code);
 	}
 

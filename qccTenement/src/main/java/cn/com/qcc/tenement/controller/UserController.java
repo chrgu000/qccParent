@@ -431,18 +431,11 @@ public class UserController {
 		User user1 = userService.loginByPwd(user);
 		if (user1 != null) {
 			if (str1.equals(user1.getPassword())) {
-
-				if (user1.getToken() != null && !"".equals(user1.getToken())) {
-					map.put("token", user1.getToken());
-				} else {
-					String token = userService.addRongToken(user1.getUserid(), "z" + user1.getUserid(),
-							"http://www.hadoop.zzw777.com/d7b6b65a-5ee1-4d6f-9f18-5a6fbc589387");
-					map.put("token", token);
-				}
 				map.put("userId", user1.getUserid());
-				map.put("accesToken", user1.getAccestoken());
+				map.put("accessToken", user1.getAccestoken());
 				map.put("lat", user1.getLatitude());
 				map.put("log", user1.getLongitude());
+				map.put("acctoken", user1.getAcctoken());
 				return ResultMap.build(200, "登录成功", map);
 			} else {
 				return ResultMap.build(400, "用户名或者密码错误");

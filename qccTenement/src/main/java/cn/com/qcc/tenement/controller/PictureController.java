@@ -31,8 +31,8 @@ public class PictureController {
 	
 	
 	
-	//视频的最大大小20M
-	private final static int VIDEO_MAX_SIZE =  1024 * 1000 * 20 ;
+	//视频的最大大小100M
+	private final static int VIDEO_MAX_SIZE =  1024 * 1000 * 100 ;
 
 	@RequestMapping(value = "/uploadPicture")
 	@ResponseBody
@@ -60,7 +60,7 @@ public class PictureController {
 		long size = content.getSize();
 		// 最大20M
 		if (size > VIDEO_MAX_SIZE) 
-			return ResultMap.build(400, "视频最大为20M");
+			return ResultMap.build(400, "视频最大为100M");
 		// 获取文件的全部名称
 		String originName  = content.getOriginalFilename();
 		// 获取文件后缀

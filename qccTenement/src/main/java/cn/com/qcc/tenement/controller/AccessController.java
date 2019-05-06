@@ -2,13 +2,15 @@ package cn.com.qcc.tenement.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import cn.com.qcc.common.PageQuery;
 import cn.com.qcc.common.ResultMap;
 import cn.com.qcc.pojo.Access;
@@ -150,7 +152,7 @@ public class AccessController {
 	@RequestMapping("/beforesend")
 	@ResponseBody
 	public ResultMap test () {
-		
+		System.out.print("测试中文");
 		//Long userid = IDUtils.getUserIdByToken(request);
 		try {
 			Thread.sleep(3000);

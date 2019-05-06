@@ -13,10 +13,15 @@
 	<button id="button">JXMP</button>
 	
 	
+	
+	
+	
+	<button class="shouquan"> å¾®ä¿¡ææ </button>
+	
+	输入页码：<input value="1" class="page">
+	<button type="button" class="clickBtn">CLICK</button>
+	
 	<div id="addree"></div>
-	
-	
-	<button class="shouquan"> 微信授权 </button>
 
 </body>
 
@@ -25,10 +30,31 @@
 <script type="text/javascript">
  $(function () {
 	 
+	 $('.clickBtn').click(function () {
+		 var pagesize = $('.page').val();
+		 alert(pagesize);
+		 $.ajax({
+				method : 'post',
+				data :{userid:10006381 ,pagesize:pagesize},
+				url : 'https://www.zzw777.com/Tenement/user/belogin/album',
+				success : function(data) {
+					var map = data.obj.detailList;
+					var TopDiv = $('#addree').empty();
+					$.each(map,function(index, value) {
+						var body_in = '<tr><td>'+value.houseid+'</td><td>'+value.picture.split(',')[0]+'</td><td>'+
+						'<image src='+value.picture.split(',')[0]+' /></td></tr>';
+						TopDiv.append(body_in);
+					});
+				}
+		});
+		 
+	 });
+	 
+	 
 	 $('.shouquan').click(function () {
-		     var url = "https://www.zzw777.com/Tenement/oauth/oauth2AuthorizeController"; //注意此处的basePath是没有端口号的域名地址。如果包含:80,在提交给微信时有可能会提示 “redirect_uri参数错误” 。
-	        //money为订单需要支付的金额
-	        //state中存放的为商品订单号
+		     var url = "https://www.zzw777.com/Tenement/oauth/oauth2AuthorizeController"; //æ³¨ææ­¤å¤çbasePathæ¯æ²¡æç«¯å£å·çååå°åãå¦æåå«:80,å¨æäº¤ç»å¾®ä¿¡æ¶æå¯è½ä¼æç¤º âredirect_uriåæ°éè¯¯â ã
+	        //moneyä¸ºè®¢åéè¦æ¯ä»çéé¢
+	        //stateä¸­å­æ¾çä¸ºååè®¢åå·
 	        console.log(url);
 	        var state = "10001765";
 	        var weixinUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx37a5a7281317047a&redirect_uri=" + encodeURI(url) + "&response_type=code&scope=snsapi_userinfo&state=state="+state+"#wechat_redirect";
