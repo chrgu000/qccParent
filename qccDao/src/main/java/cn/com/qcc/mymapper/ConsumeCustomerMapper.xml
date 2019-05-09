@@ -108,7 +108,7 @@
 					lucre
 				WHERE
 					DATEDIFF(update_time, NOW()) = #{daycount}
-				AND lucre.state = 1
+				AND lucre.state  in ( 1 ,5 )
 				AND lucre.userid = #{userid}
 				AND lucre.type = 1
 			) todaycommission
@@ -121,7 +121,7 @@
 				WHERE
 					MONTH (lucre.update_time) = MONTH (curdate())
 				AND YEAR (lucre.update_time) = YEAR (curdate())
-				AND lucre.state = 1
+				AND lucre.state in ( 1 ,5 )
 				AND lucre.userid = #{userid}
 				AND lucre.type = 1
 			) monthcommission
@@ -132,7 +132,7 @@
 				FROM
 					lucre
 				WHERE
-					lucre.state = 1
+					lucre.state  in ( 1 ,5 )
 				AND lucre.userid = #{userid}
 				AND lucre.type = 1
 			) totalcommission

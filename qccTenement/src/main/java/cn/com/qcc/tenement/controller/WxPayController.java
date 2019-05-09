@@ -664,8 +664,16 @@ public class WxPayController {
 			,Houseorder houseorder , String formid)
 			throws IllegalAccessException, UnrecoverableKeyException, KeyManagementException, ClientProtocolException,
 			KeyStoreException, NoSuchAlgorithmException, IOException {
+		
+		if (total_free >290000) {
+			return ResultMap.build(400, "微信支付限制,超出交易。请前往支付宝平台完成交易");
+		}
+		
 		OrderInfo order = new OrderInfo();
 		String out_trade_no = IDUtils.genItemId();
+		
+		
+		
 		if ("10001765".equals(userid)) {total_free = 1;}
 		//String out_trade_no = conId + "cz" + userid;
 		if ("gzfzz".equals(type)) {

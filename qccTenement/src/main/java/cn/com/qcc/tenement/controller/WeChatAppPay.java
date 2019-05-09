@@ -91,6 +91,7 @@ public class WeChatAppPay {
 		// total_free = 1;
 		// 先需要往数据库插入一条记录或者是更新一条记录
 		String appid = getAppIdByApptype(app_type);
+		
 		houseorder.setPrices(Double.valueOf(total_free) / 100);
 		if (houseorder.getDaycount() == 0) {
 			houseorder.setDaycount(0);
@@ -104,6 +105,7 @@ public class WeChatAppPay {
 		
 		jedisClient.set(RedisUtil.ONLINE_PAY_ORDER + out_trade_no, "cz_" + houseorderid);
 		jedisClient.expire(RedisUtil.ONLINE_PAY_ORDER+ out_trade_no, RedisUtil.ONLINE_PAY_ORDER_OUT_TIME);
+		
 		
 		
 		String notify_url = PayCommonConfig.houseyudingreturn;
@@ -122,6 +124,8 @@ public class WeChatAppPay {
 		if (com.jpay.ext.kit.StrKit.isBlank(spbill_create_ip)) {
 			spbill_create_ip = "120.24.43.56";
 		}
+		
+		
 		// 第一次签名
 		Map<String, String> paraMap = new HashMap<>();
 		// 订单总金额，单位为分

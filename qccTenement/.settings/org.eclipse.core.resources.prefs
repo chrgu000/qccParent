@@ -3,4 +3,6 @@ encoding//src/main/java=UTF-8
 encoding//src/main/resources=UTF-8
 encoding//src/main/resources/AccessTokenInterUrl.properties=UTF-8
 encoding//src/main/resources/Intercepted.properties=UTF-8
+encoding//src/main/resources/\u5728\u7EBF\u4EA4\u79DF\u91D1\u989D\u5206\u914D\u60C5\u51B5.hello=UTF-8
+encoding//src/main/resources/\u9879\u76EE\u5404\u5927\u94FE\u63A5\u89E3\u6790.properties=UTF-8
 encoding//src/main/webapp/WEB-INF/pages/hello.jsp=UTF-8

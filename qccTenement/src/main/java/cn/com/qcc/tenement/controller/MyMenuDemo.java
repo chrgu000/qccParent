@@ -102,7 +102,7 @@ public class MyMenuDemo {
 		fb1.setType("miniprogram");
 		fb1.setAppid(PayCommonConfig.qcc_xiaochengxuappid);
 		fb1.setUrl("http://mp.weixin.qq.com");
-		fb1.setPagepath("pages/IssuedBan/IssuedBan");
+		fb1.setPagepath("pages/nearbyMap/nearbyMap");
 		
 
 		// -------------

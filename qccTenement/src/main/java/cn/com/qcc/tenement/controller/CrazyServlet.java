@@ -187,7 +187,7 @@ public class CrazyServlet extends HttpServlet {
 						return_str = getReplyTextMessage(code_str, fromUserName, toUserName);
 					}
 					if ("33".equals(EventKey)) {
-						code_str = "绑定失败,请先授权!";
+						code_str = "绑定失败,请先授权! 授权操作:附近房源 -->个人 --> 我的VIP --> 提现 --> 授权";
 						if (checksearch != null) {
 							// 说明查到的信息。在判断是否绑定了提现账号
 							if (CheckDataUtil.checkNotEmpty(checksearch.getWeixinaccount())) {

@@ -16,7 +16,6 @@ public class UserCustomer extends User {
 	private Long user_id;      // 用户userid
 	private Long fatheruserid; // 层级管理
 	private String username;   // 用户昵称
-	private Long profileid;  // profile id
 	private String landaccesurlid; // 子账号权限
 	private Integer state; //状态
 	private Double balance; // 余额
@@ -218,13 +217,6 @@ public class UserCustomer extends User {
 		this.signstate = signstate;
 	}
 
-	public Long getProfileid() {
-		return profileid;
-	}
-
-	public void setProfileid(Long profileid) {
-		this.profileid = profileid;
-	}
 
 	public List<MessReply> getMessagereply() {
 		return messagereply;

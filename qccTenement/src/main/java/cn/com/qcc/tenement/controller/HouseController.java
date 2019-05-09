@@ -990,7 +990,7 @@ public class HouseController {
 			double orderPirce = landPrice + centPrice;
 			if (orderPirce ==0) {
 				orderPirce = Double.valueOf(houseCustomer.getPrices()) * 0.5 ;
-			}
+			} 
 			// 第一次需要付的钱
 			double firstCentPrice = Double.valueOf(houseCustomer.getPrices()) * houseModel.get(1);
 			

@@ -60,6 +60,7 @@ public class ConsumeController {
 		consume.setType(0);
 		consume.setCreate_time(new Date());
 		
+		
 		jedisClient.set(RedisUtil.ONLINE_PAY_ORDER + orderId, "cz_" + userid);
 		jedisClient.expire(RedisUtil.ONLINE_PAY_ORDER + orderId, RedisUtil.ONLINE_PAY_ORDER_OUT_TIME);
 		

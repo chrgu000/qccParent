@@ -173,7 +173,9 @@ public class PayCommonConfig {
 	
 	/**房源预定成功接收的公众号 底部 点击链家**/
 	public static final String GONGZONGMESS_HOUSE_YUDING_URL = "https://www.zzw777.com/download.html";
+	/**房源预定成功后公众平台模板id**/
+	public static final String GONGZONGMESS_HOUSE_YUDING_TEMID_BROKER = "0ikG2G-Qoo_IcXQnb6BEmaumSR2BlVp4kU0lovfYNzI";
 
 	/**房源预定成功后公众平台模板id**/
-	public static final String GONGZONGMESS_HOUSE_YUDING_TEMID = "-zFaBpcCPoHNSmJSPzLkrhKHIH5-rPSLU9bwrV7ebNA";
+	public static final String GONGZONGMESS_HOUSE_YUDING_TEMID_LAND = "-zFaBpcCPoHNSmJSPzLkrhKHIH5-rPSLU9bwrV7ebNA";
 }

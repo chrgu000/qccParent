@@ -4,8 +4,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import cn.com.qcc.common.CheckDataUtil;
 import cn.com.qcc.common.DateUtil;
 import cn.com.qcc.common.HttpSign;
 import cn.com.qcc.common.ResultMap;
@@ -110,13 +108,15 @@ public class BrokerServiceImpl implements BrokerService{
 			return false;
 		}
 		
-		ProfileExample example = new ProfileExample();
+		return true ;
+		/*ProfileExample example = new ProfileExample();
 		ProfileExample.Criteria criteria = example.createCriteria();
 		criteria.andIdentityEqualTo(identity);
+		criteria.andSignstateEqualTo(2);
 		List<Profile> list = profileMapper.selectByExample(example);
 		if (CheckDataUtil.checkNotEmpty(list)) 
 			return  true ;
-		return false;
+		return false;*/
 	}
 
 

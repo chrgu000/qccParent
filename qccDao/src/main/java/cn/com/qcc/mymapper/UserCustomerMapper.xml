@@ -11,7 +11,6 @@
 		IFNULL(landlord.landstate,'')landstate,
 		IFNULL(vipcount.balance,'0.0')balance,
 		IFNULL(vipcount.count,'100')vipcount,
-		`profile`.profileid ,
 		`user`.acctoken,
 		`user`.accestoken ,
 		`user`.password
@@ -97,7 +96,7 @@
 				`profile`.identity ,
 				`profile`.idpictures ,
 				`user`.userid,
-				`profile`.sex ,	`profile`.profileid ,`profile`.sign_time ,
+				`profile`.sex  ,`profile`.sign_time ,
 				 IFNULL(`profile`.signstate,'1')signstate 
 		  from `user` LEFT JOIN `profile` on `user`.userid = `profile`.user_id 
 			where  `user`.userid = #{user_id}
